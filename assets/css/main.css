@@ -1,0 +1,135 @@
+html, body {
+  width: 100%;
+  height: 100%;
+}
+
+select {
+  padding: 6px 11px;
+  margin-top: -1px;
+  -webkit-appearance: none;
+  border: 1px solid #ccc;
+  border-radius: 2px 0 0 2px;
+  padding: 9px;
+  background: url('../images/select-bg.png') no-repeat right #fff;
+}
+
+select option {
+  padding: 6px 11px;
+}
+
+label {
+  font-size: 12px;
+  text-transform: capitalize;
+}
+
+.deleteElement {
+  color: #c0392b;
+  cursor: pointer;
+}
+
+.deleteElement:hover {
+  text-decoration: underline;
+}
+
+.row {
+  width: 100% !important;
+  max-width: 100%;
+}
+
+.header {
+  border-bottom: 1px solid #acacac;
+  z-index: 999;
+}
+
+.logo {
+  display: block;
+  background: #fff url('../img/image4094_1.png') no-repeat;
+  width: 111px;
+  height: 65px;
+  margin: 5px;
+}
+
+.container {
+  height: 100%;
+  position: relative;
+}
+
+.firstLevelRequirements {
+  /* border-right: 1px solid #acacac; */
+  box-shadow: 0px 1px 2px rgba(0,0,0,.2);
+  padding-top: 15px;
+  height: 100%;
+  z-index: 900;
+  background: #fff;
+  width: 350px;
+  float: left;
+}
+
+.firstLevelRequirements a:hover {
+  text-decoration: underline;
+}
+
+.thirdLevelRequirements {
+  display: none;
+  z-index: 800;
+  background-color: #efefef;
+  border: 1px solid #cdcdcd;
+  width: 25%;
+  padding: 15px;
+  height: 100%;
+  position: absolute; top: 0; left: 350px; 
+  box-shadow: 4px 0px 13px -7px rgba(0,0,0,.6);
+}
+
+.content {
+  box-shadow: 0px 0px 3px rgba(0,0,0,.2) inset;
+  height: 100%;
+  z-index: 600;
+  position: absolute;
+  width: 100%;
+  padding-left: 350px;
+}
+
+.close:hover { 
+  color: #c0392b;
+}
+
+.serviceBox {
+  width: 300px;
+  margin: 15px;
+  border: 1px solid #cdcdcd;
+  padding: 15px;
+  float: left;
+}
+
+.serviceBox:hover {
+  box-shadow: 0px 0px 4px #ededed;
+  border: 1px solid #2EBDAE;
+}
+
+.selected {
+  background-color: rgba(0,0,0,.05);
+}
+
+@-webkit-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@-moz-keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+@keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+
+.fade {
+  opacity:0;  /* make things invisible upon start */
+  -webkit-animation:fadeIn ease-in 1;  /* call our keyframe named fadeIn, use animattion ease-in and repeat it only 1 time */
+  -moz-animation:fadeIn ease-in 1;
+  animation:fadeIn ease-in 1;
+
+  -webkit-animation-fill-mode:forwards;  /* this makes sure that after animation is done we remain at the last keyframe value (opacity: 1)*/
+  -moz-animation-fill-mode:forwards;
+  animation-fill-mode:forwards;
+
+  -webkit-animation-duration:0.5s;
+  -moz-animation-duration:0.5s;
+  animation-duration:0.5s;
+}
+
+.noresults {
+  margin: 15px;
+}
