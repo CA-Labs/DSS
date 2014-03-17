@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="dssApp">
+<head>
+  <meta charset="UTF-8">
+  <title>DSS</title>
+  <link rel="stylesheet" href="lib/css/foundation.min.css" />
+  <link rel="stylesheet" href="lib/css/foundation-icons.css" />
+  <link rel="stylesheet" href="lib/css/nouislider.fox.css" />
+  <link rel="stylesheet" href="src/css/main.css" />
+  <script src="lib/js/custom.modernizr.js"></script>
+</head>
+<body ng-controller="dssCtrl">
+  <div class="row header">
+    <div class="large-12 columns">
+      <header>
+        <div class="logo"></div>
+      </header>
+    </div>
+  </div>
+
+  <div class="row container">
+    <div class="large-4 columns firstLevelRequirements" >
+      <div ng-repeat="requirement in requirements | filter: { level: 1 }">
+        <label class="right"><a ng-click="showSubcategory((requirement.name | replaceSpacesWithDash).toLowerCase())">Details &raquo;</a></label>
+        <label style="margin-bottom: 5px;">{{ requirement.name | capitalize }} 
+          <span data-tooltip class="has-tip tip-top" title="{{ requirement.definition }}">
+            <i class="fi-lightbulb"></i>
+          </span>
+        </label>
+        <span class="label secondary radius right requirementValue">-</span>
+        <div render="{{ requirement.type }}" parameters="{{ requirement.attributes }}" style="width: 80%; " class="noUiSlider"></div>
+        <br>
+      </div>
+    </div>
+    <div ng-repeat="requirement in requirements | filter: { level: 1 }">
+      <div class="thirdLevelRequirements" id="{{ (requirement.name | replaceSpacesWithDash).toLowerCase() }}">
+        <p class="right"><i class="fi-x close" ng-click="closeSubcategory('thirdLevelRequirements')"></i></p>
+        <p>{{ requirement.name | capitalize }}</p>
+        <div class="row collapse">
+          <div class="large-9 columns">
+            <select class="thirdLevelRequirementsSelect {{ requirement.name }}">
+              <optgroup ng-repeat="requirementSubcategory in requirements | filter: { level: 3 } | filter:requirement.name | unique:'subcategory'" label="{{ requirementSubcategory.subcategory }}">
+                <option ng-repeat="requirementThirdLevel in requirements | filter: { level: 3 } | filter:requirement.name | filter:requirementSubcategory.subcategory" 
+                value="{{ requirementThirdLevel.name }}" title="{{ requirementThirdLevel.definition }}">
+                {{ requirementThirdLevel.name | capitalize }}
+                </option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="large-3 columns">
+            <button class="button postfix" ng-click="addElementToQuery(requirement.name)">Add</button>
+          </div>
+        </div>
+        <!-- start queries --> 
+        <div ng-repeat="item in queryElements | filter: { level: 3 } | filter:requirement.name">
+          <div ng-switch on="item.type">
+            <div ng-switch-when="input">
+              <req-input itemname="{{ item.name }}" definition="{{ item.definition }}" linkname="{{ item.linkName }}"></req-input>
+            </div>
+            <div ng-switch-when="radio">
+              <req-radio itemname="{{ item.name }}" definition="{{ item.definition }}" linkname="{{ item.linkName }}"></req-radio>
+            </div>
+            <div ng-switch-when="select">
+              <req-select itemname="{{ item.name }}" definition="{{ item.definition }}" linkname="{{ item.linkName }}" ></req-select>
+            </div>
+            <div ng-switch-when="slider">
+              <req-slider itemname="{{ item.name }}" definition="{{ item.definition }}" linkname="{{ item.linkName }}"></req-slider>
+            </div>
+            <div ng-switch-default>
+              <div render="{{ item.type }}" parameters="{{ item.attributes }}" ng-model="item.linkName" ng-change="change()">{{ item.name | replaceSpacesWithDash }}</div>
+            </div>
+          </div>
+        </div>
+        <!-- end queries -->
+      </div>
+    </div>
+    <div class="large-8 columns content">
+      <h4 ng-hide="matchingServices.length" class="noresults">No Services match your requirements</h4>
+      <div ng-repeat="service in matchingServices" class="serviceBox fade" ng-click="selected($index)" id="service-{{ $index }}">
+        <div class="row">
+          <div class="large-4 columns">
+            <img src="{{ service.logo_url }}" alt="{{ service.name }}">
+          </div>
+          <div class="large-8 columns">
+            {{ service.name }}
+          </div>
+        </div>
+        <div class="row">
+          <div class="large-12 columns">
+            <p><small>{{ service.description }}</small></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <script src="lib/js/jquery.js"></script>
+  <script src="lib/js/jquery.nouislider.js"></script>
+  <!-- <script src="lib/js/angular.min.js"></script> -->
+  <script src="lib/js/foundation.min.js"></script>
+  <script src="http://localhost:2480/js/orientdb-api.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0-rc.2/angular.min.js"></script> 
+  <script src="src/js/main2.js"></script>
+</body>
+</html>
