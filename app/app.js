@@ -1,2 +1,5 @@
 /* global angular */
-var dssApp = angular.module('dssApp', []);
+var dssApp = angular.module('dssApp', [
+    'ngStorage',
+    'nouislider'
+]);
