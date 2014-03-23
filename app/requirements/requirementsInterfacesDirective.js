@@ -51,7 +51,7 @@ dssApp.directive('reqSelect', function() {
     };
 });
 
-dssApp.directive('reqSlider', function() {
+dssApp.directive('reqSlider', function() { // TODO: change that to ngSlider
     return {
         restrict: 'E',
         replace: true,

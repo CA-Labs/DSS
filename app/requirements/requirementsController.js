@@ -15,7 +15,9 @@ dssApp.controller('requirementsController', function($scope, dataFactory) {
         var requirementName;
         requirementName = $("select." + categoryName).val();
         return angular.forEach($scope.requirements, function(requirement) {
-            if (requirement.category === categoryName && requirement.name === requirementName && $scope.queryElements.indexOf(requirement) === -1) {
+            if (requirement.category === categoryName
+                && requirement.name === requirementName
+                && $scope.queryElements.indexOf(requirement) === -1) {
                 return $scope.queryElements.push(requirement);
             }
         });
@@ -79,8 +81,7 @@ dssApp.controller('requirementsController', function($scope, dataFactory) {
         };
     };
     return $scope.$watch('selectedServices', function() {
-        var queryEdges;
-        queryEdges = "select from Services where 1=1";
+        var queryEdges = "select from Services where 1=1";
         angular.forEach($scope.selectedServices, function(selectedService) {});
         console.log($scope.selectedServices);
         if ($scope.selectedServices.length) {
