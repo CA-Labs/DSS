@@ -1,107 +1,201 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="dssApp">
 <head>
-  <meta charset="UTF-8">
-  <title>DSS</title>
-  <link rel="stylesheet" href="components/foundation/css/foundation.min.css" />
-  <link rel="stylesheet" href="components/foundation-icon-fonts/foundation-icons.css" />
-  <link rel="stylesheet" href="components/nouislider/jquery.nouislider.css" />
-  <link rel="stylesheet" href="assets/css/main.css" />
-  <script src="components/modernizr/modernizr.js"></script>
+    <meta charset="UTF-8">
+    <title>MODAClouds - Decision Support System</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.css"/>
+    <link rel="stylesheet" href="assets/css/dss.css"/>
 </head>
-<body ng-controller="dssCtrl">
-  <div class="row header">
-    <div class="large-12 columns">
-      <header>
-        <div class="logo"></div>
-      </header>
-    </div>
-  </div>
-
-  <div class="row container">
-    <div class="large-4 columns firstLevelRequirements" >
-      <div ng-repeat="requirement in requirements | filter: { level: 1 }">
-        <label class="right"><a ng-click="showSubcategory((requirement.name | replaceSpacesWithDash).toLowerCase())">Details &raquo;</a></label>
-        <label style="margin-bottom: 5px;">{{ requirement.name | capitalize }} 
-          <span data-tooltip class="has-tip tip-top" title="{{ requirement.definition }}">
-            <i class="fi-lightbulb"></i>
-          </span>
-        </label>
-        <span class="label secondary radius right requirementValue">-</span>
-        <div render="{{ requirement.type }}" parameters="{{ requirement.attributes }}" style="width: 80%; " class="noUiSlider"></div>
-        <br>
-      </div>
-    </div>
-    <div ng-repeat="requirement in requirements | filter: { level: 1 }">
-      <div class="thirdLevelRequirements" id="{{ (requirement.name | replaceSpacesWithDash).toLowerCase() }}">
-        <p class="right"><i class="fi-x close" ng-click="closeSubcategory('thirdLevelRequirements')"></i></p>
-        <p>{{ requirement.name | capitalize }}</p>
-        <div class="row collapse">
-          <div class="large-9 columns">
-            <select class="thirdLevelRequirementsSelect {{ requirement.name }}">
-              <optgroup ng-repeat="requirementSubcategory in requirements | filter: { level: 3 } | filter:requirement.name | unique:'subcategory'" label="{{ requirementSubcategory.subcategory }}">
-                <option ng-repeat="requirementThirdLevel in requirements | filter: { level: 3 } | filter:requirement.name | filter:requirementSubcategory.subcategory" 
-                value="{{ requirementThirdLevel.name }}" title="{{ requirementThirdLevel.definition }}">
-                {{ requirementThirdLevel.name | capitalize }}
-                </option>
-              </optgroup>
-            </select>
-          </div>
-          <div class="large-3 columns">
-            <button class="button postfix" ng-click="addElementToQuery(requirement.name)">Add</button>
-          </div>
+<body ng-app="dssApp">
+<div class="container-fluid margin-10">
+    <div class="row">
+        <div class="col-lg-4 logo"></div>
+        <div class="col-lg-8 logo-text">
+            <h3>Decision Support System</h3>
         </div>
-        <!-- start queries --> 
-        <div ng-repeat="item in queryElements | filter: { level: 3 } | filter:requirement.name">
-          <div ng-switch on="item.type">
-            <div ng-switch-when="input">
-              <req-input itemname="{{ item.name }}" definition="{{ item.definition }}" linkname="{{ item.linkName }}"></req-input>
-            </div>
-            <div ng-switch-when="radio">
-              <req-radio itemname="{{ item.name }}" definition="{{ item.definition }}" linkname="{{ item.linkName }}"></req-radio>
-            </div>
-            <div ng-switch-when="select">
-              <req-select itemname="{{ item.name }}" definition="{{ item.definition }}" linkname="{{ item.linkName }}" ></req-select>
-            </div>
-            <div ng-switch-when="slider">
-              <req-slider itemname="{{ item.name }}" definition="{{ item.definition }}" linkname="{{ item.linkName }}"></req-slider>
-            </div>
-            <div ng-switch-default>
-              <div render="{{ item.type }}" parameters="{{ item.attributes }}" ng-model="item.linkName" ng-change="change()">{{ item.name | replaceSpacesWithDash }}</div>
-            </div>
-          </div>
-        </div>
-        <!-- end queries -->
-      </div>
     </div>
-    <div class="large-8 columns content">
-      <h4 ng-hide="matchingServices.length" class="noresults">No Services match your requirements</h4>
-      <div ng-repeat="service in matchingServices" class="serviceBox fade" ng-click="selected($index)" id="service-{{ $index }}">
+    <!--navbar-->
+    <div class="row">
+        <div class="navbar navbar-inverse">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#"><span class="glyphicon glyphicon-import"></span> Load Requirements</a>
+                </li>
+                <li>
+                    <a href="#"><span class="glyphicon glyphicon-export"></span> Export Results</a>
+                </li>
+                <li>
+                    <form class="navbar-form">
+                        <input type="text" class="form-control col-lg-4" placeholder="Search Cloud Service" />
+                    </form>
+                </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Options <b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#"><span class="glyphicon glyphicon-save"></span> Save Session</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-export"></span> Export Session</a></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-import"></span> Import Session</a></li>
+                        <li class="divider"></li>
+                        <li><a href="#"><span class="glyphicon glyphicon-trash"></span> Clean Selection</a></li>
+                    </ul>
+                </li>
+                <li>
+                    &nbsp;&nbsp;
+                    &nbsp;&nbsp;
+                </li>
+            </ul>
+        </div>
+    </div>
+    <!--end navbar-->
+    <!-- main container-->
+    <div class="row mainContainer">
         <div class="row">
-          <div class="large-4 columns">
-            <img src="{{ service.logo_url }}" alt="{{ service.name }}">
-          </div>
-          <div class="large-8 columns">
-            {{ service.name }}
-          </div>
+            <div class="col-lg-3">
+                <blockquote>
+                    <p class="active">1. Assets</p>
+                    <small><cite>on the highest level</cite></small>
+                </blockquote>
+            </div>
+            <div class="col-lg-3">
+                <blockquote>
+                    <p>2. Risks</p>
+                    <small><cite>protect your business</cite></small>
+                </blockquote>
+            </div>
+            <div class="col-lg-3">
+                <blockquote>
+                    <p>3. Requirements</p>
+                    <small><cite>to fulfil your search options</cite></small>
+                </blockquote>
+            </div>
+            <div class="col-lg-3">
+                <blockquote>
+                    <p>4. Cloud Services</p>
+                    <small><cite>best matching your criteria</cite></small>
+                </blockquote>
+            </div>
         </div>
         <div class="row">
-          <div class="large-12 columns">
-            <p><small>{{ service.description }}</small></p>
-          </div>
+            <div class="col-lg-4 form-group form-inline">
+                <select label="assets" class="form-control form">
+                    <option>--</option>
+                    <optgroup label="Business">
+                        <option>Protect Company Brand</option>
+                        <option>There would be another one much longer</option>
+                    </optgroup>
+                </select>
+                <button class="btn btn-success">Add</button>
+            </div>
+            <div class="col-lg-8">
+                <h4>Definition</h4>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis dolor doloremque doloribus dolorum error eum illum impedit, ipsum iste iusto, laboriosam libero magni nesciunt odit officiis rem vitae. Cumque, et.
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Culpa eos error ipsa laborum officia provident recusandae sed soluta vitae voluptatibus! Alias atque earum eius excepturi exercitationem labore neque quam, quisquam?
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis, culpa dolores, ea eius eum excepturi facere illum nesciunt odio officia quibusdam sequi voluptatem voluptates! Asperiores esse modi placeat provident unde.
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab aspernatur atque corporis dignissimos dolorem doloribus eaque explicabo facere ipsa ipsam ipsum magni mollitia neque quasi reiciendis repudiandae, tenetur unde voluptatem.
+                </p>
+
+            </div>
         </div>
-      </div>
     </div>
-  </div>
+    <!--end main container-->
+    <div class="row sticky-bottom">
+        <div class="col-lg-12 text-right">
+            <button class="btn">Previous step</button>
+            <button class="btn btn-primary">Next step</button>
+            <button class="btn btn-primary">Search Cloud Services</button>
+        </div>
+    </div>
+</div>
+<!--<div class="row header">-->
+    <!--<div class="large-12 columns">-->
+        <!--<header>-->
+            <!--<div class="logo"></div>-->
+        <!--</header>-->
+    <!--</div>-->
+<!--</div>-->
+
+<!--<div class="row container">-->
+    <!--<div class="large-4 columns firstLevelRequirements" >-->
+        <!--<div ng-repeat="requirement in requirements | filter: { level: 1 }">-->
+            <!--<label class="right"><a ng-click="showSubcategory((requirement.name | replaceSpacesWithDash).toLowerCase())">Details &raquo;</a></label>-->
+            <!--<label style="margin-bottom: 5px;">{{ requirement.name | capitalize }}-->
+          <!--<span data-tooltip class="has-tip tip-top" title="{{ requirement.definition }}">-->
+            <!--<i class="fi-lightbulb"></i>-->
+          <!--</span>-->
+            <!--</label>-->
+            <!--<span class="label secondary radius right requirementValue">-</span>-->
+            <!--<div render="{{ requirement.type }}" parameters="{{ requirement.attributes }}" style="width: 80%; " class="noUiSlider"></div>-->
+            <!--<br>-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div ng-repeat="requirement in requirements | filter: { level: 1 }">-->
+        <!--<div class="thirdLevelRequirements" id="{{ (requirement.name | replaceSpacesWithDash).toLowerCase() }}">-->
+            <!--<p class="right"><i class="fi-x close" ng-click="closeSubcategory('thirdLevelRequirements')"></i></p>-->
+            <!--<p>{{ requirement.name | capitalize }}</p>-->
+            <!--<div class="row collapse">-->
+                <!--<div class="large-9 columns">-->
+                    <!--<select class="thirdLevelRequirementsSelect {{ requirement.name }}">-->
+                        <!--<optgroup ng-repeat="requirementSubcategory in requirements | filter: { level: 3 } | filter:requirement.name | unique:'subcategory'" label="{{ requirementSubcategory.subcategory }}">-->
+                            <!--<option ng-repeat="requirementThirdLevel in requirements | filter: { level: 3 } | filter:requirement.name | filter:requirementSubcategory.subcategory"-->
+                                    <!--value="{{ requirementThirdLevel.name }}" title="{{ requirementThirdLevel.definition }}">-->
+                                <!--{{ requirementThirdLevel.name | capitalize }}-->
+                            <!--</option>-->
+                        <!--</optgroup>-->
+                    <!--</select>-->
+                <!--</div>-->
+                <!--<div class="large-3 columns">-->
+                    <!--<button class="button postfix" ng-click="addElementToQuery(requirement.name)">Add</button>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--&lt;!&ndash; start queries &ndash;&gt;-->
+            <!--<div ng-repeat="item in queryElements | filter: { level: 3 } | filter:requirement.name">-->
+                <!--<div ng-switch on="item.type">-->
+                    <!--<div ng-switch-when="input">-->
+                        <!--<req-input itemname="{{ item.name }}" definition="{{ item.definition }}" linkname="{{ item.linkName }}"></req-input>-->
+                    <!--</div>-->
+                    <!--<div ng-switch-when="radio">-->
+                        <!--<req-radio itemname="{{ item.name }}" definition="{{ item.definition }}" linkname="{{ item.linkName }}"></req-radio>-->
+                    <!--</div>-->
+                    <!--<div ng-switch-when="select">-->
+                        <!--<req-select itemname="{{ item.name }}" definition="{{ item.definition }}" linkname="{{ item.linkName }}" ></req-select>-->
+                    <!--</div>-->
+                    <!--<div ng-switch-when="slider">-->
+                        <!--<req-slider itemname="{{ item.name }}" definition="{{ item.definition }}" linkname="{{ item.linkName }}"></req-slider>-->
+                    <!--</div>-->
+                    <!--<div ng-switch-default>-->
+                        <!--<div render="{{ item.type }}" parameters="{{ item.attributes }}" ng-model="item.linkName" ng-change="change()">{{ item.name | replaceSpacesWithDash }}</div>-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--&lt;!&ndash; end queries &ndash;&gt;-->
+        <!--</div>-->
+    <!--</div>-->
+    <!--<div class="large-8 columns content">-->
+        <!--<h4 ng-hide="matchingServices.length" class="noresults">No Services match your requirements</h4>-->
+        <!--<div ng-repeat="service in matchingServices" class="serviceBox fade" ng-click="selected($index)" id="service-{{ $index }}">-->
+            <!--<div class="row">-->
+                <!--<div class="large-4 columns">-->
+                    <!--<img src="{{ service.logo_url }}" alt="{{ service.name }}">-->
+                <!--</div>-->
+                <!--<div class="large-8 columns">-->
+                    <!--{{ service.name }}-->
+                <!--</div>-->
+            <!--</div>-->
+            <!--<div class="row">-->
+                <!--<div class="large-12 columns">-->
+                    <!--<p><small>{{ service.description }}</small></p>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+<!--</div>-->
 
 
-  <script src="components/jquery/dist/jquery.min.js"></script>
-  <script src="components/nouislider/jquery.nouislider.js"></script>
-  <script src="components/angular/angular.min.js"></script>
-  <script src="components/angular-foundation/mm-foundation.min.js"></script>
-  <script src="components/ngstorage/ngStorage.min.js"></script>
-  <script src="components/angular-nouislider/src/nouislider.min.js"></script>
-  <script src="components/angular-resource/angular-resource.min.js"></script>
-  <script src="app/app.min.js"></script>
+<script src="components/jquery/dist/jquery.min.js"></script>
+<script src="components/angular/angular.min.js"></script>
+<script src="components/ngstorage/ngStorage.min.js"></script>
+<script src="components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="app/app.min.js"></script>
 </body>
 </html>
