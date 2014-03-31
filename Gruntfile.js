@@ -18,7 +18,7 @@ module.exports = function (grunt) {
 
                         'app/common/filters.js',
                         'app/common/orientdbFactory.js',
-//
+
                         'app/common/baseController.js',
 
                         'requirements/requiremetnsController.js',
@@ -26,12 +26,17 @@ module.exports = function (grunt) {
                     ]
                 }
             }
+        },
+        watch: {
+            files: ['<config:uglify.my_target.files["app/app.min.js"]>'],
+            tasks: ['uglify']
         }
 
     });
 
     // Load packages
     grunt.loadNpmTasks('grunt-contrib-uglify');
+    grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Tasks
     grunt.registerTask('default', ['uglify']);

@@ -50,25 +50,25 @@
     <!-- main container-->
     <div class="row mainContainer">
         <div class="row topMenu">
-            <div class="col-lg-3" data-target="#dssSlides" data-slide-to="0">
+            <div class="col-lg-3 assets-slide" data-target="#dssSlides" data-slide-to="0">
                 <blockquote>
                     <p class="active">1. Assets</p>
                     <small><cite>on the highest level</cite></small>
                 </blockquote>
             </div>
-            <div class="col-lg-3" data-target="#dssSlides" data-slide-to="1">
+            <div class="col-lg-3 risks-slide" data-target="#dssSlides" data-slide-to="1">
                 <blockquote>
                     <p>2. Risks</p>
                     <small><cite>protect your business</cite></small>
                 </blockquote>
             </div>
-            <div class="col-lg-3" data-target="#dssSlides" data-slide-to="2">
+            <div class="col-lg-3 requirements-slide" data-target="#dssSlides" data-slide-to="2">
                 <blockquote>
                     <p>3. Requirements</p>
                     <small><cite>to fulfil your search options</cite></small>
                 </blockquote>
             </div>
-            <div class="col-lg-3" data-target="#dssSlides" data-slide-to="3">
+            <div class="col-lg-3 services-slide" data-target="#dssSlides" data-slide-to="3">
                 <blockquote>
                     <p>4. Cloud Services</p>
                     <small><cite>best matching your criteria</cite></small>
@@ -124,9 +124,9 @@
     <!--end main container-->
     <div class="row sticky-bottom">
         <div class="col-lg-12 text-right">
-            <button class="btn">Previous step</button>
-            <button class="btn btn-primary">Next step</button>
-            <button class="btn btn-primary">Search Cloud Services</button>
+            <button class="btn btn-primary slide-prev" href="#dssSlides" data-slide="prev" disabled>Previous step</button>
+            <button class="btn btn-primary slide-next" href="#dssSlides" data-slide="next">Next step</button>
+            <button class="btn btn-primary" data-target="#dssSlides" data-slide-to="3">Search Cloud Services</button>
         </div>
     </div>
 </div>
