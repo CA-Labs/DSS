@@ -13833,7 +13833,7 @@ function urlIsSameOrigin(requestUrl) {
  *
  * Expressions, like the one defined for the `ngClick` directive in the example
  * below, are evaluated with respect to the current scope.  Therefore, there is
- * no risk of inadvertently coding in a dependency on a global value in such an
+ * no item of inadvertently coding in a dependency on a global value in such an
  * expression.
  *
  * @example

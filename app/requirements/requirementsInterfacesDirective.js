@@ -23,8 +23,7 @@ dssApp.directive('reqRadio', function() {
         link: function(scope, element) {
             var attributes;
             attributes = scope.$eval("{" + scope.item.attributes + "}");
-            element.html('<label for="' + scope.item.name + '">' + scope.item.name + ' <span data-tooltip class="has-tip tip-top" title="' + scope.item.definition + '"><i class="fi-lightbulb"></i></span></label><div class="switch small radius\
-      query" name="' + scope.item.linkName + '"><input id="0" name="' + scope.item.name + '" type="radio" checked><label for="z" onclick="">' + attributes[0] + '</label><input id="1" name="' + scope.item.name + '" type="radio"><label for="z1" onclick="">' + attributes[1] + '</label><span></span></div>');
+            element.html('<label>' + scope.item.name + '</label><label class="switch-light well" onclick=""><input type="checkbox"/><span><span>' + attributes[0] + '</span><span>' + attributes[1] + '</span></span><a class="btn btn-success"></a></label>');
             return element.bind('click', function() {
                 return scope.change();
             });
@@ -65,7 +64,7 @@ dssApp.directive('reqSlider', function() { // TODO: change that to ngSlider
         <div style="width: 80%; margin-bottom: 15px;" class="noUiSlider"></div>\
       ');
             return element.find("div.noUiSlider").noUiSlider({
-                range: attributes.range || [0, 100],
+                range: { min: 0, max: 10 },
                 start: attributes.start || 0,
                 step: attributes.step || 1,
                 handles: attributes.handles || 1,

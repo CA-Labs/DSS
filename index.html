@@ -5,6 +5,8 @@
     <title>MODAClouds - Decision Support System</title>
     <link rel="stylesheet" href="assets/css/bootstrap.css"/>
     <link rel="stylesheet" href="assets/css/dss.css"/>
+    <link rel="stylesheet" href="components/nouislider/jquery.nouislider.css"/>
+    <link rel="stylesheet" href="components/css-toggle-switch/dist/toggle-switch.css"/>
 </head>
 <body ng-app="dssApp">
 <div class="container-fluid margin-10">
@@ -109,25 +111,48 @@
                     <!--risks slide -->
                     <div class="item risks-slide" ng-controller="risksController">
                         <div class="col-lg-4 form-group form-inline">
-                            <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.name group by r.category for a in risks">
+                            <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.name group by r.asset for r in risks">
                                 <option value="">--</option>
                             </select>
-                            <button class="btn btn-success" ng-click="risksSelected.push(risk)">Add</button>
+                            <button class="btn btn-success" ng-click="risksSelected.push(item)">Add</button>
                         </div>
                         <div class="col-lg-4">
                             <h4>Risks Identified</h4>
-                            <div class="list-group">
-                                <a class="list-group-item"
-                                   href="#"
-                                   ng-repeat="riskSelected in risksSelected"
-                                        >
-                                    <strong>{{ risksSelected.name }}</strong>
-                                </a>
+                            <div ng-repeat="item in risks | filter: { asset: '!security' }">
+                                <div ng-switch="item.renderType">
+                                    <div ng-switch-when="input">
+                                        <req-input riskname="{{ item.name }}" definition="{{ item.description }}"></req-input>
+                                    </div>
+                                    <div ng-switch-when="radio">
+                                        <req-radio itemname="{{ item.name }}" definition="{{ item.description }}"></req-radio>
+                                    </div>
+                                    <div ng-switch-when="select">
+                                        <req-select itemname="{{ item.name }}" definition="{{ item.description }}" ></req-select>
+                                    </div>
+                                    <div ng-switch-when="slider">
+                                        <req-slider itemname="{{ item.name }}" definition="{{ item.description }}"></req-slider>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div class="col-lg-4">
-                            <h4>Definition</h4>
-                            <p>{{ risk.description }}</p>
+                            <h4>Risks Selected</h4>
+                            <div ng-repeat="item in risksSelected">
+                                <div ng-switch="item.renderType">
+                                    <div ng-switch-when="input">
+                                        <req-input riskname="{{ item.name }}" definition="{{ item.description }}"></req-input>
+                                    </div>
+                                    <div ng-switch-when="radio">
+                                        <req-radio itemname="{{ item.name }}" definition="{{ item.description }}"></req-radio>
+                                    </div>
+                                    <div ng-switch-when="select">
+                                        <req-select itemname="{{ item.name }}" definition="{{ item.description }}" ></req-select>
+                                    </div>
+                                    <div ng-switch-when="slider">
+                                        <req-slider itemname="{{ item.name }}" definition="{{ item.description }}"></req-slider>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <!--requirements slide-->
@@ -158,9 +183,12 @@
 <script src="components/angular/angular.min.js"></script>
 <script src="components/ngstorage/ngStorage.min.js"></script>
 <script src="components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="components/nouislider/jquery.nouislider.js"></script>
 <!--<script src="app/app.min.js"></script>-->
 <script src="app/app.js"></script>
 <script src="app/common/orientdbFactory.js"></script>
 <script src="app/assets/assetsController.js"></script>
+<script src="app/risks/risksController.js"></script>
+<script src="app/requirements/requirementsInterfacesDirective.js"></script>
 </body>
 </html>
