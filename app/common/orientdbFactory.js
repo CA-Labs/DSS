@@ -6,7 +6,7 @@ var config = {
     }
 };
 
-dssApp.factory('orientdbFactory', function () {
+dssApp.factory('orientdbFactory', function ($http   ) {
 
     var methods = {};
     var host = config.http.beProto + "://" + config.http.beHost + ":" + config.http.bePort + "/";

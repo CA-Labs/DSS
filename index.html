@@ -83,16 +83,27 @@
                     <!--assets slide-->
                     <div class="active item assets-slide" ng-controller="assetsController">
                         <div class="col-lg-4 form-group form-inline">
-                        <select label="assets" class="form-control form" ng-model="assets" ng-options="a.name for a in assets">
-                            <option>--</option>
+                        <select label="assets" class="form-control form assets-select" ng-model="asset" ng-options="a.name group by a.category for a in assets">
+                            <option value="">--</option>
                         </select>
-                        <button class="btn btn-success">Add</button>
+                        <button class="btn btn-success" ng-click="assetsSelected.push(asset)">Add</button>
                         </div>
-                        <div class="col-lg-8">
+                        <div class="col-lg-4">
+                        <h4>Assets Selected</h4>
+                            <div class="list-group">
+                                <a class="list-group-item"
+                                   href="#"
+                                    ng-repeat="assetSelected in assetsSelected"
+                                    >
+                                    <strong>{{ assetSelected.name }}</strong>
+                                    <br>
+                                    <small>category: {{ assetSelected.category }}</small>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
                         <h4>Definition</h4>
-                        <p><strong>Corporate transparency</strong> describes the extent to which a corporation's actions are observable by outsiders. This is a consequence of regulation, local norms, and the set of information, privacy, and business policies concerning corporate decisionmaking and operations openness to employees, stakeholders, shareholders and the general public. From the perspective of outsiders, transparency can be defined simply as the perceived quality of intentionally shared information from the corporation.
-                        </p>
-
+                        <p>{{ asset.description }}</p>
                         </div>
                     </div>
                     <!--risks slide -->
@@ -127,6 +138,9 @@
 <script src="components/angular/angular.min.js"></script>
 <script src="components/ngstorage/ngStorage.min.js"></script>
 <script src="components/bootstrap/dist/js/bootstrap.js"></script>
-<script src="app/app.min.js"></script>
+<!--<script src="app/app.min.js"></script>-->
+<script src="app/app.js"></script>
+<script src="app/common/orientdbFactory.js"></script>
+<script src="app/assets/assetsController.js"></script>
 </body>
 </html>
