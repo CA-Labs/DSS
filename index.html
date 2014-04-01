@@ -83,7 +83,7 @@
                     <!--assets slide-->
                     <div class="active item assets-slide" ng-controller="assetsController">
                         <div class="col-lg-4 form-group form-inline">
-                        <select label="assets" class="form-control form assets-select" ng-model="asset" ng-options="a.name group by a.category for a in assets">
+                        <select label="assets" class="form-control form assets-select item-select" ng-model="asset" ng-options="a.name group by a.category for a in assets">
                             <option value="">--</option>
                         </select>
                         <button class="btn btn-success" ng-click="assetsSelected.push(asset)">Add</button>
@@ -107,8 +107,28 @@
                         </div>
                     </div>
                     <!--risks slide -->
-                    <div class="item risks-slide">
-
+                    <div class="item risks-slide" ng-controller="risksController">
+                        <div class="col-lg-4 form-group form-inline">
+                            <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.name group by r.category for a in risks">
+                                <option value="">--</option>
+                            </select>
+                            <button class="btn btn-success" ng-click="risksSelected.push(risk)">Add</button>
+                        </div>
+                        <div class="col-lg-4">
+                            <h4>Risks Identified</h4>
+                            <div class="list-group">
+                                <a class="list-group-item"
+                                   href="#"
+                                   ng-repeat="riskSelected in risksSelected"
+                                        >
+                                    <strong>{{ risksSelected.name }}</strong>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-lg-4">
+                            <h4>Definition</h4>
+                            <p>{{ risk.description }}</p>
+                        </div>
                     </div>
                     <!--requirements slide-->
                     <div class="item requirements-slide">
