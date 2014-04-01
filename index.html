@@ -81,24 +81,16 @@
                 <!-- Carousel items -->
                 <div class="carousel-inner">
                     <!--assets slide-->
-                    <div class="active item assets-slide">
+                    <div class="active item assets-slide" ng-controller="assetsController">
                         <div class="col-lg-4 form-group form-inline">
-                        <select label="assets" class="form-control form">
+                        <select label="assets" class="form-control form" ng-model="assets" ng-options="a.name for a in assets">
                             <option>--</option>
-                            <optgroup label="Business">
-                                <option>Protect Company Brand</option>
-                                <option>There would be another one much longer</option>
-                            </optgroup>
                         </select>
                         <button class="btn btn-success">Add</button>
                         </div>
                         <div class="col-lg-8">
                         <h4>Definition</h4>
-                        <p>
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Corporis dolor doloremque doloribus dolorum error eum illum impedit, ipsum iste iusto, laboriosam libero magni nesciunt odit officiis rem vitae. Cumque, et.
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Culpa eos error ipsa laborum officia provident recusandae sed soluta vitae voluptatibus! Alias atque earum eius excepturi exercitationem labore neque quam, quisquam?
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Blanditiis, culpa dolores, ea eius eum excepturi facere illum nesciunt odio officia quibusdam sequi voluptatem voluptates! Asperiores esse modi placeat provident unde.
-                        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Ab aspernatur atque corporis dignissimos dolorem doloribus eaque explicabo facere ipsa ipsam ipsum magni mollitia neque quasi reiciendis repudiandae, tenetur unde voluptatem.
+                        <p><strong>Corporate transparency</strong> describes the extent to which a corporation's actions are observable by outsiders. This is a consequence of regulation, local norms, and the set of information, privacy, and business policies concerning corporate decisionmaking and operations openness to employees, stakeholders, shareholders and the general public. From the perspective of outsiders, transparency can be defined simply as the perceived quality of intentionally shared information from the corporation.
                         </p>
 
                         </div>

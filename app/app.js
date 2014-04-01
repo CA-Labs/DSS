@@ -1,6 +1,6 @@
 /* global angular */
 
-// bootstrap definitions
+// bootstrap definitions and UI interactions
 $("#dssSlides").carousel('pause' ,{
     wrap: false
 }).on('slid.bs.carousel', function () {

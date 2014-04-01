@@ -1,10 +1,18 @@
+var config = {
+    http: {
+       beProto: 'http',
+       beHost: 'localhost',
+       bePort: '3003'
+    }
+};
+
 dssApp.factory('orientdbFactory', function () {
 
     var methods = {};
+    var host = config.http.beProto + "://" + config.http.beHost + ":" + config.http.bePort + "/";
 
-    methods.getMatching = function (query) {
-        var results = $resource('/query/:collection');
-        return query; // TODO: make connector to orientdb to run the query
+    methods.getMatching = function (collection, query, callback) {
+        $http.get(host + "query" + "/" + collection, query).success(callback);
     };
 
     return methods;

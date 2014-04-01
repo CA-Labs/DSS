@@ -9,7 +9,7 @@ module.exports = function (grunt) {
                     sourceMap: true,
                     sourceMapName: 'app/app.min.map',
                     banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
-                        ' - author: <%= pkg.author %> - ' +
+                        'author: <%= pkg.author %> - ' +
                         '<%= grunt.template.today("yyyy-mm-dd") %> */'
                 },
                 files: {
@@ -20,6 +20,8 @@ module.exports = function (grunt) {
                         'app/common/orientdbFactory.js',
 
                         'app/common/baseController.js',
+
+                        'app/assets/assetsController.js',
 
                         'requirements/requiremetnsController.js',
                         'requirements/requiremetnsInterfacesDirective.js'
