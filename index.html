@@ -114,7 +114,7 @@
                             <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.name group by r.asset for r in risks">
                                 <option value="">--</option>
                             </select>
-                            <button class="btn btn-success" ng-click="risksSelected.push(item)">Add</button>
+                            <button class="btn btn-success" ng-click="risksSelected.push(risk)">Add</button>
                         </div>
                         <div class="col-lg-4">
                             <h4>Risks Identified</h4>
@@ -167,12 +167,12 @@
                                 <select label="requiremetns" class="form-control form assets-select item-select" ng-model="requirement" ng-options="r.name group by r.category for r in requirements">
                                     <option value="">--</option>
                                 </select>
-                                <button class="btn btn-success" ng-click="requirementsSelected.push(item)">Add</button>
+                                <button class="btn btn-success" ng-click="requirementsSelected.push(requirement)">Add</button>
                             </div>
                             <div class="col-lg-4">
                                 <h4>Requirements</h4>
-                                <div ng-repeat="item in requirementsSelected">
-                                    <div ng-switch="item.renderType">
+                                <div ng-repeat="item in requirementsSelected track by $index">
+                                    <div ng-switch="item.type">
                                         <div ng-switch-when="input">
                                             <req-input itemname="{{ item.name }}" definition="{{ item.description }}"></req-input>
                                         </div>

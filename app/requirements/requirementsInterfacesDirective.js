@@ -42,7 +42,7 @@ dssApp.directive('reqSelect', function() {
             angular.forEach(attributes, function(value, key) {
                 options = options + '<option value="' + key + '">' + value + '</option>';
             });
-            element.html('<label for="' + scope.item.name + '">' + scope.item.name + ' <span data-tooltip class="has-tip tip-top" title="' + scope.item.definition + '"><i class="fi-lightbulb"></i></span></label><select name="' + scope.item.linkName + '" class="query">' + options + '</select>');
+            element.html('<label for="' + scope.item.name + '">' + scope.item.name + ' <span data-tooltip class="has-tip tip-top" title="' + scope.item.definition + '"><i class="fi-lightbulb"></i></span></label><select name="' + scope.item.linkName + '" class="query form-control form">' + options + '</select>');
             return element.bind('change', function() {
                 return scope.change();
             });
