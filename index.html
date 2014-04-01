@@ -156,8 +156,40 @@
                         </div>
                     </div>
                     <!--requirements slide-->
-                    <div class="item requirements-slide">
-
+                    <div class="item requirements-slide" ng-controller="requirementsController">
+                            <div class="col-lg-12">
+                                <div class="alert alert-warning alert-dismissable">
+                                    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                    <strong>Note: </strong>Please choose requirements which fulfill your search cryteria and has not been identified in the assets and requiremetns section
+                                </div>
+                            </div>
+                            <div class="col-lg-4 form-group form-inline">
+                                <select label="requiremetns" class="form-control form assets-select item-select" ng-model="requirement" ng-options="r.name group by r.category for r in requirements">
+                                    <option value="">--</option>
+                                </select>
+                                <button class="btn btn-success" ng-click="requirementsSelected.push(item)">Add</button>
+                            </div>
+                            <div class="col-lg-4">
+                                <h4>Requirements</h4>
+                                <div ng-repeat="item in requirementsSelected">
+                                    <div ng-switch="item.renderType">
+                                        <div ng-switch-when="input">
+                                            <req-input itemname="{{ item.name }}" definition="{{ item.description }}"></req-input>
+                                        </div>
+                                        <div ng-switch-when="radio">
+                                            <req-radio itemname="{{ item.name }}" definition="{{ item.description }}"></req-radio>
+                                        </div>
+                                        <div ng-switch-when="select">
+                                            <req-select itemname="{{ item.name }}" definition="{{ item.description }}" ></req-select>
+                                        </div>
+                                        <div ng-switch-when="slider">
+                                            <req-slider itemname="{{ item.name }}" definition="{{ item.description }}"></req-slider>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                            </div>
                     </div>
                     <!--services slide-->
                     <div class="item services-slide">
@@ -189,6 +221,7 @@
 <script src="app/common/orientdbFactory.js"></script>
 <script src="app/assets/assetsController.js"></script>
 <script src="app/risks/risksController.js"></script>
+<script src="app/requirements/requirementsController.js"></script>
 <script src="app/requirements/requirementsInterfacesDirective.js"></script>
 </body>
 </html>
