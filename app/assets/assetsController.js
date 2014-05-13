@@ -1,9 +1,9 @@
-dssApp.controller('assetsController', function($scope, orientdbFactory, $localStorage) {
+dssApp.controller('assetsController', function($scope, $rootScope, orientdbFactory, $localStorage) {
    // extend base controller
     //$injector.invoke(baseController, this, {$scope: $scope});
 
     $scope.asset = "";
-    $scope.assetsSelected = $localStorage.assetsSelected || [];
+    $rootScope.assetsSelected = $localStorage.assetsSelected || [];
     $scope.description = "";
     $scope.updateDescription = function (assetSelected) {
         $scope.asset.description = assetSelected.description;

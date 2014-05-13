@@ -1,8 +1,8 @@
-dssApp.controller('risksController', function ($scope, orientdbFactory, $localStorage) {
+dssApp.controller('risksController', function ($scope, $rootScope, orientdbFactory, $localStorage) {
 
     // init
     $scope.risk = "";
-    $scope.risksSelected = $localStorage.risksSelected || [];
+    $rootScope.risksSelected = $localStorage.risksSelected || [];
 
     // fetch data
     orientdbFactory.getMatching('risks', '', function (data) {

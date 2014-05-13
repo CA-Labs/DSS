@@ -1,5 +1,5 @@
-dssApp.controller('requirementsController', function($scope, orientdbFactory, $localStorage) {
-    $scope.requirementsSelected = $localStorage.requirementsSelected || [];
+dssApp.controller('requirementsController', function($scope, $rootScope, orientdbFactory, $localStorage) {
+    $rootScope.requirementsSelected = $localStorage.requirementsSelected || [];
     $scope.requirement = "";
 
     // fetch data
