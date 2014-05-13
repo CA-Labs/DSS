@@ -10,9 +10,9 @@ dssApp.controller('mainController', function ($scope, $rootScope, orientdbFactor
         var element = angular.element(event.target);
 
         element.attr({
-            href: 'data:application/json;charset=utf-8,' + encodeURI($localStorage.toString()),
-            target: '_blank',
-            download: 'filename.json'
+            download: 'DSS_Session.json',
+            href: 'data:application/json;charset=utf-8,' + encodeURI(JSON.stringify($localStorage)),
+            target: '_blank'
         });
     };
 });
