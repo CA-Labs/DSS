@@ -58,11 +58,14 @@ dssApp.directive('reqSlider', function() { // TODO: change that to ngSlider
             var attributes;
             attributes = scope.$eval("{" + scope.item.attributes + "}");
             element.html('\
-        <label style="margin-bottom: 5px;">' + scope.item.name + '<span data-tooltip class="has-tip tip-top" title="' + scope.item.definition + '">\
+        <label style="margin-bottom: 5px;" class="def-tip" data-container="body" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">' + scope.item.name + '<span title="' + scope.item.definition + '" \
         <i class="fi-lightbulb"></i></span></label>\
         <span class="label secondary radius right requirementValue">-</span>\
-        <div style="width: 80%; margin-bottom: 15px;" class="noUiSlider"></div>\
+        <div class="row"><div class="col-lg-6"><small>Likelihood: </small><div style="width: 80%; margin-bottom: 15px;" class="noUiSlider"></div></div><div class="col-lg-6"><small>Consequence :</small><div style="width: 80%; margin-bottom: 15px;" class="noUiSlider"></div></div></div>\
       ');
+            $(".def-tip").popover({
+                toggle: 'hover'
+            });
             return element.find("div.noUiSlider").noUiSlider({
                 range: { min: 0, max: 10 },
                 start: attributes.start || 0,
@@ -72,6 +75,7 @@ dssApp.directive('reqSlider', function() { // TODO: change that to ngSlider
                     return $(this).prev("span.requirementValue").text($(this).val());
                 }
             });
+
         }
     };
 });

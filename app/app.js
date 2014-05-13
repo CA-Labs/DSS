@@ -27,7 +27,6 @@ $("#dssSlides").carousel('pause' ,{
    }
 });
 
-
 var dssApp = angular.module('dssApp', [
     'ngStorage'
 ]);
