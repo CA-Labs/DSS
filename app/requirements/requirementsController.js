@@ -1,10 +1,14 @@
-dssApp.controller('requirementsController', function($scope, orientdbFactory) {
-    $scope.requirementsSelected = [];
+dssApp.controller('requirementsController', function($scope, orientdbFactory, $localStorage) {
+    $scope.requirementsSelected = $localStorage.requirementsSelected || [];
     $scope.requirement = "";
 
     // fetch data
     orientdbFactory.getMatching('requirements', '', function (data) {
         $scope.risks = data;
+    });
+
+    $scope.$watch('requirementsSelected', function (value) {
+       $localStorage.requirementsSelected = value;
     });
 //    $scope.queryElements = [];
 //    $scope.selectedServices = [];
