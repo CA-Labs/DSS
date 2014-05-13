@@ -34,9 +34,11 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">Options <b class="caret"></b></a>
                     <ul class="dropdown-menu">
-                        <li><a href="#" ng-click="saveSession($event)"><span class="glyphicon glyphicon-save"></span> Save Session</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-export"></span> Export Session</a></li>
-                        <li><a href="#"><span class="glyphicon glyphicon-import"></span> Import Session</a></li>
+                        <li><a href="#" ng-click="saveSessionFile($event)"><span class="glyphicon glyphicon-export"></span> Export Session</a></li>
+                        <li>
+                            <a href="#" ng-click="uploadSessionFile()"><span class="glyphicon glyphicon-import"></span> Import Session</a>
+                            <input type="file" id="uploadSessionFile" class="hidden"/>
+                        </li>
                         <li class="divider"></li>
                         <li><a href="#" ng-click="clearSelection()"><span class="glyphicon glyphicon-trash"></span> Clean Selection</a></li>
                     </ul>
@@ -201,6 +203,7 @@
 <!--<script src="app/app.min.js"></script>-->
 <script src="app/app.js"></script>
 <script src="app/common/orientdbFactory.js"></script>
+<script src="app/common/mainInterfaces.js"></script>
 <script src="app/common/mainController.js"></script>
 <script src="app/assets/assetsController.js"></script>
 <script src="app/risks/risksController.js"></script>

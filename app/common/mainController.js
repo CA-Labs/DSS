@@ -6,7 +6,7 @@ dssApp.controller('mainController', function ($scope, $rootScope, orientdbFactor
         $localStorage.requirementsSelected = $rootScope.requirementsSelected = [];
     };
 
-    $scope.saveSession = function (event) {
+    $scope.saveSessionFile = function (event) {
         var element = angular.element(event.target);
 
         element.attr({
@@ -15,4 +15,12 @@ dssApp.controller('mainController', function ($scope, $rootScope, orientdbFactor
             target: '_blank'
         });
     };
+
+    $scope.uploadSessionFile = function () {
+        $('#uploadSessionFile').trigger('click');
+    };
+
+    $scope.loadLocalSessionContent = function ($fileContent) {
+        $localStorage = JSON.parse($fileContent);
+    }
 });
