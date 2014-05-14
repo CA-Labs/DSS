@@ -50,7 +50,7 @@ dssApp.directive('reqSelect', function() {
     };
 });
 
-dssApp.directive('reqSlider', function() { // TODO: change that to ngSlider
+dssApp.directive('reqSlider', function() {
     return {
         restrict: 'E',
         replace: true,
@@ -75,7 +75,6 @@ dssApp.directive('reqSlider', function() { // TODO: change that to ngSlider
                     return $(this).prev("span.requirementValue").text($(this).val());
                 }
             });
-
         }
     };
 });
