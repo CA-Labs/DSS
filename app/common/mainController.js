@@ -21,6 +21,11 @@ dssApp.controller('mainController', function ($scope, $rootScope, orientdbFactor
     };
 
     $scope.loadLocalSessionContent = function ($fileContent) {
-        $localStorage = JSON.parse($fileContent);
+        if (dssApp.isJSON($fileContent)) {
+            var fileContent = JSON.parse($fileContent);
+            $localStorage.assetsSelected = $rootScope.assetsSelected = fileContent.assetsSelected;
+            $localStorage.risksSelected = $rootScope.risksSelected = fileContent.risksSelected;
+            $localStorage.requirementsSelected = $rootScope.requirementsSelected = fileContent.requirementsSelected;
+        }
     }
 });

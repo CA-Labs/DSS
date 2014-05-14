@@ -21,3 +21,16 @@ dssApp.directive('onReadFile', function ($parse) {
         }
     };
 });
+
+dssApp.isJSON = function (string) {
+  if (typeof string == "string") {
+      try {
+          JSON.parse(string);
+      } catch (ex) {
+          return false;
+      }
+      return true;
+  } else {
+      return false;
+  }
+};

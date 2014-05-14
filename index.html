@@ -37,7 +37,7 @@
                         <li><a href="#" ng-click="saveSessionFile($event)"><span class="glyphicon glyphicon-export"></span> Export Session</a></li>
                         <li>
                             <a href="#" ng-click="uploadSessionFile()"><span class="glyphicon glyphicon-import"></span> Import Session</a>
-                            <input type="file" id="uploadSessionFile" class="hidden"/>
+                            <input type="file" id="uploadSessionFile" class="hidden" on-read-file="loadLocalSessionContent($fileContent)"/>
                         </li>
                         <li class="divider"></li>
                         <li><a href="#" ng-click="clearSelection()"><span class="glyphicon glyphicon-trash"></span> Clean Selection</a></li>
