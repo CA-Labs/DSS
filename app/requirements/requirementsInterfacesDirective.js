@@ -37,12 +37,12 @@ dssApp.directive('reqSelect', function() {
         replace: true,
         link: function(scope, element) {
             var attributes, options;
-            attributes = scope.$eval("{" + scope.item.attributes + "}");
+            attributes = scope.$eval("{" + scope.item.options + "}");
             options = '<option value="none">-- select --</option>';
             angular.forEach(attributes, function(value, key) {
                 options = options + '<option value="' + key + '">' + value + '</option>';
             });
-            element.html('<label for="' + scope.item.name + '">' + scope.item.name + ' <span data-tooltip class="has-tip tip-top" title="' + scope.item.definition + '"><i class="fi-lightbulb"></i></span></label><select name="' + scope.item.linkName + '" class="query form-control form">' + options + '</select>');
+            element.html('<label for="' + scope.item.name + '">' + scope.item.name + ' <span data-tooltip class="has-tip tip-top" title="' + scope.item.name + '"><i class="fi-lightbulb"></i></span></label><select name="' + scope.item.linkName + '" class="query form-control form">' + options + '</select>');
             return element.bind('change', function() {
                 return scope.change();
             });

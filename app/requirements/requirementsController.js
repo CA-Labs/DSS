@@ -4,7 +4,7 @@ dssApp.controller('requirementsController', function($scope, $rootScope, orientd
 
     // fetch data
     orientdbFactory.getMatching('requirements', '', function (data) {
-        $scope.risks = data;
+        $scope.requirements = data;
     });
 
     $scope.$watch('requirementsSelected', function (value) {
