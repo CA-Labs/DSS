@@ -3,9 +3,9 @@ dssApp.controller('requirementsController', function($scope, $rootScope, orientd
     $scope.requirement = "";
 
     // fetch data
-    orientdbFactory.getMatching('requirements', '', function (data) {
-        $scope.requirements = data;
-    });
+//    orientdbFactory.getMatching('requirements', '', function (data) {
+//        $scope.requirements = data;
+//    });
 
     $scope.$watch('requirementsSelected', function (value) {
        $localStorage.requirementsSelected = value;
