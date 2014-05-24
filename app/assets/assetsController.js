@@ -11,7 +11,8 @@ dssApp.controller('assetsController', function($scope, $rootScope, orientdbFacto
 
     $scope.$watch("assetsSelected", function (value) {
         $localStorage.assetsSelected = value;
-    });
+    }, true);
+
 
     // fetch data
     orientdbFactory.getMatching('Assets', '', function (data) {

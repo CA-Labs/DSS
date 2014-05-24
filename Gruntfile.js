@@ -17,7 +17,7 @@ module.exports = function (grunt) {
                         'app/app.js',
 
                         'app/common/filters.js',
-                        'app/common/orientdbFactory.js',
+                        'app/common/dssFactories.js',
 
                         'app/common/baseController.js',
 
