@@ -122,7 +122,7 @@
                         <div class="col-lg-8">
                             <h4>Risks Selected</h4>
                             <div ng-repeat="item in risksSelected">
-                                <div ng-switch="item.renderType">
+                                <div ng-switch="item.representation">
                                     <div ng-switch-when="input">
                                         <req-input riskname="{{ item.name }}" definition="{{ item.description }}"></req-input>
                                     </div>
@@ -156,7 +156,7 @@
                             <div class="col-lg-4">
                                 <h4>Requirements</h4>
                                 <div ng-repeat="item in requirementsSelected track by $index">
-                                    <div ng-switch="item.type">
+                                    <div ng-switch="item.representation">
                                         <div ng-switch-when="input">
                                             <req-input itemname="{{ item.name }}" definition="{{ item.description }}"></req-input>
                                         </div>
@@ -202,7 +202,7 @@
 <script src="components/nouislider/jquery.nouislider.js"></script>
 <!--<script src="app/app.min.js"></script>-->
 <script src="app/app.js"></script>
-<script src="app/common/orientdbFactory.js"></script>
+<script src="app/common/dssFactories.js"></script>
 <script src="app/common/mainInterfaces.js"></script>
 <script src="app/common/mainController.js"></script>
 <script src="app/assets/assetsController.js"></script>

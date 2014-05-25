@@ -2,6 +2,9 @@
  Main interfaces file
 **/
 
+/**
+ * Directive which reads file using local browser File Reader method
+ */
 dssApp.directive('onReadFile', function ($parse) {
     return {
         restrict: 'A',
@@ -22,6 +25,12 @@ dssApp.directive('onReadFile', function ($parse) {
     };
 });
 
+/**
+ * Method to check if the string provided is valid JSON or not. At this point used when a session file is read
+ * to the browser.
+ * @param string
+ * @returns {boolean}
+ */
 dssApp.isJSON = function (string) {
   if (typeof string == "string") {
       try {
