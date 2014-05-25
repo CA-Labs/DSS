@@ -1,4 +1,4 @@
-dssApp.controller('risksController', function ($scope, $rootScope, orientdbFactory, $localStorage) {
+dssApp.controller('risksController', function ($scope, $rootScope, orientdbFactory, helper, $localStorage) {
 
     // init
     $scope.risk = "";
@@ -11,5 +11,24 @@ dssApp.controller('risksController', function ($scope, $rootScope, orientdbFacto
 
     $scope.$watch('risksSelected', function (value) {
         $localStorage.risksSelected = value;
+        var risksNames = helper.selectAttributeFromObjects(value, 'name');
+        var risksConditions = [];
+        // TODO: refactor
+        angular.forEach(risksNames, function (value) {
+            risksConditions.push({
+                "attribute": "name",
+                "operator": "=",
+                "value": value
+            });
+        });
+
+        var query = {
+            columns: "expand(out())",
+            conditions: { "WHEREOR": risksConditions }
+        };
+
+        orientdbFactory.getMatching('Risks', query, function (data) {
+            $rootScope.requirements = data;
+        })
     }, true);
 });

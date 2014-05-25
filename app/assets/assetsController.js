@@ -23,6 +23,7 @@ dssApp.controller('assetsController', function($scope, $rootScope, orientdbFacto
         $localStorage.assetsSelected = value;
         var assetNames = helper.selectAttributeFromObjects(value, 'name');
         var assetConditions = [];
+        // TODO: refactor
         angular.forEach(assetNames, function (value) {
             assetConditions.push({
                     "attribute": "name",
