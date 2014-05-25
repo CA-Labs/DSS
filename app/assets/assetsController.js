@@ -22,8 +22,17 @@ dssApp.controller('assetsController', function($scope, $rootScope, orientdbFacto
     $scope.$watch("assetsSelected", function (value) {
         $localStorage.assetsSelected = value;
         var assetNames = helper.selectAttributeFromObjects(value, 'name');
+        var assetConditions = [];
+        angular.forEach(assetNames, function (value) {
+            assetConditions.push({
+                    "attribute": "name",
+                    "operator": "=",
+                    "value": value
+            });
+        });
         var query = {
             columns: "expand(both())",
+            conditions: { "WHEREOR": assetConditions }
         };
 
         // Selects only risks which are connected to the assets selected, hence query on assets
