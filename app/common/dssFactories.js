@@ -6,7 +6,7 @@
 var config = {
     http: {
        beProto: 'http',
-       beHost: 'localhost',
+       beHost: window.location.hostname,
        bePort: '3003'
     }
 };
