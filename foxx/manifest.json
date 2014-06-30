@@ -4,5 +4,7 @@
   "author": "Jacek Dominiak, Jordi Aranda",
   "controllers": {
     "/": "app.js"
-  }
+  },
+  "setup": "scripts/setup.js",
+  "teardown": "scripts/teardown.js"
 }
