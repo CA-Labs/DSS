@@ -13,7 +13,7 @@
   controller.get("/assets/:type", function(req, res) {
     var query = "for node in dss_nodes filter node.type == @type return node";
     var stmt = db._createStatement({"query": query});
-    stmt.bind("type", req.params("type").toString);
+    stmt.bind("type", req.params("type"));
     var result = stmt.execute();
     res.json(result);
   }).pathParam("type", {

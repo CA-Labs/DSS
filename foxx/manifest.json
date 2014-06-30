@@ -2,6 +2,7 @@
   "name": "DSS",
   "version": "0.0.1",
   "author": "Jacek Dominiak, Jordi Aranda",
+  "thumbnail": "thumbnail.png"
   "controllers": {
     "/": "app.js"
   },
