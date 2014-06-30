@@ -3,7 +3,9 @@
   "use strict";
   
   var Foxx = require("org/arangodb/foxx"),
-  controller = new Foxx.Controller(applicationContext)
+  controller = new Foxx.Controller(applicationContext),
+  arango = require("org/arangodb"),
+  db = arango.db;
 
   /** Retrieves all assets by asset type (bsoia/toia/)
    * 
