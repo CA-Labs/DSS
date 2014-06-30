@@ -48,7 +48,9 @@ dssApp.controller('assetsController', function($scope, $rootScope, orientdbFacto
      * requirements need to have the shared data set via $rootScope as those are the only ones reset from not
      * local controller.
      */
+    /*
     orientdbFactory.getMatching('Assets', '', function (data) {
         $scope.assets = data;
     });
+    */
 });

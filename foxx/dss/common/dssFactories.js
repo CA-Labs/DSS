@@ -16,7 +16,7 @@ var config = {
  * GET,PUT,POST,DELETE cors options are enabled. If any additional is needed, it should be enabled in the cors section
  * of the back end service.js file
  */
-dssApp.factory('orientdbFactory', function ($http   ) {
+dssApp.factory('orientdbFactory', function ($http) {
 
     var methods = {};
     var host = config.http.beProto + "://" + config.http.beHost + ":" + config.http.bePort + "/";

@@ -7,30 +7,29 @@ module.exports = function (grunt) {
             my_target: {
                 options: {
                     sourceMap: true,
-                    sourceMapName: 'app/app.min.map',
+                    sourceMapName: 'foxx/dss/app.min.map',
                     banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
                         'author: <%= pkg.author %> - ' +
                         '<%= grunt.template.today("yyyy-mm-dd") %> */'
                 },
                 files: {
-                    'app/app.min.js': [
-                        'app/app.js',
-
-                        'app/common/filters.js',
-                        'app/common/dssFactories.js',
-
-                        'app/common/baseController.js',
-
-                        'app/assets/assetsController.js',
-
-                        'requirements/requiremetnsController.js',
-                        'requirements/requiremetnsInterfacesDirective.js'
+                    'foxx/dss/app.min.js': [
+                        'foxx/dss/app.js',
+                        'foxx/dss/assets/assetsController.js',
+                        'foxx/dss/common/baseController.js',
+                        'foxx/dss/common/dssFactories.js',
+                        'foxx/dss/common/filters.js',
+                        'foxx/dss/common/mainController.js',
+                        'foxx/dss/common/mainInterfaces.js',
+                        'foxx/dss/requirements/requirementsController.js',
+                        'foxx/dss/requirements/requirementsInterfacesDirective.js',
+                        'foxx/dss/risks/risksController.js'
                     ]
                 }
             }
         },
         watch: {
-            files: ['<config:uglify.my_target.files["app/app.min.js"]>'],
+            files: ['<config:uglify.my_target.files["dss/app.min.js"]>'],
             tasks: ['uglify']
         }
 
