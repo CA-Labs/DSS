@@ -1,4 +1,4 @@
-dssApp.controller('risksController', function ($scope, $rootScope, orientdbFactory, helper, $localStorage) {
+dssApp.controller('risksController', ["$scope", "$rootScope", "$localStorage", function ($scope, $rootScope, $localStorage) {
 
     // init
     $scope.risk = "";
@@ -9,6 +9,7 @@ dssApp.controller('risksController', function ($scope, $rootScope, orientdbFacto
 //       $rootScope.risks = data;
 //    });
 
+/**
     $scope.$watch('risksSelected', function (value) {
         $localStorage.risksSelected = value;
         var risksNames = helper.selectAttributeFromObjects(value, 'name');
@@ -27,8 +28,10 @@ dssApp.controller('risksController', function ($scope, $rootScope, orientdbFacto
             conditions: { "WHEREOR": risksConditions }
         };
 
+        /*
         orientdbFactory.getMatching('Risks', query, function (data) {
             $rootScope.requirements = data;
         })
     }, true);
-});
+*/
+}]);

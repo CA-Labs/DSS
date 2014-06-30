@@ -17,7 +17,7 @@ module.exports = function (grunt) {
                         'foxx/dss/app.js',
                         'foxx/dss/assets/assetsController.js',
                         'foxx/dss/common/baseController.js',
-                        'foxx/dss/common/dssFactories.js',
+                        'foxx/dss/common/dssServices.js',
                         'foxx/dss/common/filters.js',
                         'foxx/dss/common/mainController.js',
                         'foxx/dss/common/mainInterfaces.js',

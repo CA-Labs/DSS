@@ -1,4 +1,4 @@
-dssApp.controller('assetsController', function($scope, $rootScope, orientdbFactory, helper, $localStorage) {
+dssApp.controller('assetsController', ["$scope", "$rootScope", "ArangoDBService", "$localStorage", function($scope, $rootScope, ArangoDBService, $localStorage) {
    // extend base controller
     //$injector.invoke(baseController, this, {$scope: $scope});
 
@@ -19,6 +19,7 @@ dssApp.controller('assetsController', function($scope, $rootScope, orientdbFacto
      * Watch assetsSelected $scope and save the selected values to $localStorage if needed as well as rerun
      * risks identified query to only show the risks which are based on the selected assets.
      */
+    /**
     $scope.$watch("assetsSelected", function (value) {
         $localStorage.assetsSelected = value;
         var assetNames = helper.selectAttributeFromObjects(value, 'name');
@@ -41,7 +42,7 @@ dssApp.controller('assetsController', function($scope, $rootScope, orientdbFacto
             $rootScope.risks = data;
         });
     }, true);
-
+    */
 
     /**
      * Initial fetch of the data using back end. it will set the local scope in this case. Only risks and
@@ -53,4 +54,14 @@ dssApp.controller('assetsController', function($scope, $rootScope, orientdbFacto
         $scope.assets = data;
     });
     */
-});
+    
+    ArangoDBService.getBSOA(function(error, data){
+      if(error){
+        console.log(error);
+      } else {
+        console.log(data);
+        $scope.assets = data;
+      }
+    });
+    
+}]);

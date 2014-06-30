@@ -1,4 +1,4 @@
-dssApp.controller('requirementsController', function($scope, $rootScope, orientdbFactory, $localStorage) {
+dssApp.controller('requirementsController', ["$scope", "$rootScope", "$localStorage", function($scope, $rootScope, $localStorage) {
     $rootScope.requirementsSelected = $localStorage.requirementsSelected || [];
     $scope.requirement = "";
 
@@ -98,4 +98,4 @@ dssApp.controller('requirementsController', function($scope, $rootScope, orientd
 //        if ($scope.selectedServices.length) {
 //            return $scope.selectedServicesEdges = dataFactory.matchingServices(queryEdges);
 //        }
-    });
+    }]);

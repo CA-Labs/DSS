@@ -5,7 +5,7 @@
 /**
  * Directive which reads file using local browser File Reader method
  */
-dssApp.directive('onReadFile', function ($parse) {
+dssApp.directive('onReadFile', ["$parse", function ($parse) {
     return {
         restrict: 'A',
         scope: false,
@@ -23,7 +23,7 @@ dssApp.directive('onReadFile', function ($parse) {
             });
         }
     };
-});
+}]);
 
 /**
  * Method to check if the string provided is valid JSON or not. At this point used when a session file is read

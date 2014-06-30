@@ -1,4 +1,4 @@
 // Base behaviour controller
-dssApp.controller('BaseController', function ($scope) {
+dssApp.controller('BaseController', ["$scope", function ($scope) {
 
-});
+}]);

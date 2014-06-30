@@ -54,28 +54,34 @@
     <!-- main container-->
     <div class="row mainContainer">
         <div class="row topMenu">
-            <div class="col-lg-3 assets-slide" data-target="#dssSlides" data-slide-to="0">
+            <div class="col-lg-2 assets-slide" data-target="#dssSlides" data-slide-to="0">
                 <blockquote>
-                    <p class="active">1. Assets</p>
-                    <small><cite>on the highest level</cite></small>
+                    <p class="active">1. BSOIA Assets</p>
+                    <small><cite>Business-oriented intangible assets</cite></small>
                 </blockquote>
             </div>
-            <div class="col-lg-3 risks-slide" data-target="#dssSlides" data-slide-to="1">
+            <div class="col-lg-2 assets-slide" data-target="#dssSlides" data-slide-to="1">
                 <blockquote>
-                    <p>2. Risks</p>
-                    <small><cite>protect your business</cite></small>
+                    <p>2. TOIA Assets</p>
+                    <small><cite>Technical-oriented intangible assets</cite></small>
                 </blockquote>
             </div>
-            <div class="col-lg-3 requirements-slide" data-target="#dssSlides" data-slide-to="2">
+            <div class="col-lg-2 risks-slide" data-target="#dssSlides" data-slide-to="2">
                 <blockquote>
-                    <p>3. Requirements</p>
-                    <small><cite>to fulfil your search options</cite></small>
+                    <p>3. Risks</p>
+                    <small><cite>Protect your business</cite></small>
                 </blockquote>
             </div>
-            <div class="col-lg-3 services-slide" data-target="#dssSlides" data-slide-to="3">
+            <div class="col-lg-3 requirements-slide" data-target="#dssSlides" data-slide-to="3">
                 <blockquote>
-                    <p>4. Cloud Services</p>
-                    <small><cite>best matching your criteria</cite></small>
+                    <p>4. Treatments</p>
+                    <small><cite>To fulfill your search options</cite></small>
+                </blockquote>
+            </div>
+            <div class="col-lg-3 services-slide" data-target="#dssSlides" data-slide-to="4">
+                <blockquote>
+                    <p>5. Cloud Services</p>
+                    <small><cite>Best cloud services matching your criteria</cite></small>
                 </blockquote>
             </div>
         </div>
@@ -88,26 +94,23 @@
                     <div class="active item assets-slide" ng-controller="assetsController">
                         <div class="col-lg-4 form-group form-inline">
                         <select label="assets" class="form-control form assets-select item-select" ng-model="asset" ng-options="a.name group by a.category for a in assets">
-                            <option value="">--</option>
+                            <option value="">-</option>
                         </select>
                         <button class="btn btn-success" ng-click="assetsSelected.push(asset)">Add</button>
                         </div>
-                        <div class="col-lg-4">
-                        <h4>Assets Selected</h4>
-                            <div class="list-group">
-                                <a class="list-group-item"
-                                   href="#"
-                                    ng-repeat="assetSelected in assetsSelected"
-                                    >
-                                    <strong>{{ assetSelected.name }}</strong>
-                                    <br>
-                                    <small>category: {{ assetSelected.category }}</small>
-                                </a>
-                            </div>
+                        <div class="col-lg-4" ng-if="assetsSelected.length > 0">
+                          <h4>Assets Selected</h4>
+                          <div class="list-group">
+                            <a class="list-group-item" href="#" ng-repeat="assetSelected in assetsSelected">
+                              <strong>{{ assetSelected.name }}</strong>
+                              <br>
+                              <small>category: {{ assetSelected.category }}</small>
+                            </a>
+                          </div>
                         </div>
-                        <div class="col-lg-4">
-                        <h4>Definition</h4>
-                        <p>{{ asset.description }}</p>
+                        <div ng-if="asset" class="col-lg-4">
+                          <h4>Definition</h4>
+                          <p>{{ asset.description }}</p>
                         </div>
                     </div>
                     <!--risks slide -->
@@ -196,7 +199,7 @@
 </div>
 
 <script src="components/jquery/dist/jquery.min.js"></script>
-<script src="components/angular/angular.min.js"></script>
+<script src="components/angular/angular.js"></script>
 <script src="components/ngstorage/ngStorage.min.js"></script>
 <script src="components/bootstrap/dist/js/bootstrap.js"></script>
 <script src="components/nouislider/jquery.nouislider.js"></script>

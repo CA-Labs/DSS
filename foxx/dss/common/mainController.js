@@ -1,4 +1,4 @@
-dssApp.controller('mainController', function ($scope, $rootScope, orientdbFactory, $localStorage) {
+dssApp.controller('mainController', ["$scope", "$rootScope", "$localStorage", function ($scope, $rootScope, $localStorage) {
 
     $scope.clearSelection = function () {
         $localStorage.assetsSelected = $rootScope.assetsSelected = [];
@@ -30,4 +30,4 @@ dssApp.controller('mainController', function ($scope, $rootScope, orientdbFactor
             // TODO: extend with cloud services selected
         }
     }
-});
+}]);
