@@ -57,3 +57,10 @@ blockquote {
 
 .select2-chosen-2, .select2-result-selectable, .select2-choice {
   line-height: 2.5 !important; }
+
+/* BSOIA tags */
+.bsoia-tag {
+  float: left;
+  display: block;
+  margin-top: 10px;
+  margin-left: -12px; }

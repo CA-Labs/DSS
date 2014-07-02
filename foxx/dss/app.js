@@ -53,7 +53,8 @@ $('#dssSlides').carousel('pause' ,{
 var dssApp = angular.module('dssApp', [
     'ngStorage',
     'angular-flash.service',
-    'angular-flash.flash-alert-directive'
+    'angular-flash.flash-alert-directive',
+    'ngDragDrop'
 ]);
 
 // TODO: add ngstorage integration to store choosen requirements and resuts in JSON format

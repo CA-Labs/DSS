@@ -4,12 +4,15 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('toiaController', ['$scope', '$localStorage', 'ArangoDBService', 'flash', function($scope, $localStorage, ArangoDBService, flash){
+dssApp.controller('toiaController', ['$scope', '$localStorage', 'BSOIAService', 'ArangoDBService', 'flash', function($scope, $localStorage, BSOIAService, ArangoDBService, flash){
 
     //Initialization
     $scope.toiaAssets = $localStorage.toiaAssets = [];
     $scope.toiaAssetsSelected = $localStorage.toiaAssetsSelected = [];
     $scope.toiaAsset = {};
+    $scope.bsoiaAssetsSelected = BSOIAService.getBSOIA();
+    $scope.tags = [{name: 'a'},{name: 'b'},{name: 'c'},{name: 'd'}];
+    $scope.tags2 = [];
 
     $scope.addToiaAsset = function(toiaAsset){
         //Check asset doesn't already exists

@@ -132,7 +132,15 @@
                             </select>
                             <button class="btn btn-success" ng-click="addToiaAsset(toiaAsset)">Add</button>
                             <!-- BSOIA tags -->
-                            <!-- TODO: -->
+                            <div id="selected-bsoia" class="col-lg-4">
+                                <ul>
+                                    <li ng-repeat="tag in tags" ng-show="tag.name" ng-model="tags" data-drag="true" jqyoui-draggable="{index: {{$index}}, placeholder: 'keep'}">
+                                        {{tag.name}}
+                                    </li>
+                                </ul>
+                                Drop it here:
+                                <div class="thumbnail" data-drop="true" ng-model="tags2" style="height: 200px;"></div>
+                            </div>
                         </div>
                         <div class="col-lg-4">
                             <h4>Assets Selected</h4>
@@ -145,7 +153,7 @@
                         </div>
                         <div class="col-lg-4">
                             <h4>Definition</h4>
-                            <p>{{ asset.description }}</p>
+                            <p>{{ toiaAsset.description }}</p>
                         </div>
                     </div>
                     <div class="item ta-slide">
@@ -263,6 +271,7 @@
 <script src="components/angular-flash/dist/angular-flash.min.js"></script>
 <script src="components/underscore/underscore.js"></script>
 <script src="components/select2/select2.min.js"></script>
+<script src="components/angular-dragdrop/src/angular-dragdrop.js"></script>
 <!-- DSS-related scripts -->
 <script src="dss/app.min.js"></script>
 </body>
