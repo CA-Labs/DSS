@@ -1,9 +1,10 @@
-dssApp.controller('mainController', ["$scope", "$rootScope", "$localStorage", function ($scope, $rootScope, $localStorage) {
+dssApp.controller('mainController', ['$scope', '$rootScope', '$localStorage', function ($scope, $rootScope, $localStorage) {
 
     $scope.clearSelection = function () {
-        $localStorage.assetsSelected = $rootScope.assetsSelected = [];
+        $localStorage.bsoiaAssetsSelected = $rootScope.bsoiaAssetsSelected = [];
+        $localStorage.toiaAssetsSelected = $rootScope.toiaAssetsSelected = [];
         $localStorage.risksSelected = $rootScope.risksSelected = [];
-        $localStorage.requirementsSelected = $rootScope.requirementsSelected = [];
+        $localStorage.treatmentsSelected = $rootScope.treatmentsSelected = [];
         // TODO: extend with cloud services selected
     };
 

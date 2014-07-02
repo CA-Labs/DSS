@@ -1,15 +1,13 @@
-dssApp.controller('assetsController', ["$scope", "$rootScope", "ArangoDBService", "$localStorage", function($scope, $rootScope, ArangoDBService, $localStorage) {
-   // extend base controller
-    //$injector.invoke(baseController, this, {$scope: $scope});
+dssApp.controller('assetsController', ['$scope', '$rootScope', 'ArangoDBService', '$localStorage', function($scope, $rootScope, ArangoDBService, $localStorage) {
 
-    // inits
-    $scope.asset = "";
-    $rootScope.assetsSelected = $localStorage.assetsSelected || [];
+    //Initialization
+    $scope.asset = {};
     $scope.description = "";
+    $rootScope.bsoiaAssetsSelected = $localStorage.bsoiaAssetsSelected || [];
 
     /**
-     * Simple update description on the asset selection view
-     * @param assetSelected
+     * Simple update description on the asset selection view.
+     * @param assetSelected The asset selected by the user.
      */
     $scope.updateDescription = function (assetSelected) {
         $scope.asset.description = assetSelected.description;
@@ -54,13 +52,12 @@ dssApp.controller('assetsController', ["$scope", "$rootScope", "ArangoDBService"
         $scope.assets = data;
     });
     */
-    
+
     ArangoDBService.getBSOA(function(error, data){
       if(error){
         console.log(error);
       } else {
-        console.log(data);
-        $scope.assets = data;
+        $scope.bsoiaAssets = data;
       }
     });
     

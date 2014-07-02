@@ -41,3 +41,9 @@ blockquote {
 
 .def-tip {
   cursor: help; }
+
+.remove-asset {
+  float: right !important;
+  margin-right: -25px !important;
+  vertical-align: middle !important;
+  display: none; }

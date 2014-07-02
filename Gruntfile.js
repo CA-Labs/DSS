@@ -15,6 +15,7 @@ module.exports = function (grunt) {
                 files: {
                     'foxx/dss/app.min.js': [
                         'foxx/dss/app.js',
+                        'foxx/dss/controllers/bsoia-controller.js',
                         'foxx/dss/assets/assetsController.js',
                         'foxx/dss/common/baseController.js',
                         'foxx/dss/common/dssServices.js',
@@ -29,10 +30,12 @@ module.exports = function (grunt) {
             }
         },
         watch: {
-            files: ['<config:uglify.my_target.files["dss/app.min.js"]>'],
-            tasks: ['uglify']
+            files: ['foxx/dss/*'],
+            tasks: ['uglify'],
+            options: {
+                nospawn: true
+            }
         }
-
     });
 
     // Load packages
@@ -40,5 +43,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Tasks
-    grunt.registerTask('default', ['uglify']);
+    grunt.registerTask('default', ['watch']);
 };
