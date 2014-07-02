@@ -17,7 +17,7 @@ dssApp.service('ArangoDBService', ['$http', function($http){
 
     //FOXX API endpoints
     var FOXX_API = {
-        getBSOA: function(){
+        getBSOIA: function(){
                 return ARANGODB_BASE_URL + 'assets/bsoia'
         },
         getTOIA: function(){
@@ -32,12 +32,12 @@ dssApp.service('ArangoDBService', ['$http', function($http){
     };
 
     /**
-     * Retrieves BSOA assets from the database.
+     * Retrieves BSOIA assets from the database.
      * @param callback Callback fn to execute
      * on data retrieval.
      */
-    this.getBSOA = function(callback){
-        $http({method: 'GET', url: FOXX_API.getBSOA()})
+    this.getBSOIA = function(callback){
+        $http({method: 'GET', url: FOXX_API.getBSOIA()})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })

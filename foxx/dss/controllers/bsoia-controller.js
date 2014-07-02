@@ -4,51 +4,39 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('bsoiaController', ['$scope', '$localStorage', 'ArangoDBService', 'flash', function($scope, $localStorage, ArangoDBService, flash){
+dssApp.controller('bsoiaController', ['$scope', '$localStorage', 'BSOIAService', 'ArangoDBService', 'flash', function($scope, $localStorage, BSOIAService, ArangoDBService, flash){
 
     //Initialization
     $scope.bsoiaAssets = $localStorage.bsoiaAssets = [];
-    $scope.bsoiaAssetsSelected = $localStorage.bsoiaAssetsSelected = [];
+    $scope.bsoiaAssetsSelected = $localStorage.bsoiaAssetsSelected = BSOIAService.getBSOIA();
     $scope.bsoiaAsset = {};
 
     /**
-     * Adds an asset to the list of selected
-     * BSOIA assets.
-     * @param bsoiaAsset The selected asset to add.
+     * Adds a new BSOIA asset, calling the
+     * BSOIA service.
+     * @param bsoiaAsset The BSOIA asset to be
+     * added.
      */
     $scope.addBsoiaAsset = function(bsoiaAsset){
-        //Check asset doesn't already exists
-        var exists = $scope.bsoiaAssetsSelected.filter(function(asset){
-            return asset.name === bsoiaAsset.name;
-        }).length > 0;
-        if(!exists){
-            $scope.bsoiaAssetsSelected.push(bsoiaAsset);
-        } else {
-            flash.warn = 'This asset has been already added!';
-        }
+        BSOIAService.addBSOIA(bsoiaAsset);
     };
 
     /**
-     * Removes an asset from the list of
-     * selected BSOIA assets.
-     * @param bsoiaAsset The asset to be removed.
+     * Removes a BSOIA asset, calling the
+     * BSOIA service.
+     * @param bsoiaAsset The BSOIA asset to be
+     * removed.
      */
-    $scope.removeBsoiaAsset = function(bsoiaAssetSelected){
-        var index = -1;
-        _.each($scope.bsoiaAssetsSelected, function(asset, assetIndex){
-            if(asset.name == bsoiaAssetSelected.name){
-                index = assetIndex;
-            }
-        });
-        if(index >= 0) $scope.bsoiaAssetsSelected.splice(index, 1);
+    $scope.removeBsoiaAsset = function(bsoiaAsset){
+        BSOIAService.removeBSOIA(bsoiaAsset);
     };
 
-    ArangoDBService.getBSOA(function(error, data){
+    ArangoDBService.getBSOIA(function(error, data){
         if(error){
             flash.error = 'An error occurred while trying to fetch BSOIA assets from database';
         } else {
             $scope.bsoiaAssets = data._documents;
         }
-    })
+    });
 
 }]);

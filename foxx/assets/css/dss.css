@@ -47,3 +47,13 @@ blockquote {
   margin-right: -25px !important;
   vertical-align: middle !important;
   display: none; }
+
+/* Select2 overwrites */
+.select2-choice, .select2-search, .select2-result-selectable, .select2-input {
+  height: 43px !important; }
+
+#s2id_autogen2_search {
+  height: 43px !important; }
+
+.select2-chosen-2, .select2-result-selectable, .select2-choice {
+  line-height: 2.5 !important; }

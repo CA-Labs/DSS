@@ -16,6 +16,8 @@ module.exports = function (grunt) {
                     'foxx/dss/app.min.js': [
                         'foxx/dss/app.js',
                         'foxx/dss/controllers/bsoia-controller.js',
+                        'foxx/dss/controllers/toia-controller.js',
+                        'foxx/dss/services/bsoia-service.js',
                         'foxx/dss/assets/assetsController.js',
                         'foxx/dss/common/baseController.js',
                         'foxx/dss/common/dssServices.js',
