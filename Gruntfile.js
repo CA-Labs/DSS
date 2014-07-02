@@ -30,7 +30,7 @@ module.exports = function (grunt) {
             }
         },
         watch: {
-            files: ['foxx/dss/*'],
+            files: ['foxx/dss/*', 'foxx/dss/*/*.js'],
             tasks: ['uglify'],
             options: {
                 nospawn: true

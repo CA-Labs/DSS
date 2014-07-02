@@ -101,9 +101,9 @@
                         <div class="col-lg-4">
                           <h4>Assets Selected</h4>
                           <div class="list-group">
-                            <a class="list-group-item selected-asset" href="#" ng-repeat="bsoiaAsset in bsoiaAssetsSelected">
-                              <strong>{{ bsoiaAsset.name }}</strong>
-                              <span class="glyphicon glyphicon-remove remove-asset">&nbsp;</span>
+                            <a class="list-group-item selected-asset" href="#" ng-repeat="bsoiaAssetSelected in bsoiaAssetsSelected">
+                              <strong>{{ bsoiaAssetSelected.name }}</strong>
+                              <span class="glyphicon glyphicon-remove remove-asset" ng-click="removeBsoiaAsset(bsoiaAssetSelected)">&nbsp;</span>
                             </a>
                           </div>
                         </div>
@@ -247,6 +247,7 @@
 <script src="components/ngstorage/ngStorage.min.js"></script>
 <script src="components/bootstrap/dist/js/bootstrap.js"></script>
 <script src="components/nouislider/jquery.nouislider.js"></script>
+<script src="components/underscore/underscore.js"></script>
 <!-- DSS-related scripts -->
 <script src="dss/app.min.js"></script>
 </body>
