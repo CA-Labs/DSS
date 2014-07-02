@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('bsoiaController', ['$scope', '$localStorage', 'ArangoDBService', function($scope, $localStorage, ArangoDBService){
+dssApp.controller('bsoiaController', ['$scope', '$localStorage', 'ArangoDBService', 'flash', function($scope, $localStorage, ArangoDBService, flash){
 
     //Initialization
     $scope.bsoiaAssets = $localStorage.bsoiaAssets = [];
@@ -23,6 +23,8 @@ dssApp.controller('bsoiaController', ['$scope', '$localStorage', 'ArangoDBServic
         }).length > 0;
         if(!exists){
             $scope.bsoiaAssetsSelected.push(bsoiaAsset);
+        } else {
+            flash.warn = 'This asset has been already added!';
         }
     };
 
@@ -43,7 +45,7 @@ dssApp.controller('bsoiaController', ['$scope', '$localStorage', 'ArangoDBServic
 
     ArangoDBService.getBSOA(function(error, data){
         if(error){
-            console.log(error);
+            flash.error = 'An error occurred while trying to fetch BSOIA assets from database';
         } else {
             $scope.bsoiaAssets = data._documents;
         }

@@ -92,6 +92,18 @@
                 <div class="carousel-inner">
                     <!-- bsoia assets slide -->
                     <div class="active item bsoia-slide" ng-controller="bsoiaController">
+                        <!-- Error flash -->
+                        <div class="fade alert-danger col-lg-12" flash-alert="error" active-class="in alert">
+                            <button type="button" class="close" ng-click="hide()">&times;</button>
+                            <strong class="alert-heading">Oops!</strong>
+                            <span class="alert-message">{{flash.message}}</span>
+                        </div>
+                        <!-- Warning flash -->
+                            <div class="fade alert-warning col-lg-12" flash-alert="warn" active-class="in alert">
+                            <button type="button" class="close" ng-click="hide()">&times;</button>
+                            <strong class="alert-heading">Oops!</strong>
+                            <span class="alert-message">{{flash.message}}</span>
+                        </div>
                         <div class="col-lg-4 form-group form-inline">
                             <select label="assets" class="form-control form assets-select item-select" ng-model="bsoiaAsset" ng-options="a.name for a in bsoiaAssets">
                                 <option value="">-</option>
@@ -247,6 +259,7 @@
 <script src="components/ngstorage/ngStorage.min.js"></script>
 <script src="components/bootstrap/dist/js/bootstrap.js"></script>
 <script src="components/nouislider/jquery.nouislider.js"></script>
+<script src="components/angular-flash/dist/angular-flash.min.js"></script>
 <script src="components/underscore/underscore.js"></script>
 <!-- DSS-related scripts -->
 <script src="dss/app.min.js"></script>
