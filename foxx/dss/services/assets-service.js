@@ -7,9 +7,9 @@
 dssApp.service('AssetsService', ['flash', function(flash){
 
     //BSOIA assets
-    var bsoia = [];
+    var bsoia = [];     //BSOIA assets selected by the user
     //TOIA assets
-    var toia = [];
+    var toia = [];      //TOIA assets selected by the user
 
     /**
      * Adds an asset to the list of selected

@@ -7,9 +7,8 @@
 dssApp.controller('bsoiaController', ['$scope', '$localStorage', 'AssetsService', 'ArangoDBService', 'flash', function($scope, $localStorage, AssetsService, ArangoDBService, flash){
 
     //Initialization
-    $scope.bsoiaAssets = $localStorage.bsoiaAssets = [];
-    $scope.bsoiaAssetsSelected = $localStorage.bsoiaAssetsSelected = AssetsService.getBSOIA();
-    $scope.bsoiaAsset = {};
+    $scope.bsoiaAssets = $localStorage.bsoiaAssets = [];                                            //BSOIA assets retrieved from the DB
+    $scope.bsoiaAssetsSelected = $localStorage.bsoiaAssetsSelected = AssetsService.getBSOIA();      //BSOIA assets selected by the user (shared across the Assets service)
 
     /**
      * Adds a new BSOIA asset, calling the
@@ -31,6 +30,7 @@ dssApp.controller('bsoiaController', ['$scope', '$localStorage', 'AssetsService'
         AssetsService.removeBSOIA(bsoiaAsset);
     };
 
+    //Initial fetch of BSOIA assets
     ArangoDBService.getBSOIA(function(error, data){
         if(error){
             flash.error = 'An error occurred while trying to fetch BSOIA assets from database';
