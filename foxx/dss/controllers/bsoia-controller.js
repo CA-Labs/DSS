@@ -4,11 +4,11 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('bsoiaController', ['$scope', '$localStorage', 'BSOIAService', 'ArangoDBService', 'flash', function($scope, $localStorage, BSOIAService, ArangoDBService, flash){
+dssApp.controller('bsoiaController', ['$scope', '$localStorage', 'AssetsService', 'ArangoDBService', 'flash', function($scope, $localStorage, AssetsService, ArangoDBService, flash){
 
     //Initialization
     $scope.bsoiaAssets = $localStorage.bsoiaAssets = [];
-    $scope.bsoiaAssetsSelected = $localStorage.bsoiaAssetsSelected = BSOIAService.getBSOIA();
+    $scope.bsoiaAssetsSelected = $localStorage.bsoiaAssetsSelected = AssetsService.getBSOIA();
     $scope.bsoiaAsset = {};
 
     /**
@@ -18,7 +18,7 @@ dssApp.controller('bsoiaController', ['$scope', '$localStorage', 'BSOIAService',
      * added.
      */
     $scope.addBsoiaAsset = function(bsoiaAsset){
-        BSOIAService.addBSOIA(bsoiaAsset);
+        AssetsService.addBSOIA(bsoiaAsset);
     };
 
     /**
@@ -28,7 +28,7 @@ dssApp.controller('bsoiaController', ['$scope', '$localStorage', 'BSOIAService',
      * removed.
      */
     $scope.removeBsoiaAsset = function(bsoiaAsset){
-        BSOIAService.removeBSOIA(bsoiaAsset);
+        AssetsService.removeBSOIA(bsoiaAsset);
     };
 
     ArangoDBService.getBSOIA(function(error, data){

@@ -65,6 +65,8 @@ blockquote {
   margin-right: -25px !important;
   vertical-align: middle !important;
   display: none;
+  top: 5px;
+  position: relative;
 }
 
 /* Select2 overwrites */
@@ -82,8 +84,21 @@ blockquote {
 
 /* BSOIA tags */
 .bsoia-tag {
-  float: left;
   display: block;
   margin-top: 10px;
   margin-left: -12px;
+}
+
+.bsoia-tag-chosen {
+  display: block;
+  margin-top: 10px;
+}
+
+.dropzone {
+  background-color: #E8FDF9;
+  height: 150px;
+  max-height: 200px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin-top: 10px;
 }

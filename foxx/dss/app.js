@@ -63,7 +63,7 @@ var dssApp = angular.module('dssApp', [
  ********************* BSOIA SLIDE ********************
  *****************************************************/
 
-//Show x (close button) when hovering selected assets
+//Show/hide x (close button) when hovering selected assets
 $('.list-group').on('mouseover', '.selected-asset', function(e){
     $(this).find('.remove-asset').show();
 });

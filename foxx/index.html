@@ -131,23 +131,23 @@
                             <select label="assets" class="form-control form assets-select item-select" ng-model="toiaAsset" ng-options="a.name for a in toiaAssets">
                             </select>
                             <button class="btn btn-success" ng-click="addToiaAsset(toiaAsset)">Add</button>
-                            <!-- BSOIA tags -->
+                            <!-- bsoia tags -->
                             <div id="selected-bsoia" class="col-lg-4">
-                                <ul>
-                                    <li ng-repeat="tag in tags" ng-show="tag.name" ng-model="tags" data-drag="true" jqyoui-draggable="{index: {{$index}}, placeholder: 'keep'}">
-                                        {{tag.name}}
-                                    </li>
-                                </ul>
-                                Drop it here:
-                                <div class="thumbnail" data-drop="true" ng-model="tags2" style="height: 200px;"></div>
+                                <button ui-draggable="true" drag="bsoiaAssetSelected" class="btn btn-info bsoia-tag" ng-repeat="bsoiaAssetSelected in bsoiaAssetsSelected">
+                                    {{bsoiaAssetSelected.name}}
+                                </button>
                             </div>
                         </div>
                         <div class="col-lg-4">
                             <h4>Assets Selected</h4>
                             <div class="list-group">
-                                <a class="list-group-item selected-asset" href="#" ng-repeat="toiaAssetSelected in toiaAssetsSelected">
-                                    <strong>{{ toiaAssetSelected.name }}</strong>
+                                <!-- dropzones per toia asset selected -->
+                                <a ui-on-drop="bsoiaDropped($event, $data, toiaAssetSelected)" class="list-group-item selected-asset dropzone" href="#" ng-repeat="toiaAssetSelected in toiaAssetsSelected track by $index">
+                                    <strog>{{ toiaAssetSelected.asset.name }}</strong>
                                     <span class="glyphicon glyphicon-remove remove-asset" ng-click="removeToiaAsset(toiaAssetSelected)">&nbsp;</span>
+                                    <button class="btn btn-info bsoia-tag-chosen" ng-repeat="bsoiaRelation in toiaAssetSelected.bsoiaRelations">
+                                        {{bsoiaRelation.name}}
+                                    </button>
                                 </a>
                             </div>
                         </div>
@@ -264,6 +264,7 @@
 </div>
 
 <script src="components/jquery/dist/jquery.min.js"></script>
+<script src="components/jquery-ui/jquery-ui.min.js"></script>
 <script src="components/angular/angular.js"></script>
 <script src="components/ngstorage/ngStorage.min.js"></script>
 <script src="components/bootstrap/dist/js/bootstrap.js"></script>
@@ -271,7 +272,7 @@
 <script src="components/angular-flash/dist/angular-flash.min.js"></script>
 <script src="components/underscore/underscore.js"></script>
 <script src="components/select2/select2.min.js"></script>
-<script src="components/angular-dragdrop/src/angular-dragdrop.js"></script>
+<script src="components/angular-dragdrop/draganddrop.js"></script>
 <!-- DSS-related scripts -->
 <script src="dss/app.min.js"></script>
 </body>

@@ -4,36 +4,28 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('toiaController', ['$scope', '$localStorage', 'BSOIAService', 'ArangoDBService', 'flash', function($scope, $localStorage, BSOIAService, ArangoDBService, flash){
+dssApp.controller('toiaController', ['$rootScope', '$scope', '$localStorage', 'AssetsService', 'ArangoDBService', 'flash', function($rootScope, $scope, $localStorage, AssetsService, ArangoDBService, flash){
 
     //Initialization
     $scope.toiaAssets = $localStorage.toiaAssets = [];
-    $scope.toiaAssetsSelected = $localStorage.toiaAssetsSelected = [];
-    $scope.toiaAsset = {};
-    $scope.bsoiaAssetsSelected = BSOIAService.getBSOIA();
-    $scope.tags = [{name: 'a'},{name: 'b'},{name: 'c'},{name: 'd'}];
-    $scope.tags2 = [];
+    $scope.toiaAssetsSelected = AssetsService.getTOIA();
+    $scope.bsoiaAssetsSelected = AssetsService.getBSOIA();
 
     $scope.addToiaAsset = function(toiaAsset){
-        //Check asset doesn't already exists
-        var exists = $scope.toiaAssetsSelected.filter(function(asset){
-            return asset.name === toiaAsset.name;
-        }).length > 0;
-        if(!exists){
-            $scope.toiaAssetsSelected.push(toiaAsset);
-        } else {
-            flash.warn = 'This asset has been already added!';
-        }
+        AssetsService.addTOIA(toiaAsset);
     };
 
     $scope.removeToiaAsset = function(toiaAssetSelected){
-        var index = -1;
-        _.each($scope.toiaAssetsSelected, function(asset, assetIndex){
-            if(asset.name == toiaAssetSelected.name){
-                index = assetIndex;
-            }
-        });
-        if(index >= 0) $scope.toiaAssetsSelected.splice(index, 1);
+        AssetsService.removeTOIA(toiaAssetSelected);
+    };
+
+    $scope.bsoiaDropped = function($event, $data, toiaAsset){
+        if(AssetsService.existsBSOIAinTOIA($data.name, toiaAsset.asset.name)){
+            flash.warn = 'BSOIA ' + $data.name + ' already added in ' + toiaAsset.asset.name
+        } else {
+            toiaAsset.bsoiaRelations.push($data);
+            AssetsService.updateTOIAbyName(toiaAsset.asset.name, toiaAsset);
+        }
     };
 
     ArangoDBService.getTOIA(function(error, data){
