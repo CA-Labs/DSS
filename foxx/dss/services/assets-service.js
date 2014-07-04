@@ -17,6 +17,10 @@ dssApp.service('AssetsService', ['flash', function(flash){
      * @param bsoiaAsset The selected asset to add.
      */
     this.addBSOIA = function(bsoiaAsset){
+        if(bsoiaAsset === null || typeof bsoiaAsset === 'undefined'){
+            flash.warn = 'No BSOIA was selected';
+            return;
+        }
         //Check asset doesn't already exists
         var exists = bsoia.filter(function(asset){
             return asset.name === bsoiaAsset.name;
@@ -58,6 +62,10 @@ dssApp.service('AssetsService', ['flash', function(flash){
      * @param toiaAsset The selected asset to add.
      */
     this.addTOIA = function(toiaAsset){
+        if(toiaAsset === null || typeof toiaAsset === 'undefined'){
+            flash.warn = 'No TOIA was selected';
+            return;
+        }
         //Check asset doesn't already exists
         var exists = toia.filter(function(asset){
             return asset.asset.name === toiaAsset.name;

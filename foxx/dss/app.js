@@ -54,8 +54,11 @@ var dssApp = angular.module('dssApp', [
     'ngStorage',
     'angular-flash.service',
     'angular-flash.flash-alert-directive',
-    'ngDragDrop'
-]);
+    'ngDragDrop',
+    'angular-loading-bar'
+]).config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
+        cfpLoadingBarProvider.includeSpinner = false;
+}]);
 
 // TODO: add ngstorage integration to store choosen requirements and resuts in JSON format
 
