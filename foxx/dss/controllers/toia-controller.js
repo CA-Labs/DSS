@@ -42,7 +42,7 @@ dssApp.controller('toiaController', ['$rootScope', '$scope', '$localStorage', 'A
      */
     $scope.bsoiaDropped = function($event, $data, toiaAsset){
         if(AssetsService.existsBSOIAinTOIA($data.name, toiaAsset.asset.name)){
-            flash.warn = 'BSOIA ' + $data.name + ' already added in ' + toiaAsset.asset.name
+            flash.warn = 'BSOIA ' + $data.name + ' already added in TOIA ' + toiaAsset.asset.name
         } else {
             toiaAsset.bsoiaRelations.push($data);
             AssetsService.updateTOIAbyName(toiaAsset.asset.name, toiaAsset);

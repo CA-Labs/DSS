@@ -44,12 +44,10 @@ blockquote {
   }
 }
 
-
-
 .sticky-bottom {
-  position: absolute;
+  position: relative;
   bottom: 10px;
-  right: 10px;
+  right: -15px;
 }
 
 .item-select {
@@ -90,15 +88,58 @@ blockquote {
 }
 
 .bsoia-tag-chosen {
-  display: block;
+  display: inline;
   margin-top: 10px;
+  margin-left: 10px;
+  margin-bottom: 10px;
 }
 
+/* Drop zones */
 .dropzone {
   background-color: #E8FDF9;
-  height: 150px;
-  max-height: 200px;
+  height: 250px;
+  max-height: 800px;
   overflow-x: hidden;
   overflow-y: auto;
   margin-top: 10px;
+}
+
+.dropzone-container {
+  border: 2px;
+  border-style: dashed;
+  min-height: 50px;
+  height: auto !important;
+  max-height: 600px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+/* Flash */
+
+.alert-warn {
+  background-color: #fcf8e3;
+  border: 1px solid #fbeed5;
+}
+
+.alert-warn,
+.alert-warn h4 {
+  color: #c09853;
+}
+
+.alert-danger, .alert-error {
+  color: #b94a48;
+  background-color: #f2dede;
+  border-color: #eed3d7;
+}
+
+.alert-flash h4 {
+  margin: 0;
+}
+
+.alert-danger h4, .alert-error h4 {
+  color: #b94a48;
+}
+
+.alert-danger h4, .alert-error h4 {
+  color: #b94a48;
 }

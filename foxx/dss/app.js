@@ -64,11 +64,11 @@ var dssApp = angular.module('dssApp', [
  *****************************************************/
 
 //Show/hide x (close button) when hovering selected assets
-$('.list-group').on('mouseover', '.selected-asset', function(e){
+$('body').on('mouseover', '.list-group > .selected-asset', function(e){
     $(this).find('.remove-asset').show();
 });
 
-$('.list-group').on('mouseout', '.selected-asset', function(e){
+$('body').on('mouseout', '.list-group > .selected-asset', function(e){
     $(this).find('.remove-asset').hide();
 });
 
