@@ -1,6 +1,6 @@
 /**
  * Created by Jordi Aranda.
- * 01/07/14
+ * 07/07/14
  * <jordi.aranda@bsc.es>
  */
 
@@ -11,14 +11,14 @@
  * ArangoDB database instance.
  */
 dssApp.service('ArangoDBService', ['$http', function($http){
-  
+
     //TODO: Fix an stable arangoDB server base URL
     var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/';
 
     //FOXX API endpoints
     var FOXX_API = {
         getBSOIA: function(){
-                return ARANGODB_BASE_URL + 'assets/bsoia'
+            return ARANGODB_BASE_URL + 'assets/bsoia'
         },
         getTOIA: function(){
             return ARANGODB_BASE_URL + 'assets/toia'
@@ -90,5 +90,5 @@ dssApp.service('ArangoDBService', ['$http', function($http){
                 callback(data, null);
             });
     };
-  
+
 }]);

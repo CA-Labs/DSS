@@ -35,6 +35,7 @@ dssApp.controller('toiaController', ['$rootScope', '$scope', '$localStorage', 'A
      * within a selected TOIA's drop zone.
      * @param $event The event generated when dropping
      * the BSOIA asset.
+     * @param $event The event raised.
      * @param $data The data passed to this fn.
      * @param toiaAsset The TOIA asset that
      * receives the event (a BSOIA asset was dropped

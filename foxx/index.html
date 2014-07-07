@@ -24,7 +24,8 @@
         <div class="navbar navbar-inverse" ng-controller="mainController">
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="#"><span class="glyphicon glyphicon-import"></span> Load Requirements</a>
+                    <input id="load-requirements" ng-file-select="onFileSelect($files)" type="file" style="display: none;"/>
+                    <a href="#" ng-click="showFileUploadDialog('#load-requirements')"><span class="glyphicon glyphicon-import"></span> Load Requirements </a>
                 </li>
                 <li>
                     <a href="#"><span class="glyphicon glyphicon-export"></span> Export Results</a>
@@ -149,7 +150,7 @@
                                     <span class="glyphicon glyphicon-remove remove-asset" ng-click="removeToiaAsset(toiaAssetSelected)">&nbsp;</span>
                                     <p style="margin-top: 10px; margin-bottom: 20px;"> {{ toiaAssetSelected.asset.description }}</p>
                                     <div ui-on-drop="bsoiaDropped($event, $data, toiaAssetSelected)" class="dropzone-container">
-                                        <button class="btn btn-info bsoia-tag-chosen" ng-repeat="bsoiaRelation in toiaAssetSelected.bsoiaRelations">
+                                        <button ui-draggable="true" class="btn btn-info bsoia-tag-chosen" ng-repeat="bsoiaRelation in toiaAssetSelected.bsoiaRelations">
                                             {{bsoiaRelation.name}}
                                         </button>
                                     </div>
@@ -157,26 +158,21 @@
                             </div>
                         </div>
                     </div>
-                    <div class="item ta-slide">
+                    <!-- ta assets -->
+                    <div class="item ta-slide" ng-controller="taController">
                         <div class="col-lg-4 form-group form-inline">
-                            <select label="assets" class="form-control form assets-select item-select" ng-model="asset" ng-options="a.name group by a.category for a in assets">
-                                <option value="">-</option>
+                            <select label="assets" class="form-control form assets-select item-select" ng-model="taAsset" ng-options="a.cloudResource._serviceName for a in taAssets">
                             </select>
-                            <button class="btn btn-success" ng-click="assetsSelected.push(asset)">Add</button>
+                            <button class="btn btn-success" ng-click="addTaAsset(taAsset)">Add</button>
                         </div>
-                        <div class="col-lg-4">
-                            <h4>Assets Selected</h4>
-                            <div class="list-group">
-                                <a class="list-group-item" href="#" ng-repeat="assetSelected in assetsSelected">
-                                    <strong>{{ assetSelected.name }}</strong>
-                                    <br>
-                                    <small>category: {{ assetSelected.category }}</small>
+                        <div class="col-lg-8">
+                            <div class="list-group" ng-if="taAssetsSelected.length > 0">
+                                <a class="list-group-item selected-asset" href="#" ng-repeat="taAssetSelected in taAssetsSelected">
+                                    <strong>{{ taAssetSelected.cloudResource._serviceName }}</strong>
+                                    <span class="glyphicon glyphicon-remove remove-asset" ng-click="removeTaAsset(taAssetSelected)">&nbsp;</span>
+                                    <p style="margin-top: 10px;">{{ taAssetSelected.cloudResource._serviceType }}</p>
                                 </a>
                             </div>
-                        </div>
-                        <div class="col-lg-4">
-                            <h4>Definition</h4>
-                            <p>{{ asset.description }}</p>
                         </div>
                     </div>
                     <!--risks slide -->
@@ -264,8 +260,10 @@
     </div>
 </div>
 
+<!-- Don't change scripts order, it is important to keep it so it is -->
 <script src="components/jquery/dist/jquery.min.js"></script>
 <script src="components/jquery-ui/jquery-ui.min.js"></script>
+<script src="components/ng-file-upload/angular-file-upload-shim.js"></script>
 <script src="components/angular/angular.js"></script>
 <script src="components/ngstorage/ngStorage.min.js"></script>
 <script src="components/bootstrap/dist/js/bootstrap.js"></script>
@@ -275,6 +273,8 @@
 <script src="components/select2/select2.min.js"></script>
 <script src="components/angular-dragdrop/draganddrop.js"></script>
 <script src="components/angular-loading-bar/src/loading-bar.js"></script>
+<script src="components/ng-file-upload/angular-file-upload.js"></script>
+<script src="components/x2js/xml2json.js"></script>
 <!-- DSS-related scripts -->
 <script src="dss/app.min.js"></script>
 </body>

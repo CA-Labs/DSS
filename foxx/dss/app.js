@@ -55,7 +55,8 @@ var dssApp = angular.module('dssApp', [
     'angular-flash.service',
     'angular-flash.flash-alert-directive',
     'ngDragDrop',
-    'angular-loading-bar'
+    'angular-loading-bar',
+    'angularFileUpload'
 ]).config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
         cfpLoadingBarProvider.includeSpinner = false;
 }]);

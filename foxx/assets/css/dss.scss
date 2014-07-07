@@ -97,7 +97,8 @@ blockquote {
 /* Drop zones */
 .dropzone {
   background-color: #E8FDF9;
-  height: 250px;
+  min-height: 150px;
+  height: auto !important;
   max-height: 800px;
   overflow-x: hidden;
   overflow-y: auto;
