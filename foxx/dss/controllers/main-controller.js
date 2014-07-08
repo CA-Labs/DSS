@@ -4,9 +4,6 @@
  * <jordi.aranda@bsc.es>
  */
 
-//Access jQuery object from AngularJS controller
-//var $jq = jQuery.noConflict();
-
 dssApp.controller('mainController', ['$scope', '$upload', 'flash', 'AssetsService', function($scope, $upload, flash, AssetsService){
 
     //Initialization
@@ -60,22 +57,23 @@ dssApp.controller('mainController', ['$scope', '$upload', 'flash', 'AssetsServic
     *********************************************/
 
     $scope.onFileSelect = function($files){
+
         var file = $files[0];
         if(file !== null && typeof file !== 'undefined'){
-            //This is async!
-            var xmlString = fileReader.readAsText(file);
-            //Load handler
-            fileReader.onload = function(){
-                //Add all defined cloud resources as technical assets by calling the Assets service
-                $scope.lastRequirementsLoaded = fileReader.result;
-                var resources = x2js.xml_str2json($scope.lastRequirementsLoaded).resourceModelExtension.resourceContainer;
-                _.each(resources, function(taAsset, index){
-                    AssetsService.addTAReadFromXML(taAsset);
+            AssetsService.loadResourcesFromXML(file).then(function(xmlString){
+                var resources = x2js.xml_str2json(xmlString).resourceModelExtension.resourceContainer;
+                _.each(resources, function(resource){
+                    AssetsService.addTA(resource);
                 });
-            }
+            });
         } else {
             flash.error = 'Some error occurred while trying to upload your requirements';
         }
-    }
+
+        // Mind the hack! Reset the form so that cloud descriptor files (same name, file, ...)
+        // can be uploaded first (wrap the input element within a form element and reset the form)
+        jQuery('#cloud-descriptor-file-selector').get(0).reset();
+
+    };
 
 }]);

@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.service('AssetsService', ['flash', function(flash){
+dssApp.service('AssetsService', ['flash', '$q', function(flash, $q){
 
     //BSOIA assets
     var bsoia = [];         //BSOIA assets selected by the user
@@ -12,7 +12,6 @@ dssApp.service('AssetsService', ['flash', function(flash){
     var toia = [];          //TOIA assets selected by the user
     //TA assets
     var ta = [];            //TA assets selected by the user
-    var taFromXml = [];     //TA read from a cloud services descriptor xml file loaded by the user
 
     /**
      * Adds an asset to the list of selected
@@ -158,7 +157,7 @@ dssApp.service('AssetsService', ['flash', function(flash){
      */
     this.addTA = function(taAsset){
         if(taAsset === null || typeof taAsset === 'undefined'){
-            flash.warn = 'No TA was selected';
+            flash.warn = 'No TA were selected';
         } else {
             //Check asset doesn't already exist
             var exists = ta.filter(function(asset, index){
@@ -195,56 +194,14 @@ dssApp.service('AssetsService', ['flash', function(flash){
         return ta;
     };
 
-    /**
-     * Adds a new TA asset to the list
-     * of assets read from a cloud service
-     * descriptor XML file.
-     * @param taAsset The TA asset to be
-     * added.
-     */
-    this.addTAReadFromXML = function(taAsset){
-        console.log('calling addTAReadFromXML...');
-        if(taAsset === null || typeof taAsset === 'undefined'){
-            flash.warn = 'No TA was selected';
-        } else {
-            //Check asset doesn't already exist
-            var exists = ta.filter(function(asset, index){
-                return asset._id == taAsset._id;
-            }).length > 0;
-            if(!exists){
-                taFromXml.push(taAsset);
-            } else {
-                flash.warn = 'This asset has been already added';
-            }
-        }
-        console.log(taFromXml.length);
+    this.loadResourcesFromXML = function(file){
+        var fileReader = new FileReader();
+        var deferred = $q.defer();
+        var xmlString = fileReader.readAsText(file);
+        fileReader.onload = function(){
+            deferred.resolve(fileReader.result);
+        };
+        return deferred.promise;
     };
-
-    /**
-     * Removes a TA asset from the list of
-     * assets previously read from a cloud
-     * service descriptor XML file.
-     * @param taAsset The TA asset to be
-     * removed.
-     */
-    this.removeTAReadFromXML = function(taAsset){
-        var index = -1;
-        _.each(taFromXml, function(asset, assetIndex){
-            if(asset._id == taAsset._id){
-                index = assetIndex;
-            }
-        });
-        if(index >= 0) taFromXml.splice(index, 1);
-    };
-
-    /**
-     * Retrieves the TA assets previously read
-     * from a cloud service descriptor XML
-     * file.
-     * @returns {Array}
-     */
-    this.getTAReadFromXML = function(){
-        return taFromXml;
-    }
 
 }]);
