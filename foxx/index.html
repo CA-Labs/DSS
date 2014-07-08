@@ -24,7 +24,7 @@
         <div class="navbar navbar-inverse" ng-controller="mainController">
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <input id="load-requirements" ng-file-select="onFileSelect($files)" type="file" style="display: none;"/>
+                    <input id="load-requirements" ng-file-select="onFileSelect($files)" type="file" class="hidden"/>
                     <a href="#" ng-click="showFileUploadDialog('#load-requirements')"><span class="glyphicon glyphicon-import"></span> Load Requirements </a>
                 </li>
                 <li>
@@ -160,14 +160,16 @@
                     </div>
                     <!-- ta assets -->
                     <div class="item ta-slide" ng-controller="taController">
+                        <!--
                         <div class="col-lg-4 form-group form-inline">
                             <select label="assets" class="form-control form assets-select item-select" ng-model="taAsset" ng-options="a.cloudResource._serviceName for a in taAssets">
                             </select>
                             <button class="btn btn-success" ng-click="addTaAsset(taAsset)">Add</button>
                         </div>
-                        <div class="col-lg-8">
-                            <div class="list-group" ng-if="taAssetsSelected.length > 0">
-                                <a class="list-group-item selected-asset" href="#" ng-repeat="taAssetSelected in taAssetsSelected">
+                        -->
+                        <div class="col-lg-12">
+                            <div class="list-group" ng-if="taAssets.length > 0">
+                                <a class="list-group-item selected-asset" href="#" ng-repeat="taAssetSelected in taAssets">
                                     <strong>{{ taAssetSelected.cloudResource._serviceName }}</strong>
                                     <span class="glyphicon glyphicon-remove remove-asset" ng-click="removeTaAsset(taAssetSelected)">&nbsp;</span>
                                     <p style="margin-top: 10px;">{{ taAssetSelected.cloudResource._serviceType }}</p>
