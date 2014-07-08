@@ -134,6 +134,53 @@ dssApp.service('AssetsService', ['flash', '$q', function(flash, $q){
     };
 
     /**
+     * Removes a BSOIA asset from the list
+     * of relations included in a TOIA asset.
+     * @param bsoiaAssetName The BSOIA asset
+     * name to be removed.
+     * @param toiaAssetName The TOIA asset that
+     * contains the BSOIA relations.
+     */
+    this.removeBSOIAfromTOIA = function(bsoiaAssetName, toiaAssetName){
+        var toiaIndex = -1;
+        _.each(toia, function(asset, i){
+            if(asset.asset.name == toiaAssetName){
+                toiaIndex = i;
+            }
+        });
+        if(toiaIndex < 0){
+            flash.error = toiaAssetName + ' does not exist';
+            return;
+        } else {
+            var bsoiaIndex = -1;
+            _.each(toia[toiaIndex].bsoiaRelations, function(relation, j){
+                if(relation.name == bsoiaAssetName){
+                    bsoiaIndex = j;
+                }
+            });
+            if(bsoiaIndex >= 0){
+                toia[toiaIndex].bsoiaRelations.splice(bsoiaIndex, 1);
+            }
+        }
+    };
+
+    /**
+     * Checks if a BSOIA asset has ever been linked
+     * to some TOIA asset.
+     * @param bsoiaAssetName The name of the BSOIA
+     * asset.
+     * @returns {boolean}
+     * @constructor
+     */
+    this.isBSOIALinked = function(bsoiaAssetName){
+        return toia.filter(function(asset){
+            return asset.bsoiaRelations.filter(function(relation){
+                return relation.name == bsoiaAssetName;
+            }).length > 0;
+        }).length > 0;
+    };
+
+    /**
      * Updates a TOIA by TOIA name.
      * @param toiaAssetName The name of the TOIA asset.
      * @param toiaAsset The TOIA asset with the update.

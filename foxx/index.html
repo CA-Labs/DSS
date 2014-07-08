@@ -138,21 +138,24 @@
                                 <strong>No BSOIA selected</strong>
                             </div>
                             <div id="selected-bsoia" class="col-lg-4">
-                                <button ui-draggable="true" drag="bsoiaAssetSelected" class="btn btn-info bsoia-tag" ng-repeat="bsoiaAssetSelected in bsoiaAssetsSelected">
+                                <button ui-draggable="true" drag="bsoiaAssetSelected" class="btn btn-sm bsoia-tag" ng-class="isBsoiaEverUsed(bsoiaAssetSelected) ? 'btn-info' : 'btn-warning'" ng-repeat="bsoiaAssetSelected in bsoiaAssetsSelected">
                                     {{bsoiaAssetSelected.name}}
                                 </button>
                             </div>
                         </div>
                         <div class="col-lg-8">
-                            <div class="list-group" ng-if="toiaAssetsSelected.length > 0">
-                                <h4>Assets Selected</h4>
+                            <div class="list-group">
+                                <div  ng-if="toiaAssetsSelected.length > 0">
+                                    <h4>Assets Selected</h4>
+                                </div>
                                 <!-- dropzones per toia asset selected -->
                                 <a class="list-group-item selected-asset dropzone" href="#" ng-repeat="toiaAssetSelected in toiaAssetsSelected track by $index">
                                     <strong>{{ toiaAssetSelected.asset.name }}</strong>
                                     <span class="glyphicon glyphicon-remove remove-asset" ng-click="removeToiaAsset(toiaAssetSelected)">&nbsp;</span>
                                     <p style="margin-top: 10px; margin-bottom: 20px;"> {{ toiaAssetSelected.asset.description }}</p>
                                     <div ui-on-drop="bsoiaDropped($event, $data, toiaAssetSelected)" class="dropzone-container">
-                                        <button ui-draggable="true" class="btn btn-sm bsoia-tag-chosen" ng-repeat="bsoiaRelation in toiaAssetSelected.bsoiaRelations">
+                                        <button ui-draggable="true" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="bsoiaRelation in toiaAssetSelected.bsoiaRelations">
+                                            <small><span class="glyphicon glyphicon-remove remove-bsoia-in-toia-asset" ng-click="removeBsoiaFromToiaAsset(bsoiaRelation, toiaAssetSelected)">&nbsp;</span></small>
                                             {{bsoiaRelation.name}}
                                         </button>
                                     </div>

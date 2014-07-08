@@ -70,10 +70,21 @@ var dssApp = angular.module('dssApp', [
 //Show/hide x (close button) when hovering selected assets
 $('body').on('mouseover', '.list-group > .selected-asset', function(e){
     $(this).find('.remove-asset').show();
+    $(this).find('.remove-bsoia-in-toia').show();
 });
 
 $('body').on('mouseout', '.list-group > .selected-asset', function(e){
     $(this).find('.remove-asset').hide();
+    $(this).find('.remove-bsoia-in-toia').hide();
+});
+
+//Show/hide x (close button) when hovering selected bsoia tags in drop zones
+$('body').on('mouseover', '.list-group > .dropzone', function(e){
+    $(this).find('.remove-bsoia-in-toia-asset').show();
+});
+
+$('body').on('mouseout', '.list-group > .dropzone', function(e){
+    $(this).find('.remove-bsoia-in-toia-asset').hide();
 });
 
 //Select2

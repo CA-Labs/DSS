@@ -72,6 +72,18 @@ blockquote {
   margin-left: 10px;
   margin-bottom: 10px; }
 
+.bsoia-tag-used {
+  background-color: #DAA520 !important;
+  border-color: #DAA520 !important; }
+
+.remove-bsoia-in-toia-asset {
+  float: right !important;
+  margin-right: -20px !important;
+  vertical-align: middle !important;
+  display: none;
+  position: relative;
+  top: -5px; }
+
 /* Drop zones */
 .dropzone {
   background-color: #E8FDF9;

@@ -30,6 +30,10 @@ dssApp.controller('toiaController', ['$rootScope', '$scope', '$localStorage', 'A
         AssetsService.removeTOIA(toiaAssetSelected);
     };
 
+    $scope.removeBsoiaFromToiaAsset = function(bsoiaAsset, toiaAsset){
+        AssetsService.removeBSOIAfromTOIA(bsoiaAsset.name, toiaAsset.asset.name);
+    };
+
     /**
      * Fn called when a BSOIA asset gets dropped
      * within a selected TOIA's drop zone.
@@ -48,6 +52,10 @@ dssApp.controller('toiaController', ['$rootScope', '$scope', '$localStorage', 'A
             toiaAsset.bsoiaRelations.push($data);
             AssetsService.updateTOIAbyName(toiaAsset.asset.name, toiaAsset);
         }
+    };
+
+    $scope.isBsoiaEverUsed = function(bsoiaAsset){
+        return AssetsService.isBSOIALinked(bsoiaAsset.name);
     };
 
     //Initial fetch of TOIA assets
