@@ -13,7 +13,7 @@
 dssApp.service('ArangoDBService', ['$http', function($http){
 
     //TODO: Fix an stable arangoDB server base URL
-    var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/';
+    var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/api/';
 
     //FOXX API endpoints
     var FOXX_API = {
