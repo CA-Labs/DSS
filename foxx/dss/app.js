@@ -91,3 +91,7 @@ $('body').on('mouseout', '.list-group > .dropzone', function(e){
 $('select[label="assets"]').select2({
     placeholder: 'Select an asset'
 });
+
+$('select[label="risks"]').select2({
+    placeholder: 'Select an asset'
+});
