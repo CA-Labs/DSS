@@ -179,14 +179,12 @@
                         </div>
                     </div>
                     <!--risks slide -->
-                    <div class="item risks-slide">
+                    <div class="item risks-slide" ng-controller="risksController">
                         <div class="col-lg-4 form-group form-inline">
-                            <h4>Risks Identifed</h4>
-                            <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.name group by r.asset for r in risks">
-                                <option value="">--</option>
+                            <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.destination.name for r in potentialRisks">
                             </select>
-                            <button class="btn btn-success" ng-click="risksSelected.push(risk)">Add</button>
                         </div>
+                        <!--
                         <div class="col-lg-8">
                             <h4>Risks Selected</h4>
                             <div ng-repeat="item in risksSelected">
@@ -206,9 +204,11 @@
                                 </div>
                             </div>
                         </div>
+                        -->
                     </div>
                     <!--requirements slide-->
                     <div class="item treatments-slide">
+                        <!--
                         <div class="col-lg-12">
                             <div class="alert alert-warning alert-dismissable">
                                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
@@ -242,6 +242,7 @@
                         </div>
                         <div class="col-lg-4">
                         </div>
+                    -->
                     </div>
                     <!--services slide-->
                     <div class="item services-slide">

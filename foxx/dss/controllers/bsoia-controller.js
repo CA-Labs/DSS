@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('bsoiaController', ['$scope', '$localStorage', 'AssetsService', 'ArangoDBService', 'flash', function($scope, $localStorage, AssetsService, ArangoDBService, flash){
+dssApp.controller('bsoiaController', ['$scope', '$rootScope', '$localStorage', 'AssetsService', 'ArangoDBService', 'flash', function($scope, $rootScope, $localStorage, AssetsService, ArangoDBService, flash){
 
     //Initialization
     $scope.bsoiaAssets = $localStorage.bsoiaAssets = [];                                            //BSOIA assets retrieved from the DB
@@ -29,6 +29,17 @@ dssApp.controller('bsoiaController', ['$scope', '$localStorage', 'AssetsService'
     $scope.removeBsoiaAsset = function(bsoiaAsset){
         AssetsService.removeBSOIA(bsoiaAsset);
     };
+
+    /**
+     * Listen for changes in selected BSOIA
+     * assets, so that potential risks can be
+     * recomputed.
+     */
+    $scope.$watch(function(){
+        return AssetsService.getBSOIA();
+    }, function(newVal, oldVal){
+        $rootScope.$broadcast('bsoiaChanged');
+    }, true);
 
     //Initial fetch of BSOIA assets
     ArangoDBService.getBSOIA(function(error, data){

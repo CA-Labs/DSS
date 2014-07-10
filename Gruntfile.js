@@ -18,14 +18,14 @@ module.exports = function (grunt) {
                         'foxx/dss/controllers/bsoia-controller.js',
                         'foxx/dss/controllers/toia-controller.js',
                         'foxx/dss/controllers/ta-controller.js',
+                        'foxx/dss/controllers/risks-controller.js',
                         'foxx/dss/controllers/main-controller.js',
                         'foxx/dss/services/assets-service.js',
                         'foxx/dss/services/arangodb-service.js',
                         'foxx/dss/common/filters.js',
                         'foxx/dss/common/mainInterfaces.js',
                         'foxx/dss/requirements/requirementsController.js',
-                        'foxx/dss/requirements/requirementsInterfacesDirective.js',
-                        'foxx/dss/risks/risksController.js'
+                        'foxx/dss/requirements/requirementsInterfacesDirective.js'
                     ]
                 }
             }

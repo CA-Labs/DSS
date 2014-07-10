@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('toiaController', ['$rootScope', '$scope', '$localStorage', 'AssetsService', 'ArangoDBService', 'flash', function($rootScope, $scope, $localStorage, AssetsService, ArangoDBService, flash){
+dssApp.controller('toiaController', ['$scope', '$rootScope', '$localStorage', 'AssetsService', 'ArangoDBService', 'flash', function($scope, $rootScope, $localStorage, AssetsService, ArangoDBService, flash){
 
     //Initialization
     $scope.toiaAssets = $localStorage.toiaAssets = [];      //The TOIA assets retrieved from the DB
@@ -57,6 +57,17 @@ dssApp.controller('toiaController', ['$rootScope', '$scope', '$localStorage', 'A
     $scope.isBsoiaEverUsed = function(bsoiaAsset){
         return AssetsService.isBSOIALinked(bsoiaAsset.name);
     };
+
+    /**
+     * Listen for changes in selected TOIA
+     * assets, so that potential risks can be
+     * recomputed.
+     */
+    $scope.$watch(function(){
+        return AssetsService.getTOIA();
+    }, function(newVal, oldVal){
+        $rootScope.$broadcast('toiaChanged');
+    }, true);
 
     //Initial fetch of TOIA assets
     ArangoDBService.getTOIA(function(error, data){

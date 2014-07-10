@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.service('AssetsService', ['flash', '$q', function(flash, $q){
+dssApp.service('AssetsService', ['flash', '$q', '$rootScope', function(flash, $q, $rootScope){
 
     //BSOIA assets
     var bsoia = [];         //BSOIA assets selected by the user
