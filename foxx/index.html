@@ -181,6 +181,7 @@
                     <!--risks slide -->
                     <div class="item risks-slide" ng-controller="risksController">
                         <div class="col-lg-4 form-group form-inline">
+                            <!-- TODO: Apply unique filter in potential risks -->
                             <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.destination.name for r in potentialRisks">
                             </select>
                         </div>

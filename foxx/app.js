@@ -5,7 +5,8 @@
     var Foxx = require('org/arangodb/foxx'),
     controller = new Foxx.Controller(applicationContext),
     arango = require('org/arangodb'),
-    db = arango.db;
+    db = arango.db,
+    console = require("console");
 
     /** Retrieves all assets by asset type (bsoia/toia/)
     *
@@ -48,37 +49,26 @@
     controller.get('potentialRisks', function(req, res){
 
         //TODO: Return projections and not full paths?
+        //TODO: This API is deprecated, will change in v.2.2.0, see http://docs.arangodb.org/Aql/Functions.html
         var query = 'for p in paths(dss_nodes, dss_edges, "outbound", false)' +
-                    'filter (p.source.type == "bsoia" || p.source.type == "toia")' +
-                    ' && p.destination.type == "risk"' +
-                    ' && (p.source.name in [@bsoias] || p.source.name in [@toias])' +
+                    'let sourceType = (p.source.type)' +
+                    'let destinationType = (p.destination.type)' +
+                    'let sourceName = (lower(p.source.name))' +
+                    'filter ((sourceType == "bsoia" || sourceType == "toia") && (destinationType == "risk") && (contains(lower(@bsoias), sourceName) || contains(lower(@toias), sourceName)))' +
                     'return p';
+
         var stmt = db._createStatement({query: query});
 
         var bsoias = '';
         var toias = '';
 
         if(req.params('bsoias') !== null && typeof req.params('bsoias') !== 'undefined'){
-            bsoias = _.map(req.params('bsoias').split(','), function(bsoia, index){
-                if(index == 0){
-                    return '"' + bsoia + '"';
-                } else {
-                    return ',' + '"' + bsoia + '"';
-                }
-            });
-            console.log('Bsoias computed', bsoias);
+            bsoias = req.params('bsoias');
         }
         stmt.bind('bsoias', bsoias);
 
         if(req.params('toias') !== null && typeof req.params('toias') !== 'undefined'){
-            toias = _.map(req.params('toias').split(','), function(toia, index){
-               if(index == 0){
-                   return '"' + toia + '"';
-               } else {
-                   return ',' + '"' + toia + '"';
-               }
-            });
-            console.log('Toias computed', toias);
+            toias = req.params('toias');
         }
         stmt.bind('toias', toias);
 
