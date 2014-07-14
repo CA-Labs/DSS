@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="components/select2/select2-bootstrap.css"/>
     <link rel="stylesheet" href="components/select2/select2.css"/>
     <link rel="stylesheet" href="components/angular-loading-bar/src/loading-bar.css"/>
+    <link rel="stylesheet" href="components/bootstrap-switch/dist/css/bootstrap3/bootstrap-switch.css"/>
 </head>
 <body ng-app="dssApp">
 <div class="container-fluid margin-10">
@@ -189,6 +190,7 @@
                         <div class="col-lg-8">
                             <div class="list-group">
                                 <div ng-if="risksSelected.length > 0">
+                                    <input name="risks-per-ta" bs-switch ng-model="risksPerTA" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="ON" switch-off-text="OFF" switch-on-color="success"/>
                                     <h4>Risks Selected</h4>
                                 </div>
                                 <a class="list-group-item selected-risk" href="#" ng-repeat="risk in risksSelected">
@@ -284,6 +286,8 @@
 <script src="components/angular-loading-bar/src/loading-bar.js"></script>
 <script src="components/ng-file-upload/angular-file-upload.js"></script>
 <script src="components/x2js/xml2json.js"></script>
+<script src="components/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
+<script src="components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js"></script>
 <!-- DSS-related scripts -->
 <script src="dss/app.min.js"></script>
 </body>

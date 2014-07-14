@@ -125,8 +125,6 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', function($http, Ass
      * on data retrieval.
      */
     this.getPotentialRisks = function(callback) {
-        console.log(AssetsService.getBSOIA());
-        console.log(AssetsService.getTA());
         $http({method: 'GET', url: FOXX_API.getPotentialRisks(AssetsService.getBSOIA(), AssetsService.getTA())})
             .success(function(data, status, headers, config){
                 callback(null, data);

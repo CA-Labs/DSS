@@ -61,7 +61,7 @@ dssApp.directive('reqSlider', function() {
         <label style="margin-bottom: 5px;" class="def-tip" data-container="body" data-toggle="popover" data-placement="right" data-content="Vivamus sagittis lacus vel augue laoreet rutrum faucibus.">' + scope.risk.destination.name + '<span title="' + scope.risk.destination.definition + '" \
         <i class="fi-lightbulb"></i></span></label>\
         <span class="label secondary radius right requirementValue">-</span>\
-        <div class="row"><div class="col-lg-6"><small>Likelihood: </small><div style="width: 80%; margin-bottom: 15px;" class="noUiSlider"></div></div><div class="col-lg-6"><small>Consequence :</small><div style="width: 80%; margin-bottom: 15px;" class="noUiSlider"></div></div></div>\
+        <div class="row"><div class="col-lg-6"><p style="margin-bottom: 15px">Likelihood: </p><div style="width: 80%; margin-bottom: 15px;" class="noUiSlider"></div></div><div class="col-lg-6"><p style="margin-bottom: 15px;">Consequence :</p><div style="width: 80%; margin-bottom: 15px;" class="noUiSlider"></div></div></div>\
       ');
             $(".def-tip").popover({
                 toggle: 'hover'

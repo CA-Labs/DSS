@@ -125,3 +125,10 @@ blockquote {
 
 .alert-danger h4, .alert-error h4 {
   color: #b94a48; }
+
+/* Risks switch */
+.bootstrap-switch {
+  float: right !important; }
+
+.bootstrap-switch-success {
+  background-color: #18bc9c !important; }
