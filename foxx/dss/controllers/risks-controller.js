@@ -4,11 +4,12 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'AssetsService', function($scope, ArangoDBService, flash, AssetsService){
+dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'AssetsService', '$timeout', function($scope, ArangoDBService, flash, AssetsService, $timeout){
 
     //Initialization
-    $scope.potentialRisks = [];
-    $scope.risksSelected = AssetsService.getRisks();
+    $scope.potentialRisks = [];                         //List of current potential risks depending on BSOIA/TOIA assets selected by the user
+    $scope.risksSelected = AssetsService.getRisks();    //Risks selected by the user
+    $scope.switch = { isSwitchSelected: false };        //Switch button to allow evaluate risks for each TA
 
     /**
      * Event received when a BSOIA asset has been selected/removed
@@ -57,6 +58,31 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
            }
         });
     });
+
+    /**
+     * Handles toggle event in risks switch component.
+     */
+    /*
+    $scope.$watch('switchIsSelected', function(switchSelected){
+        console.log(switchSelected);
+        if(switchSelected){
+            if(AssetsService.getTA().length == 0){
+                //The user did not specify any TA, he can't evaluate risks per TA
+                flash.warn = 'You need to specify TA before trying to evaluate risks for each of them';
+                $scope.toggleActivation();
+            } else {
+                //TODO: Do magic here :D
+            }
+        } else {
+            console.log('Deactivate switch');
+        }
+    });
+    */
+
+    $scope.toggleActivation = function(){
+        $scope.switch.isSwitchSelected = !$scope.switch.isSwitchSelected;
+        console.log($scope.switch.isSwitchSelected);
+    };
 
     /**
      * Adds a new risk to the list of selected risks,
