@@ -49,8 +49,7 @@
     controller.get('potentialRisks', function(req, res){
 
         //TODO: Return projections and not full paths?
-        //TODO: This API is deprecated, will change in v.2.2.0, see http://docs.arangodb.org/Aql/Functions.html
-        var query = 'for p in paths(dss_nodes, dss_edges, "outbound", false)' +
+        var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 2})' +
                     'let sourceType = (p.source.type)' +
                     'let destinationType = (p.destination.type)' +
                     'let sourceName = (lower(p.source.name))' +

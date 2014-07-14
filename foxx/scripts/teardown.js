@@ -1,3 +1,3 @@
 /* This script gets executed on app shutdown */
 
-//TODO: 
+//TODO: App shutdown functions go here
