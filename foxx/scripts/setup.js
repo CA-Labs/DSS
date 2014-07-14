@@ -8,21 +8,18 @@ var arangodb = require("org/arangodb");
 var db = arangodb.db;
 var graphs = require("org/arangodb/general-graph");
 
-var dss_nodes = applicationContext.collectionName("dss_nodes");
-var dss_edges = applicationContext.collectionName("dss_edges");
-
 //Check if dss_nodes collection exists
-if(db._collection(dss_nodes) === null) {
+if(db._collection("dss_nodes") === null) {
     console.log("Creating nodes collection 'dss_nodes'...");
-	var collection = db._create(dss_nodes);
+	var collection = db._create("dss_nodes");
 } else {
     console.log("Collection 'dss_nodes' already exists, nothing to do here...");
 }
 
 //Check if dss_edges collection exists
-if(db._collection(dss_edges) === null){
+if(db._collection("dss_edges") === null){
     console.log("Creating edges collection 'dss_edges'...");
-    var collection = db._create(dss_edges);
+    var collection = db._create("dss_edges");
 } else {
     console.log("Collection 'dss_edges' already exists, nothing to do here...");
 }
