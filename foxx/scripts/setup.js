@@ -29,7 +29,7 @@ var available_graphs = graphs._list();
 
 if(available_graphs.indexOf("dss") == -1){
     console.log("Graph 'dss' does not exist, creating it from 'dss_edges' definition and 'dss_nodes' collection...");
-    graphs._create("dss", [graph_module._directedRelation("dss_edges", "dss_nodes", "dss_nodes")], ["dss_nodes"]);
+    graphs._create("dss", [graphs._directedRelation("dss_edges", "dss_nodes", "dss_nodes")], ["dss_nodes"]);
 } else {
     console.log("Graph 'dss' exists already, nothing to do here...");
 }
