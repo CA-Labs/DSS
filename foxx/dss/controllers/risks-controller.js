@@ -10,6 +10,10 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
     $scope.potentialRisks = [];
     $scope.risksSelected = AssetsService.getRisks();
 
+    /**
+     * Event received when a BSOIA asset has been selected/removed
+     * by the user. This allows to recompute the potential risks.
+     */
     $scope.$on('bsoiaChanged', function(){
         ArangoDBService.getPotentialRisks(function(error, data){
             if(error){
@@ -30,6 +34,10 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
         });
     });
 
+    /**
+     * Event received when a TOIA asset has been selected/removed
+     * by the user. This allows to recompute the potential risks.
+     */
     $scope.$on('toiaChanged', function(){
         ArangoDBService.getPotentialRisks(function(error, data){
            if(error){
@@ -50,10 +58,21 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
         });
     });
 
+    /**
+     * Adds a new risk to the list of selected risks,
+     * by calling the Assets service.
+     * @param risk The risk to be added to the list of
+     * selected risks.
+     */
     $scope.addRisk = function(risk){
         AssetsService.addRisk(risk);
     };
 
+    /**
+     * Removes a risk from the list of selected risks,
+     * by calling the Assets service.
+     * @param risk
+     */
     $scope.removeRisk = function(risk){
         AssetsService.removeRisk(risk);
     };

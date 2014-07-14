@@ -12,8 +12,8 @@ dssApp.controller('toiaController', ['$scope', '$rootScope', '$localStorage', 'A
     $scope.bsoiaAssetsSelected = AssetsService.getBSOIA();  //BSOIA assets selected by the user (shared across the Assets service)
 
     /**
-     * Adds a new TOIA asset, calling the
-     * Assets service.
+     * Adds a new TOIA asset to the list of selected TOIA,
+     * by calling the Assets service.
      * @param toiaAsset The TOIA asset to be added.
      */
     $scope.addToiaAsset = function(toiaAsset){
@@ -21,8 +21,8 @@ dssApp.controller('toiaController', ['$scope', '$rootScope', '$localStorage', 'A
     };
 
     /**
-     * Removes a TOIA asset, calling the
-     * Assets service.
+     * Removes a TOIA asset from the list of selected TOIA,
+     * by calling the Assets service.
      * @param toiaAssetSelected The TOIA asset to be
      * removed.
      */
@@ -30,6 +30,13 @@ dssApp.controller('toiaController', ['$scope', '$rootScope', '$localStorage', 'A
         AssetsService.removeTOIA(toiaAssetSelected);
     };
 
+    /**
+     * Removes the relation between a certain BSOIA asset
+     * and a TOIA asset,
+     * @param bsoiaAsset The BSOIA asset to be removed.
+     * @param toiaAsset The TOIA asset that contains the
+     * relationship between them.
+     */
     $scope.removeBsoiaFromToiaAsset = function(bsoiaAsset, toiaAsset){
         AssetsService.removeBSOIAfromTOIA(bsoiaAsset.name, toiaAsset.asset.name);
     };
@@ -54,6 +61,12 @@ dssApp.controller('toiaController', ['$scope', '$rootScope', '$localStorage', 'A
         }
     };
 
+    /**
+     * Fn that checks whether a certain BSOIA asset has been
+     * ever selected.
+     * @param bsoiaAsset The BSOIA asset to check.
+     * @returns {*}
+     */
     $scope.isBsoiaEverUsed = function(bsoiaAsset){
         return AssetsService.isBSOIALinked(bsoiaAsset.name);
     };

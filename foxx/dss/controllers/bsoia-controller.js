@@ -12,7 +12,7 @@ dssApp.controller('bsoiaController', ['$scope', '$rootScope', '$localStorage', '
 
     /**
      * Adds a new BSOIA asset, calling the
-     * BSOIA service.
+     * Assets service.
      * @param bsoiaAsset The BSOIA asset to be
      * added.
      */
@@ -22,7 +22,7 @@ dssApp.controller('bsoiaController', ['$scope', '$rootScope', '$localStorage', '
 
     /**
      * Removes a BSOIA asset, calling the
-     * BSOIA service.
+     * Assets service.
      * @param bsoiaAsset The BSOIA asset to be
      * removed.
      */
