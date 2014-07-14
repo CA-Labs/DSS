@@ -78,6 +78,15 @@ $('body').on('mouseout', '.list-group > .selected-asset', function(e){
     $(this).find('.remove-bsoia-in-toia').hide();
 });
 
+//Show/hide x (close button) when hovering selected risks
+$('body').on('mouseover', '.list-group > .selected-risk', function(e){
+    $(this).find('.remove-risk').show();
+});
+
+$('body').on('mouseout', '.list-group > .selected-risk', function(e){
+    $(this).find('.remove-risk').hide();
+});
+
 //Show/hide x (close button) when hovering selected bsoia tags in drop zones
 $('body').on('mouseover', '.list-group > .dropzone', function(e){
     $(this).find('.remove-bsoia-in-toia-asset').show();

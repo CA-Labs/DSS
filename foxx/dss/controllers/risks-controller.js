@@ -4,10 +4,11 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', function($scope, ArangoDBService, flash){
+dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'AssetsService', function($scope, ArangoDBService, flash, AssetsService){
 
     //Initialization
     $scope.potentialRisks = [];
+    $scope.risksSelected = AssetsService.getRisks();
 
     $scope.$on('bsoiaChanged', function(){
         ArangoDBService.getPotentialRisks(function(error, data){
@@ -47,6 +48,14 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', func
                $scope.potentialRisks = aux;
            }
         });
-    })
+    });
+
+    $scope.addRisk = function(risk){
+        AssetsService.addRisk(risk);
+    };
+
+    $scope.removeRisk = function(risk){
+        AssetsService.removeRisk(risk);
+    };
 
 }]);

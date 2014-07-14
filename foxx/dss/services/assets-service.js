@@ -12,6 +12,8 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', function(flash, $q
     var toia = [];          //TOIA assets selected by the user
     //TA assets
     var ta = [];            //TA assets selected by the user
+    //Risks
+    var risks = [];         //Risks selected by the user
 
     /**
      * Adds an asset to the list of selected
@@ -250,5 +252,35 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', function(flash, $q
         };
         return deferred.promise;
     };
+
+    this.addRisk = function(risk){
+        if(risk === null || typeof risk === 'undefined'){
+            flash.warn = 'No risk was selected';
+        } else {
+            //Check risk doesn't already exist
+            var exists = risks.filter(function(r, riskIndex){
+                return risk.destination.name == r.destination.name;
+            }).length > 0;
+            if(!exists){
+                risks.push(risk);
+            } else {
+                flash.warn = 'This risk has been already added';
+            }
+        }
+    };
+
+    this.removeRisk = function(risk){
+        var index = -1;
+        _.each(risks, function(r, riskIndex){
+            if(risk.destination.name == r.destination.name){
+                index = riskIndex;
+            }
+        });
+        if(index >= 0) risks.splice(index, 1);
+    };
+
+    this.getRisks = function(){
+        return risks;
+    }
 
 }]);

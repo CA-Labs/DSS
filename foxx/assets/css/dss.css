@@ -42,7 +42,7 @@ blockquote {
 .def-tip {
   cursor: help; }
 
-.remove-asset {
+.remove-asset, .remove-risk {
   float: right !important;
   margin-right: -25px !important;
   vertical-align: middle !important;
