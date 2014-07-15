@@ -281,6 +281,6 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', function(flash, $q
 
     this.getRisks = function(){
         return risks;
-    }
+    };
 
 }]);

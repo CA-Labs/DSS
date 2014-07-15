@@ -9,7 +9,8 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
     //Initialization
     $scope.potentialRisks = [];                         //List of current potential risks depending on BSOIA/TOIA assets selected by the user
     $scope.risksSelected = AssetsService.getRisks();    //Risks selected by the user
-    $scope.switch = { isSwitchSelected: false };        //Switch button to allow evaluate risks for each TA
+    $scope.switch = { isSwitchSelected: true };         //Switch button to allow evaluate risks for each TA
+    $scope.taAssets = AssetsService.getTA();            //The selected TA assets
 
     /**
      * Event received when a BSOIA asset has been selected/removed
@@ -60,28 +61,28 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
     });
 
     /**
-     * Handles toggle event in risks switch component.
+     * Handles toggle event in risks switch component and manages
+     * the logic of when the user can specify risks per each tangible
+     * asset.
      */
-    /*
-    $scope.$watch('switchIsSelected', function(switchSelected){
-        console.log(switchSelected);
-        if(switchSelected){
-            if(AssetsService.getTA().length == 0){
-                //The user did not specify any TA, he can't evaluate risks per TA
-                flash.warn = 'You need to specify TA before trying to evaluate risks for each of them';
-                $scope.toggleActivation();
-            } else {
-                //TODO: Do magic here :D
-            }
-        } else {
-            console.log('Deactivate switch');
-        }
+
+    $scope.$watch('taAssets', function(newTaAssets){
+       if(newTaAssets.length == 0){
+           $scope.switch.isSwitchSelected = true;
+       };
+        $scope.taAssets = newTaAssets;
     });
-    */
 
     $scope.toggleActivation = function(){
-        $scope.switch.isSwitchSelected = !$scope.switch.isSwitchSelected;
-        console.log($scope.switch.isSwitchSelected);
+        if(!$scope.switch.isSwitchSelected){
+            if($scope.taAssets.length == 0){
+                flash.warn = 'You can\'t define risks per each tangible asset since you did not specify any of them';
+                $scope.switch.isSwitchSelected = true;
+                return;
+            } else {
+                $scope.switch.isSwitchSelected = false;
+            }
+        }
     };
 
     /**

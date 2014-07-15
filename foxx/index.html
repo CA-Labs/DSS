@@ -73,7 +73,7 @@
             </div>
             <div class="col-lg-2 ta-slide" data-target="#dssSlides" data-slide-to="2">
                 <blockquote>
-                    <p>3. Technical assets </p>
+                    <p>3. Tangible assets </p>
                 </blockquote>
             </div>
             <div class="col-lg-2 risks-slide" data-target="#dssSlides" data-slide-to="3">
@@ -189,9 +189,8 @@
                         </div>
                         <div class="col-lg-8">
                             <div class="list-group">
-                                <button ng-click="toggleActivation()">Toggle</button>
-                                <div ng-if="risksSelected.length > 0">
-                                    <input name="risks-per-ta" bs-switch ng-model="$parent.switch.isSwitchSelected" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="ON" switch-off-text="OFF" switch-on-color="success" ng-change="toggleActivation()"/>
+                                <div ng-show="risksSelected.length > 0">
+                                    <input name="risks-per-ta" bs-switch ng-model="switch.isSwitchSelected" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="ON" switch-off-text="OFF" switch-on-color="success" ng-change="toggleActivation()"/>
                                     <h4>Risks Selected</h4>
                                 </div>
                                 <a class="list-group-item selected-risk" href="#" ng-repeat="risk in risksSelected">
