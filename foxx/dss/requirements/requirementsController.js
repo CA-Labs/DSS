@@ -1,4 +1,4 @@
-dssApp.controller('requirementsController', ["$scope", "$rootScope", "$localStorage", function($scope, $rootScope, $localStorage) {
+    dssApp.controller('requirementsController', ["$scope", "$rootScope", "$localStorage", function($scope, $rootScope, $localStorage) {
     $rootScope.requirementsSelected = $localStorage.requirementsSelected || [];
     $scope.requirement = "";
 

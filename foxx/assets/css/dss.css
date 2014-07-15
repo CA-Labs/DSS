@@ -40,7 +40,9 @@ blockquote {
   width: 80% !important; }
 
 .def-tip {
-  cursor: help; }
+  cursor: help;
+  float: left;
+  display: block; }
 
 .remove-asset, .remove-risk {
   float: right !important;
@@ -132,3 +134,30 @@ blockquote {
 
 .bootstrap-switch-success {
   background-color: #18bc9c !important; }
+
+/* Risk container */
+.risk-container {
+  min-height: 100px;
+  height: auto !important;
+  max-height: 800px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  margin-top: 10px; }
+
+.requirement-value {
+  float: right; }
+
+.risk-very-low {
+  background-color: darkgreen !important; }
+
+.risk-low {
+  background-color: lightgreen !important; }
+
+.risk-normal {
+  background-color: orange !important; }
+
+.risk-high {
+  background-color: #B94A48 !important; }
+
+.risk-very-high {
+  background-color: maroon !important; }

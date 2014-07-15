@@ -25,7 +25,8 @@ module.exports = function (grunt) {
                         'foxx/dss/common/filters.js',
                         'foxx/dss/common/mainInterfaces.js',
                         'foxx/dss/requirements/requirementsController.js',
-                        'foxx/dss/requirements/requirementsInterfacesDirective.js'
+                        'foxx/dss/requirements/requirementsInterfacesDirective.js',
+                        'foxx/dss/directives/*.js'
                     ]
                 }
             }

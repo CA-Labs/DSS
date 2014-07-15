@@ -193,8 +193,10 @@
                                     <input name="risks-per-ta" bs-switch ng-model="switch.isSwitchSelected" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="ON" switch-off-text="OFF" switch-on-color="success" ng-change="toggleActivation()"/>
                                     <h4>Risks Selected</h4>
                                 </div>
-                                <a class="list-group-item selected-risk" href="#" ng-repeat="risk in risksSelected">
+                                <div class="list-group-item selected-risk risk-container" href="#" ng-repeat="risk in risksSelected">
                                     <span class="glyphicon glyphicon-remove remove-risk" ng-click="removeRisk(risk)">&nbsp;</span>
+                                    <risk-slider risk="risk" multiple="!switch.isSwitchSelected" ta-assets="taAssets"></risk-slider>
+                                    <!--
                                     <div ng-switch="risk.destination.representation">
                                         <div ng-switch-when="input">
                                             <req-input riskname="{{ risk.destination.name }}" definition="{{ risk.destination.description }}"></req-input>
@@ -209,7 +211,8 @@
                                             <req-slider itemname="{{ risk.destination.name }}" definition="{{ risk.destination.description }}"></req-slider>
                                         </div>
                                     </div>
-                                </a>
+                                    -->
+                                </div>
                             </div>
                         </div>
                     </div>
