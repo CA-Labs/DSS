@@ -71,18 +71,51 @@ dssApp.directive('riskSlider', function(){
                 toggle: 'hover'
             });
 
-            return element.find("div.noUiSlider").noUiSlider({
-                range: { min: attributes.range[0], max: attributes.range[1] },
-                start: attributes.start || 0,
-                step: attributes.step || 1,
-                handles: attributes.handles || 1
-            }).on({
-                slide: function() {
-                    var domElement = $(this).prev().prev().siblings('span.requirement-value');
-                    var currentValue = $(this).val();
-                    return removeClasses(domElement).addClass(numberToCategoryClass(currentValue)).text(numberToCategoryName(currentValue));
-                }
+            //We can specify risks for each TA (scope.multiple == true)
+            scope.$on('repeatDone', function(scope, element, attrs){
+                //Set very low class by default on initialization
+                element.find("div.noUiSlider").prev().prev().siblings('span.requirement-value')
+                    .addClass(CATEGORY.VERY_LOW.class)
+                    .text(CATEGORY.VERY_LOW.name);
+
+                return element.find("div.noUiSlider").noUiSlider({
+                    range: { min: attributes.range[0], max: attributes.range[1] },
+                    start: attributes.start || 0,
+                    step: attributes.step || 1,
+                    handles: attributes.handles || 1
+                }).on({
+                    slide: function() {
+                        var domElement = $(this).prev().prev().siblings('span.requirement-value');
+                        var currentValue = $(this).val();
+                        return removeClasses(domElement)
+                            .addClass(numberToCategoryClass(currentValue))
+                            .text(numberToCategoryName(currentValue));
+                    }
+                });
             });
+
+            //We can only specify risks for each TA as a whole (scope.multiple == false)
+            if(!scope.multiple){
+                //Set very low class by default on initialization
+                element.find("div.noUiSlider").prev().prev().siblings('span.requirement-value')
+                    .addClass(CATEGORY.VERY_LOW.class)
+                    .text(CATEGORY.VERY_LOW.name);
+
+                return element.find("div.noUiSlider").noUiSlider({
+                    range: { min: attributes.range[0], max: attributes.range[1] },
+                    start: attributes.start || 0,
+                    step: attributes.step || 1,
+                    handles: attributes.handles || 1
+                }).on({
+                    slide: function() {
+                        var domElement = $(this).prev().prev().siblings('span.requirement-value');
+                        var currentValue = $(this).val();
+                        return removeClasses(domElement)
+                            .addClass(numberToCategoryClass(currentValue))
+                            .text(numberToCategoryName(currentValue));
+                    }
+                });
+            }
         }
     };
 });
