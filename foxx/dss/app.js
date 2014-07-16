@@ -57,7 +57,8 @@ var dssApp = angular.module('dssApp', [
     'ngDragDrop',
     'angular-loading-bar',
     'angularFileUpload',
-    'frapontillo.bootstrap-switch'
+    'frapontillo.bootstrap-switch',
+    'nouislider'
 ]).config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
         cfpLoadingBarProvider.includeSpinner = false;
 }]);

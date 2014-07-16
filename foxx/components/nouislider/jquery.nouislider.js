@@ -1,17 +1,11 @@
-/*! $.noUiSlider - WTFPL - refreshless.com/nouislider/ */
+/**@preserve
+$.fn.noUiSlider - WTFPL - refreshless.com/nouislider/ */
 
 /*jslint browser: true */
-/*jslint devel: true */
-/*jslint continue: true */
-/*jslint plusplus: true */
 /*jslint sub: true */
 /*jslint white: true */
-
-// ==ClosureCompiler==
-// @externs_url http://refreshless.com/externs/jquery-1.8.js
-// @compilation_level ADVANCED_OPTIMIZATIONS
-// @warning_level VERBOSE
-// ==/ClosureCompiler==
+/*jslint continue: true */
+/*jslint plusplus: true */
 
 (function( $ ){
 
@@ -19,18 +13,22 @@
 
 	var
 	// Cache the document selector;
-/** @const */ doc = $(document),
+	/** @const */
+	doc = $(document),
+	// Make a backup of the original jQuery/Zepto .val() method.
+	/** @const */
+	$val = $.fn.val,
 	// Namespace for binding and unbinding slider events;
-/** @const */ namespace = '.nui',
-	// Copy of the current value function;
-/** @const */ $val = $.fn.val,
+	/** @const */
+	namespace = '.nui',
 	// Determine the events to bind. IE11 implements pointerEvents without
 	// a prefix, which breaks compatibility with the IE10 implementation.
-/** @const */ actions = window.navigator.pointerEnabled ? {
+	/** @const */
+	actions = window.navigator['pointerEnabled'] ? {
 		start: 'pointerdown',
 		move: 'pointermove',
 		end: 'pointerup'
-	} : window.navigator.msPointerEnabled ? {
+	} : window.navigator['msPointerEnabled'] ? {
 		start: 'MSPointerDown',
 		move: 'MSPointerMove',
 		end: 'MSPointerUp'
@@ -40,7 +38,8 @@
 		end: 'mouseup touchend'
 	},
 	// Re-usable list of classes;
-/** @const */ Classes = [
+	/** @const */
+	Classes = [
 /*  0 */  'noUi-target'
 /*  1 */ ,'noUi-base'
 /*  2 */ ,'noUi-origin'
@@ -59,43 +58,7 @@
 /* 15 */ ,'noUi-active'
 /* 16 */ ,'noUi-extended'
 /* 17 */ ,'noUi-stacking'
-	],
-/** @const */ Formatting = [
-/*  0 */  'decimals'
-/*  1 */ ,'mark'
-/*  2 */ ,'thousand'
-/*  3 */ ,'prefix'
-/*  4 */ ,'postfix'
-/*  5 */ ,'encoder'
-/*  6 */ ,'decoder'
-/*  7 */ ,'negative'
-/*  8 */ ,'negativeBefore'
-	],
-/** @const */ FormatDefaults = [
-/*  0 */  2
-/*  1 */ ,'.'
-/*  2 */ ,''
-/*  3 */ ,''
-/*  4 */ ,''
-/*  5 */ ,function(a){ return a; }
-/*  6 */ ,function(a){ return a; }
-/*  7 */ ,'-'
-/*  8 */ ,''
 	];
-
-
-// Error handling
-
-	function throwError( message ){
-		throw new RangeError('noUiSlider: ' + message);
-	}
-
-	// Throw an error if formatting options are incompatible.
-	function throwEqualError( F, a, b ) {
-		if ( (F[a] || F[b]) && (F[a] === F[b]) ) {
-			throwError("(Link) '"+a+"' can't match '"+b+"'.'");
-		}
-	}
 
 
 // General helpers
@@ -118,15 +81,6 @@
 
 // Type validation
 
-	function typeMatch ( a, b ) {
-		return (typeof a) === (typeof b);
-	}
-
-	// Test in an object is an instance of jQuery or Zepto.
-	function isInstance ( a ) {
-		return a instanceof $ || ( $['zepto'] && $['zepto']['isZ'](a) );
-	}
-
 	// Checks whether a value is numerical.
 	function isNumeric ( a ) {
 		return typeof a === 'number' && !isNaN( a ) && isFinite( a );
@@ -146,18 +100,6 @@
 		setTimeout(function(){
 			element.removeClass(className);
 		}, duration);
-	}
-
-	// Tests if element has a class, adds it if not. Returns original state.
-	function getsClass ( element, className ) {
-
-		var has = element.hasClass(className);
-
-		if ( !has ) {
-			element.addClass( className );
-		}
-
-		return has;
 	}
 
 
@@ -225,7 +167,10 @@
 	function getStep ( options, value ){
 
 		var j = 1, a, b;
-		while ( value >= options.xPct[j] ){
+
+		// Find the proper step for rtl sliders by search in inverse direction.
+		// Fixes issue #262.
+		while ( (options.dir ? (100 - value) : value) >= options.xPct[j] ){
 			j++;
 		}
 
@@ -307,336 +252,12 @@
 	}
 
 
-// Organize formatting in an object.
-
-	/** @constructor */
-	function Format( options ){
-
-		// If no settings where provided, the defaults will be loaded.
-		if ( options === undefined ){
-			options = {};
-		}
-
-		if ( typeof options !== 'object' ){
-			throwError("(Format) 'format' option must be an object.");
-		}
-
-		var settings = {};
-
-		// Copy all values into a new object.
-		$(Formatting).each(function(i, val){
-
-			if ( options[val] === undefined ){
-
-				settings[val] = FormatDefaults[i];
-
-			// When we aren't loading defaults, validate the entry.
-			} else if ( typeMatch(options[val],  FormatDefaults[i]) ) {
-
-				// Support for up to 7 decimals.
-				// More can't be guaranteed due to floating point issues.
-				if ( val === 'decimals' ){
-					if ( options[val] < 0 || options[val] > 7 ){
-						throwError("(Format) 'format.decimals' option must be between 0 and 7.");
-					}
-				}
-
-				settings[val] = options[val];
-
-			// If the value isn't valid, emit an error.
-			} else {
-				throwError("(Format) 'format."+val+"' must be a " + typeof FormatDefaults[i] + ".");
-			}
-		});
-
-		// Some values can't be extracted from a
-		// string if certain combinations are present.
-		throwEqualError(settings, 'mark', 'thousand');
-		throwEqualError(settings, 'prefix', 'negative');
-		throwEqualError(settings, 'prefix', 'negativeBefore');
-
-		this.settings = settings;
-	}
-
-	// Shorthand for internal value get
-	Format.prototype.v = function ( a ) {
-		return this.settings[a];
-	};
-
-	Format.prototype.to = function ( number ) {
-
-		function reverse ( a ) {
-			return a.split('').reverse().join('');
-		}
-
-		number = this.v('encoder')( number );
-
-		var negative = '', preNegative = '', base = '', mark = '';
-
-		if ( number < 0 ) {
-			negative = this.v('negative');
-			preNegative = this.v('negativeBefore');
-		}
-
-		// Round to proper decimal count
-		number = Math.abs(number).toFixed( this.v('decimals') ).toString();
-		number = number.split('.');
-
-		// Rounding away decimals might cause a value of -0
-		// when using very small ranges. Remove those cases.
-		if ( parseFloat(number) === 0 ) {
-			number[0] = '0';
-		}
-
-		// Group numbers in sets of three.
-		if ( this.v('thousand') ) {
-			base = reverse(number[0]).match(/.{1,3}/g);
-			base = reverse(base.join(reverse( this.v('thousand') )));
-		} else {
-			base = number[0];
-		}
-
-		// Ignore the decimal separator if decimals are set to 0.
-		if ( this.v('mark') && number.length > 1 ) {
-			mark = this.v('mark') + number[1];
-		}
-
-		// Return the finalized formatted number.
-		return preNegative +
-			this.v('prefix') +
-			negative +
-			base +
-			mark +
-			this.v('postfix');
-	};
-
-	Format.prototype.from = function ( input ) {
-
-		function esc(s){
-			return s.replace(/[\-\/\\\^$*+?.()|\[\]{}]/g, '\\$&');
-		}
-
-		var isNeg;
-		// The set request might want to ignore this handle.
-		// Test for 'undefined' too, as a two-handle slider
-		// can still be set with an integer.
-		if( input === null || input === undefined ) {
-			return false;
-		}
-
-		// Remove formatting and set period for float parsing.
-		input = input.toString();
-
-		// Replace the preNegative indicator.
-		isNeg = input.replace(new RegExp('^' + esc( this.v('negativeBefore') )), '');
-
-		// Check if the value changed by removing the negativeBefore symbol.
-		if( input !== isNeg ) {
-			input = isNeg;
-			isNeg = '-';
-		} else {
-			isNeg = '';
-		}
-
-		// If prefix is set and the number is actually prefixed.
-		input = input.replace(new RegExp('^'+esc( this.v('prefix') )), '');
-
-		// Only replace if a negative sign is set.
-		if ( this.v['negative'] ) {
-
-			// Reset isNeg to prevent double '-' insertion.
-			isNeg = '';
-
-			// Reset the negative sign to '-'
-			input = input.replace(new RegExp('^'+esc( this.v('negative') )), '-');
-		}
-
-		// Clean the input string
-		input = input
-		// If postfix is set and the number is postfixed.
-			.replace( new RegExp(esc( this.v('postfix') ) + '$'), '')
-		// Remove the separator every three digits.
-			.replace( new RegExp(esc( this.v('thousand') ), 'g'), '')
-		// Set the decimal separator back to period.
-			.replace( this.v('mark'), '.');
-
-		// Run the user defined decoder. Returns input by default.
-		input = this.v('decoder')( parseFloat( isNeg + input ) );
-
-		// Ignore invalid input
-		if (isNaN( input )) {
-			return false;
-		}
-
-		return input;
-	};
-
-
-// Serialization target
-
-/** @constructor */
-	function Link( entry, update ){
-
-		// Make sure Link isn't called as a function, in which case
-		// the 'this' scope would be the window.
-		if ( !(this instanceof Link) ) {
-			throw new Error( "Link: " +
-				"Don't use Link as a function. " +
-				"Use the 'new' keyword.");
-		}
-
-		if ( !entry ) {
-			throw new RangeError("Link: missing parameters.");
-		}
-
-		// Write all formatting to this object.
-		// No validation needed, as we'll merge these with the parent
-		// format options first.
-		this.formatting = entry['format'] || {};
-
-		// Store the update option.
-		this.update = !update;
-
-		// In IE < 9, .bind() isn't available, need this link in .change().
-	var that = this,
-
-		// Get values from the input.
-		target = entry['target'] || function(){},
-		method = entry['method'],
-
-		// Find the type of this link.
-		isTooltip = ( typeof target === 'string' && target.indexOf('-tooltip-') === 0 ),
-		isHidden = ( typeof target === 'string' && target.indexOf('-') !== 0 ),
-		isMethod = ( typeof target === 'function' ),
-		is$ = ( isInstance(target) ),
-		isInput = ( is$ && target.is('input, select, textarea') ),
-		methodIsFunction = ( is$ && typeof method === 'function' ),
-		methodIsName = ( is$ && typeof method === 'string' && target[method] );
-
-		// If target is a string, a new hidden input will be created.
-		if ( isTooltip ) {
-
-			// By default, use the 'html' method.
-			this.method = method || 'html';
-
-			// Use jQuery to create the element
-			this.el = $( target.replace('-tooltip-', '') || '<div/>' )[0];
-
-			return;
-		}
-
-		// If the string doesn't begin with '-', which is reserved, add a new hidden input.
-		if ( isHidden ) {
-
-			this.method = 'val';
-
-			this.el = document.createElement('input');
-			this.el.name = target;
-			this.el.type = 'hidden';
-
-			return;
-		}
-
-		// The target can also be a function, which will be called.
-		if ( isMethod ) {
-			this.target = false;
-			this.method = target;
-			return;
-		}
-
-		// If the target is and $ element.
-		if ( is$ ) {
-
-			// The method must exist on the element.
-			if ( method && ( methodIsFunction || methodIsName ) ) {
-				this.target = target;
-				this.method = method;
-				return;
-			}
-
-			// If a jQuery/Zepto input element is provided, but no method is set,
-			// the element can assume it needs to respond to 'change'...
-			if ( !method && isInput ) {
-
-				// Default to .val if this is an input element.
-				this.method = 'val';
-				this.target = target;
-
-				// Set the slider to a new value on change.
-				this.target.on('change', function( e ){
-
-					// Returns null array.
-					function at(a,b,c){
-						return [c?a:b, c?b:a];
-					}
-
-					var output = at(null, $(e.target).val(), that.N);
-
-					that.obj.val(output, { 'link': that });
-				});
-
-				return;
-			}
-
-			// ... or not.
-			if ( !method && !isInput ) {
-
-				// Default arbitrarily to 'html'.
-				this.method = 'html';
-				this.target = target;
-
-				return;
-			}
-		}
-
-		throw new RangeError("Link: Invalid Link.");
-	}
-
-	// Provides external items with the slider value.
-	Link.prototype.write = function ( options, value, handle, slider, update ) {
-
-		// Don't synchronize this Link.
-		if ( this.update && update === false ) {
-			return;
-		}
-
-		// Convert the value to the slider stepping/range.
-		value = fromStepping( options, value );
-
-		// Format values for display.
-		value = this.format( value );
-
-		// Store the numerical value.
-		this.saved = value;
-
-		// Branch between serialization to a function or an object.
-		if ( typeof this.method === 'function' ) {
-			// When target is undefined, the target was a function.
-			// In that case, provided the slider as the calling scope.
-			// Use [0] to get the DOM element, not the $ instance.
-			this.method.call( this.target[0] || slider[0], value, handle, slider );
-		} else {
-			this.target[ this.method ]( value, handle, slider );
-		}
-	};
-
-	// Parses slider value to user defined display.
-	Link.prototype.format = function ( a ) {
-		return this.formatting.to(a);
-	};
-
-	// Converts a formatted value back to a real number.
-	Link.prototype.valueOf = function ( a ) {
-		return this.formatting.from(a);
-	};
-
-
 // Input validation
 
 	function testStep ( parsed, entry ) {
 
 		if ( !isNumeric( entry ) ) {
-			throwError("'step' is not numeric.");
+			throw new Error("noUiSlider: 'step' is not numeric.");
 		}
 
 		// The step option can still be used to set stepping
@@ -648,7 +269,13 @@
 
 		// Filter incorrect input.
 		if ( typeof entry !== 'object' || $.isArray(entry) ) {
-			throwError("'range' is not an object.");
+			throw new Error("noUiSlider: 'range' is not an object.");
+		}
+
+		// Catch missing start or end.
+		if ( entry['min'] === undefined ||
+				entry['max'] === undefined ) {
+			throw new Error("noUiSlider: Missing 'min' or 'max' in 'range'.");
 		}
 
 		// Loop all entries.
@@ -663,7 +290,7 @@
 
 			// Reject any invalid input.
 			if ( !$.isArray( value ) ){
-				throwError("'range' contains invalid value.");
+				throw new Error("noUiSlider: 'range' contains invalid value.");
 			}
 
 			// Covert min/max syntax to 0 and 100.
@@ -677,7 +304,7 @@
 
 			// Check for correct input.
 			if ( !isNumeric( percentage ) || !isNumeric( value[0] ) ) {
-				throwError("'range' value isn't numeric.");
+				throw new Error("noUiSlider: 'range' value isn't numeric.");
 			}
 
 			// Store values.
@@ -725,7 +352,7 @@
 		// Validate input. Values aren't tested, the internal Link will do
 		// that and provide a valid location.
 		if ( !$.isArray( entry ) || !entry.length || entry.length > 2 ) {
-			throwError("'start' option is incorrect.");
+			throw new Error("noUiSlider: 'start' option is incorrect.");
 		}
 
 		// Store the number of handles.
@@ -742,7 +369,7 @@
 		parsed.snap = entry;
 
 		if ( typeof entry !== 'boolean' ){
-			throwError("'snap' option must be a boolean.");
+			throw new Error("noUiSlider: 'snap' option must be a boolean.");
 		}
 	}
 
@@ -757,7 +384,7 @@
 		} else if ( entry === false ) {
 			parsed.connect = 0;
 		} else {
-			throwError("'connect' option was doesn't match handle count.");
+			throw new Error("noUiSlider: 'connect' option doesn't match handle count.");
 		}
 	}
 
@@ -773,14 +400,14 @@
 			parsed.ort = 1;
 			break;
 		  default:
-			throwError("'orientation' option is invalid.");
+			throw new Error("noUiSlider: 'orientation' option is invalid.");
 		}
 	}
 
 	function testMargin ( parsed, entry ) {
 
 		if ( parsed.xPct.length > 2 ) {
-			throwError("'margin' option is only supported on linear sliders.");
+			throw new Error("noUiSlider: 'margin' option is only supported on linear sliders.");
 		}
 
 		// Parse value to range and store. As xVal is checked
@@ -788,7 +415,7 @@
 		parsed.margin = fromPercentage(parsed.xVal, entry);
 
 		if ( !isNumeric(entry) ){
-			throwError("'margin' option must be numeric.");
+			throw new Error("noUiSlider: 'margin' option must be numeric.");
 		}
 	}
 
@@ -806,7 +433,7 @@
 			parsed.connect = [0,2,1,3][parsed.connect];
 			break;
 		  default:
-			throwError("'direction' option was not recognized.");
+			throw new Error("noUiSlider: 'direction' option was not recognized.");
 		}
 	}
 
@@ -814,7 +441,7 @@
 
 		// Make sure the input is a string.
 		if ( typeof entry !== 'string' ) {
-			throwError("'behaviour' must be a string containing options.");
+			throw new Error("noUiSlider: 'behaviour' must be a string containing options.");
 		}
 
 		// Check if the string contains any keywords.
@@ -837,32 +464,26 @@
 	function testSerialization ( parsed, entry, sliders ) {
 
 		parsed.ser = [ entry['lower'], entry['upper'] ];
-		parsed.formatting = new Format( entry['format'] );
+		parsed.formatting = entry['format'];
 
-		$.each( parsed.ser, function( i, a ){
+		$.each( parsed.ser, function( index, linkInstances ){
 
 			// Check if the provided option is an array.
-			if ( !$.isArray(a) ) {
-				throwError("'serialization."+(!i?'lower':'upper')+"' must be an array.");
+			if ( !$.isArray(linkInstances) ) {
+				throw new Error("noUiSlider: 'serialization."+(!index ? 'lower' : 'upper')+"' must be an array.");
 			}
 
-			$.each(a, function(){
+			$.each(linkInstances, function(){
 
 				// Check if entry is a Link.
-				if ( !(this instanceof Link) ) {
-					throwError("'serialization."+(!i?'lower':'upper')+"' can only contain Link instances.");
+				if ( !(this instanceof $.Link) ) {
+					throw new Error("noUiSlider: 'serialization."+(!index ? 'lower' : 'upper')+"' can only contain Link instances.");
 				}
 
-				// Assign other properties.
-				this.N = i;
-				this.obj = sliders;
-				this.scope = this.scope || sliders;
-
-				// Run internal validator.
-				this.formatting = new Format($.extend({}
-					,entry['format']
-					,this.formatting
-				));
+				// Assign properties.
+				this.setIndex ( index );
+				this.setObject( sliders );
+				this.setFormatting( entry['format'] );
 			});
 		});
 
@@ -897,25 +518,26 @@
 			,margin: 0
 		}, tests;
 
+		// Tests are executed in the order they are presented here.
 		tests = {
 			'step': { r: false, t: testStep },
-			'range': { r: true, t: testRange },
 			'start': { r: true, t: testStart },
-			'snap': { r: false, t: testSnap },
 			'connect': { r: true, t: testConnect },
+			'direction': { r: true, t: testDirection },
+			'range': { r: true, t: testRange },
+			'snap': { r: false, t: testSnap },
 			'orientation': { r: false, t: testOrientation },
 			'margin': { r: false, t: testMargin },
-			'direction': { r: true, t: testDirection },
 			'behaviour': { r: true, t: testBehaviour },
 			'serialization': { r: true, t: testSerialization }
 		};
 
 		// Set defaults where applicable.
 		options = $.extend({
-			 'connect': false
-			,'direction': 'ltr'
-			,'behaviour': 'tap'
-			,'orientation': 'horizontal'
+			'connect': false,
+			'direction': 'ltr',
+			'behaviour': 'tap',
+			'orientation': 'horizontal'
 		}, options);
 
 		// Make sure the test for serialization runs.
@@ -931,11 +553,12 @@
 		$.each( tests, function( name, test ){
 
 			if ( options[name] === undefined ) {
+
 				if ( test.r ) {
-					throwError("'" + name + "' is required.");
-				} else {
-					return true;
+					throw new Error("noUiSlider: '" + name + "' is required.");
 				}
+
+				return true;
 			}
 
 			test.t( parsed, options[name], sliders );
@@ -973,7 +596,8 @@
 		// If the Link requires creation of a new element,
 		// create this element and return a new Link instance.
 		if ( link.el ) {
-			link = new Link({
+
+			link = new $.Link({
 				'target': $(link.el).clone().appendTo( handle ),
 				'method': link.method,
 				'format': link.formatting
@@ -987,15 +611,14 @@
 	// Loop all links for a handle.
 	function addElements ( elements, handle, formatting ) {
 
-		var index, list = [];
+		var index, list = [], standard = new $.Link({}, true);
 
 		// Use the Link interface to provide unified
 		// formatting for the .val() method.
-		list.push(
-			new Link({
-				'format': formatting
-			}, true)
-		);
+		standard.setFormatting(formatting);
+
+		// The list now contains at least one element.
+		list.push( standard );
 
 		// Loop all links in either 'lower' or 'upper'.
 		for ( index = 0; index < elements.length; index++ ) {
@@ -1159,8 +782,9 @@ function closure ( target, options, originalOptions ){
 
 		// Write values to serialization Links.
 		// Convert the value to the correct relative representation.
+		// Convert the value to the slider stepping/range.
 		$($Serialization[n]).each(function(){
-			this.write( options, to, handle.children(), $Target );
+			this.write( fromStepping( options, to ), handle.children(), $Target );
 		});
 
 		return true;
@@ -1420,7 +1044,7 @@ function closure ( target, options, originalOptions ){
 // Initialize slider
 
 	// Throw an error if the slider was already initialized.
-	if ( !$Target.is(':empty') ) {
+	if ( $Target.hasClass(Classes[0]) ) {
 		throw new Error('Slider was already initialized.');
 	}
 
@@ -1440,9 +1064,24 @@ function closure ( target, options, originalOptions ){
 // Methods
 
 	// Set the slider value.
-	target.vSet = function ( values, callback, link, update, animate ){
+	/** @expose */
+	target.vSet = function ( ) {
 
-		var i, to;
+		var args = Array.prototype.slice.call( arguments, 0 ),
+			callback, link, update, animate,
+			i, count, actual, to, values = asArray( args[0] );
+
+		// Extract modifiers for value method.
+		if ( typeof args[1] === 'object' ) {
+			callback = args[1]['set'];
+			link = args[1]['link'];
+			update = args[1]['update'];
+			animate = args[1]['animate'];
+
+		// Support the 'true' option.
+		} else if ( args[1] === true ) {
+			callback = true;
+		}
 
 		// The RTL settings is implemented by reversing the front-end,
 		// internal mechanisms are the same.
@@ -1455,13 +1094,19 @@ function closure ( target, options, originalOptions ){
 			addClassFor( $Target, Classes[14], 300 );
 		}
 
+		// Determine how often to set the handles.
+		count = $Handles.length > 1 ? 3 : 1;
+		if ( values.length === 1 ) {
+			count = 1;
+		}
+
 		// If there are multiple handles to be set run the setting
 		// mechanism twice for the first handle, to make sure it
 		// can be bounced of the second one properly.
-		for ( i = 0; i < ( $Handles.length > 1 ? 3 : 1 ); i++ ) {
+		for ( i = 0; i < count; i++ ) {
 
 			to = link || $Serialization[i%2][0];
-			to = to.valueOf( values[i%2] );
+			to = to.getValue( values[i%2] );
 
 			if ( to === false ) {
 				continue;
@@ -1481,10 +1126,15 @@ function closure ( target, options, originalOptions ){
 			}
 
 			// Reset the input if it doesn't match the slider.
-			$($Serialization[i%2]).each(function(){
+			$($Serialization[i%2]).each(function(index){
+
+				if (!index) {
+					actual = this.actual;
+					return true;
+				}
+
 				this.write(
-					options,
-					$Locations[i%2],
+					actual,
 					$Handles[i%2].children(),
 					$Target,
 					update
@@ -1501,7 +1151,8 @@ function closure ( target, options, originalOptions ){
 	};
 
 	// Get the slider value.
-	target.vGet = function ( ){
+	/** @expose */
+	target.vGet = function ( ) {
 
 		var i, retour = [];
 
@@ -1515,7 +1166,7 @@ function closure ( target, options, originalOptions ){
 			return retour[0];
 		}
 
-		if ( options.dir && options.handles > 1 ) {
+		if ( options.dir ) {
 			return retour.reverse();
 		}
 
@@ -1523,7 +1174,8 @@ function closure ( target, options, originalOptions ){
 	};
 
 	// Destroy the slider and unbind all events.
-	target.destroy = function ( ){
+	/** @expose */
+	target.destroy = function ( ) {
 
 		// Loop all linked serialization objects and unbind all
 		// events in the noUiSlider namespace.
@@ -1560,7 +1212,7 @@ function closure ( target, options, originalOptions ){
 
 		// Throw error if group is empty.
 		if ( !this.length ){
-			throwError("Can't initialize slider on empty selection.");
+			throw new Error("noUiSlider: Can't initialize slider on empty selection.");
 		}
 
 		// Test the options once, not for every slider.
@@ -1596,55 +1248,44 @@ function closure ( target, options, originalOptions ){
 		});
 	}
 
+	// Access the internal getting and setting methods based on argument count.
+	function value ( ) {
+		return this[0][ !arguments.length ? 'vGet' : 'vSet' ].apply(this[0], arguments);
+	}
 
-	// Expose serialization constructor.
+	// Override the .val() method. Test every element. Is it a slider? Go to
+	// the slider value handling. No? Use the standard method.
+	// Note how $.fn.val extects 'this' to be an instance of $. For convenience,
+	// the above 'value' function does too.
+	$.fn.val = function ( ) {
+
+		// this === instanceof $
+
+		function valMethod( a ){
+			return a.hasClass(Classes[0]) ? value : $val;
+		}
+
+		var args = arguments,
+			first = $(this[0]);
+
+		if ( !arguments.length ) {
+			return valMethod(first).call(first);
+		}
+
+		// Return the set so it remains chainable
+		return this.each(function(){
+			valMethod($(this)).apply($(this), args);
+		});
+	};
+
+// Remap the serialization constructor for legacy support.
 	/** @expose */
-	$.noUiSlider = { 'Link': Link };
+	$.noUiSlider = { 'Link': $.Link };
 
-	// Extend jQuery/Zepto with the noUiSlider method.
+// Extend jQuery/Zepto with the noUiSlider method.
 	/** @expose */
 	$.fn.noUiSlider = function ( options, re ) {
 		return ( re ? rebuild : initialize ).call(this, options);
-	};
-
-	$.fn.val = function ( ) {
-
-		// Convert the function arguments to an array.
-		var args = Array.prototype.slice.call( arguments, 0 ),
-			set, link, update, animate;
-
-		// Test if there are arguments, and if not, call the 'get' method.
-		if ( !args.length ) {
-
-			// Determine whether to use the native val method.
-			if ( this.hasClass(Classes[0]) ) {
-				return this[0].vGet();
-			}
-
-			return $val.apply( this );
-		}
-
-		// Extract modifiers for value method.
-		if ( typeof args[1] === 'object' ) {
-			set = args[1]['set'];
-			link = args[1]['link'];
-			update = args[1]['update'];
-			animate = args[1]['animate'];
-
-		// Support the 'true' option.
-		} else if ( args[1] === true ) {
-			set = true;
-		}
-
-		// Loop all individual items, and handle setting appropriately.
-		return this.each(function(){
-
-			if ( $(this).hasClass(Classes[0]) ) {
-				this.vSet( asArray(args[0]), set, link, update, animate );
-			} else {
-				$val.apply( $(this), args );
-			}
-		});
 	};
 
 }( window['jQuery'] || window['Zepto'] ));
