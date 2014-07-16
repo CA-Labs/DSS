@@ -4,16 +4,24 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.directive('riskSlider', function(){
+dssApp.directive('riskSlider', ['AssetsService', function(AssetsService){
     return {
         restrict: 'E',
         templateUrl: 'dss/partials/risks/slider.html',
         scope: {
             risk: '=',
-            multiple: '=',
-            taAssets: '='
+            multiple: '='
         },
         link: function(scope, element, attrs){
+
+            scope.taAssets = AssetsService.getTA();
+            scope.$watch('taAssets', function(newTaAssets, oldTaAssets){
+                //TODO: bla bla bla...
+            }, true);
+
+            //Auxiliar lists to track slider values
+            scope.riskLikelihoodConsequenceMultiple = [];
+            scope.riskLikelihoodConsequenceNotMultiple = [];
 
             //List of available categories to categorize risks level
             var CATEGORY = {
@@ -71,6 +79,11 @@ dssApp.directive('riskSlider', function(){
                 toggle: 'hover'
             });
 
+            //When the user selects whether to specify risks per TA or as a whole, restart the likelihood/consequences model
+            scope.$on('riskTypeSelected', function(scope, element, riskType){
+                //TODO: bla bla bla...
+            });
+
             //We can specify risks for each TA (scope.multiple == true)
             scope.$on('repeatDone', function(scope, element, attrs){
                 //Set very low class by default on initialization
@@ -116,6 +129,7 @@ dssApp.directive('riskSlider', function(){
                     }
                 });
             }
+
         }
     };
-});
+}]);

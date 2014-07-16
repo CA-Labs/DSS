@@ -1,5 +1,6 @@
 <!-- When switch is on, specify risk for all TA as a whole -->
 <div style="margin-top: 10px" ng-show="!multiple">
+    <div ng-if="!multiple" on-risks-type="single"></div>
     <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
     <br/>
     <div class="col-lg-6" style="margin-top: 10px;">
@@ -15,6 +16,7 @@
 </div>
 <!-- When switch is off, specify risk for all TA (independently, for each one) -->
 <div style="margin-top: 10px" ng-show="multiple">
+    <div ng-if="multiple" on-risks-type="multiple"></div>
     <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
     <br/>
     <div ng-repeat="taAsset in taAssets" on-repeat-done="repeatDone" class="col-lg-12">

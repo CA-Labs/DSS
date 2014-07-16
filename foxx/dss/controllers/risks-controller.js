@@ -69,8 +69,8 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
     $scope.$watch('taAssets', function(newTaAssets){
        if(newTaAssets.length == 0){
            $scope.switch.isSwitchSelected = true;
-       };
-        $scope.taAssets = newTaAssets;
+       }
+       $scope.taAssets = newTaAssets;
     });
 
     $scope.toggleActivation = function(){
