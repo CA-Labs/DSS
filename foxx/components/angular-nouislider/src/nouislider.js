@@ -15,7 +15,7 @@ angular.module('nouislider', []).directive('slider', function () {
         link: {
             pre: function (scope, element, attrs) {
                 console.log(scope);
-                console.log('pre in angular directive');
+                console.log('child pre');
                 var callback, fromParsed, parsedValue, slider, toParsed;
                 slider = $(element);
                 callback = scope.callback ? scope.callback : 'slide';
@@ -85,7 +85,7 @@ angular.module('nouislider', []).directive('slider', function () {
                 }
             },
             post: function(){
-                console.log('post in slider directive');
+                console.log('child post');
             }
         }
     }

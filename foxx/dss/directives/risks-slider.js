@@ -10,20 +10,19 @@ dssApp.directive('riskSlider', ['AssetsService', function(AssetsService){
         templateUrl: 'dss/partials/risks/slider.html',
         scope: {
             risk: '=',
-            multiple: '='
+            multiple: '=',
+            index: '='
         },
         link: {
             pre: function(scope, element, attrs){
 
-                console.log('prelink in risk slider');
+                console.log(scope);
+                console.log('parent pre');
+
                 scope.taAssets = AssetsService.getTA();
                 scope.$watch('taAssets', function(newTaAssets, oldTaAssets){
                     //TODO: bla bla bla...
                 }, true);
-
-                //Auxiliar lists to track slider values
-                scope.riskLikelihoodConsequenceMultiple = [];
-                scope.riskLikelihoodConsequenceNotMultiple = [];
 
                 //List of available categories to categorize risks level
                 var CATEGORY = {
@@ -75,21 +74,34 @@ dssApp.directive('riskSlider', ['AssetsService', function(AssetsService){
                     return domElement;
                 };
 
-                var attributes = scope.$eval("{" + scope.risk.destination.attributes + "}");
+                scope.attributes = scope.$eval("{" + scope.risk.destination.attributes + "}");
 
                 $(".def-tip").popover({
                     toggle: 'hover'
                 });
 
-                scope.a = 0;
-                scope.b = 10;
-                scope.c = 1;
+                scope.$watch('riskLikelihood', function(newSliderValue, oldSliderValue){
+                    console.log('likelihood slider value changed for risk ' + scope.index);
+                });
 
-                scope.$watch('myModel', function(newSliderValue, oldSliderValue){
-                    console.log('Old was ' + oldSliderValue + ' and new is ' + newSliderValue);
+                scope.$watch('riskConsequence', function(newSliderValue, oldSliderValue){
+                    console.log('consequence slider value changed for risk ' + scope.index);
+                });
+
+                scope.$watch('riskTALikelihood', function(newSliderValue, oldSliderValue){
+                    console.log('riskTALikelihood slider value changed for risk ' + scope.index);
+                    console.log(scope);
+                });
+
+                scope.$watch('riskTAConsequence', function(newSliderValue, oldSliderValue){
+                    console.log('riskTAConsequence slider value changed for risk ' + scope.index);
+                    console.log(scope);
                 });
 
                 /**
+                scope.$watch('myModel', function(newSliderValue, oldSliderValue){
+                    console.log('Old was ' + oldSliderValue + ' and new is ' + newSliderValue);
+                });
 
                  //When the user selects whether to specify risks per TA or as a whole, restart the likelihood/consequences model
                  scope.$on('riskTypeSelected', function(scope, element, riskType){
@@ -145,7 +157,7 @@ dssApp.directive('riskSlider', ['AssetsService', function(AssetsService){
 
             },
             post: function(){
-                console.log('postlink in risk slider');
+                console.log('parent post');
             }
         }
     };

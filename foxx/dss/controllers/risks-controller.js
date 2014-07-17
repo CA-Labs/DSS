@@ -4,11 +4,11 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'AssetsService', '$timeout', function($scope, ArangoDBService, flash, AssetsService, $timeout){
+dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'AssetsService', 'RisksService', '$timeout', function($scope, ArangoDBService, flash, AssetsService, RisksService, $timeout){
 
     //Initialization
     $scope.potentialRisks = [];                         //List of current potential risks depending on BSOIA/TOIA assets selected by the user
-    $scope.risksSelected = AssetsService.getRisks();    //Risks selected by the user
+    $scope.risksSelected = RisksService.getRisks();    //Risks selected by the user
     $scope.switch = { isSwitchSelected: true };         //Switch button to allow evaluate risks for each TA
     $scope.taAssets = AssetsService.getTA();            //The selected TA assets
 
@@ -87,21 +87,21 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
 
     /**
      * Adds a new risk to the list of selected risks,
-     * by calling the Assets service.
+     * by calling the Risks service.
      * @param risk The risk to be added to the list of
      * selected risks.
      */
     $scope.addRisk = function(risk){
-        AssetsService.addRisk(risk);
+        RisksService.addRisk(risk);
     };
 
     /**
      * Removes a risk from the list of selected risks,
-     * by calling the Assets service.
+     * by calling the Risks service.
      * @param risk
      */
     $scope.removeRisk = function(risk){
-        AssetsService.removeRisk(risk);
+        RisksService.removeRisk(risk);
     };
 
 }]);

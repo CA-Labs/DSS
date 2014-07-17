@@ -21,6 +21,7 @@ module.exports = function (grunt) {
                         'foxx/dss/controllers/risks-controller.js',
                         'foxx/dss/controllers/main-controller.js',
                         'foxx/dss/services/assets-service.js',
+                        'foxx/dss/services/risks-service.js',
                         'foxx/dss/services/arangodb-service.js',
                         'foxx/dss/common/filters.js',
                         'foxx/dss/common/mainInterfaces.js',

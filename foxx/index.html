@@ -193,9 +193,9 @@
                                     <input name="risks-per-ta" bs-switch ng-model="switch.isSwitchSelected" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="ON" switch-off-text="OFF" switch-on-color="success" ng-change="toggleActivation()"/>
                                     <h4>Risks Selected</h4>
                                 </div>
-                                <div class="list-group-item selected-risk risk-container" href="#" ng-repeat="risk in risksSelected">
+                                <div class="list-group-item selected-risk risk-container" href="#" ng-repeat="risk in risksSelected track by $index">
                                     <span class="glyphicon glyphicon-remove remove-risk" ng-click="removeRisk(risk)">&nbsp;</span>
-                                    <risk-slider risk="risk" multiple="!switch.isSwitchSelected"></risk-slider>
+                                    <risk-slider risk="risk" multiple="!switch.isSwitchSelected" index="$index"></risk-slider>
                                     <!--
                                     <div ng-switch="risk.destination.representation">
                                         <div ng-switch-when="input">
