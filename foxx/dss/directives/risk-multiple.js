@@ -4,13 +4,18 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.directive('onRisksType', function(){
+/**
+ * Directive used to initialize risk sliders values on startup.
+ */
+dssApp.directive('onRisksType', ['$timeout', function($timeout){
     return {
         restrict: 'A',
-        scope: {},
+        scope: false,
         link: function(scope, element, attrs){
-            var risksType = attrs.onRisksType;
-            scope.$emit('riskTypeSelected', element, risksType);
+            $timeout(function(){
+                scope.$emit('sliderValueChanged', {slider: $(element.children().first()), value: $(element.children().first()).val()});
+            }, 10);
         }
     };
-});
+}]);
+

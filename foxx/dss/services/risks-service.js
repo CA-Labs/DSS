@@ -8,12 +8,13 @@ dssApp.service('RisksService', ['flash', function(flash){
 
     var risks = [];                             //The list of selected risks by the user.
 
-    var singleLikelihoodConsequence = [];       // An array of likelihood/consequences values (object with two keys), when
-                                                // risks must be evaluated as a whole and not per TA.
-                                                // The size of this array should be size(risks).
+    var risksLikelihoodConsequence = {};            //Likelihood/consequences values for each risk (as a whole) of the form
+                                                //riskname_likelihood/riskname_consequence
 
-    var multipleLikelihoodConsequence = [];     // An array of arrays of likelihood/consequences values (object with two keys),
-                                                // for each TA and risk. The size of this array should be size(risks)*size(TA).
+    var risksTALikelihoodConsequence = {};          //Likelihood/consequences values for each TA and risk of the form
+                                                //riskname_taAssetName_likelihood/riskname_taAssetName_consequence
+
+
     /**
      * Adds a risk to the list of selected risks.
      * @param risk The risk to be added.
@@ -56,30 +57,32 @@ dssApp.service('RisksService', ['flash', function(flash){
         return risks;
     };
 
-    this.addSingleLikelihoodConsequence = function(likelihood, consequence){
-        var newEntry = {likelihood: likelihood, consequence: consequence};
-        singleLikelihoodConsequence.push(newEntry);
+    this.addRiskLikelihood = function(riskName, likelihood){
+        console.log('adding risk likelihood...');
+        risksLikelihoodConsequence[riskName + '_likelihood'] = likelihood;
     };
 
-    /**
-     * Removes likelihood/consequence values for
-     * @param index
-     */
-    this.removeSingleLikelihoodConsequence = function(index){
-        if(index < 0 || singleLikelihoodConsequence.length == 0) {
-            flash.error = 'Invalid likelihood/consequence value to be removed.'
-            return;
-        } else {
-            if(index < singleLikelihoodConsequence){
-                singleLikelihoodConsequence.splice(index, 1);
-            } else {
-                flash.error = 'Invalid likelihood/consequence value to be removed (index out of bound)';
-            }
-        }
+    this.addRiskConsequence = function(riskName, consequence){
+        console.log('adding risk consequence...');
+        risksLikelihoodConsequence[riskName + '_consequence'] = consequence;
     };
 
-    this.getSingleLikelihoodConsequence = function(){
-        return singleLikelihoodConsequence;
-    }
+    this.addRiskTALikelihood = function(riskName, taAssetName, likelihood){
+        console.log('adding risk TA likelihood');
+        risksTALikelihoodConsequence[riskName + '_' + taAssetName+ '_likelihood'] = likelihood;
+    };
+
+    this.addRiskTAConsequence = function(riskName, taAssetName, consequence){
+        console.log('adding risk TA consequence');
+        risksTALikelihoodConsequence[riskName + '_' + taAssetName+ '_consequence'] = consequence;
+    };
+
+    this.getRisksLikelihoodConsequence = function(){
+        return risksLikelihoodConsequence;
+    };
+
+    this.getRisksTALikelihoodConsequence = function(){
+        return risksTALikelihoodConsequence;
+    };
 
 }]);

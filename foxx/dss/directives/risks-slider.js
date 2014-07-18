@@ -8,18 +8,10 @@ dssApp.directive('riskSlider', ['AssetsService', function(AssetsService){
     return {
         restrict: 'E',
         templateUrl: 'dss/partials/risks/slider.html',
-        scope: {
-            risk: '=',
-            multiple: '=',
-            index: '='
-        },
+        scope: false,
         link: {
             pre: function(scope, element, attrs){
 
-                console.log(scope);
-                console.log('parent pre');
-
-                scope.taAssets = AssetsService.getTA();
                 scope.$watch('taAssets', function(newTaAssets, oldTaAssets){
                     //TODO: bla bla bla...
                 }, true);
@@ -156,9 +148,7 @@ dssApp.directive('riskSlider', ['AssetsService', function(AssetsService){
                  */
 
             },
-            post: function(){
-                console.log('parent post');
-            }
+            post: angular.noop
         }
     };
 }]);

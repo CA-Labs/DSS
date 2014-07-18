@@ -14,8 +14,6 @@ angular.module('nouislider', []).directive('slider', function () {
         },
         link: {
             pre: function (scope, element, attrs) {
-                console.log(scope);
-                console.log('child pre');
                 var callback, fromParsed, parsedValue, slider, toParsed;
                 slider = $(element);
                 callback = scope.callback ? scope.callback : 'slide';
@@ -40,6 +38,10 @@ angular.module('nouislider', []).directive('slider', function () {
                         _ref = slider.val(), from = _ref[0], to = _ref[1];
                         fromParsed = parseFloat(from);
                         toParsed = parseFloat(to);
+
+                        //Propagate event upwards
+                        scope.$emit('sliderValueChanged', {slider: slider, value: slider.val()});
+
                         return scope.$apply(function () {
                             scope.ngFrom = fromParsed;
                             return scope.ngTo = toParsed;
@@ -53,6 +55,7 @@ angular.module('nouislider', []).directive('slider', function () {
                             ]);
                         }
                     });
+
                     return scope.$watch('ngTo', function (newVal, oldVal) {
                         if (newVal !== toParsed) {
                             return slider.val([
@@ -73,10 +76,15 @@ angular.module('nouislider', []).directive('slider', function () {
                     });
                     slider.on(callback, function () {
                         parsedValue = parseFloat(slider.val());
+
+                        //Propagate event upwards
+                        scope.$emit('sliderValueChanged', {slider: slider, value: slider.val()});
+
                         return scope.$apply(function () {
                             return scope.ngModel = parsedValue;
                         });
                     });
+
                     return scope.$watch('ngModel', function (newVal, oldVal) {
                         if (newVal !== parsedValue) {
                             return slider.val(newVal);
@@ -85,7 +93,7 @@ angular.module('nouislider', []).directive('slider', function () {
                 }
             },
             post: function(){
-                console.log('child post');
+                //
             }
         }
     }

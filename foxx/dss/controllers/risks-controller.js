@@ -4,13 +4,15 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'AssetsService', 'RisksService', '$timeout', function($scope, ArangoDBService, flash, AssetsService, RisksService, $timeout){
+dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'AssetsService', 'RisksService', '$timeout', '$interpolate', function($scope, ArangoDBService, flash, AssetsService, RisksService, $timeout, $interpolate){
 
     //Initialization
-    $scope.potentialRisks = [];                         //List of current potential risks depending on BSOIA/TOIA assets selected by the user
-    $scope.risksSelected = RisksService.getRisks();    //Risks selected by the user
-    $scope.switch = { isSwitchSelected: true };         //Switch button to allow evaluate risks for each TA
-    $scope.taAssets = AssetsService.getTA();            //The selected TA assets
+    $scope.potentialRisks = [];                                                                     //List of current potential risks depending on BSOIA/TOIA assets selected by the user
+    $scope.risksSelected = RisksService.getRisks();                                                 //Risks selected by the user
+    $scope.multiple = false;                                                                        //Switch button to allow evaluate risks for each TA
+    $scope.taAssets = AssetsService.getTA();                                                        //The selected TA assets
+    $scope.simpleRisksLikelihoodConsequence = RisksService.getRisksLikelihoodConsequence();         //Likelihood/Consequence values for simple risks model
+    $scope.multipleRisksLikelihoodConsequence = RisksService.getRisksTALikelihoodConsequence();     //Likelihood/Consequence values for multiple risks model
 
     /**
      * Event received when a BSOIA asset has been selected/removed
@@ -66,21 +68,29 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
      * asset.
      */
 
-    $scope.$watch('taAssets', function(newTaAssets){
-       if(newTaAssets.length == 0){
-           $scope.switch.isSwitchSelected = true;
-       }
-       $scope.taAssets = newTaAssets;
+    $scope.$watch('taAssets', function(newTaAssets, oldTaAssets){
+
+        //Check switch button status
+        if(newTaAssets.length == 0){
+            $scope.multiple = false;
+        }
+
+        //TODO: Update Risks service models, if required (taAssets might have been added/deleted)
+        $scope.taAssets = newTaAssets;
+    });
+
+    $scope.$watch('risksSelected', function(newRisks, oldRisks){
+        //TODO: Update Risks service models, if required (risks might have been added/deleted)
     });
 
     $scope.toggleActivation = function(){
-        if(!$scope.switch.isSwitchSelected){
+        if($scope.multiple){
             if($scope.taAssets.length == 0){
                 flash.warn = 'You can\'t define risks per each tangible asset since you did not specify any of them';
-                $scope.switch.isSwitchSelected = true;
+                $scope.multiple = false;
                 return;
             } else {
-                $scope.switch.isSwitchSelected = false;
+                $scope.multiple = true;
             }
         }
     };
@@ -103,5 +113,54 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
     $scope.removeRisk = function(risk){
         RisksService.removeRisk(risk);
     };
+
+    /**
+     * Event received when a certain slider value has changed.
+     * It updates the corresponding model in the Risks service
+     * so that we can track all risk lihelihood/consequence slider
+     * values.
+     */
+    $scope.$on('sliderValueChanged', function($event, element){
+
+        //Current slider value
+        var sliderValue = element.value;
+
+        //Retrieve the unique hash key to know what must be updated in risks services, wheter simple or multiple models
+        var hashKey = element.slider.data('hash-key');
+        var hashAttributes = hashKey.split('_');
+
+        if(hashAttributes.length < 2){
+            flash.error = 'Incorrect hash key for slider value!';
+            return;
+        }
+
+        var riskName = hashAttributes[0];
+
+        if($scope.multiple){
+            //Look up what TA asset we are referring to
+            var taKey = hashAttributes[1];
+            //Likelihood or consequence?
+            var valueToUpdate = hashAttributes[2];
+            if(valueToUpdate == "likelihood"){
+                //Update likelihood for a certain TA in multiple model
+                RisksService.addRiskTALikelihood(riskName, taKey, sliderValue);
+            } else {
+                //Update consequence for a certain TA in multiple model
+                RisksService.addRiskTAConsequence(riskName, taKey, sliderValue);
+            }
+        } else {
+            //Likelihood or consequence?
+            var valueToUpdate = hashAttributes[1];
+            if(valueToUpdate == "likelihood"){
+                //Update likelihood in simple model
+                RisksService.addRiskLikelihood(riskName, sliderValue)
+            } else {
+                //Update consequence in simple model
+                RisksService.addRiskConsequence(riskName, sliderValue);
+            }
+        }
+        console.log($scope.simpleRisksLikelihoodConsequence);
+        console.log($scope.multipleRisksLikelihoodConsequence);
+    });
 
 }]);
