@@ -14,6 +14,57 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
     $scope.simpleRisksLikelihoodConsequence = RisksService.getRisksLikelihoodConsequence();         //Likelihood/Consequence values for simple risks model
     $scope.multipleRisksLikelihoodConsequence = RisksService.getRisksTALikelihoodConsequence();     //Likelihood/Consequence values for multiple risks model
 
+    //List of available categories to categorize risks level
+    var CATEGORY = {
+        VERY_LOW: {
+            class: 'risk-very-low',
+            name: 'Very low'
+        },
+        LOW: {
+            class: 'risk-low',
+            name: 'Low'
+        },
+        NORMAL: {
+            class: 'risk-normal',
+            name: 'Normal'
+        },
+        HIGH: {
+            class: 'risk-high',
+            name: 'High'
+        },
+        VERY_HIGH: {
+            class: 'risk-very-high',
+            name: 'Very high'
+        }
+    };
+
+    //Auxiliar function to map scalar values to discrete ones (class names)
+    var numberToCategoryClass = function(n){
+        if(n < 2 ) return CATEGORY.VERY_LOW.class;
+        if(n == 2 || n == 3) return CATEGORY.LOW.class;
+        if(n == 4 || n == 5 || n == 6) return CATEGORY.NORMAL.class;
+        if(n == 7 || n == 8) return CATEGORY.HIGH.class;
+        if(n > 8) return CATEGORY.VERY_HIGH.class;
+    };
+
+    //Auxiliar function to map scalar values to discrete ones (names)
+    var numberToCategoryName = function(n){
+        if(n < 2 ) return CATEGORY.VERY_LOW.name;
+        if(n == 2 || n == 3) return CATEGORY.LOW.name;
+        if(n == 4 || n == 5 || n == 6) return CATEGORY.NORMAL.name;
+        if(n == 7 || n == 8) return CATEGORY.HIGH.name;
+        if(n > 8) return CATEGORY.VERY_HIGH.name;
+    };
+
+    //Auxiliar function to clear categories
+    var removeClasses = function(domElement){
+        for(category in CATEGORY){
+            domElement.removeClass(CATEGORY[category].class);
+        }
+        return domElement;
+    };
+
+
     /**
      * Event received when a BSOIA asset has been selected/removed
      * by the user. This allows to recompute the potential risks.
@@ -68,6 +119,7 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
      * asset.
      */
 
+    /*
     $scope.$watch(function(){
         return $scope.simpleRisksLikelihoodConsequence;
     }, function(newVal, oldVal){
@@ -83,10 +135,11 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
         console.log('old was', oldVal);
         console.log('new is', newVal);
     }, true);
+    */
 
     $scope.$watch('taAssets', function(newTaAssets, oldTaAssets){
 
-        console.log('taAssets change');
+        //console.log('taAssets change');
 
         //Check switch button status
         if(newTaAssets.length == 0){
@@ -131,9 +184,9 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
         //Add keys
         _.each(keysToAdd, function(key){
             _.each($scope.risksSelected, function(risk){
-                //var attrs = JSON.parse('{' + risk.destination.attributes + '}');
-                RisksService.addRiskTALikelihood(risk.destination.name, key, 0);
-                RisksService.addRiskTAConsequence(risk.destination.name, key, 0);
+                var attrs = $scope.$eval("{" + risk.destination.attributes + "}");
+                RisksService.addRiskTALikelihood(risk.destination.name, key, attrs.start);
+                RisksService.addRiskTAConsequence(risk.destination.name, key, attrs.start);
             })
         });
 
@@ -143,7 +196,7 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
 
     $scope.$watch('risksSelected', function(newRisks, oldRisks){
 
-        console.log('risksSelected change');
+        //console.log('risksSelected change');
 
         //Update risks simple model
         var keysToRemove = [];
@@ -170,8 +223,8 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
                 }
             });
             if(!found){
-                //var attrs = JSON.parse('{' + newRisk.destination.attributes + '}');
-                keysToAdd.push({name: newRisk.destination.name, value: 0});
+                var attrs = $scope.$eval("{" + newRisk.destination.attributes + "}");
+                keysToAdd.push({name: newRisk.destination.name, value: attrs.start});
             }
         });
 
@@ -237,9 +290,13 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
         //Current slider value
         var sliderValue = element.value;
 
+        //Update category tag with current slider value
+        removeClasses(element.slider.children().first())
+            .addClass(numberToCategoryClass(sliderValue))
+            .text(numberToCategoryName(sliderValue));
+
         //Retrieve the unique hash key to know what must be updated in risks services, wheter simple or multiple models
         var hashKey = element.slider.data('hash-key');
-        console.log('hash key is', hashKey);
         var hashAttributes = hashKey.split('_');
 
         if(hashAttributes.length < 2){

@@ -63,7 +63,7 @@ dssApp.service('RisksService', ['flash', function(flash){
      * @param likelihood The likelihood value of that risk.
      */
     this.addRiskLikelihood = function(riskName, likelihood){
-        console.log('adding risk likelihood in ' + riskName);
+        //console.log('adding risk likelihood in ' + riskName);
         risksLikelihoodConsequence[riskName + '_likelihood'] = parseInt(likelihood);
     };
 
@@ -77,13 +77,13 @@ dssApp.service('RisksService', ['flash', function(flash){
         var regex = new RegExp(riskName + '[\\w\\s]*', 'i');
         for(key in risksLikelihoodConsequence){
             if(regex.exec(key)){
-                console.log('removing key ' + key + ' in simple model');
+                //console.log('removing key ' + key + ' in simple model');
                 delete risksLikelihoodConsequence[key];
             }
         }
         for(key in risksTALikelihoodConsequence){
             if(regex.exec(key)){
-                console.log('removing key ' + key + ' in multiple model');
+                //console.log('removing key ' + key + ' in multiple model');
                 delete risksTALikelihoodConsequence[key];
             }
         }
@@ -95,7 +95,7 @@ dssApp.service('RisksService', ['flash', function(flash){
      * @param consequence The consequence value of that risk.
      */
     this.addRiskConsequence = function(riskName, consequence){
-        console.log('adding risk consequence for ' + riskName + ' in simple model');
+        //console.log('adding risk consequence for ' + riskName + ' in simple model');
         risksLikelihoodConsequence[riskName + '_consequence'] = parseInt(consequence);
     };
 
@@ -106,7 +106,7 @@ dssApp.service('RisksService', ['flash', function(flash){
      * @param likelihood The likelihood value.
      */
     this.addRiskTALikelihood = function(riskName, taAssetName, likelihood){
-        console.log('adding risk likelihood for ' + riskName + '/' + taAssetName + ' in multiple model');
+        //console.log('adding risk likelihood for ' + riskName + '/' + taAssetName + ' in multiple model');
         risksTALikelihoodConsequence[riskName + '_' + taAssetName + '_likelihood'] = parseInt(likelihood);
     };
 
@@ -117,7 +117,7 @@ dssApp.service('RisksService', ['flash', function(flash){
      * @param consequence The consequence value.
      */
     this.addRiskTAConsequence = function(riskName, taAssetName, consequence){
-        console.log('adding risk consequence for ' + riskName + '/' + taAssetName + ' in multiple model');
+        //console.log('adding risk consequence for ' + riskName + '/' + taAssetName + ' in multiple model');
         risksTALikelihoodConsequence[riskName + '_' + taAssetName + '_consequence'] = parseInt(consequence);
     };
 
@@ -130,7 +130,7 @@ dssApp.service('RisksService', ['flash', function(flash){
         var regex = new RegExp('[\\w\\s]+_' + taAssetName + '_[\\w\\s]+', 'i');
         for(key in risksTALikelihoodConsequence){
             if(regex.exec(key)){
-                console.log('removing key ' + key + ' in multiple model');
+                //console.log('removing key ' + key + ' in multiple model');
                 delete risksTALikelihoodConsequence[key];
             }
         }
