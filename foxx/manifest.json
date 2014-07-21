@@ -5,7 +5,8 @@
   "thumbnail": "thumbnail.png",
   "description": "Decision Support System for MODAClouds European project",
   "controllers": {
-    "/api": "app.js"
+    "/api": "app.js",
+    "/crud": "crud.js"
   },
   "setup": "scripts/setup.js",
   "teardown": "scripts/teardown.js",
