@@ -220,13 +220,13 @@
                                     <div style="margin-top: 10px" ng-show="multiple">
                                         <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
                                         <br/>
-                                        <div ng-repeat="taAsset in taAssets track by $index" on-repeat-done="repeatDone" class="col-lg-12">
+                                        <div ng-repeat="taAsset in taAssets" on-repeat-done="repeatDone" class="col-lg-12">
                                             <span class="def-tip" data-placement="right" data-content="{{ taAsset.cloudResource._serviceType }}"><strong>{{taAsset.cloudResource._serviceName}}</strong></span>
                                             <br/>
                                             <div class="col-lg-6" style="margin-top: 10px; display: block;">
                                                 <p style="margin-bottom: 15px">Likelihood: </p>
                                                 <div on-risks-type="multiple">
-                                                    <div style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_likelihood'}}" ng-model="likelihood$parent.index$index" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
+                                                    <div style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_likelihood'}}" ng-model="likelihood" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
                                                         <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                                                     </div>
                                                 </div>
@@ -234,7 +234,7 @@
                                             <div class="col-lg-6" style="margin-top: 10px; display: block">
                                                 <p style="margin-bottom: 15px;">Consequence :</p>
                                                 <div on-risks-type="multiple">
-                                                    <div style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_consequence'}}" ng-model="consequence$parent.index$index" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
+                                                    <div style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_consequence'}}" ng-model="consequence" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
                                                         <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                                                     </div>
                                                 </div>
