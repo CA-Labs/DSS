@@ -68,20 +68,132 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
      * asset.
      */
 
+    $scope.$watch(function(){
+        return $scope.simpleRisksLikelihoodConsequence;
+    }, function(newVal, oldVal){
+        console.log('simple model has changed');
+        console.log('old was', oldVal);
+        console.log('new is', newVal);
+    }, true);
+
+    $scope.$watch(function(){
+        return $scope.multipleRisksLikelihoodConsequence;
+    }, function(newVal, oldVal){
+        console.log('multiple model has changed');
+        console.log('old was', oldVal);
+        console.log('new is', newVal);
+    }, true);
+
     $scope.$watch('taAssets', function(newTaAssets, oldTaAssets){
+
+        console.log('taAssets change');
 
         //Check switch button status
         if(newTaAssets.length == 0){
             $scope.multiple = false;
         }
 
-        //TODO: Update Risks service models, if required (taAssets might have been added/deleted)
+        //Update risks multiple model
+        var keysToRemove = [];
+        var keysToAdd = [];
+
+        //Keys removed
+        _.each(oldTaAssets, function(oldAsset){
+            var found = false;
+            _.each(newTaAssets, function(newAsset){
+                if(newAsset.cloudResource._serviceName == oldAsset.cloudResource._serviceName){
+                    found = true;
+                }
+            });
+            if(!found){
+                keysToRemove.push(oldAsset.cloudResource._serviceName);
+            }
+        });
+
+        //Keys added
+        _.each(newTaAssets, function(newTaAsset) {
+            var found = false;
+            _.each(oldTaAssets, function (oldTaAsset) {
+                if(oldTaAsset.cloudResource._serviceName == newTaAsset.cloudResource._serviceName){
+                    found = true;
+                }
+            });
+            if(!found){
+                keysToAdd.push(newTaAsset.cloudResource._serviceName);
+            }
+        });
+
+        //Remove keys
+        _.each(keysToRemove, function(key){
+            RisksService.removeRiskTALikelihoodConsequence(key);
+        });
+
+        //Add keys
+        _.each(keysToAdd, function(key){
+            _.each($scope.risksSelected, function(risk){
+                //var attrs = JSON.parse('{' + risk.destination.attributes + '}');
+                RisksService.addRiskTALikelihood(risk.destination.name, key, 0);
+                RisksService.addRiskTAConsequence(risk.destination.name, key, 0);
+            })
+        });
+
         $scope.taAssets = newTaAssets;
-    });
+
+    }, true);
 
     $scope.$watch('risksSelected', function(newRisks, oldRisks){
-        //TODO: Update Risks service models, if required (risks might have been added/deleted)
-    });
+
+        console.log('risksSelected change');
+
+        //Update risks simple model
+        var keysToRemove = [];
+        var keysToAdd = [];
+
+        //Keys removed
+        _.each(oldRisks, function(oldRisk){
+            var found = false;
+            _.each(newRisks, function(newRisk){
+                if(newRisk.destination.name == oldRisk.destination.name){
+                    found = true;
+                }
+            });
+            if(!found){
+                keysToRemove.push(oldRisk.destination.name);
+            }
+        });
+        //Keys added
+        _.each(newRisks, function(newRisk){
+            var found = false;
+            _.each(oldRisks, function(oldRisk){
+                if(oldRisk.destination.name == newRisk.destination.name){
+                    found = true;
+                }
+            });
+            if(!found){
+                //var attrs = JSON.parse('{' + newRisk.destination.attributes + '}');
+                keysToAdd.push({name: newRisk.destination.name, value: 0});
+            }
+        });
+
+
+        //Remove keys
+        _.each(keysToRemove, function(key){
+            RisksService.removeRiskLikelihoodConsequence(key);
+        });
+
+        //Add keys
+        _.each(keysToAdd, function(key){
+            RisksService.addRiskLikelihood(key.name, key.value);
+            RisksService.addRiskConsequence(key.name, key.value);
+            _.each($scope.taAssets, function(taAsset){
+                RisksService.addRiskTALikelihood(key.name, taAsset.cloudResource._serviceName, key.value);
+                RisksService.addRiskTAConsequence(key.name, taAsset.cloudResource._serviceName, key.value);
+            });
+        });
+
+        $scope.risksSelected = newRisks;
+
+    }, true);
 
     $scope.toggleActivation = function(){
         if($scope.multiple){
@@ -127,6 +239,7 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
 
         //Retrieve the unique hash key to know what must be updated in risks services, wheter simple or multiple models
         var hashKey = element.slider.data('hash-key');
+        console.log('hash key is', hashKey);
         var hashAttributes = hashKey.split('_');
 
         if(hashAttributes.length < 2){
@@ -159,8 +272,7 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
                 RisksService.addRiskConsequence(riskName, sliderValue);
             }
         }
-        console.log($scope.simpleRisksLikelihoodConsequence);
-        console.log($scope.multipleRisksLikelihoodConsequence);
+
     });
 
 }]);
