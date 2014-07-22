@@ -1,0 +1,25 @@
+{
+  "name": "dss",
+  "version": "0.0.1",
+  "author": "Jacek Dominiak, Jordi Aranda",
+  "thumbnail": "thumbnail.png",
+  "description": "Decision Support System for MODAClouds European project",
+  "controllers": {
+    "/api": "backend/controllers/dssController.js",
+    "/crud": "backend/controllers/crudController.js"
+  },
+  "setup": "backend/scripts/setup.js",
+  "teardown": "backend/scripts/teardown.js",
+  "isSystem": false,
+  "assets": {
+    "index.html": {
+      "files": ["frontend/index.html"]
+    }
+  },
+  "files": {
+    "/assets": "frontend/assets",
+    "/components": "frontend/components",
+    "/partials": "frontend/partials",
+    "/dss": "frontend"
+  }
+}
