@@ -19,17 +19,16 @@
         joi = require('joi'),
         _ = require('underscore');
 
-    /**
-     * --------------------------------------------
-     * SCHEMAS
-     * Schemas in this context are replacements for the models as we do store the data in the same
-     * dss_nodes collection. Schemas will be used for the data input validation
-     * --------------------------------------------
-     */
+    //
+    // --------------------------------------------
+    // SCHEMAS
+    // Schemas in this context are replacements for the models as we do store the data in the same
+    // dss_nodes collection. Schemas will be used for the data input validation
+    // --------------------------------------------
+    //
 
-    /**
-     * Schema which holds providers data, used to make a edge connection to the service
-     * the provider is offering
+    /** Schema which holds providers data, used to make a edge connection to the service the provider is offering
+     *
      */
     var ProviderSchema = joi.object().keys(
         {
@@ -46,10 +45,8 @@
         }
     );
 
-    /**
-     * Metric schema used to add and retrieve new metrics used to feed the service data
-     * new services can be added ONLY with the currently existings metrics and if one more is needed
-     * new metric should be added at first.
+    /**Metric schema used to add and retrieve new metrics used to feed the service data new services can be added ONLY with the currently existings metrics and if one more is needed new metric should be added at first.
+     *
      */
     var MetricSchema = joi.object().keys(
         {
@@ -60,11 +57,11 @@
     );
 
 
-    /**
-     * --------------------------------------------
-     * REPOSITORIES
-     * --------------------------------------------
-     */
+    //
+    // --------------------------------------------
+    // REPOSITORIES
+    // --------------------------------------------
+    //
     var nodesRepository = Foxx.Repository.extend({
         update: function (key, data) {
             return nodesCollection.updateById(key, data);
@@ -80,35 +77,32 @@
         }
     });
 
-    /**
-     * --------------------------------------------
-     * ROUTES
-     * --------------------------------------------
-     */
+    //
+    // --------------------------------------------
+    // ROUTES
+    // --------------------------------------------
+    //
 
-    /**
-     * Gets all the nodes with certain type
+    /** Gets all the nodes with certain type
+     *
      */
     controller.get('/node/:type', function(req, res) {
         res.json(nodesRepository.get(req.params('type')));
     }).pathParam('type', {
-        description: 'The type of the nodes queried (charactersitic|metric|provider|service)',
+        description: 'The type of the nodes (charactersitic|metric|provider|service)',
         type: 'string'
-    }).summary('Lists the nodes based on the type');
+    });
 
-    /**
-     * Puts a new node type which can be of a type of a service or metric
+    /** Puts a new node type service or metric
+     *
      */
     controller.put('/node', function (req, res) {
         // for now no validation
         res.json(nodesRepository.create(req.params('data')));
-    }).bodyParam('data', {
-        description: 'data of the new document which should be created',
-        type: 'string'
     });
 
-    /**
-     * Modifies the dss_node which can be a type of a service of a metric
+    /** Modifies the dss_node type of a service of a metric
+     *
      */
     controller.post('/node/:id', function (req, res) {
         // for now no validation
@@ -117,14 +111,10 @@
         .pathParam('id', {
             description: 'Id of the dss_nodes to be modified',
             type: 'string'
-        })
-        .bodyParam('data', {
-            description: 'new data of the document which should be updated',
-            type: 'string'
         });
 
-    /**
-     * Deletes a node
+    /** Deletes a node
+     *
      */
     controller.delete('/node/:id', function (req, res) {
         // for now no validation
