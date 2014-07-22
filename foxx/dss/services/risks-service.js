@@ -13,8 +13,6 @@ dssApp.service('RisksService', ['flash', function(flash){
 
     var risksTALikelihoodConsequence = {};      //Likelihood/consequences values for each TA and risk of the form
                                                 //riskname_taAssetName_likelihood/riskname_taAssetName_consequence
-
-
     /**
      * Adds a risk to the list of selected risks.
      * @param risk The risk to be added.

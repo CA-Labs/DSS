@@ -12,8 +12,6 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', function(flash, $q
     var toia = [];          //TOIA assets selected by the user
     //TA assets
     var ta = [];            //TA assets selected by the user
-    //Risks
-    var risks = [];         //Risks selected by the user
 
     /**
      * Adds an asset to the list of selected
