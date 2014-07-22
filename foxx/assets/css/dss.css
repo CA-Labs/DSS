@@ -145,7 +145,8 @@ blockquote {
   margin-top: 10px; }
 
 .requirement-value {
-  float: right; }
+  float: right;
+  margin-right: -85px; }
 
 .risk-very-low {
   background-color: darkgreen !important; }
