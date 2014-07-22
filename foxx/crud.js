@@ -59,7 +59,26 @@
         }
     );
 
-    var nodesRepositrory = Foxx.Repository.extend({});
+
+    /**
+     * --------------------------------------------
+     * REPOSITORIES
+     * --------------------------------------------
+     */
+    var nodesRepository = Foxx.Repository.extend({
+        update: function (key, data) {
+            return nodesCollection.updateById(key, data);
+        },
+        create: function (data) {
+            return nodesCollection.save(data);
+        },
+        delete: function (key) {
+            return nodesCollection.remove(key);
+        },
+        get: function (type) {
+            return nodesCollection.byExmaple({ type: type });
+        }
+    });
 
     /**
      * --------------------------------------------
