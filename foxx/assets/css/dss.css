@@ -44,7 +44,7 @@ blockquote {
   float: left;
   display: block; }
 
-.remove-asset, .remove-risk {
+.remove-asset, .remove-risk, .remove-treatment {
   float: right !important;
   margin-right: -25px !important;
   vertical-align: middle !important;

@@ -273,9 +273,9 @@
                                 <div  ng-if="treatmentsSelected.length > 0">
                                     <h4>Treatments Selected</h4>
                                 </div>
-                                <a class="list-group-item selected-treatment" href="#" ng-repeat="selectedTreatment in selectedTreatments">
-                                    <strong>{{ selectedTreatment.destination.name }}</strong>
-                                    <span class="glyphicon glyphicon-remove remove-asset" ng-click="removeTreatment(selectedTreatment)">&nbsp;</span>
+                                <a class="list-group-item selected-treatment" href="#" ng-repeat="treatmentSelected in treatmentsSelected">
+                                    <strong>{{ treatmentSelected.destination.name }}</strong>
+                                    <span class="glyphicon glyphicon-remove remove-treatment" ng-click="removeTreatment(treatmentSelected)">&nbsp;</span>
                                 </a>
                             </div>
                         </div>

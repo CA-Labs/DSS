@@ -10,7 +10,7 @@
  * Manages all data retrieval from the
  * ArangoDB database instance.
  */
-dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'TreatmentsService', function($http, AssetsService, TreatmentsService){
+dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', function($http, AssetsService, RisksService){
 
     //TODO: Fix an stable arangoDB server base URL
     //var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/api/';
@@ -58,9 +58,9 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'TreatmentsService'
             _.each(selectedRisks, function(risk){
                 if(firstRisk){
                     firstRisk = false;
-                    url += 'risks=' + risk.name;
+                    url += 'risks=' + risk.destination.name;
                 } else {
-                    url += ',' + risk.name
+                    url += ',' + risk.destination.name
                 }
             });
             return url;
@@ -150,7 +150,7 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'TreatmentsService'
      * on data retrieval.
      */
     this.getPotentialTreatments = function(callback){
-        $http({method: 'GET', url: FOXX_API.getPotentialTreatments(TreatmentsService.getTreatments())})
+        $http({method: 'GET', url: FOXX_API.getPotentialTreatments(RisksService.getRisks())})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })

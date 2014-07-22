@@ -4,10 +4,10 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('treatmentsController', ['$scope', 'ArangoDBService', 'TreatmentsService', function($scope, ArangoDBService, TreatmentsService){
+dssApp.controller('treatmentsController', ['$scope', 'ArangoDBService', 'TreatmentsService', 'flash', function($scope, ArangoDBService, TreatmentsService, flash){
 
     $scope.potentialTreatments = [];        // The list of potential treatments
-    $scope.treatmentsSelected = [];         // The list of selected treatments
+    $scope.treatmentsSelected = TreatmentsService.getTreatments();         // The list of selected treatments
 
     $scope.$on('risksSelectedChanged', function(){
         ArangoDBService.getPotentialTreatments(function(error, data){

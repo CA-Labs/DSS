@@ -94,7 +94,7 @@
             'let sourceType = (p.source.type)' +
             'let destinationType = (p.destination.type)' +
             'let sourceName = (lower(p.source.name))' +
-            'filter (sourceType == "risk") && (destinationType == "treatment") && (contains(lower(@risks), sourceName)' +
+            'filter (sourceType == "risk") && (destinationType == "treatment") && (contains(lower(@risks), sourceName))' +
             'return p';
 
         var stmt = db._createStatement({query: query});
@@ -102,8 +102,9 @@
         var risks = '';
 
         if(req.params('risks') !== null && typeof req.params('risks') !== 'undefined'){
-            risks = req.params('bsoias');
+            risks = req.params('risks');
         }
+
         stmt.bind('risks', risks);
 
         var result = stmt.execute();
