@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'AssetsService', 'RisksService', '$timeout', '$interpolate', function($scope, ArangoDBService, flash, AssetsService, RisksService, $timeout, $interpolate){
+dssApp.controller('risksController', ['$scope', '$rootScope', 'ArangoDBService', 'flash', 'AssetsService', 'RisksService', '$timeout', '$interpolate', function($scope, $rootScope, ArangoDBService, flash, AssetsService, RisksService, $timeout, $interpolate){
 
     //Initialization
     $scope.potentialRisks = [];                                                                     //List of current potential risks depending on BSOIA/TOIA assets selected by the user
@@ -64,6 +64,15 @@ dssApp.controller('risksController', ['$scope', 'ArangoDBService', 'flash', 'Ass
         return domElement;
     };
 
+    /**
+     * Listen for changes in potential risks, so that
+     * treatments can be recomputed.
+     */
+    $scope.$watch(function(){
+        return $scope.risksSelected;
+    }, function(newVal, oldVal){
+        $rootScope.$broadcast('risksSelectedChanged');
+    }, true);
 
     /**
      * Event received when a BSOIA asset has been selected/removed

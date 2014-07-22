@@ -10,7 +10,7 @@
  * Manages all data retrieval from the
  * ArangoDB database instance.
  */
-dssApp.service('ArangoDBService', ['$http', 'AssetsService', function($http, AssetsService){
+dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', function($http, AssetsService, RisksService){
 
     //TODO: Fix an stable arangoDB server base URL
     //var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/api/';
@@ -49,6 +49,19 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', function($http, Ass
                } else {
                    url += ',' + toia.asset.name;
                }
+            });
+            return url;
+        },
+        getPotentialTreatments: function(selectedRisks){
+            var firstRisk = true;
+            var url = ARANGODB_BASE_URL + 'potentialTreatments?';
+            _.each(selectedRisks, function(risk){
+                if(firstRisk){
+                    firstRisk = false;
+                    url += 'risks=' + risk.destination.name;
+                } else {
+                    url += ',' + risk.destination.name
+                }
             });
             return url;
         }
@@ -117,10 +130,6 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', function($http, Ass
     /**
      * Retrieves potential risks by looking up
      * risks connected to BSOIA or TOIA assets.
-     * @param selectedBsoias The BSOIA assets
-     * selected by the user to be protected.
-     * @param selectedToias The TOIA assets
-     * selected by the user to be protected.
      * @param callback Callback fn to execute
      * on data retrieval.
      */
@@ -131,6 +140,22 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', function($http, Ass
             })
             .error(function (data, status, headers, config){
                callback(data, null);
+            });
+    };
+
+    /**
+     * Retrieves potential treatments connected to
+     * a list of risks.
+     * @param callback Callback fn to execute
+     * on data retrieval.
+     */
+    this.getPotentialTreatments = function(callback){
+        $http({method: 'GET', url: FOXX_API.getPotentialTreatments(RisksService.getRisks())})
+            .success(function(data, status, headers, config){
+                callback(null, data);
+            })
+            .error(function(data, status, headers, config){
+                callback(data, null);
             });
     };
 
