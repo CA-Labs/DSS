@@ -13,59 +13,53 @@
         controller = new Foxx.Controller(applicationContext),
         arango = require('org/arangodb'),
         db = arango.db,
+        nodesCollection = db._collection('dss_nodes'),
+        edgesCollection = db._collection('dss_edges'),
         console = require('console'),
+        joi = require('joi'),
         _ = require('underscore');
 
     /**
      * --------------------------------------------
-     * MODELS
+     * SCHEMAS
+     * Schemas in this context are replacements for the models as we do store the data in the same
+     * dss_nodes collection. Schemas will be used for the data input validation
      * --------------------------------------------
      */
 
     /**
-     * Model which holds providers data, used to make a edge connection to the service
+     * Schema which holds providers data, used to make a edge connection to the service
      * the provider is offering
      */
-    var ProviderModel = Foxx.Model.extend({},
+    var ProviderSchema = joi.object().keys(
         {
-            attributes: {
-                _key: "string",
-                type: { type: "string", required: true, defaultValue: "provider" },
-                name: { type: "string", required: true },
-                year_founding: "number",
-                website: { type: "string", required: true },
-                logo_url: "string",
-                description: { type: "string", required: true },
-                number_of_employees: "number",
-                headquarters: "string",
-                headquarters_country: "string",
-                headquarters_continent: "string"
-            }
-        });
+            type: joi.string().valid('provider').required().default('provider'),
+            name: joi.string().required(),
+            year_founding: joi.number().optional(),
+            website: joi.string().required(),
+            logo_url: joi.string().optional(),
+            description: joi.string().required(),
+            number_of_employees: joi.number().optional(),
+            headquarters: joi.string().optional(),
+            headquarters_country: joi.string().optional(),
+            headquarters_continent: joi.string().optional()
+        }
+    );
 
     /**
-     * Metric model used to add and retrieve new metrics used to feed the service data
+     * Metric schema used to add and retrieve new metrics used to feed the service data
      * new services can be added ONLY with the currently existings metrics and if one more is needed
      * new metric should be added at first.
      */
-    var MetricModel = Foxx.Model.extend({},
+    var MetricSchema = joi.object().keys(
         {
-            attributes: {
-                _key: "string",
-                name: { type: "string", required: true },
-                type: { type: "string", required: true, defaultValue: "metric" },
-                options: { type: "object", required: true }
-            }
-        });
+            name: joi.string().required(),
+            type: joi.string().required().default('metric').allow('metric'),
+            options: joi.object().required()
+        }
+    );
 
-
-    /**
-     * --------------------------------------------
-     * REPOSITORIES
-     * --------------------------------------------
-     */
-
-    var Metrics = Foxx.Repositories.extend({})
+    var nodesRepositrory = Foxx.Repository.extend({});
 
     /**
      * --------------------------------------------
@@ -85,7 +79,7 @@
     }).pathParam('type', {
         description: 'The type of the nodes queried (charactersitic|metric|provider|service)',
         type: 'string'
-    });
+    }).summary('Lists the nodes based on the type');
 
     /**
      * Puts a new node type which can be of a type of a service or metric
