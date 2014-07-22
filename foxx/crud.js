@@ -90,11 +90,7 @@
      * Gets all the nodes with certain type
      */
     controller.get('/node/:type', function(req, res) {
-        var query = 'for node in dss_nodes filter node.type == @type return node';
-        var stmt = db._createStatement({query: query});
-        stmt.bind('type', req.params('type'));
-        var result = stmt.execute();
-        res.json(result);
+        res.json(nodesRepository.get(req.params('type')));
     }).pathParam('type', {
         description: 'The type of the nodes queried (charactersitic|metric|provider|service)',
         type: 'string'
@@ -104,21 +100,40 @@
      * Puts a new node type which can be of a type of a service or metric
      */
     controller.put('/node', function (req, res) {
-
+        // for now no validation
+        res.json(nodesRepository.create(req.params('data')));
+    }).bodyParam('data', {
+        description: 'data of the new document which should be created',
+        type: 'string'
     });
 
     /**
      * Modifies the dss_node which can be a type of a service of a metric
      */
     controller.post('/node/:id', function (req, res) {
-
-    });
+        // for now no validation
+        res.json(nodesRepository.update(req.params('id')), req.params('data'));
+    }).errorResponse(arango.ArangoError, 404, "The document could not be found")
+        .pathParam('id', {
+            description: 'Id of the dss_nodes to be modified',
+            type: 'string'
+        })
+        .bodyParam('data', {
+            description: 'new data of the document which should be updated',
+            type: 'string'
+        });
 
     /**
      * Deletes a node
      */
     controller.delete('/node/:id', function (req, res) {
-
-    });
+        // for now no validation
+        nodesRepository.delete(req.params('id'));
+        res.json({ status: true });
+    }).errorResponse(arango.ArangoError, 404, "The document could not be found")
+        .pathParam('id', {
+            description: 'Id of the dss_nodes to be deleted',
+            type: 'string'
+        });
 
 })();
