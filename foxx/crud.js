@@ -45,7 +45,7 @@
         }
     );
 
-    /**Metric schema used to add and retrieve new metrics used to feed the service data new services can be added ONLY with the currently existings metrics and if one more is needed new metric should be added at first.
+    /** Metric schema used to add and retrieve new metrics used to feed the service data new services can be added ONLY with the currently existings metrics and if one more is needed new metric should be added at first.
      *
      */
     var MetricSchema = joi.object().keys(
@@ -73,7 +73,7 @@
             return nodesCollection.remove(key);
         },
         get: function (type) {
-            return nodesCollection.byExample({ type: type });
+            return nodesCollection.byExample({ type: type }).toArray();
         }
     });
 
