@@ -7,34 +7,34 @@ module.exports = function (grunt) {
             my_target: {
                 options: {
                     sourceMap: true,
-                    sourceMapName: 'foxx/dss/app.min.map',
+                    sourceMapName: 'dss/app.min.map',
                     banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
                         'author: <%= pkg.author %> - ' +
                         '<%= grunt.template.today("yyyy-mm-dd") %> */'
                 },
                 files: {
-                    'foxx/dss/app.min.js': [
-                        'foxx/dss/app.js',
-                        'foxx/dss/controllers/bsoia-controller.js',
-                        'foxx/dss/controllers/toia-controller.js',
-                        'foxx/dss/controllers/ta-controller.js',
-                        'foxx/dss/controllers/risks-controller.js',
-                        'foxx/dss/controllers/treatments-controller.js',
-                        'foxx/dss/controllers/main-controller.js',
-                        'foxx/dss/services/assets-service.js',
-                        'foxx/dss/services/risks-service.js',
-                        'foxx/dss/services/arangodb-service.js',
-                        'foxx/dss/services/treatments-service.js',
-                        'foxx/dss/common/filters.js',
-                        'foxx/dss/common/mainInterfaces.js',
-                        'foxx/dss/requirements/requirementsInterfacesDirective.js',
-                        'foxx/dss/directives/*.js'
+                    'dss/app.min.js': [
+                        'dss/app.js',
+                        'dss/controllers/bsoia-controller.js',
+                        'dss/controllers/toia-controller.js',
+                        'dss/controllers/ta-controller.js',
+                        'dss/controllers/risks-controller.js',
+                        'dss/controllers/treatments-controller.js',
+                        'dss/controllers/main-controller.js',
+                        'dss/services/assets-service.js',
+                        'dss/services/risks-service.js',
+                        'dss/services/arangodb-service.js',
+                        'dss/services/treatments-service.js',
+                        'dss/common/filters.js',
+                        'dss/common/mainInterfaces.js',
+                        'dss/requirements/requirementsInterfacesDirective.js',
+                        'dss/directives/*.js'
                     ]
                 }
             }
         },
         watch: {
-            files: ['foxx/dss/*', 'foxx/dss/*/*.js'],
+            files: ['dss/*', 'dss/*/*.js'],
             tasks: ['uglify'],
             options: {
                 nospawn: true
