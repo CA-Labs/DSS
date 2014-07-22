@@ -5,21 +5,21 @@
   "thumbnail": "thumbnail.png",
   "description": "Decision Support System for MODAClouds European project",
   "controllers": {
-    "/api": "app.js",
-    "/crud": "crud.js"
+    "/api": "backend/app.js",
+    "/crud": "backend/crud.js"
   },
-  "setup": "scripts/setup.js",
-  "teardown": "scripts/teardown.js",
+  "setup": "backend/scripts/setup.js",
+  "teardown": "backend/scripts/teardown.js",
   "isSystem": false,
   "assets": {
     "index.html": {
-      "files": ["index.html"]
+      "files": ["frontend/index.html"]
     }
   },
   "files": {
-    "/assets": "assets",
-    "/components": "components",
-    "/partials": "partials",
-    "/dss": "dss"
+    "/assets": "frontend/assets",
+    "/components": "frontend/components",
+    "/partials": "frontend/partials",
+    "/dss": "frontend"
   }
 }
