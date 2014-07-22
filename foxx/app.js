@@ -74,13 +74,44 @@
         var result = stmt.execute();
         res.json(result);
 
-    }).queryParam("bsoias", {
-        description: "A comma-separated list of selected BSOIA assets names",
-        type: "string",
+    }).queryParam('bsoias', {
+        description: 'A comma-separated list of selected BSOIA assets names',
+        type: 'string',
         required: false
-    }).queryParam("toias", {
-        description: "A comma-separated list of selected TOIA assets names",
-        type: "string",
+    }).queryParam('toias', {
+        description: 'A comma-separated list of selected TOIA assets names',
+        type: 'string',
+        required: false
+    });
+
+    /**
+     * Retrieves treatments connected to risks.
+     */
+    controller.get('potentialTreatments', function(req, res){
+
+        //TODO: Return projections and not full paths?
+        var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
+            'let sourceType = (p.source.type)' +
+            'let destinationType = (p.destination.type)' +
+            'let sourceName = (lower(p.source.name))' +
+            'filter (sourceType == "risk") && (destinationType == "treatment") && (contains(lower(@risks), sourceName)' +
+            'return p';
+
+        var stmt = db._createStatement({query: query});
+
+        var risks = '';
+
+        if(req.params('risks') !== null && typeof req.params('risks') !== 'undefined'){
+            risks = req.params('bsoias');
+        }
+        stmt.bind('risks', risks);
+
+        var result = stmt.execute();
+        res.json(result);
+
+    }).queryParam('risks', {
+        description: 'A comma-separated list of selected risks names',
+        type: 'string',
         required: false
     });
 
