@@ -7,34 +7,34 @@ module.exports = function (grunt) {
             my_target: {
                 options: {
                     sourceMap: true,
-                    sourceMapName: 'dss/app.min.map',
+                    sourceMapName: 'frontend/app.min.map',
                     banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
                         'author: <%= pkg.author %> - ' +
                         '<%= grunt.template.today("yyyy-mm-dd") %> */'
                 },
                 files: {
-                    'dss/app.min.js': [
-                        'dss/app.js',
-                        'dss/controllers/bsoia-controller.js',
-                        'dss/controllers/toia-controller.js',
-                        'dss/controllers/ta-controller.js',
-                        'dss/controllers/risks-controller.js',
-                        'dss/controllers/treatments-controller.js',
-                        'dss/controllers/main-controller.js',
-                        'dss/services/assets-service.js',
-                        'dss/services/risks-service.js',
-                        'dss/services/arangodb-service.js',
-                        'dss/services/treatments-service.js',
-                        'dss/common/filters.js',
-                        'dss/common/mainInterfaces.js',
-                        'dss/requirements/requirementsInterfacesDirective.js',
-                        'dss/directives/*.js'
+                    'frontend/app.min.js': [
+                        'frontend/app.js',
+                        'frontend/controllers/bsoia-controller.js',
+                        'frontend/controllers/toia-controller.js',
+                        'frontend/controllers/ta-controller.js',
+                        'frontend/controllers/risks-controller.js',
+                        'frontend/controllers/treatments-controller.js',
+                        'frontend/controllers/main-controller.js',
+                        'frontend/services/assets-service.js',
+                        'frontend/services/risks-service.js',
+                        'frontend/services/arangodb-service.js',
+                        'frontend/services/treatments-service.js',
+                        'frontend/common/filters.js',
+                        'frontend/common/mainInterfaces.js',
+                        'frontend/requirements/requirementsInterfacesDirective.js',
+                        'frontend/directives/*.js'
                     ]
                 }
             }
         },
         watch: {
-            files: ['dss/*', 'dss/*/*.js'],
+            files: ['frontend/*', 'frontend/*/*.js'],
             tasks: ['uglify'],
             options: {
                 nospawn: true
