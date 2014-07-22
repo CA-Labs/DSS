@@ -62,7 +62,7 @@
     // REPOSITORIES
     // --------------------------------------------
     //
-    var nodesRepository = Foxx.Repository.extend({
+    var nodesRepositoryDefinition = Foxx.Repository.extend({
         update: function (key, data) {
             return nodesCollection.updateById(key, data);
         },
@@ -73,9 +73,11 @@
             return nodesCollection.remove(key);
         },
         get: function (type) {
-            return nodesCollection.byExmaple({ type: type });
+            return nodesCollection.byExample({ type: type });
         }
     });
+
+    var nodesRepository = new nodesRepositoryDefinition;
 
     //
     // --------------------------------------------
