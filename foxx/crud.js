@@ -13,7 +13,8 @@
         controller = new Foxx.Controller(applicationContext),
         arango = require('org/arangodb'),
         db = arango.db,
-        console = require('console');
+        console = require('console'),
+        _ = require('underscore');
 
     /**
      * --------------------------------------------
@@ -21,6 +22,10 @@
      * --------------------------------------------
      */
 
+    /**
+     * Model which holds providers data, used to make a edge connection to the service
+     * the provider is offering
+     */
     var ProviderModel = Foxx.Model.extend({},
         {
             attributes: {
@@ -38,6 +43,11 @@
             }
         });
 
+    /**
+     * Metric model used to add and retrieve new metrics used to feed the service data
+     * new services can be added ONLY with the currently existings metrics and if one more is needed
+     * new metric should be added at first.
+     */
     var MetricModel = Foxx.Model.extend({},
         {
             attributes: {
@@ -47,11 +57,15 @@
                 options: { type: "object", required: true }
             }
         });
+
+
     /**
      * --------------------------------------------
      * REPOSITORIES
      * --------------------------------------------
      */
+
+    var Metrics = Foxx.Repositories.extend({})
 
     /**
      * --------------------------------------------
