@@ -162,3 +162,14 @@ blockquote {
 
 .risk-very-high {
   background-color: maroon !important; }
+
+/* Carousel hack for Firefox */
+/*.navbar-wrapper {border: 1px solid purple;}*/
+.carousel {
+  border: 1px solid transparent; }
+
+/*.carousel-caption {border: 1px solid yellow;}*/
+.carousel .item {
+  border: 1px solid transparent; }
+
+/*.carousel-inner > .item > img {border: 1px solid red;}*/
