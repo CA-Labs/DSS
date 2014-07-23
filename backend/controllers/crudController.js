@@ -15,69 +15,19 @@
         db = arango.db,
         nodesCollection = db._collection('dss_nodes'),
         edgesCollection = db._collection('dss_edges'),
+        Repository = require('backend/repositories/dynamicRepository').repository,
+
         console = require('console'),
         joi = require('joi'),
         _ = require('underscore');
 
     //
     // --------------------------------------------
-    // SCHEMAS
-    // Schemas in this context are replacements for the models as we do store the data in the same
-    // dss_nodes collection. Schemas will be used for the data input validation
+    // REPOSITORIES INITIALIZATION
     // --------------------------------------------
     //
 
-    /** Schema which holds providers data, used to make a edge connection to the service the provider is offering
-     *
-     */
-    var ProviderSchema = joi.object().keys(
-        {
-            type: joi.string().valid('provider').required().default('provider'),
-            name: joi.string().required(),
-            year_founding: joi.number().optional(),
-            website: joi.string().required(),
-            logo_url: joi.string().optional(),
-            description: joi.string().required(),
-            number_of_employees: joi.number().optional(),
-            headquarters: joi.string().optional(),
-            headquarters_country: joi.string().optional(),
-            headquarters_continent: joi.string().optional()
-        }
-    );
-
-    /** Metric schema used to add and retrieve new metrics used to feed the service data new services can be added ONLY with the currently existings metrics and if one more is needed new metric should be added at first.
-     *
-     */
-    var MetricSchema = joi.object().keys(
-        {
-            name: joi.string().required(),
-            type: joi.string().required().default('metric').allow('metric'),
-            options: joi.object().required()
-        }
-    );
-
-
-    //
-    // --------------------------------------------
-    // REPOSITORIES
-    // --------------------------------------------
-    //
-    var nodesRepositoryDefinition = Foxx.Repository.extend({
-        update: function (key, data) {
-            return nodesCollection.updateById(key, data);
-        },
-        create: function (data) {
-            return nodesCollection.save(data);
-        },
-        delete: function (key) {
-            return nodesCollection.remove(key);
-        },
-        get: function (type) {
-            return nodesCollection.byExample({ type: type }).toArray();
-        }
-    });
-
-    var nodesRepository = new nodesRepositoryDefinition;
+    var nodesRepository = new Repository(nodesCollection, { });
 
     //
     // --------------------------------------------
@@ -89,7 +39,7 @@
      *
      */
     controller.get('/node/:type', function(req, res) {
-        res.json(nodesRepository.get(req.params('type')));
+        res.json(nodesRepository.byExample({ type: req.params('type')}));
     }).pathParam('type', {
         description: 'The type of the nodes (charactersitic|metric|provider|service)',
         type: 'string'
