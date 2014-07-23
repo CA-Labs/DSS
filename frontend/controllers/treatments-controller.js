@@ -65,14 +65,12 @@ dssApp.controller('treatmentsController', ['$scope', 'ArangoDBService', 'Treatme
 
     }, true);
 
-    /*
     $scope.$watch(function(){
         return $scope.treatmentValues;
     }, function(newValue, oldValue){
         console.log('old', oldValue);
         console.log('new', newValue);
     }, true);
-    */
 
     /**
      * Event received when a treatment value changes, so that treatment

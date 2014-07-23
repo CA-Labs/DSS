@@ -277,11 +277,11 @@
                                     <strong>{{ treatmentSelected.destination.name }}</strong>
                                     <span class="glyphicon glyphicon-remove remove-treatment" ng-click="removeTreatment(treatmentSelected)">&nbsp;</span>
                                     <div ng-switch="treatmentSelected.destination.representation">
-                                        <div ng-switch-when="radio">
-                                            <p>Radio</p>
-                                        </div>
                                         <div ng-switch-when="select">
                                             <treat-select item="treatmentSelected"></treat-select>
+                                        </div>
+                                        <div ng-switch-when="radio">
+                                            <treat-radio item="treatmentSelected"></treat-radio>
                                         </div>
                                     </div>
                                 </a>

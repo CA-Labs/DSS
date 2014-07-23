@@ -1,0 +1,3 @@
+<div ng-repeat="(key,value) in options">
+    <input type="radio" name="{{value}}" value="{{key}}" ng-model="$parent.aux" ng-change="change(value)"><span style="margin-left: 10px;">{{value}}</span>
+</div>
