@@ -1,0 +1,6 @@
+<div style="margin-top: 20px; width: 300px; text-align: right;" class="input-group" ng-repeat="(key,value) in options">
+    <span class="input-group-addon">
+        <input type="radio" name="{{value}}" value="{{key}}" ng-model="$parent.aux" ng-change="change(value)">
+      </span>
+    <input type="text" class="form-control" value="{{value}}" readonly="readonly" style="background-color: #18bc9c !important; cursor: default !important;">
+</div>

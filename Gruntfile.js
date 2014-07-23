@@ -27,7 +27,6 @@ module.exports = function (grunt) {
                         'frontend/services/treatments-service.js',
                         'frontend/common/filters.js',
                         'frontend/common/mainInterfaces.js',
-                        'frontend/requirements/requirementsInterfacesDirective.js',
                         'frontend/directives/*.js'
                     ]
                 }
