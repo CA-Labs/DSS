@@ -122,12 +122,6 @@ dssApp.controller('risksController', ['$scope', '$rootScope', 'ArangoDBService',
         });
     });
 
-    /**
-     * Handles toggle event in risks switch component and manages
-     * the logic of when the user can specify risks per each tangible
-     * asset.
-     */
-
     /*
     $scope.$watch(function(){
         return $scope.simpleRisksLikelihoodConsequence;
@@ -146,9 +140,28 @@ dssApp.controller('risksController', ['$scope', '$rootScope', 'ArangoDBService',
     }, true);
     */
 
-    $scope.$watch('taAssets', function(newTaAssets, oldTaAssets){
+    /**
+     * Handles toggle event in risks switch component and manages
+     * the logic of when the user can specify risks per each tangible
+     * asset.
+     */
+    $scope.toggleActivation = function(){
+        if($scope.multiple){
+            if($scope.taAssets.length == 0){
+                flash.warn = 'You can\'t define risks per each tangible asset since you did not specify any of them';
+                $scope.multiple = false;
+                return;
+            } else {
+                $scope.multiple = true;
+            }
+        }
+    };
 
-        //console.log('taAssets change');
+    /**
+     * Every time the set of TA assets changes, we should update the
+     * likelihood/consequence models, since they are not modified automatically.
+     */
+    $scope.$watch('taAssets', function(newTaAssets, oldTaAssets){
 
         //Check switch button status
         if(newTaAssets.length == 0){
@@ -203,9 +216,11 @@ dssApp.controller('risksController', ['$scope', '$rootScope', 'ArangoDBService',
 
     }, true);
 
+    /**
+     * Every time the set of selected risks changes, we should update the
+     * likelihood/consequence models, since they are not modified automatically.
+     */
     $scope.$watch('risksSelected', function(newRisks, oldRisks){
-
-        //console.log('risksSelected change');
 
         //Update risks simple model
         var keysToRemove = [];
@@ -256,18 +271,6 @@ dssApp.controller('risksController', ['$scope', '$rootScope', 'ArangoDBService',
         $scope.risksSelected = newRisks;
 
     }, true);
-
-    $scope.toggleActivation = function(){
-        if($scope.multiple){
-            if($scope.taAssets.length == 0){
-                flash.warn = 'You can\'t define risks per each tangible asset since you did not specify any of them';
-                $scope.multiple = false;
-                return;
-            } else {
-                $scope.multiple = true;
-            }
-        }
-    };
 
     /**
      * Adds a new risk to the list of selected risks,
