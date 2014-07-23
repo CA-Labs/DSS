@@ -1,11 +1,3 @@
-/**
- * Crud main fox file
- * @author: Jacek Dominiak
- * @copyright: Jacek Dominiak
- * @created: 21/07/14
- */
-
-// Self invoke
 (function () {
     "use strict";
 
@@ -29,6 +21,7 @@
 
     var nodesRepository = new Repository(nodesCollection, { });
 
+
     //
     // --------------------------------------------
     // ROUTES
@@ -38,10 +31,20 @@
     /** Gets all the nodes with certain type
      *
      */
-    controller.get('/node/:type', function(req, res) {
+    controller.get('/nodes/:type', function(req, res) {
         res.json(nodesRepository.byExample({ type: req.params('type')}));
     }).pathParam('type', {
         description: 'The type of the nodes (charactersitic|metric|provider|service)',
+        type: 'string'
+    });
+
+    /** Gets the node with specified key
+     *
+     */
+    controller.get('/node/:id', function (req, res) {
+        res.json(nodesRepository.byId(req.params('id')));
+    }).pathParam('id', {
+        description: 'ID of the node to be retrieved',
         type: 'string'
     });
 
@@ -50,7 +53,7 @@
      */
     controller.put('/node', function (req, res) {
         // for now no validation
-        res.json(nodesRepository.save(req.params('data')));
+        res.json(nodesRepository.save(req.body()));
     });
 
     /** Modifies the dss_node type of a service of a metric
@@ -58,7 +61,7 @@
      */
     controller.post('/node/:id', function (req, res) {
         // for now no validation
-        res.json(nodesRepository.replaceById(req.params('id')), req.params('data'));
+        res.json(nodesRepository.replaceById(req.params('id')), req.body());
     }).errorResponse(arango.ArangoError, 404, "The document could not be found")
         .pathParam('id', {
             description: 'Id of the dss_nodes to be modified',
@@ -77,5 +80,4 @@
             description: 'Id of the dss_nodes to be deleted',
             type: 'string'
         });
-
 })();
