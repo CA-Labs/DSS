@@ -5,7 +5,7 @@
  */
 
 /**
- * Directive used to initialize risk sliders values on startup.
+ * Used to initialize risk sliders values on startup.
  */
 dssApp.directive('onRisksType', ['$timeout', function($timeout){
     return {

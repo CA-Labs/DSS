@@ -7,6 +7,7 @@
 dssApp.service('TreatmentsService', ['flash', function(flash){
 
     var treatments = [];            // Treatments selected by the user
+    var treatmentsValues = {};      // Treatments values model used to store select/sliders/radio UI components values
 
     /**
      * Adds a treatment to the list of selected treatments.
@@ -49,5 +50,32 @@ dssApp.service('TreatmentsService', ['flash', function(flash){
     this.getTreatments = function(){
         return treatments;
     };
+
+    /**
+     * Adds a new treatment value to the model of selected treatments values.
+     * @param treatmentName The treatment name.
+     * @param treatmentValue The treatment value.
+     */
+    this.addTreatmentValue = function(treatmentName, treatmentValue){
+        console.log('adding treatment value', treatmentName, treatmentValue);
+        treatmentsValues[treatmentName] = treatmentValue;
+    };
+
+    /**
+     * Removes a treatment value from the model of selected treatments values.
+     * @param treatmentName The treatment name.
+     */
+    this.removeTreatmentValue = function(treatmentName){
+        console.log('removing treatment value', treatmentName);
+        delete treatmentsValues[treatmentName];
+    };
+
+    /**
+     * Retrieves the treatments values model.
+     * @returns {{}}
+     */
+    this.getTreatmentsValues = function(){
+        return treatmentsValues;
+    }
 
 }]);

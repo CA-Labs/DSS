@@ -40,6 +40,7 @@
         var stmt = db._createStatement({query: query});
         var result = stmt.execute();
         res.json(result);
+        //res.json(dynamicRepository.getAll('treatments'))
     });
 
     /** Retrieves potential risks connected to TOIA
