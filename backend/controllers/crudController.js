@@ -50,7 +50,7 @@
      */
     controller.put('/node', function (req, res) {
         // for now no validation
-        res.json(nodesRepository.create(req.params('data')));
+        res.json(nodesRepository.save(req.params('data')));
     });
 
     /** Modifies the dss_node type of a service of a metric
@@ -58,7 +58,7 @@
      */
     controller.post('/node/:id', function (req, res) {
         // for now no validation
-        res.json(nodesRepository.update(req.params('id')), req.params('data'));
+        res.json(nodesRepository.replaceById(req.params('id')), req.params('data'));
     }).errorResponse(arango.ArangoError, 404, "The document could not be found")
         .pathParam('id', {
             description: 'Id of the dss_nodes to be modified',
@@ -70,7 +70,7 @@
      */
     controller.delete('/node/:id', function (req, res) {
         // for now no validation
-        nodesRepository.delete(req.params('id'));
+        nodesRepository.remove(req.params('id'));
         res.json({ status: true });
     }).errorResponse(arango.ArangoError, 404, "The document could not be found")
         .pathParam('id', {
