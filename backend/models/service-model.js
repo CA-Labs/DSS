@@ -10,7 +10,8 @@ var Foxx = require('org/arangodb/foxx'),
     ServiceModel = Foxx.Model.extend({
         schema: {
             name: joi.string().required(),
-            type: joi.string().required().default('service').allow('PaaS', 'IaaS', 'SaaS')
+            type: joi.string().required().default('service'),
+            cloudType: joi.string().required().allow('PaaS', 'IaaS', 'SaaS')
         }
     });
 

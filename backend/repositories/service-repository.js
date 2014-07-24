@@ -5,11 +5,11 @@
  */
 
 var Foxx            = require('org/arangodb/foxx'),
-    ServiceModel    = require('backend/models/serviceModel').model,
+    ServiceModel    = require('backend/models/service-model').model,
     ArangoDB        = require("org/arangodb");
 
 
-var ServiceRepository = new Foxx.Repository(ArangoDB.db._collection('dss_nodes'),{model: ServiceModel});
+var ServiceRepository = new Foxx.Repository(ArangoDB.db._collection('service'),{model: ServiceModel});
 
 exports.repository = ServiceRepository;
 
