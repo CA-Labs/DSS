@@ -54,14 +54,64 @@
                 </div>
                 <div class="form-group" ng-class="{ 'has-error' : metricForm.name.$invalid && !metricForm.name.$pristine }">
                     <label for="options">Options: </label>
-                    <textarea name="options" class="form-control" ng-model="metricData.options"></textarea>
+                    <textarea name="options" class="form-control" ng-model="metricData.options" rows="10" required></textarea>
                     <p ng-show="metricForm.options.$invalid && !metricForm.options.$pristine" class="help-block">Options are invalid. They should be a object</p>
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg btn-block">Save</button>
+                <button type="submit" class="btn btn-primary pull-right">Save</button>
             </form>
         </div>
         <div class="col-lg-12" ng-show="showServicePanel">
             <h4>Add New Service</h4>
+                <form name="serviceForm">
+                    <div class="row">
+                        <div class="col-lg-6">
+                            <div class="form-group" ng-class="{ 'has-error' : serviceForm.name.$invalid && !serviceForm.name.$pristine }">
+                                <label for="name">Name: </label>
+                                <input type="text" name="name" ng-model="serviceData.name" ng-required="true" class="form-control" autofocus/>
+                                <p ng-show="serviceForm.name.$invalid" class="help-block">Name is required</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="year_founding">Year Founding (yyyy): </label>
+                                <input type="number" name="year_founding" ng-model="serviceData.year_founding" class="form-control" min="1900" max="maxYear" ng-minlenght="4" ng-maxlength="4"/>
+                                <p ng-show="serviceForm.year_founding.$error.minlength || serviceForm.year_founding.$error.maxlength" class="help-block">Incorrect year</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="website">Website: </label>
+                                <input type="url" name="website" ng-model="serviceData.website" class="form-control" ng-required="true"/>
+                                <p ng-show="serviceForm.website.$invalid" class="help-block">Website is required</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="logo_url">Logo URL: </label>
+                                <input type="url" name="logo_url" ng-model="serviceData.logo_url" class="form-control" ng-required="false"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="description">Description: </label>
+                                <textarea name="description" ng-model="serviceData.description" rows="10" class="form-control"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="number_of_employees">Number of Employees: </label>
+                                <input type="number" name="number_of_employees" ng-model="serviceData.number_of_employees" class="form-control" ng-required="false" min="1"/>
+                                <p ng-show="!serviceForm.number_of_employees.$valid">Can't be lower than 1</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="headquarters">Headquarters: </label>
+                                <input type="number" name="headquarters" ng-model="serviceData.headquarters" class="form-control" ng-required="false"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="headquarters_country">Headquarters Country: </label>
+                                <input type="number" name="headquarters_country" ng-model="serviceData.headquarters_country" class="form-control" ng-required="false"/>
+                            </div>
+                            <div class="form-group">
+                                <label for="headquarters_continent">Headquarters Continent: </label>
+                                <input type="number" name="headquarters_continent" ng-model="serviceData.headquarters_continent" class="form-control" ng-required="false"/>
+                            </div>
+                        </div>
+                        <div class="col-lg-6">
+
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary pull-right">Save</button>
+                </form>
         </div>
     </div>
     <!--/main container-->

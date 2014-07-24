@@ -47,6 +47,8 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
     }
     // }
 
+    $scope.maxYear = new Date().getFullYear();
+
     $scope.isValidObject = function (data) {
         try {
             var object = JSON.parse(data);
