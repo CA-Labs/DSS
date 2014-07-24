@@ -11,7 +11,7 @@ var FoxxModel = require('org/arangodb/foxx').Model,
         schema: {
             name: joi.string().required(),
             type: joi.string().required().default('metric'),
-            options: joi.object().min(2)
+            options: joi.object().min(2).optional()
         }
     });
 
