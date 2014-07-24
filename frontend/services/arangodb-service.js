@@ -18,7 +18,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
 
     //FOXX API endpoints
     var FOXX_API = {
-        getAll: function (url) {
+        getUrl: function (url) {
             return ARANGODB_BASE_URL + url
         },
         getBSOIA: function(){
@@ -162,17 +162,52 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
             });
     };
 
+    /**
+     * Get all the data from the given url API endpoint
+     * @param {string} urlEndPoint - valid url end point
+     * @returns {promise}
+     */
     this.getAll = function (urlEndPoint) {
         var deffered = $q.defer();
-        $http({
-            method: 'GET',
-            url: FOXX_API.getAll(urlEndPoint)
-        }).success(function (data) {
+        $http.get(FOXX_API.getURL(urlEndPoint)).success(function (data) {
             deffered.resolve(data);
         }).error(function (err) {
             deffered.reject(err);
         });
         return deffered.promise;
-    }
+    };
 
+    /**
+     * Save new object
+     * @param {string} urlEndPoint - valid url end point
+     * @param {object} data - data to be saved
+     * @returns {promise}
+     */
+    this.save = function (urlEndPoint, data) {
+        var deffered = $q.defer();
+        $http.put(FOXX_API.getUrl(urlEndPoint), data).success(function (data) {
+            deffered.resolve(data);
+        }).error(function (err) {
+            deffered.reject(err);
+        });
+
+        return deffered.promise;
+    };
+
+    /**
+     * Update existing object
+     * @param {string} urlEndPoint - valid url end point - need to contain the key
+     * @param {object} data - data to be saved
+     * @returns {promise}
+     */
+    this.update = function (urlEndPoint, data) {
+        var deffered = $q.defer();
+        $http.post(FOXX_API.getUrl(urlEndPoint), data).success(function (data) {
+            deffered.resolve(data);
+        }).error(function (err) {
+            deffered.reject(err);
+        });
+
+        return deffered.promise;
+    };
 }]);
