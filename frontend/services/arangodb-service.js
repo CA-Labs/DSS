@@ -10,7 +10,7 @@
  * Manages all data retrieval from the
  * ArangoDB database instance.
  */
-dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', function($http, AssetsService, RisksService){
+dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService', function($http, $q, AssetsService, RisksService){
 
     //TODO: Fix an stable arangoDB server base URL
     //var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/api/';
@@ -18,6 +18,9 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', fun
 
     //FOXX API endpoints
     var FOXX_API = {
+        getAll: function (url) {
+            return ARANGODB_BASE_URL + url
+        },
         getBSOIA: function(){
             return ARANGODB_BASE_URL + 'assets/bsoia'
         },
@@ -158,5 +161,18 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', fun
                 callback(data, null);
             });
     };
+
+    this.getAll = function (urlEndPoint) {
+        var deffered = $q.defer();
+        $http({
+            method: 'GET',
+            url: FOXX_API.getAll(urlEndPoint)
+        }).success(function (data) {
+            deffered.resolve(data);
+        }).error(function (err) {
+            deffered.reject(err);
+        });
+        return deffered.promise;
+    }
 
 }]);
