@@ -11,6 +11,16 @@ var dssApp = angular.module('dssApp', [
 ]);
 
 dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($scope, ArangoDBService) {
+    // Initialize save object
+    $scope.providerData = {};
+    $scope.metricData = {};
+    $scope.serviceData = {};
+
+    // Get the data from the database
+//    $scope.provider = ArangoDBService.getAll('node/provider');
+//    $scope.metric = ArangoDBService.getAll('node/metric');
+
+    // Views switch {
     $scope.showServicePanel = true;
     $scope.showMetricPanel = false;
     $scope.showProviderPanel = false;
@@ -35,4 +45,18 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
                 break;
         }
     }
+    // }
+
+    $scope.isValidObject = function (data) {
+        try {
+            var object = JSON.parse(data);
+        } catch (err) {
+            return false;
+        }
+        return (typeof object == "object");
+    };
+
+    $scope.saveForm = function (objectType, data) {
+
+    };
 }]);
