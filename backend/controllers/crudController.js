@@ -8,6 +8,8 @@
         nodesCollection = db._collection('dss_nodes'),
         edgesCollection = db._collection('dss_edges'),
         Repository = require('backend/repositories/dynamicRepository').repository,
+        ServiceRepository = require('backend/repositories/service-repository').repository,
+        ServiceModel = require('backend/models/serviceModel').model,
 
         console = require('console'),
         joi = require('joi'),
@@ -42,7 +44,7 @@
      *
      */
     controller.get('/node/:id', function (req, res) {
-        res.json(nodesRepository.byId(req.params('id')));
+        res.json(nodesRepository.byId(req.params('id')).forClient());
     }).pathParam('id', {
         description: 'ID of the node to be retrieved',
         type: 'string'
@@ -53,7 +55,7 @@
      */
     controller.put('/node', function (req, res) {
         // for now no validation
-        res.json(nodesRepository.save(req.body()));
+        res.json(ServiceRepository.save(new ServiceModel(req.body())));
     });
 
     /** Modifies the dss_node type of a service of a metric
