@@ -63,8 +63,6 @@ var dssApp = angular.module('dssApp', [
         cfpLoadingBarProvider.includeSpinner = false;
 }]);
 
-// TODO: add ngstorage integration to store choosen requirements and resuts in JSON format
-
 /******************************************************
  ********************* BSOIA SLIDE ********************
  *****************************************************/

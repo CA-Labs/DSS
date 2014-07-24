@@ -19,13 +19,13 @@
         <div class="navbar navbar-inverse">
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="#"><span class="glyphicon glyphicon-plus-sign"></span> Add Provider</a>
+                    <a href="#" ng-click="switchPanel('provider')"><span class="glyphicon glyphicon-plus-sign"></span> Add Provider</a>
                 </li>
                 <li>
-                    <a href="#"><span class="glyphicon glyphicon-plus-sign"></span> Add Metric</a>
+                    <a href="#" ng-click="switchPanel('metric')"><span class="glyphicon glyphicon-plus-sign"></span> Add Metric</a>
                 </li>
                 <li style="margin-right: 25px;">
-                    <a href="#"><span class="glyphicon glyphicon-plus-sign"></span> Add Service</a>
+                    <a href="#" ng-click="switchPanel('service')"><span class="glyphicon glyphicon-plus-sign"></span> Add Service</a>
                 </li>
             </ul>
         </div>
@@ -33,16 +33,31 @@
     <!--/navbar-->
     <!--main container-->
     <div class="row mainContainer">
+        <div class="col-lg-12" ng-show="showProviderPanel">
+            <h4>Add New Provider</h4>
 
+            <form>
+
+            </form>
+        </div>
+        <div class="col-lg-12" ng-show="showMetricPanel">
+            <h4>Add New Metric</h4>
+        </div>
+        <div class="col-lg-12" ng-show="showServicePanel">
+            <h4>Add New Service</h4>
+        </div>
     </div>
     <!--/main container-->
 </div>
 <script src="components/jquery/dist/jquery.min.js"></script>
+<script src="components/jquery-ui/jquery-ui.min.js"></script>
 <script src="components/angular/angular.min.js"></script>
+<script src="components/angular-flash/dist/angular-flash.min.js"></script>
 <script src="components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="components/select2/select2.min.js"></script>
 
 <!--app-->
-<script src="controllers/crud-controller.js"></script>
+<script src="app.min.js"></script>
 <script src="services/arangodb-service.js"></script>
 </body>
 </html>
