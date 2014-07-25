@@ -8,28 +8,86 @@ var arangodb = require("org/arangodb");
 var db = arangodb.db;
 var graphs = require("org/arangodb/general-graph");
 
-//Check if dss_nodes collection exists
-if(db._collection("dss_nodes") === null) {
-    console.log("Creating nodes collection 'dss_nodes'...");
-	var collection = db._create("dss_nodes");
+//Check if bsoia collection exists
+if(db._collection('bsoia') === null) {
+    console.log('Creating nodes collection "bsoia" in "dss" database...');
+	db._createDocumentCollection('bsoia');
 } else {
-    console.log("Collection 'dss_nodes' already exists, nothing to do here...");
+    console.log('Collection "bsoia" already exists, nothing to do here...');
 }
 
-//Check if dss_edges collection exists
-if(db._collection("dss_edges") === null){
-    console.log("Creating edges collection 'dss_edges'...");
-    var collection = db._create("dss_edges");
+//Check if toia collection exists
+if(db._collection('toia') === null) {
+    console.log('Creating nodes collection "toia" in "dss" database...');
+    db._createDocumentCollection('toia');
 } else {
-    console.log("Collection 'dss_edges' already exists, nothing to do here...");
+    console.log('Collection "toia" already exists, nothing to do here...');
+}
+
+//Check if risk collection exists
+if(db._collection('risk') === null) {
+    console.log('Creating nodes collection "risk" in "dss" database...');
+    db._createDocumentCollection('risk');
+} else {
+    console.log('Collection "risk" already exists, nothing to do here...');
+}
+
+//Check if treatment collection exists
+if(db._collection('treatment') === null) {
+    console.log('Creating nodes collection "treatment" in "dss" database...');
+    db._createDocumentCollection('treatment');
+} else {
+    console.log('Collection "treatment" already exists, nothing to do here...');
+}
+
+//Check if characteristic collection exists
+if(db._collection('characteristic') === null) {
+    console.log('Creating nodes collection "characteristic" in "dss" database...');
+    db._createDocumentCollection('characteristic');
+} else {
+    console.log('Collection "characteristic" already exists, nothing to do here...');
+}
+
+//Check if metric collection exists
+if(db._collection('metric') === null) {
+    console.log('Creating nodes collection "metric" in "dss" database...');
+    db._createDocumentCollection('metric');
+} else {
+    console.log('Collection "metric" already exists, nothing to do here...');
+}
+
+//Check if provider collection exists
+if(db._collection('provider') === null) {
+    console.log('Creating nodes collection "provider" in "dss" database...');
+    db._createDocumentCollection('provider');
+} else {
+    console.log('Collection "provider" already exists, nothing to do here...');
+}
+
+//Check if service collection exists
+if(db._collection('service') === null) {
+    console.log('Creating nodes collection "service" in "dss" database...');
+    db._createDocumentCollection('service');
+} else {
+    console.log('Collection "service" already exists, nothing to do here...');
+}
+
+//TODO: Review edges collection and graph (we probably need to distinguish different edge types)
+
+//Check if dss_edges collection exists
+if(db._collection('edges') === null){
+    console.log('Creating edges collection "edges"...');
+    db._createEdgeCollection('edges');
+} else {
+    console.log('Collection "edges" already exists, nothing to do here...');
 }
 
 //Check if graph exists (if not, create it from dss_edges/dss_nodes collections)
 var available_graphs = graphs._list();
 
-if(available_graphs.indexOf("dss") == -1){
-    console.log("Graph 'dss' does not exist, creating it from 'dss_edges' definition and 'dss_nodes' collection...");
-    graphs._create("dss", [graphs._directedRelation("dss_edges", "dss_nodes", "dss_nodes")], ["dss_nodes"]);
+if(available_graphs.indexOf('dss') == -1){
+    console.log('Graph "dss" does not exist, creating it from "edges" definition and documents collections...');
+    graphs._create("dss", [graphs._directedRelation('edges', ['bsoia', 'toia', 'risk'], ['toia', 'risk', 'treatments'])], ['characteristic', 'metric', 'provider', 'service']);
 } else {
     console.log("Graph 'dss' exists already, nothing to do here...");
 }

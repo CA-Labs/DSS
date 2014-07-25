@@ -46,7 +46,7 @@ dssApp.controller('bsoiaController', ['$scope', '$rootScope', '$localStorage', '
         if(error){
             flash.error = 'An error occurred while trying to fetch BSOIA assets from database';
         } else {
-            $scope.bsoiaAssets = data._documents;
+            $scope.bsoiaAssets = data;
         }
     });
 

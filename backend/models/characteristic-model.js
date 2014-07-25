@@ -1,14 +1,13 @@
 /**
  * Characteristic Model
- *
  * @author: Jacek Dominiak
  * @copyright: Jacek Dominiak
  * @created: 22/07/14
  */
 
-var FoxxModel = require('org/arangodb/foxx').Model,
+var Foxx = require('org/arangodb/foxx'),
     joi = require('joi'),
-    CharacteristicModel = FoxxModel.extend({
+    CharacteristicModel = Foxx.Model.extend({
         schema: {
             name: joi.string().required(),
             type: joi.string().required().default('characteristic'),

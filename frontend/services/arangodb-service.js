@@ -14,7 +14,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
 
     //TODO: Fix an stable arangoDB server base URL
     //var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/api/';
-    var ARANGODB_BASE_URL = 'http://localhost:8529/_db/_system/dss/api/';
+    var ARANGODB_BASE_URL = 'http://localhost:8529/_db/dss/dss/';
 
     //FOXX API endpoints
     var FOXX_API = {
@@ -22,21 +22,21 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
             return ARANGODB_BASE_URL + url
         },
         getBSOIA: function(){
-            return ARANGODB_BASE_URL + 'assets/bsoia'
+            return ARANGODB_BASE_URL + 'crud/nodes/bsoia'
         },
         getTOIA: function(){
-            return ARANGODB_BASE_URL + 'assets/toia'
+            return ARANGODB_BASE_URL + 'crud/nodes/toia'
         },
         getRisks: function(){
-            return ARANGODB_BASE_URL + 'risks';
+            return ARANGODB_BASE_URL + 'crud/nodes/risk';
         },
         getTreatments: function(){
-            return ARANGODB_BASE_URL + 'treatments';
+            return ARANGODB_BASE_URL + 'crud/nodes/treatment';
         },
         getPotentialRisks: function(selectedBsoias, selectedToias){
             //Build correct URL from selectedBsoias/Toias lists
             var firstBsoia = firstToia = true;
-            var url = ARANGODB_BASE_URL + 'potentialRisks?';
+            var url = ARANGODB_BASE_URL + 'graph/potentialRisks?';
             _.each(selectedBsoias, function(bsoia){
                if(firstBsoia){
                    firstBsoia = false;
@@ -57,7 +57,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
         },
         getPotentialTreatments: function(selectedRisks){
             var firstRisk = true;
-            var url = ARANGODB_BASE_URL + 'potentialTreatments?';
+            var url = ARANGODB_BASE_URL + 'graph/potentialTreatments?';
             _.each(selectedRisks, function(risk){
                 if(firstRisk){
                     firstRisk = false;
