@@ -214,28 +214,68 @@
         var type = req.params('type');
         switch(type){
             case 'characteristic':
-                res.json(CharacteristicRepository.all());
+                // Don't return the model, but its data
+                var characteristics = CharacteristicRepository.all();
+                characteristics = _.map(characteristics, function(characteristic){
+                    return characteristic.forClient();
+                });
+                res.json(characteristics);
                 break;
             case 'metric':
-                res.json(MetricRepository.all());
+                // Don't return the model, but its data
+                var metrics = MetricRepository.all();
+                metrics = _.map(metrics, function(metric){
+                    return metric.forClient();
+                });
+                res.json(metrics);
                 break;
             case 'provider':
-                res.json(ProviderRepository.all());
+                // Don't return the model, but its data
+                var providers = ProviderRepository.all();
+                providers = _.map(providers, function(provider){
+                    return provider.forClient();
+                });
+                res.json(providers);
                 break;
             case 'service':
-                res.json(ServiceRepository.all());
+                // Don't return the model, but its data
+                var services = ServiceRepository.all();
+                services = _.map(services, function(service){
+                    return service.forClient();
+                });
+                res.json(services);
                 break;
             case 'bsoia':
-                res.json(BSOIARepository.all());
+                // Don't return the model, but its data
+                var bsoias = BSOIARepository.all();
+                bsoias = _.map(bsoias, function(bsoia){
+                    return bsoia.forClient();
+                });
+                res.json(bsoias);
                 break;
             case 'toia':
-                res.json(TOIARepository.all());
+                // Don't return the model, but its data
+                var toias = TOIARepository.all();
+                toias = _.map(toias, function(toia){
+                    return toia.forClient();
+                });
+                res.json(toias);
                 break;
             case 'risk':
-                res.json(RiskRepository.all());
+                // Don't return the model, but its data
+                var risks = RiskRepository.all();
+                risks = _.map(risks, function(risk){
+                    return risk.forClient();
+                });
+                res.json(risks);
                 break;
             case 'treatment':
-                res.json(TreatmentRepository.all());
+                // Don't return the model, but its data
+                var treatments = TreatmentRepository.all();
+                treatments = _.map(treatments, function(treatment){
+                   return treatment.forClient();
+                });
+                res.json(treatments);
                 break;
             default:
                 res.json({error: true, reason: 'Unknown node type'});
@@ -339,7 +379,7 @@
         required: true
     });
 
-    /** Modifies a certain node type.
+    /** Modifies a node of a certain type by id.
      *
      */
     controller.put('/nodes/:type/:id', function (req, res) {
@@ -445,7 +485,7 @@
         required: true
     });
 
-    /** Deletes a node.
+    /** Deletes a node of a certain type by id.
      *
      */
     controller.delete('/nodes/:type/:id', function (req, res) {
