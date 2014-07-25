@@ -11,7 +11,7 @@ var graphs = require("org/arangodb/general-graph");
 //Check if bsoia collection exists
 if(db._collection('bsoia') === null) {
     console.log('Creating nodes collection "bsoia" in "dss" database...');
-	db._create('bsoia');
+	db._createDocumentCollection('bsoia');
 } else {
     console.log('Collection "bsoia" already exists, nothing to do here...');
 }
@@ -19,7 +19,7 @@ if(db._collection('bsoia') === null) {
 //Check if toia collection exists
 if(db._collection('toia') === null) {
     console.log('Creating nodes collection "toia" in "dss" database...');
-    db._create('toia');
+    db._createDocumentCollection('toia');
 } else {
     console.log('Collection "toia" already exists, nothing to do here...');
 }
@@ -27,7 +27,7 @@ if(db._collection('toia') === null) {
 //Check if risk collection exists
 if(db._collection('risk') === null) {
     console.log('Creating nodes collection "risk" in "dss" database...');
-    db._create('risk');
+    db._createDocumentCollection('risk');
 } else {
     console.log('Collection "risk" already exists, nothing to do here...');
 }
@@ -35,7 +35,7 @@ if(db._collection('risk') === null) {
 //Check if treatment collection exists
 if(db._collection('treatment') === null) {
     console.log('Creating nodes collection "treatment" in "dss" database...');
-    db._create('treatment');
+    db._createDocumentCollection('treatment');
 } else {
     console.log('Collection "treatment" already exists, nothing to do here...');
 }
@@ -43,7 +43,7 @@ if(db._collection('treatment') === null) {
 //Check if characteristic collection exists
 if(db._collection('characteristic') === null) {
     console.log('Creating nodes collection "characteristic" in "dss" database...');
-    db._create('characteristic');
+    db._createDocumentCollection('characteristic');
 } else {
     console.log('Collection "characteristic" already exists, nothing to do here...');
 }
@@ -51,7 +51,7 @@ if(db._collection('characteristic') === null) {
 //Check if metric collection exists
 if(db._collection('metric') === null) {
     console.log('Creating nodes collection "metric" in "dss" database...');
-    db._create('metric');
+    db._createDocumentCollection('metric');
 } else {
     console.log('Collection "metric" already exists, nothing to do here...');
 }
@@ -59,7 +59,7 @@ if(db._collection('metric') === null) {
 //Check if provider collection exists
 if(db._collection('provider') === null) {
     console.log('Creating nodes collection "provider" in "dss" database...');
-    db._create('provider');
+    db._createDocumentCollection('provider');
 } else {
     console.log('Collection "provider" already exists, nothing to do here...');
 }
@@ -67,7 +67,7 @@ if(db._collection('provider') === null) {
 //Check if service collection exists
 if(db._collection('service') === null) {
     console.log('Creating nodes collection "service" in "dss" database...');
-    db._create('service');
+    db._createDocumentCollection('service');
 } else {
     console.log('Collection "service" already exists, nothing to do here...');
 }
@@ -77,7 +77,7 @@ if(db._collection('service') === null) {
 //Check if dss_edges collection exists
 if(db._collection('edges') === null){
     console.log('Creating edges collection "edges"...');
-    db._create('edges');
+    db._createEdgeCollection('edges');
 } else {
     console.log('Collection "edges" already exists, nothing to do here...');
 }

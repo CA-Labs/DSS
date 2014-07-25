@@ -39,6 +39,8 @@
     var TreatmentRepository = require('backend/repositories/treatment-repository').repository;
     var TreatmentModel = require('backend/models/treatment-model').model;
 
+    var EdgeRepository = require('backend/repositories/edge-repository').repository;
+
     //
     // Given a bulk of objects (or an object), creates an array of models
     // for each of them, so that they can be stored in ArangoDB afterwards.
@@ -541,6 +543,190 @@
         required: true
     }).pathParam('id', {
         description: 'Id of the node to be removed',
+        type: 'string',
+        required: true
+    });
+
+    /** Retrieves all edges.
+     *
+     */
+    controller.get('/edges', function(req, res){
+        Object.keys(EdgeRepository).forEach(function(key){
+            console.log(key);
+        });
+        res.json(EdgeRepository.all());
+    });
+
+    /** Retrieves an edge.
+     *
+     */
+    controller.get('/edges/:fromCollection/:fromKey/:toCollection/:toKey', function(req, res){
+
+        var fromCollection = req.params('fromCollection');
+        var fromKey = req.params('fromKey');
+        var toCollection = req.params('toCollection');
+        var toKey = req.params('toKey');
+
+        if(fromCollection && fromKey && toCollection && toKey) {
+            res.json(EdgeRepository.getFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey));
+        } else {
+            if(!fromCollection){
+                res.json({error: true, reason: 'From collection is null or undefined'});
+            } else if(!fromKey){
+                res.json({error: true, reason: 'From key is null or undefined'});
+            } else if(!toCollection){
+                res.json({error: true, reason: 'To collection is null or undefined'});
+            } else if(!toKey){
+                res.json({error: true, reason: 'To key is null or undefined'});
+            }
+        }
+
+    }).pathParam('fromCollection', {
+        description: 'A valid node collection for starting vertex',
+        type: 'string',
+        required: true
+    }).pathParam('fromKey', {
+        description: 'A valid node key for starting vertex',
+        type: 'string',
+        required: true
+    }).pathParam('toCollection', {
+        description: 'A valid node collection for ending vertex',
+        type: 'string',
+        required: true
+    }).pathParam('toKey', {
+        description: 'A valid node key for ending vertex',
+        type: 'string',
+        required: true
+    });
+
+    /** Creates a new edge.
+     *
+     */
+    controller.post('/edges/:fromCollection/:fromKey/:toCollection/:toKey', function(req, res){
+
+        var fromCollection = req.params('fromCollection');
+        var fromKey = req.params('fromKey');
+        var toCollection = req.params('toCollection');
+        var toKey = req.params('toKey');
+        var edge = req.body();
+
+        if(fromCollection && fromKey && toCollection && toKey && edge) {
+            res.json(EdgeRepository.save(fromCollection + '/' + fromKey, toCollection + '/' + toKey, edge));
+        } else {
+            if(!fromCollection){
+                res.json({error: true, reason: 'From collection is null or undefined'});
+            } else if(!fromKey){
+                res.json({error: true, reason: 'From key is null or undefined'});
+            } else if(!toCollection){
+                res.json({error: true, reason: 'To collection is null or undefined'});
+            } else if(!toKey){
+                res.json({error: true, reason: 'To key is null or undefined'});
+            } else if(!edge){
+                res.json({error: true, reason: 'Edge is null or undefined'});
+            }
+        }
+
+    }).pathParam('fromCollection', {
+        description: 'A valid node collection for starting vertex',
+        type: 'string',
+        required: true
+    }).pathParam('fromKey', {
+        description: 'A valid node key for starting vertex',
+        type: 'string',
+        required: true
+    }).pathParam('toCollection', {
+        description: 'A valid node collection for ending vertex',
+        type: 'string',
+        required: true
+    }).pathParam('toKey', {
+        description: 'A valid node key for ending vertex',
+        type: 'string',
+        required: true
+    });
+
+    /** Updates a certain edge.
+     *
+     */
+    controller.put('/edges/:fromCollection/:fromKey/:toCollection/:toKey', function(req, res){
+
+        var fromCollection = req.params('fromCollection');
+        var fromKey = req.params('fromKey');
+        var toCollection = req.params('toCollection');
+        var toKey = req.params('toKey');
+        var edge = req.body();
+
+        if(fromCollection && fromKey && toCollection && toKey && edge) {
+            res.json(EdgeRepository.updateFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey, edge));
+        } else {
+            if(!fromCollection){
+                res.json({error: true, reason: 'From collection is null or undefined'});
+            } else if(!fromKey){
+                res.json({error: true, reason: 'From key is null or undefined'});
+            } else if(!toCollection){
+                res.json({error: true, reason: 'To collection is null or undefined'});
+            } else if(!toKey){
+                res.json({error: true, reason: 'To key is null or undefined'});
+            } else if(!edge){
+                res.json({error: true, reason: 'Edge is null or undefined'});
+            }
+        }
+
+    }).pathParam('fromCollection', {
+        description: 'A valid node collection for starting vertex',
+        type: 'string',
+        required: true
+    }).pathParam('fromKey', {
+        description: 'A valid node key for starting vertex',
+        type: 'string',
+        required: true
+    }).pathParam('toCollection', {
+        description: 'A valid node collection for ending vertex',
+        type: 'string',
+        required: true
+    }).pathParam('toKey', {
+        description: 'A valid node key for ending vertex',
+        type: 'string',
+        required: true
+    });
+
+    /** Deletes a certain edge.
+     *
+     */
+    controller.delete('/edges/:fromCollection/:fromKey/:toCollection/:toKey', function(req, res){
+
+        var fromCollection = req.params('fromCollection');
+        var fromKey = req.params('fromKey');
+        var toCollection = req.params('toCollection');
+        var toKey = req.params('toKey');
+
+        if(fromCollection && fromKey && toCollection && toKey) {
+            res.json(EdgeRepository.removeFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey));
+        } else {
+            if(!fromCollection){
+                res.json({error: true, reason: 'From collection is null or undefined'});
+            } else if(!fromKey){
+                res.json({error: true, reason: 'From key is null or undefined'});
+            } else if(!toCollection){
+                res.json({error: true, reason: 'To collection is null or undefined'});
+            } else if(!toKey){
+                res.json({error: true, reason: 'To key is null or undefined'});
+            }
+        }
+
+    }).pathParam('fromCollection', {
+        description: 'A valid node collection for starting vertex',
+        type: 'string',
+        required: true
+    }).pathParam('fromKey', {
+        description: 'A valid node key for starting vertex',
+        type: 'string',
+        required: true
+    }).pathParam('toCollection', {
+        description: 'A valid node collection for ending vertex',
+        type: 'string',
+        required: true
+    }).pathParam('toKey', {
+        description: 'A valid node key for ending vertex',
         type: 'string',
         required: true
     });
