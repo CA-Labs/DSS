@@ -183,7 +183,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
      */
     this.save = function (urlEndPoint, data) {
         var deffered = $q.defer();
-        $http.put(FOXX_API.getUrl(urlEndPoint), data).success(function (data) {
+        $http.post(FOXX_API.getUrl(urlEndPoint), data).success(function (data) {
             deffered.resolve(data);
         }).error(function (err) {
             deffered.reject(err);

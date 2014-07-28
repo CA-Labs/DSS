@@ -195,7 +195,7 @@
                 }
 
             } else {
-                throw Error('Nod type is undefined');
+                throw Error('Node type is undefined');
             }
         }
 

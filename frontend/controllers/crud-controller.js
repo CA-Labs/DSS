@@ -10,7 +10,7 @@ var dssApp = angular.module('dssApp', [
     'angular-flash.flash-alert-directive'
 ]);
 
-dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($scope, ArangoDBService) {
+dssApp.controller('crudController', ['$scope', 'ArangoDBService', '$http', function ($scope, ArangoDBService, $http) {
     // Initialize save object
     $scope.providerData = {};
     $scope.metricData = {};
@@ -123,6 +123,37 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
     };
 
     $scope.saveForm = function (objectType, data) {
-
+        switch (objectType) {
+            case "service":
+                var dataToSend = {
+                    "name": data.name,
+                    "type": "service",
+                    "serivceType": data.cloudType,
+                    "metrics": $scope.metricsValues
+                };
+                ArangoDBService.save('service', data).then(function () {
+                    $scope.serviceData = {};
+                    $scope.metricsValues = {};
+                }).error(function (err) {
+                    $scope.error = err;
+                });
+                break;
+            case "metric":
+                data.type = "metric";
+                ArangoDBService.save('metric', data).then(function () {
+                    $scope.metricData = {};
+                }).fail(function () {
+                    $scope.error = err;
+                });
+                break;
+            case "provider":
+                data.type = "provider";
+                $http.put('/node/provider', data).success(function () {
+                    $scope.providerData = {};
+                }).error(function (err) {
+                    $scope.error = err;
+                });
+                break;
+        }
     };
 }]);

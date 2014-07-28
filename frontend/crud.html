@@ -42,6 +42,12 @@
             </ul>
         </div>
     </div>
+    <div class="row" ng-show="error.length > 0">
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            {{ error }}
+        </div>
+    </div>
     <!--/navbar-->
     <!--main container-->
     <div class="row mainContainer">
@@ -62,45 +68,45 @@
 
             <form name="providerForm" ng-submit="saveForm('provider', providerData)">
                 <div class="col-lg-12">
-                    <div class="form-group" ng-class="{ 'has-error' : serviceForm.name.$invalid && !serviceForm.name.$pristine }">
+                    <div class="form-group" ng-class="{ 'has-error' : providerForm.name.$invalid && !providerForm.name.$pristine }">
                         <label for="name">Name: </label>
-                        <input type="text" name="name" ng-model="serviceData.name" ng-required="true" class="form-control" autofocus/>
-                        <p ng-show="serviceForm.name.$invalid" class="help-block">Name is required</p>
+                        <input type="text" name="name" ng-model="providerData.name" ng-required="true" class="form-control" autofocus/>
+                        <p ng-show="providerForm.name.$invalid" class="help-block">Name is required</p>
                     </div>
                     <div class="form-group">
                         <label for="year_founding">Year Founding (yyyy): </label>
-                        <input type="number" name="year_founding" ng-model="serviceData.year_founding" class="form-control" min="1900" max="maxYear" ng-minlenght="4" ng-maxlength="4"/>
-                        <p ng-show="serviceForm.year_founding.$error.minlength || serviceForm.year_founding.$error.maxlength" class="help-block">Incorrect year</p>
+                        <input type="number" name="year_founding" ng-model="providerData.year_founding" class="form-control" min="1900" max="maxYear" ng-minlenght="4" ng-maxlength="4"/>
+                        <p ng-show="providerForm.year_founding.$error.minlength || providerForm.year_founding.$error.maxlength" class="help-block">Incorrect year</p>
                     </div>
                     <div class="form-group">
                         <label for="website">Website: </label>
-                        <input type="url" name="website" ng-model="serviceData.website" class="form-control" ng-required="true"/>
-                        <p ng-show="serviceForm.website.$invalid" class="help-block">Website is required</p>
+                        <input type="url" name="website" ng-model="providerData.website" class="form-control" ng-required="true"/>
+                        <p ng-show="providerForm.website.$invalid" class="help-block">Website is required</p>
                     </div>
                     <div class="form-group">
                         <label for="logo_url">Logo URL: </label>
-                        <input type="url" name="logo_url" ng-model="serviceData.logo_url" class="form-control" ng-required="false"/>
+                        <input type="url" name="logo_url" ng-model="providerData.logo_url" class="form-control" ng-required="false"/>
                     </div>
                     <div class="form-group">
                         <label for="description">Description: </label>
-                        <textarea name="description" ng-model="serviceData.description" rows="10" class="form-control"></textarea>
+                        <textarea name="description" ng-model="providerData.description" rows="10" class="form-control"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="number_of_employees">Number of Employees: </label>
-                        <input type="number" name="number_of_employees" ng-model="serviceData.number_of_employees" class="form-control" ng-required="false" min="1"/>
-                        <p ng-show="!serviceForm.number_of_employees.$valid">Can't be lower than 1</p>
+                        <input type="number" name="number_of_employees" ng-model="providerData.number_of_employees" class="form-control" ng-required="false" min="1"/>
+                        <p ng-show="!providerForm.number_of_employees.$valid">Can't be lower than 1</p>
                     </div>
                     <div class="form-group">
                         <label for="headquarters">Headquarters: </label>
-                        <input type="number" name="headquarters" ng-model="serviceData.headquarters" class="form-control" ng-required="false"/>
+                        <input type="number" name="headquarters" ng-model="providerData.headquarters" class="form-control" ng-required="false"/>
                     </div>
                     <div class="form-group">
                         <label for="headquarters_country">Headquarters Country: </label>
-                        <input type="number" name="headquarters_country" ng-model="serviceData.headquarters_country" class="form-control" ng-required="false"/>
+                        <input type="number" name="headquarters_country" ng-model="providerData.headquarters_country" class="form-control" ng-required="false"/>
                     </div>
                     <div class="form-group">
                         <label for="headquarters_continent">Headquarters Continent: </label>
-                        <input type="number" name="headquarters_continent" ng-model="serviceData.headquarters_continent" class="form-control" ng-required="false"/>
+                        <input type="number" name="headquarters_continent" ng-model="providerData.headquarters_continent" class="form-control" ng-required="false"/>
                     </div>
                 </div>
             </form>
@@ -127,6 +133,11 @@
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" ng-model="serviceForm.name" ng-required="true" class="form-control" autofocus/>
+                                <p ng-show="serviceForm.name.$invalid" class="help-block">Name is required</p>
+                            </div>
+                            <div class="form-group">
                                 <label for="provider">Provider</label>
                                 <select name="provider" ng-model="serviceData.provider" ng-required="true" class="form-control" ng-options="p.name for p in providers">
                                     <option value="">-- select provider --</option>
@@ -134,14 +145,14 @@
                                 <p ng-show="serviceForm.provider.$error.required">Please select a provider from the list</p>
                             </div>
                             <div class="form-group">
-                                <label for="serviceType">Service Type</label>
-                                <select name="serviceType" ng-model="serviceData.serviceType" ng-required="true" class="form-control">
+                                <label for="cloudType">Service Type</label>
+                                <select name="cloudType" ng-model="serviceData.cloudType" ng-required="true" class="form-control">
                                     <option value="">-- select service Type --</option>
                                     <option value="IaaS">IaaS</option>
                                     <option value="PaaS">PaaS</option>
                                     <option value="SaaS">SaaS</option>
                                 </select>
-                                <p ng-show="serviceForm.serviceType.$error.required">Please select service type from the list</p>
+                                <p ng-show="serviceForm.cloudType.$error.required">Please select service type from the list</p>
                             </div>
                             <div class="form-group" ng-repeat="metric in metrics">
                                 <p>{{ metric.name }}</p>
