@@ -163,6 +163,7 @@
                         repository = ProviderRepository;
                         break;
                     case 'service':
+                        bulk.metrics = undefined;
                         model = new ServiceModel(bulk);
                         repository = ServiceRepository;
                         break;

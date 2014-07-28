@@ -19,7 +19,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
     //FOXX API endpoints
     var FOXX_API = {
         getUrl: function (url) {
-            return ARANGODB_BASE_URL + url
+            return ARANGODB_BASE_URL + 'crud/nodes/' + url
         },
         getBSOIA: function(){
             return ARANGODB_BASE_URL + 'crud/nodes/bsoia'
@@ -167,14 +167,12 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
      * @param {string} urlEndPoint - valid url end point
      * @returns {promise}
      */
-    this.getAll = function (urlEndPoint) {
-        var deffered = $q.defer();
-        $http.get(FOXX_API.getURL(urlEndPoint)).success(function (data) {
-            deffered.resolve(data);
+    this.getAll = function (urlEndPoint, callback) {
+        $http.get(FOXX_API.getUrl(urlEndPoint)).success(function (data) {
+            callback(null, data);
         }).error(function (err) {
-            deffered.reject(err);
+            callback(err, null);
         });
-        return deffered.promise;
     };
 
     /**

@@ -17,34 +17,98 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
     $scope.serviceData = {};
 
     // Get the data from the database
-//    $scope.provider = ArangoDBService.getAll('node/provider');
-//    $scope.metric = ArangoDBService.getAll('node/metric');
+    ArangoDBService.getAll('provider', function (err, data) {
+        $scope.providers = data;
+    });
+
+    $scope.metricsValues = {};
+
+    $scope.$watch('metricsValues', function (value) {
+        console.log(value);
+
+    }, true);
+
+    ArangoDBService.getAll('metric', function (err, data) {
+        $scope.metrics = data;
+    });
 
     // Views switch {
+    $scope.showAssetPanel = false;
+    $scope.showRiskPanel = false;
+    $scope.showTreatmentPanel = false;
+    $scope.showCharacteristicPanel = false;
     $scope.showServicePanel = true;
     $scope.showMetricPanel = false;
     $scope.showProviderPanel = false;
 
     $scope.switchPanel = function (panelName) {
         switch(panelName) {
+            case "asset":
+                $scope.showRiskPanel = false;
+                $scope.showTreatmentPanel = false;
+                $scope.showCharacteristicPanel = false;
+                $scope.showServicePanel = false;
+                $scope.showProviderPanel = false;
+                $scope.showMetricPanel = false;
+                $scope.showAssetPanel = true;
+                break;
+            case "risk":
+                $scope.showTreatmentPanel = false;
+                $scope.showCharacteristicPanel = false;
+                $scope.showServicePanel = false;
+                $scope.showProviderPanel = false;
+                $scope.showMetricPanel = false;
+                $scope.showAssetPanel = false;
+                $scope.showRiskPanel = true;
+                break;
+            case "treatment":
+                $scope.showCharacteristicPanel = false;
+                $scope.showServicePanel = false;
+                $scope.showProviderPanel = false;
+                $scope.showMetricPanel = false;
+                $scope.showAssetPanel = false;
+                $scope.showRiskPanel = false;
+                $scope.showTreatmentPanel = true;
+                break;
+            case "characteristic":
+                $scope.showServicePanel = false;
+                $scope.showProviderPanel = false;
+                $scope.showMetricPanel = false;
+                $scope.showAssetPanel = false;
+                $scope.showRiskPanel = false;
+                $scope.showTreatmentPanel = false;
+                $scope.showCharacteristicPanel = true;
+                break;
             case "metric":
+                $scope.showAssetPanel = false;
+                $scope.showRiskPanel = false;
+                $scope.showTreatmentPanel = false;
+                $scope.showCharacteristicPanel = false;
                 $scope.showServicePanel = false;
                 $scope.showProviderPanel = false;
                 $scope.showMetricPanel = true;
                 break;
             case "provider":
+                $scope.showAssetPanel = false;
+                $scope.showRiskPanel = false;
+                $scope.showTreatmentPanel = false;
+                $scope.showCharacteristicPanel = false;
                 $scope.showServicePanel = false;
                 $scope.showMetricPanel = false;
                 $scope.showProviderPanel = true;
                 break;
             case "service":
             default:
+                $scope.showAssetPanel = false;
+                $scope.showRiskPanel = false;
+                $scope.showTreatmentPanel = false;
+                $scope.showCharacteristicPanel = false;
                 $scope.showMetricPanel = false;
                 $scope.showProviderPanel = false;
                 $scope.showServicePanel = true;
                 break;
         }
-    }
+    };
     // }
 
     $scope.maxYear = new Date().getFullYear();
