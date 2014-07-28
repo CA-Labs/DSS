@@ -30,7 +30,7 @@ if ! ps aux | grep "/sbin/arangod" | grep -v grep > /dev/null; then
     fi
 
     echo "Deploying DSS foxx application..."
-    sh deploy.sh
+    sh deploy.sh test
     echo "Starting tests..."
     npm test
 
@@ -38,7 +38,7 @@ else
 
     echo "ArangoDB instance already running."
     echo "Deploying DSS foxx application..."
-    sh deploy.sh
+    sh deploy.sh test
     echo "Starting tests..."
     npm test
 

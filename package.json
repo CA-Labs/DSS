@@ -15,9 +15,10 @@
     "jasmine-node": "^1.14.5",
     "karma": "^0.12.19",
     "karma-chrome-launcher": "^0.1.4",
-    "karma-jasmine": "^0.1.5"
+    "karma-jasmine": "^0.1.5",
+    "karma-spec-reporter": "0.0.13"
   },
   "scripts": {
-    "test": "jasmine-node --verbose test/spec"
+    "test": "karma start karma.config.js"
   }
 }

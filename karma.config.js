@@ -15,6 +15,7 @@ module.exports = function(config) {
 
     // list of files / patterns to load in the browser
     files: [
+        // js files required by the app
         'frontend/components/jquery/dist/jquery.min.js',
         'frontend/components/jquery-ui/jquery-ui.min.js',
         'frontend/components/ng-file-upload/angular-file-upload-shim.js',
@@ -33,6 +34,7 @@ module.exports = function(config) {
         'frontend/components/x2js/xml2json.js',
         'frontend/components/bootstrap-switch/dist/js/bootstrap-switch.js',
         'frontend/components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js',
+        // app js files
         'frontend/app.min.js',
         'frontend/controllers/bsoia-controller.js',
         'frontend/controllers/toia-controller.js',
@@ -47,6 +49,9 @@ module.exports = function(config) {
         'frontend/common/filters.js',
         'frontend/common/mainInterfaces.js',
         'frontend/directives/*.js',
+        // test js files
+        'frontend/components/angular-mocks/angular-mocks.js',
+        'frontend/components/jasmine-underscore/lib/jasmine-underscore.js',
         'test/spec/*.js'
     ],
 
@@ -65,7 +70,7 @@ module.exports = function(config) {
     // test results reporter to use
     // possible values: 'dots', 'progress'
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-    reporters: ['progress'],
+    reporters: ['spec'],
 
 
     // web server port
@@ -78,7 +83,7 @@ module.exports = function(config) {
 
     // level of logging
     // possible values: config.LOG_DISABLE || config.LOG_ERROR || config.LOG_WARN || config.LOG_INFO || config.LOG_DEBUG
-    logLevel: config.LOG_DEBUG,
+    logLevel: config.LOG_INFO,
 
 
     // enable / disable watching file and executing tests whenever any file changes

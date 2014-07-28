@@ -14,26 +14,29 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', fun
 
     //TODO: Fix an stable arangoDB server base URL
     //var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/api/';
-    var ARANGODB_BASE_URL = 'http://localhost:8529/_db/dss/dss/';
+    this.ARANGODB_BASE_URL = 'http://localhost:8529/_db/dss/dss/';
+
+    //Closures
+    var self = this;
 
     //FOXX API endpoints
-    var FOXX_API = {
+    this.FOXX_API = {
         getBSOIA: function(){
-            return ARANGODB_BASE_URL + 'crud/nodes/bsoia'
+            return self.ARANGODB_BASE_URL + 'crud/nodes/bsoia'
         },
         getTOIA: function(){
-            return ARANGODB_BASE_URL + 'crud/nodes/toia'
+            return self.ARANGODB_BASE_URL + 'crud/nodes/toia'
         },
         getRisks: function(){
-            return ARANGODB_BASE_URL + 'crud/nodes/risk';
+            return self.ARANGODB_BASE_URL + 'crud/nodes/risk';
         },
         getTreatments: function(){
-            return ARANGODB_BASE_URL + 'crud/nodes/treatment';
+            return self.ARANGODB_BASE_URL + 'crud/nodes/treatment';
         },
         getPotentialRisks: function(selectedBsoias, selectedToias){
             //Build correct URL from selectedBsoias/Toias lists
             var firstBsoia = firstToia = true;
-            var url = ARANGODB_BASE_URL + 'graph/potentialRisks?';
+            var url = self.ARANGODB_BASE_URL + 'graph/potentialRisks?';
             _.each(selectedBsoias, function(bsoia){
                if(firstBsoia){
                    firstBsoia = false;
@@ -54,7 +57,7 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', fun
         },
         getPotentialTreatments: function(selectedRisks){
             var firstRisk = true;
-            var url = ARANGODB_BASE_URL + 'graph/potentialTreatments?';
+            var url = self.ARANGODB_BASE_URL + 'graph/potentialTreatments?';
             _.each(selectedRisks, function(risk){
                 if(firstRisk){
                     firstRisk = false;
@@ -73,7 +76,7 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', fun
      * on data retrieval.
      */
     this.getBSOIA = function(callback){
-        $http({method: 'GET', url: FOXX_API.getBSOIA()})
+        $http({method: 'GET', url: self.FOXX_API.getBSOIA()})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })
@@ -88,7 +91,7 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', fun
      * on data retrieval.
      */
     this.getTOIA = function(callback){
-        $http({method: 'GET', url: FOXX_API.getTOIA()})
+        $http({method: 'GET', url: self.FOXX_API.getTOIA()})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })
@@ -103,7 +106,7 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', fun
      * on data retrieval.
      */
     this.getRisks = function(callback){
-        $http({method: 'GET', url: FOXX_API.getRisks()})
+        $http({method: 'GET', url: self.FOXX_API.getRisks()})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })
@@ -118,7 +121,7 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', fun
      * on data retrieval.
      */
     this.getTreatments = function(callback) {
-        $http({method: 'GET', url: FOXX_API.getTreatments()})
+        $http({method: 'GET', url: self.FOXX_API.getTreatments()})
             .success(function (data, status, headers, config) {
                 callback(null, data);
             })
@@ -134,7 +137,7 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', fun
      * on data retrieval.
      */
     this.getPotentialRisks = function(callback) {
-        $http({method: 'GET', url: FOXX_API.getPotentialRisks(AssetsService.getBSOIA(), AssetsService.getTA())})
+        $http({method: 'GET', url: self.FOXX_API.getPotentialRisks(AssetsService.getBSOIA(), AssetsService.getTA())})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })
@@ -150,7 +153,7 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', fun
      * on data retrieval.
      */
     this.getPotentialTreatments = function(callback){
-        $http({method: 'GET', url: FOXX_API.getPotentialTreatments(RisksService.getRisks())})
+        $http({method: 'GET', url: self.FOXX_API.getPotentialTreatments(RisksService.getRisks())})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })
