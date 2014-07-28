@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-describe('A suite', function(){
+describe('DSS API Suite', function(){
     it('is true', function(){
         expect(true).toBe(true);
     });
