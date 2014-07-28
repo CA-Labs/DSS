@@ -1,10 +1,9 @@
-#!/bin/bash
+#!/bin/bash -v
 
 #Number of seconds to wait for arangodb process startup
-WAIT_THRESHOLD=25
+WAIT_THRESHOLD=10
 
 #Check if arangod process is running or not before running tets
-
 if ! ps aux | grep "/sbin/arangod" | grep -v grep > /dev/null; then
 
     echo "ArangoDB instance is stopped, starting it..."
@@ -15,8 +14,9 @@ if ! ps aux | grep "/sbin/arangod" | grep -v grep > /dev/null; then
 
     while [ $WAIT_TIME -lt $WAIT_THRESHOLD ]
     do
-        sleep 1s
-        WAIT_TIME=$((WAIT_TIME + 1))
+        #Wait at least up to 5 seconds just to be sure ArangoDB process is up and running
+        sleep 5s
+        WAIT_TIME=$((WAIT_TIME + 5))
         if ps aux | grep "/sbin/arangod" | grep -v grep > /dev/null ; then
             break
         fi
@@ -29,12 +29,17 @@ if ! ps aux | grep "/sbin/arangod" | grep -v grep > /dev/null; then
         echo "ArangoDB instance successfully started."
     fi
 
+    echo "Deploying DSS foxx application..."
+    sh deploy.sh
     echo "Starting tests..."
     npm test
 
 else
 
-    echo "ArangoDB instance already running, starting tests..."
+    echo "ArangoDB instance already running."
+    echo "Deploying DSS foxx application..."
+    sh deploy.sh
+    echo "Starting tests..."
     npm test
 
 fi
