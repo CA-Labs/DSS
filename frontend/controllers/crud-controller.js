@@ -134,7 +134,7 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', '$http', funct
                 ArangoDBService.save('service', data).then(function () {
                     $scope.serviceData = {};
                     $scope.metricsValues = {};
-                }).error(function (err) {
+                }).fail(function (err) {
                     $scope.error = err;
                 });
                 break;
@@ -142,15 +142,15 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', '$http', funct
                 data.type = "metric";
                 ArangoDBService.save('metric', data).then(function () {
                     $scope.metricData = {};
-                }).fail(function () {
+                }).fail(function (err) {
                     $scope.error = err;
                 });
                 break;
             case "provider":
                 data.type = "provider";
-                $http.put('/node/provider', data).success(function () {
+                ArangoDBService.save('provider', data).then(function () {
                     $scope.providerData = {};
-                }).error(function (err) {
+                }).fail(function (err) {
                     $scope.error = err;
                 });
                 break;
