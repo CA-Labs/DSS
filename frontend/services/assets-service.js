@@ -108,8 +108,8 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', function(flash, $q
      * @param toiaAssetName The name of the TOIA.
      */
     this.existsTOIAByName = function(toiaAssetName){
-        toia.filter(function(asset, i){
-           return asset.name == toiaAssetName;
+        return toia.filter(function(asset, i){
+            return asset.asset.name == toiaAssetName;
         }).length > 0;
     };
 
@@ -188,7 +188,7 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', function(flash, $q
     this.updateTOIAbyName = function(toiaAssetName, toiaAsset){
         var index = -1;
         _.each(toia, function(asset, i){
-            if(asset.name == toiaAssetName){
+            if(asset.asset.name == toiaAssetName){
                 index = i;
             }
         });
@@ -250,5 +250,14 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', function(flash, $q
         };
         return deferred.promise;
     };
+
+    /**
+     * Removes all assets (BSOIA/TOIA/TA).
+     */
+    this.removeAll = function(){
+        bsoia = [];
+        toia = [];
+        ta = [];
+    }
 
 }]);
