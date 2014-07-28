@@ -1,5 +1,7 @@
 /**
- * Created by jaranda on 7/28/14.
+ * Created by Jordi Aranda.
+ * 28/07/14
+ * <jordi.aranda@bsc.es>
  */
 
 describe('A suite', function(){
