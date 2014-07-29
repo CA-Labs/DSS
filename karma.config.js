@@ -52,7 +52,8 @@ module.exports = function(config) {
         // test js files
         'frontend/components/angular-mocks/angular-mocks.js',
         'frontend/components/jasmine-underscore/lib/jasmine-underscore.js',
-        'test/frontend/**/*.js'
+        'test/frontend/**/*.js',
+        'test/backend/**/*.js'
     ],
 
 

@@ -59,6 +59,11 @@
 
         if(_.isArray(bulk)){
 
+            // We should not accept to post no content
+            if(bulk.length == 0){
+                return;
+            }
+
             var first = true;
             var firstType = bulk[0].type;
 
@@ -353,25 +358,30 @@
 
         var bulk = req.body();
         var modelsAndRepository = createModels(bulk);
-        var models = modelsAndRepository.models;
-        var repository = modelsAndRepository.repository;
 
-        if(repository && models.length > 0){
+        if(modelsAndRepository){
+            var models = modelsAndRepository.models;
+            var repository = modelsAndRepository.repository;
 
-            // Each save call returns a JSON with the response, we want
-            // to aggregate all them and return them as a single response
-            // after the bulk insertion.
-            var jsonResponse = [];
+            if(repository && models && models.length > 0){
 
-            // Iterate over models and save them
-            _.each(models, function(model){
-                jsonResponse.push(repository.save(model));
-            });
+                // Each save call returns a JSON with the response, we want
+                // to aggregate all them and return them as a single response
+                // after the bulk insertion.
+                var jsonResponse = [];
 
-            // Return save responses aggregation as response
-            res.json(jsonResponse);
+                // Iterate over models and save them
+                _.each(models, function(model){
+                    jsonResponse.push(repository.save(model));
+                });
 
-        }  else {
+                // Return save responses aggregation as response
+                res.json(jsonResponse);
+
+            }  else {
+                res.json({error: true});
+            }
+        } else {
             res.json({error: true});
         }
 
@@ -729,6 +739,26 @@
         description: 'A valid node key for ending vertex',
         type: 'string',
         required: true
+    });
+
+    // Used in tests for database clean-up
+    controller.delete('/nodes/all', function(req, res){
+        // TODO: Verify request ip is localhost so that we get rid of hacking issues
+        db._collection('metric').truncate();
+        db._collection('provider').truncate();
+        db._collection('service').truncate();
+        db._collection('characteristic').truncate();
+        db._collection('bsoia').truncate();
+        db._collection('toia').truncate();
+        db._collection('risk').truncate();
+        db._collection('treatment').truncate();
+        res.json({error: false});
+    });
+
+    controller.delete('/edges/all', function(req, res){
+        //TODO: Verify request ip is localhost so that we get rid of hacking issues
+        db._collection('edges').truncate();
+        res.json({error: false});
     });
 
 })();
