@@ -224,7 +224,7 @@
                 // Don't return the model, but its data
                 var characteristics = CharacteristicRepository.all();
                 characteristics = _.map(characteristics, function(characteristic){
-                    return characteristic.forClient();
+                    return characteristic.attributes;
                 });
                 res.json(characteristics);
                 break;
@@ -232,7 +232,7 @@
                 // Don't return the model, but its data
                 var metrics = MetricRepository.all();
                 metrics = _.map(metrics, function(metric){
-                    return metric.forClient();
+                    return metric.attributes;
                 });
                 res.json(metrics);
                 break;
@@ -240,7 +240,7 @@
                 // Don't return the model, but its data
                 var providers = ProviderRepository.all();
                 providers = _.map(providers, function(provider){
-                    return provider.forClient();
+                    return provider.attributes;
                 });
                 res.json(providers);
                 break;
@@ -248,7 +248,7 @@
                 // Don't return the model, but its data
                 var services = ServiceRepository.all();
                 services = _.map(services, function(service){
-                    return service.forClient();
+                    return service.attributes;
                 });
                 res.json(services);
                 break;
@@ -256,7 +256,7 @@
                 // Don't return the model, but its data
                 var bsoias = BSOIARepository.all();
                 bsoias = _.map(bsoias, function(bsoia){
-                    return bsoia.forClient();
+                    return bsoia.attributes;
                 });
                 res.json(bsoias);
                 break;
@@ -264,7 +264,7 @@
                 // Don't return the model, but its data
                 var toias = TOIARepository.all();
                 toias = _.map(toias, function(toia){
-                    return toia.forClient();
+                    return toia.attributes;
                 });
                 res.json(toias);
                 break;
@@ -272,7 +272,7 @@
                 // Don't return the model, but its data
                 var risks = RiskRepository.all();
                 risks = _.map(risks, function(risk){
-                    return risk.forClient();
+                    return risk.attributes;
                 });
                 res.json(risks);
                 break;
@@ -280,7 +280,7 @@
                 // Don't return the model, but its data
                 var treatments = TreatmentRepository.all();
                 treatments = _.map(treatments, function(treatment){
-                   return treatment.forClient();
+                   return treatment.attributes;
                 });
                 res.json(treatments);
                 break;
@@ -336,7 +336,7 @@
         }
 
         if(repository){
-            res.json(repository.byId(type + '/' + id).forClient());
+            res.json(repository.byId(id).attributes);
         } else {
             res.json({error: true, reason: 'Unknown type ' + type + ' or invalid id'});
         }
@@ -407,7 +407,7 @@
                 case 'characteristic':
                     model = new CharacteristicModel(raw);
                     if(model.isValid){
-                        res.json(CharacteristicRepository.replaceById(id, model).forClient());
+                        res.json(CharacteristicRepository.replaceById(id, model).attributes);
                     } else {
                        validationError = true;
                     }
@@ -415,7 +415,7 @@
                 case 'metric':
                     model = new MetricModel(raw);
                     if(model.isValid){
-                        res.json(MetricRepository.replaceById(id, model).forClient());
+                        res.json(MetricRepository.replaceById(id, model).attributes);
                     } else {
                         validationError = true;
                     }
@@ -423,7 +423,7 @@
                 case 'provider':
                     model = new ProviderModel(raw);
                     if(model.isValid){
-                        res.json(ProviderRepository.replaceById(id, model).forClient());
+                        res.json(ProviderRepository.replaceById(id, model).attributes);
                     } else {
                         validationError = true;
                     }
@@ -431,7 +431,7 @@
                 case 'service':
                     model = new ServiceModel(raw);
                     if(model.isValid){
-                        res.json(ServiceRepository.replaceById(id, model).forClient());
+                        res.json(ServiceRepository.replaceById(id, model).attributes);
                     } else {
                         validationError = true;
                     }
@@ -439,7 +439,7 @@
                 case 'bsoia':
                     model = new BSOIAModel(raw);
                     if(model.isValid){
-                        res.json(BSOIARepository.replaceById(id, model).forClient());
+                        res.json(BSOIARepository.replaceById(id, model).attributes);
                     } else {
                         validationError = true;
                     }
@@ -447,7 +447,7 @@
                 case 'toia':
                     model = new TOIAModel(raw);
                     if(model.isValid){
-                        res.json(TOIARepository.replaceById(id, model).forClient());
+                        res.json(TOIARepository.replaceById(id, model).attributes);
                     } else {
                         validationError = true;
                     }
@@ -455,7 +455,7 @@
                 case 'risk':
                     model = new RiskcModel(raw);
                     if(model.isValid){
-                        res.json(RiskRepository.replaceById(id, model).forClient());
+                        res.json(RiskRepository.replaceById(id, model).attributes);
                     } else {
                         validationError = true;
                     }
@@ -463,7 +463,7 @@
                 case 'treatment':
                     model = new TreatmentModel(raw);
                     if(model.isValid){
-                        res.json(TreatmentRepository.replaceById(id, model).forClient());
+                        res.json(TreatmentRepository.replaceById(id, model).attributes);
                     } else {
                         validationError = true;
                     }
@@ -509,28 +509,36 @@
 
             switch(type){
                 case 'characteristic':
-                    res.json(CharacteristicRepository.removeById(id));
+                    CharacteristicRepository.removeById(id);
+                    res.json({error: false});
                     break;
                 case 'metric':
-                    res.json(MetricRepository.removeById(id));
+                    MetricRepository.removeById(id);
+                    res.json({error: false});
                     break;
                 case 'provider':
-                    res.json(ProviderRepository.removeById(id));
+                    ProviderRepository.removeById(id);
+                    res.json({error: false});
                     break;
                 case 'service':
-                    res.json(ServiceRepository.removeById(id));
+                    ServiceRepository.removeById(id);
+                    res.json({error: false});
                     break;
                 case 'bsoia':
-                    res.json(BSOIARepository.removeById(id));
+                    BSOIARepository.removeById(id);
+                    res.json({error: false});
                     break;
                 case 'toia':
-                    res.json(TOIARepository.removeById(id));
+                    TOIARepository.removeById(id);
+                    res.json({error: false});
                     break;
                 case 'risk':
-                    res.json(RiskRepository.removeById(id));
+                    RiskRepository.removeById(id);
+                    res.json({error: false});
                     break;
                 case 'treatment':
-                    res.json(TreatmentRepository.removeById(id));
+                    TreatmentRepository.removeById(id);
+                    res.json({error: false});
                     break;
                 default:
                     res.json({error: true, reason: 'Unknown node type'});
@@ -557,13 +565,65 @@
         required: true
     });
 
+    /** Deletes all nodes of a certain type.
+     *
+     */
+    controller.delete('/nodes/:type', function(req, res){
+
+        var type = req.params('type');
+
+        if(type){
+            switch(type){
+                case 'characteristic':
+                    db._collection('characteristic').truncate();
+                    res.json({error: false});
+                    break;
+                case 'metric':
+                    db._collection('metric').truncate();
+                    res.json({error: false});
+                    break;
+                case 'provider':
+                    db._collection('provider').truncate();
+                    res.json({error: false});
+                    break;
+                case 'service':
+                    db._collection('service').truncate();
+                    res.json({error: false});
+                    break;
+                case 'bsoia':
+                    db._collection('bsoia').truncate();
+                    res.json({error: false});
+                    break;
+                case 'toia':
+                    db._collection('toia').truncate();
+                    res.json({error: false});
+                    break;
+                case 'risk':
+                    db._collection('risk').truncate();
+                    res.json({error: false});
+                    break;
+                case 'treatment':
+                    db._collection('treatment').truncate();
+                    res.json({error: false});
+                    break;
+                default:
+                    res.json({error: true, reason: 'Unknown node type'});
+                    break;
+            }
+        } else {
+            res.json({error: true, reason: 'Type is null or undefined'});
+        }
+
+    }).pathParam('type', {
+        description: 'The type of the nodes (characteristic|metric|provider|service|bsoia|toia|risk|treatment)',
+        type: 'string',
+        required: true
+    });
+
     /** Retrieves all edges.
      *
      */
     controller.get('/edges', function(req, res){
-        Object.keys(EdgeRepository).forEach(function(key){
-            console.log(key);
-        });
         res.json(EdgeRepository.all());
     });
 
