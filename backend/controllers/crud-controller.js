@@ -681,7 +681,7 @@
         var edge = req.body();
 
         if(fromCollection && fromKey && toCollection && toKey && edge) {
-            res.json(EdgeRepository.save(fromCollection + '/' + fromKey, toCollection + '/' + toKey, edge));
+            res.json(EdgeRepository.saveEdge(fromCollection + '/' + fromKey, toCollection + '/' + toKey, edge.type, edge));
         } else {
             if(!fromCollection){
                 res.json({error: true, reason: 'From collection is null or undefined'});

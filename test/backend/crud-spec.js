@@ -34,6 +34,12 @@ describe('CRUD API', function(){
         },
         DELETE_NODES: function(type){
             return ARANGODB_TEST_BASE_URL + 'crud/nodes/' + type;
+        },
+        GET_EDGES: function(){
+            return ARANGODB_TEST_BASE_URL + 'crud/edges'
+        },
+        POST_EDGES: function(_from, _to){
+            return ARANGODB_TEST_BASE_URL + 'crud/edges/' + _from + '/' + _to;
         }
     };
 
@@ -846,17 +852,52 @@ describe('CRUD API', function(){
      ************************************* EDGES TESTS *****************************************
      *******************************************************************************************/
 
-    xit('should be able to create a new edge between different node types', function(){
-        //Create a new BSOIA asset
-        baseAJAX('POST', API.POST_NODES(), false, bsoias[0], function(){
-            baseAJAX('GET', API.GET_NODES('bsoia'), false, null, function(data){
-                expect(data.length).toEqual(1);
+    it('should be able to create a new edge between different node types', function(){
+        var bsoiaId = null;
+        var toiaId = null;
+        // Create a new BSOIA asset
+        baseAJAX('POST', API.POST_NODES(), false, bsoias[0], function(data){
+            bsoiaId = data[0].attributes._id;
+            // Create a new TOIA asset
+            baseAJAX('POST', API.POST_NODES(), false, toias[0], function(data){
+                toiaId = data[0].attributes._id;
+                // Create the edge
+                baseAJAX('POST', API.POST_EDGES(bsoiaId, toiaId), false, {type: 'bsoia_toia', data: {value: 1}}, function(){
+                    baseAJAX('GET', API.GET_EDGES(), false, null, function(data){
+                        expect(data.length).toEqual(1);
+                        expect(data[0]._from).toBe(bsoiaId);
+                        expect(data[0]._to).toBe(toiaId);
+                    });
+                }, null);
             }, null);
         }, null);
-        //Create a new TOIA asset
-        baseAJAX('POST', API.POST_NODES(), false, toias[0], function(){
-            baseAJAX('GET', API.GET_NODES('bsoia'), false, null, function(data){
-                expect(data.length).toEqual(1);
+    });
+
+    it('should not be able to create duplicate edges between different node types', function(){
+        var bsoiaId = null;
+        var toiaId = null;
+        // Create a new BSOIA asset
+        baseAJAX('POST', API.POST_NODES(), false, bsoias[0], function(data){
+            bsoiaId = data[0].attributes._id;
+            // Create a new TOIA asset
+            baseAJAX('POST', API.POST_NODES(), false, toias[0], function(data){
+                toiaId = data[0].attributes._id;
+                // Create the edge
+                baseAJAX('POST', API.POST_EDGES(bsoiaId, toiaId), false, {type: 'bsoia_toia', data: {value: 1}}, function(){
+                    baseAJAX('GET', API.GET_EDGES(), false, null, function(data){
+                        expect(data.length).toEqual(1);
+                        expect(data[0]._from).toBe(bsoiaId);
+                        expect(data[0]._to).toBe(toiaId);
+                    });
+                    // Try to create a duplicate
+                    baseAJAX('POST', API.POST_EDGES(bsoiaId, toiaId), false, {type: 'bsoia_toia', data: {value: 1}}, function(data){
+                        baseAJAX('GET', API.GET_EDGES(), false, null, function(data){
+                            expect(data.length).toEqual(1);
+                            expect(data[0]._from).toBe(bsoiaId);
+                            expect(data[0]._to).toBe(toiaId);
+                        });
+                    }, null);
+                }, null);
             }, null);
         }, null);
     });
