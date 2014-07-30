@@ -217,7 +217,7 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a new metric', function(){
-        baseAJAX('POST', API.POST_NODES('metric'), false, metrics[0], function(){
+        baseAJAX('POST', API.POST_NODES(), false, metrics[0], function(){
             baseAJAX('GET', API.GET_NODES('metric'), false, null, function(data){
                 expect(data.length).toEqual(1);
             });
@@ -228,7 +228,7 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a bulk of metrics', function(){
-        baseAJAX('POST', API.POST_NODES('metric'), false, metrics, function(){
+        baseAJAX('POST', API.POST_NODES(), false, metrics, function(){
             baseAJAX('GET', API.GET_NODES('metric'), false, null, function(data){
                 expect(data.length).toEqual(2);
             });
@@ -238,7 +238,7 @@ describe('CRUD API', function(){
     });
 
     it('should not be able to create an empty list of metrics', function(){
-        baseAJAX('POST', API.POST_NODES('metric'), false, [], function(data){
+        baseAJAX('POST', API.POST_NODES(), false, [], function(data){
             expect(data.error).toBe(true);
             baseAJAX('GET', API.GET_NODES('metric'), false, null, function(data){
                 expect(data.length).toEqual(0);
@@ -249,7 +249,7 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a new provider', function(){
-        baseAJAX('POST', API.POST_NODES('provider'), false, providers[0], function(){
+        baseAJAX('POST', API.POST_NODES(), false, providers[0], function(){
             baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
                 expect(data.length).toEqual(1);
             });
@@ -259,7 +259,7 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a bulk of providers', function(){
-        baseAJAX('POST', API.POST_NODES('provider'), false, providers, function(){
+        baseAJAX('POST', API.POST_NODES(), false, providers, function(){
             baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
                 expect(data.length).toEqual(2);
             });
@@ -269,7 +269,7 @@ describe('CRUD API', function(){
     });
 
     it('should not be able to create an empty list of providers', function(){
-        baseAJAX('POST', API.POST_NODES('provider'), false, [], function(data){
+        baseAJAX('POST', API.POST_NODES(), false, [], function(data){
             expect(data.error).toBe(true);
             baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
                 expect(data.length).toEqual(0);
@@ -285,7 +285,7 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a new characteristic', function(){
-        baseAJAX('POST', API.POST_NODES('provider'), false, providers[0], function(){
+        baseAJAX('POST', API.POST_NODES(), false, providers[0], function(){
             baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
                 expect(data.length).toEqual(1);
             });
@@ -295,7 +295,7 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a bulk of characteristics', function(){
-        baseAJAX('POST', API.POST_NODES('provider'), false, providers, function(){
+        baseAJAX('POST', API.POST_NODES(), false, providers, function(){
             baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
                 expect(data.length).toEqual(2);
             });
@@ -305,7 +305,7 @@ describe('CRUD API', function(){
     });
 
     it('should not be able to create an empty list of characteristics', function(){
-        baseAJAX('POST', API.POST_NODES('provider'), false, [], function(data){
+        baseAJAX('POST', API.POST_NODES(), false, [], function(data){
             expect(data.error).toBe(true);
             baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
                 expect(data.length).toEqual(0);
