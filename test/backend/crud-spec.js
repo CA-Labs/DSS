@@ -4,6 +4,8 @@
  * <jordi.aranda@bsc.es>
  */
 
+jasmine.DEFAULT_TIMEOUT_INTERVAL=10;
+
 describe('CRUD API', function(){
 
     // ArangoDB test database instance
@@ -55,7 +57,7 @@ describe('CRUD API', function(){
         $.ajax({
             type: type,
             url: url,
-            async: async,
+            async: true,
             data: data ? JSON.stringify(data) : null,
             dataType: 'json',
             contentType: 'json',
@@ -65,11 +67,14 @@ describe('CRUD API', function(){
     };
 
     //Clean the database before executing any test
-    beforeEach(function(){
+    beforeEach(function(done){
         // Drop nodes collections
-        baseAJAX('DELETE', API.DROP_NODES(), false, null, null, null);
-        // Drop edges collections
-        baseAJAX('DELETE', API.DROP_EDGES(), false, null, null, null);
+        baseAJAX('DELETE', API.DROP_NODES(), false, null, function(){
+            // Drop edges collections
+            baseAJAX('DELETE', API.DROP_EDGES(), false, null, function(){
+                done();
+            }, null);
+        }, null);
     });
 
     // Sample data (metrics, characteristics, providers, services,
@@ -228,21 +233,21 @@ describe('CRUD API', function(){
             expect(data.length).toEqual(0);
         };
 
-        baseAJAX('GET', API.GET_NODES('metric'), false, null, success, null);
+        baseAJAX('GET', API.GET_NODES('metric'), true, null, success, null);
 
-        baseAJAX('GET', API.GET_NODES('provider'), false, null, success, null);
+        baseAJAX('GET', API.GET_NODES('provider'), true, null, success, null);
 
-        baseAJAX('GET', API.GET_NODES('service'), false, null, success, null);
+        baseAJAX('GET', API.GET_NODES('service'), true, null, success, null);
 
-        baseAJAX('GET', API.GET_NODES('characteristic'), false, null, success, null);
+        baseAJAX('GET', API.GET_NODES('characteristic'), true, null, success, null);
 
-        baseAJAX('GET', API.GET_NODES('bsoia'), false, null, success, null);
+        baseAJAX('GET', API.GET_NODES('bsoia'), true, null, success, null);
 
-        baseAJAX('GET', API.GET_NODES('toia'), false, null, success, null);
+        baseAJAX('GET', API.GET_NODES('toia'), true, null, success, null);
 
-        baseAJAX('GET', API.GET_NODES('risk'), false, null, success, null);
+        baseAJAX('GET', API.GET_NODES('risk'), true, null, success, null);
 
-        baseAJAX('GET', API.GET_NODES('treatment'), false, null, success, null);
+        baseAJAX('GET', API.GET_NODES('treatment'), true, null, success, null);
 
     });
 
@@ -250,81 +255,89 @@ describe('CRUD API', function(){
      ************************************ METRIC TESTS *****************************************
      *******************************************************************************************/
 
-    it('should be able to create a new metric', function(){
-        baseAJAX('POST', API.POST_NODES(), false, metrics[0], function(){
-            baseAJAX('GET', API.GET_NODES('metric'), false, null, null);
+    it('should be able to create a new metric', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, metrics[0], function(){
+            baseAJAX('GET', API.GET_NODES('metric'), true, function(){
+                done();
+            }, null);
         }, null);
     });
 
-    it('should be able to create a new metric and retrieve it back by id', function(){
-        baseAJAX('POST', API.POST_NODES(), false, metrics[0], function(){
-            baseAJAX('GET', API.GET_NODES('metric'), false, null, function(data){
+    it('should be able to create a new metric and retrieve it back by id', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, metrics[0], function(){
+            baseAJAX('GET', API.GET_NODES('metric'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var metricId = data[0]._id;
-                baseAJAX('GET', API.GET_NODE_BY_ID(metricId), false, null, function(data){
+                baseAJAX('GET', API.GET_NODE_BY_ID(metricId), true, null, function(data){
                     expect(data).toBeTruthy();
                     expect(data.type).toMatch('metric');
+                    done();
                 }, null);
             }, null);
         }, null);
     });
 
-    xit('should be able to create a new metric and update it', function(){
-        baseAJAX('POST', API.POST_NODES(), false, metrics[0], function(){
-            baseAJAX('GET', API.GET_NODES('metric'), false, null, function(data){
+    it('should be able to create a new metric and update it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, metrics[0], function(){
+            baseAJAX('GET', API.GET_NODES('metric'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var metricId = data[0]._id;
                 //Update some field
                 var metricModelRetrieved = data[0];
                 metricModelRetrieved.name = metricModelRetrieved.name.toUpperCase();
-                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(metricId), false, metricModelRetrieved, function(data){
+                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(metricId), true, metricModelRetrieved, function(data){
                     expect(data).toBeTruthy();
                     expect(data.name).toBe(metrics[0].name.toUpperCase());
+                    done();
                 }, null);
             }, null)
         }, null);
     });
 
-    it('should be able to create a new metric and delete it', function(){
-        baseAJAX('POST', API.POST_NODES(), false, metrics[0], function(){
-            baseAJAX('GET', API.GET_NODES('metric'), false, null, function(data){
+    it('should be able to create a new metric and delete it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, metrics[0], function(){
+            baseAJAX('GET', API.GET_NODES('metric'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var metricId = data[0]._id;
-                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(metricId), false, null, function(){
-                    baseAJAX('GET', API.GET_NODES('metric'), false, null, function(data){
+                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(metricId), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('metric'), true, null, function(data){
                         expect(data.length).toEqual(0);
+                        done();
                     }, null);
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should be able to delete metrics', function(){
-        baseAJAX('POST', API.POST_NODES(), false, metrics, function(){
-            baseAJAX('GET', API.GET_NODES('metric'), false, null, function(data){
+    it('should be able to delete metrics', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, metrics, function(){
+            baseAJAX('GET', API.GET_NODES('metric'), true, null, function(data){
                 expect(data.length).toEqual(2);
-                baseAJAX('DELETE', API.DELETE_NODES('metric'), false, null, function(){
-                    baseAJAX('GET', API.GET_NODES('metric'), false, null, function(data){
+                baseAJAX('DELETE', API.DELETE_NODES('metric'), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('metric'), true, null, function(data){
                         expect(data.length).toEqual(0);
+                        done();
                     }, null);
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should be able to create a bulk of metrics', function(){
-        baseAJAX('POST', API.POST_NODES(), false, metrics, function(){
-            baseAJAX('GET', API.GET_NODES('metric'), false, null, function(data){
+    it('should be able to create a bulk of metrics', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, metrics, function(){
+            baseAJAX('GET', API.GET_NODES('metric'), true, null, function(data){
                 expect(data.length).toEqual(2);
+                done();
             }, null);
         }, null);
     });
 
-    it('should not be able to create an empty list of metrics', function(){
-        baseAJAX('POST', API.POST_NODES(), false, [], function(data){
+    it('should not be able to create an empty list of metrics', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, [], function(data){
             expect(data.error).toBe(true);
-            baseAJAX('GET', API.GET_NODES('metric'), false, null, function(data){
+            baseAJAX('GET', API.GET_NODES('metric'), true, null, function(data){
                 expect(data.length).toEqual(0);
+                done();
             }, null);
         }, null);
     });
@@ -333,83 +346,90 @@ describe('CRUD API', function(){
      ************************************ PROVIDER TESTS ***************************************
      *******************************************************************************************/
 
-    it('should be able to create a new provider', function(){
-        baseAJAX('POST', API.POST_NODES(), false, providers[0], function(){
-            baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
+    it('should be able to create a new provider', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, providers[0], function(){
+            baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(1);
+                done();
             }, null);
         }, null);
     });
 
-    it('should be able to create a new provider and retrieve it back by id', function(){
-        baseAJAX('POST', API.POST_NODES(), false, providers[0], function(){
-            baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
+    it('should be able to create a new provider and retrieve it back by id', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, providers[0], function(){
+            baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var providerId = data[0]._id;
-                baseAJAX('GET', API.GET_NODE_BY_ID(providerId), false, null, function(data){
+                baseAJAX('GET', API.GET_NODE_BY_ID(providerId), true, null, function(data){
                     expect(data).toBeTruthy();
                     expect(data.type).toMatch('provider');
+                    done();
                 }, null);
             }, null);
         }, null);
     });
 
-    xit('should be able to create a new provider and update it', function(){
-        baseAJAX('POST', API.POST_NODES(), false, providers[0], function(){
-            baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
+    xit('should be able to create a new provider and update it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, providers[0], function(){
+            baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var providerId = data[0]._id;
                 //Update some field
                 var providerModelRetrieved = data[0];
                 providerModelRetrieved.name = providerModelRetrieved.name.toUpperCase();
-                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(providerId), false, providerModelRetrieved, function(data){
+                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(providerId), true, providerModelRetrieved, function(data){
                     expect(data).toBeTruthy();
                     expect(data.name).toBe(providers[0].name.toUpperCase());
+                    done();
                 }, null);
             }, null)
         }, null);
     });
 
-    it('should be able to create a new provider and delete it', function(){
-        baseAJAX('POST', API.POST_NODES(), false, providers[0], function(){
-            baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
+    it('should be able to create a new provider and delete it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, providers[0], function(){
+            baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var providerId = data[0]._id;
-                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(providerId), false, null, function(){
-                    baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
+                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(providerId), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                         expect(data.length).toEqual(0);
+                        done();
                     }, null);
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should be able to delete providers', function(){
-        baseAJAX('POST', API.POST_NODES(), false, providers, function(){
-            baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
+    it('should be able to delete providers', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, providers, function(){
+            baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(2);
-                baseAJAX('DELETE', API.DELETE_NODES('provider'), false, null, function(){
-                    baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
+                baseAJAX('DELETE', API.DELETE_NODES('provider'), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                         expect(data.length).toEqual(0);
+                        done();
                     }, null);
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should be able to create a bulk of providers', function(){
-        baseAJAX('POST', API.POST_NODES(), false, providers, function(){
-            baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
+    it('should be able to create a bulk of providers', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, providers, function(){
+            baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(2);
+                done();
             }, null);
         }, null);
     });
 
-    it('should not be able to create an empty list of providers', function(){
-        baseAJAX('POST', API.POST_NODES(), false, [], function(data){
+    it('should not be able to create an empty list of providers', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, [], function(data){
             expect(data.error).toBe(true);
-            baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
+            baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(0);
+                done();
             }, null);
         }, null);
     });
@@ -427,83 +447,90 @@ describe('CRUD API', function(){
      ********************************** CHARACTERISTIC TESTS ***********************************
      *******************************************************************************************/
 
-    it('should be able to create a new characteristic', function(){
-        baseAJAX('POST', API.POST_NODES(), false, providers[0], function(){
-            baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
+    it('should be able to create a new characteristic', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, providers[0], function(){
+            baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(1);
+                done();
             }, null);
         }, null);
     });
 
-    it('should be able to create a new characteristic and retrieve it back by id', function(){
-        baseAJAX('POST', API.POST_NODES(), false, characteristics[0], function(){
-            baseAJAX('GET', API.GET_NODES('characteristic'), false, null, function(data){
+    it('should be able to create a new characteristic and retrieve it back by id', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, characteristics[0], function(){
+            baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var characteristicId = data[0]._id;
-                baseAJAX('GET', API.GET_NODE_BY_ID(characteristicId), false, null, function(data){
+                baseAJAX('GET', API.GET_NODE_BY_ID(characteristicId), true, null, function(data){
                     expect(data).toBeTruthy();
                     expect(data.type).toMatch('characteristic');
+                    done();
                 }, null);
             }, null);
         }, null);
     });
 
-    xit('should be able to create a new characteristic and update it', function(){
-        baseAJAX('POST', API.POST_NODES(), false, characteristics[0], function(){
-            baseAJAX('GET', API.GET_NODES('characteristic'), false, null, function(data){
+    xit('should be able to create a new characteristic and update it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, characteristics[0], function(){
+            baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var characteristicId = data[0]._id;
                 //Update some field
                 var characteristicModelRetrieved = data[0];
                 characteristicModelRetrieved.name = characteristicModelRetrieved.name.toUpperCase();
-                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(characteristicId), false, characteristicModelRetrieved, function(data){
+                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(characteristicId), true, characteristicModelRetrieved, function(data){
                     expect(data).toBeTruthy();
                     expect(data.name).toBe(characteristics[0].name.toUpperCase());
+                    done();
                 }, null);
             }, null)
         }, null);
     });
 
-    it('should be able to create a new characteristic and delete it', function(){
-        baseAJAX('POST', API.POST_NODES(), false, characteristics[0], function(){
-            baseAJAX('GET', API.GET_NODES('characteristic'), false, null, function(data){
+    it('should be able to create a new characteristic and delete it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, characteristics[0], function(){
+            baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var characteristicId = data[0]._id;
-                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(characteristicId), false, null, function(){
-                    baseAJAX('GET', API.GET_NODES('characteristic'), false, null, function(data){
+                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(characteristicId), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function(data){
                         expect(data.length).toEqual(0);
+                        done();
                     }, null);
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should be able to delete characteristics', function(){
-        baseAJAX('POST', API.POST_NODES(), false, characteristics, function(){
-            baseAJAX('GET', API.GET_NODES('characteristic'), false, null, function(data){
+    it('should be able to delete characteristics', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, characteristics, function(){
+            baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function(data){
                 expect(data.length).toEqual(2);
-                baseAJAX('DELETE', API.DELETE_NODES('characteristic'), false, null, function(){
-                    baseAJAX('GET', API.GET_NODES('characteristic'), false, null, function(data){
+                baseAJAX('DELETE', API.DELETE_NODES('characteristic'), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function(data){
                         expect(data.length).toEqual(0);
+                        done();
                     }, null);
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should be able to create a bulk of characteristics', function(){
-        baseAJAX('POST', API.POST_NODES(), false, providers, function(){
-            baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
+    it('should be able to create a bulk of characteristics', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, providers, function(){
+            baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(2);
+                done();
             }, null);
         }, null);
     });
 
-    it('should not be able to create an empty list of characteristics', function(){
-        baseAJAX('POST', API.POST_NODES(), false, [], function(data){
+    it('should not be able to create an empty list of characteristics', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, [], function(data){
             expect(data.error).toBe(true);
-            baseAJAX('GET', API.GET_NODES('provider'), false, null, function(data){
+            baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(0);
+                done();
             }, null);
         }, null);
     });
@@ -512,83 +539,90 @@ describe('CRUD API', function(){
      ************************************* BSOIA TESTS *****************************************
      *******************************************************************************************/
 
-    it('should be able to create a new BSOIA asset', function(){
-        baseAJAX('POST', API.POST_NODES(), false, bsoias[0], function(){
-            baseAJAX('GET', API.GET_NODES('bsoia'), false, null, function(data){
+    it('should be able to create a new BSOIA asset', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, bsoias[0], function(){
+            baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                 expect(data.length).toEqual(1);
+                done();
             }, null);
         }, null);
     });
 
-    it('should be able to create a new BSOIA asset and retrieve it back by id', function(){
-        baseAJAX('POST', API.POST_NODES(), false, bsoias[0], function(){
-            baseAJAX('GET', API.GET_NODES('bsoia'), false, null, function(data){
+    it('should be able to create a new BSOIA asset and retrieve it back by id', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, bsoias[0], function(){
+            baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var bsoiaId = data[0]._id;
-                baseAJAX('GET', API.GET_NODE_BY_ID(bsoiaId), false, null, function(data){
+                baseAJAX('GET', API.GET_NODE_BY_ID(bsoiaId), true, null, function(data){
                     expect(data).toBeTruthy();
                     expect(data.type).toMatch('bsoia');
+                    done();
                 }, null);
             }, null);
         }, null);
     });
 
-    xit('should be able to create a new BSOIA asset and update it', function(){
-        baseAJAX('POST', API.POST_NODES(), false, bsoias[0], function(){
-            baseAJAX('GET', API.GET_NODES('bsoia'), false, null, function(data){
+    xit('should be able to create a new BSOIA asset and update it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, bsoias[0], function(){
+            baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var bsoiaId = data[0]._id;
                 //Update some field
                 var bsoiaModelRetrieved = data[0];
                 bsoiaModelRetrieved.name = bsoiaModelRetrieved.name.toUpperCase();
-                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(bsoiaId), false, bsoiaModelRetrieved, function(data){
+                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(bsoiaId), true, bsoiaModelRetrieved, function(data){
                     expect(data).toBeTruthy();
                     expect(data.name).toBe(bsoias[0].name.toUpperCase());
+                    done();
                 }, null);
             }, null)
         }, null);
     });
 
-    it('should be able to create a new BSOIA asset and delete it', function(){
-        baseAJAX('POST', API.POST_NODES(), false, bsoias[0], function(){
-            baseAJAX('GET', API.GET_NODES('bsoia'), false, null, function(data){
+    it('should be able to create a new BSOIA asset and delete it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, bsoias[0], function(){
+            baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var bsoiaId = data[0]._id;
-                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(bsoiaId), false, null, function(){
-                    baseAJAX('GET', API.GET_NODES('bsoia'), false, null, function(data){
+                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(bsoiaId), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                         expect(data.length).toEqual(0);
+                        done();
                     }, null);
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should be able to delete BSOIA assets', function(){
-        baseAJAX('POST', API.POST_NODES(), false, bsoias, function(){
-            baseAJAX('GET', API.GET_NODES('bsoia'), false, null, function(data){
+    it('should be able to delete BSOIA assets', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, bsoias, function(){
+            baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                 expect(data.length).toEqual(2);
-                baseAJAX('DELETE', API.DELETE_NODES('bsoia'), false, null, function(){
-                    baseAJAX('GET', API.GET_NODES('bsoia'), false, null, function(data){
+                baseAJAX('DELETE', API.DELETE_NODES('bsoia'), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                         expect(data.length).toEqual(0);
+                        done();
                     }, null);
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should be able to create a bulk of BSOIA assets', function(){
-        baseAJAX('POST', API.POST_NODES(), false, bsoias, function(){
-            baseAJAX('GET', API.GET_NODES('bsoia'), false, null, function(data){
+    it('should be able to create a bulk of BSOIA assets', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, bsoias, function(){
+            baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                 expect(data.length).toEqual(2);
+                done();
             }, null);
         }, null);
     });
 
-    it('should not be able to create an empty list of BSOIA assets', function(){
-        baseAJAX('POST', API.POST_NODES(), false, [], function(data){
+    it('should not be able to create an empty list of BSOIA assets', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, [], function(data){
             expect(data.error).toBe(true);
-            baseAJAX('GET', API.GET_NODES('bsoia'), false, null, function(data){
+            baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                 expect(data.length).toEqual(0);
+                done();
             }, null);
         }, null);
     });
@@ -597,83 +631,90 @@ describe('CRUD API', function(){
      ************************************** TOIA TESTS *****************************************
      *******************************************************************************************/
 
-    it('should be able to create a new TOIA asset', function(){
-        baseAJAX('POST', API.POST_NODES(), false, toias[0], function(){
-            baseAJAX('GET', API.GET_NODES('toia'), false, null, function(data){
+    it('should be able to create a new TOIA asset', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, toias[0], function(){
+            baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                 expect(data.length).toEqual(1);
+                done();
             }, null);
         }, null);
     });
 
-    it('should be able to create a new TOIA asset and retrieve it back by id', function(){
-        baseAJAX('POST', API.POST_NODES(), false, toias[0], function(){
-            baseAJAX('GET', API.GET_NODES('toia'), false, null, function(data){
+    it('should be able to create a new TOIA asset and retrieve it back by id', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, toias[0], function(){
+            baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var toiaId = data[0]._id;
-                baseAJAX('GET', API.GET_NODE_BY_ID(toiaId), false, null, function(data){
+                baseAJAX('GET', API.GET_NODE_BY_ID(toiaId), true, null, function(data){
                     expect(data).toBeTruthy();
                     expect(data.type).toMatch('toia');
+                    done();
                 }, null);
             }, null);
         }, null);
     });
 
-    xit('should be able to create a new TOIA asset and update it', function(){
-        baseAJAX('POST', API.POST_NODES(), false, toias[0], function(){
-            baseAJAX('GET', API.GET_NODES('toia'), false, null, function(data){
+    xit('should be able to create a new TOIA asset and update it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, toias[0], function(){
+            baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var toiaId = data[0]._id;
                 //Update some field
                 var toiaModelRetrieved = data[0];
                 toiaModelRetrieved.name = toiaModelRetrieved.name.toUpperCase();
-                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(toiaId), false, toiaModelRetrieved, function(data){
+                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(toiaId), true, toiaModelRetrieved, function(data){
                     expect(data).toBeTruthy();
                     expect(data.name).toBe(toias[0].name.toUpperCase());
+                    done();
                 }, null);
             }, null)
         }, null);
     });
 
-    it('should be able to create a new TOIA asset and delete it', function(){
-        baseAJAX('POST', API.POST_NODES(), false, toias[0], function(){
-            baseAJAX('GET', API.GET_NODES('toia'), false, null, function(data){
+    it('should be able to create a new TOIA asset and delete it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, toias[0], function(){
+            baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var toiaId = data[0]._id;
-                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(toiaId), false, null, function(){
-                    baseAJAX('GET', API.GET_NODES('toia'), false, null, function(data){
+                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(toiaId), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                         expect(data.length).toEqual(0);
+                        done();
                     }, null);
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should be able to delete TOIA assets', function(){
-        baseAJAX('POST', API.POST_NODES(), false, toias, function(){
-            baseAJAX('GET', API.GET_NODES('toia'), false, null, function(data){
+    it('should be able to delete TOIA assets', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, toias, function(){
+            baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                 expect(data.length).toEqual(2);
-                baseAJAX('DELETE', API.DELETE_NODES('toia'), false, null, function(){
-                    baseAJAX('GET', API.GET_NODES('toia'), false, null, function(data){
+                baseAJAX('DELETE', API.DELETE_NODES('toia'), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                         expect(data.length).toEqual(0);
+                        done();
                     }, null);
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should be able to create a bulk of TOIA assets', function(){
-        baseAJAX('POST', API.POST_NODES(), false, toias, function(){
-            baseAJAX('GET', API.GET_NODES('toia'), false, null, function(data){
+    it('should be able to create a bulk of TOIA assets', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, toias, function(){
+            baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                 expect(data.length).toEqual(2);
+                done();
             }, null);
         }, null);
     });
 
-    it('should not be able to create an empty list of TOIA assets', function(){
-        baseAJAX('POST', API.POST_NODES(), false, [], function(data){
+    it('should not be able to create an empty list of TOIA assets', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, [], function(data){
             expect(data.error).toBe(true);
-            baseAJAX('GET', API.GET_NODES('toia'), false, null, function(data){
+            baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                 expect(data.length).toEqual(0);
+                done();
             }, null);
         }, null);
     });
@@ -682,83 +723,90 @@ describe('CRUD API', function(){
      ************************************* RISKS TESTS *****************************************
      *******************************************************************************************/
 
-    it('should be able to create a new risk', function(){
-        baseAJAX('POST', API.POST_NODES(), false, risks[0], function(){
-            baseAJAX('GET', API.GET_NODES('risk'), false, null, function(data){
+    it('should be able to create a new risk', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, risks[0], function(){
+            baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                 expect(data.length).toEqual(1);
+                done();
             }, null);
         }, null);
     });
 
-    it('should be able to create a new risk and retrieve it back by id', function(){
-        baseAJAX('POST', API.POST_NODES(), false, risks[0], function(){
-            baseAJAX('GET', API.GET_NODES('risk'), false, null, function(data){
+    it('should be able to create a new risk and retrieve it back by id', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, risks[0], function(){
+            baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var riskId = data[0]._id;
-                baseAJAX('GET', API.GET_NODE_BY_ID(riskId), false, null, function(data){
+                baseAJAX('GET', API.GET_NODE_BY_ID(riskId), true, null, function(data){
                     expect(data).toBeTruthy();
                     expect(data.type).toMatch('risk');
+                    done();
                 }, null);
             }, null);
         }, null);
     });
 
-    xit('should be able to create a new risk and update it', function(){
-        baseAJAX('POST', API.POST_NODES(), false, risks[0], function(){
-            baseAJAX('GET', API.GET_NODES('risk'), false, null, function(data){
+    xit('should be able to create a new risk and update it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, risks[0], function(){
+            baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var riskId = data[0]._id;
                 //Update some field
                 var riskModelRetrieved = data[0];
                 riskModelRetrieved.name = riskModelRetrieved.name.toUpperCase();
-                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(riskId), false, riskModelRetrieved, function(data){
+                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(riskId), true, riskModelRetrieved, function(data){
                     expect(data).toBeTruthy();
                     expect(data.name).toBe(risks[0].name.toUpperCase());
+                    done();
                 }, null);
             }, null)
         }, null);
     });
 
-    it('should be able to create a new risk and delete it', function(){
-        baseAJAX('POST', API.POST_NODES(), false, risks[0], function(){
-            baseAJAX('GET', API.GET_NODES('risk'), false, null, function(data){
+    it('should be able to create a new risk and delete it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, risks[0], function(){
+            baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var riskId = data[0]._id;
-                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(riskId), false, null, function(){
-                    baseAJAX('GET', API.GET_NODES('risk'), false, null, function(data){
+                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(riskId), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                         expect(data.length).toEqual(0);
+                        done();
                     }, null);
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should be able to delete risks', function(){
-        baseAJAX('POST', API.POST_NODES(), false, risks, function(){
-            baseAJAX('GET', API.GET_NODES('risk'), false, null, function(data){
+    it('should be able to delete risks', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, risks, function(){
+            baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                 expect(data.length).toEqual(2);
-                baseAJAX('DELETE', API.DELETE_NODES('risk'), false, null, function(){
-                    baseAJAX('GET', API.GET_NODES('risk'), false, null, function(data){
+                baseAJAX('DELETE', API.DELETE_NODES('risk'), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                         expect(data.length).toEqual(0);
+                        done();
                     }, null);
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should be able to create a bulk of risks', function(){
-        baseAJAX('POST', API.POST_NODES(), false, risks, function(){
-            baseAJAX('GET', API.GET_NODES('risk'), false, null, function(data){
+    it('should be able to create a bulk of risks', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, risks, function(){
+            baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                 expect(data.length).toEqual(2);
+                done();
             }, null);
         }, null);
     });
 
-    it('should not be able to create an empty list of risks', function(){
-        baseAJAX('POST', API.POST_NODES(), false, [], function(data){
+    it('should not be able to create an empty list of risks', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, [], function(data){
             expect(data.error).toBe(true);
-            baseAJAX('GET', API.GET_NODES('risk'), false, null, function(data){
+            baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                 expect(data.length).toEqual(0);
+                done();
             }, null);
         }, null);
     });
@@ -767,82 +815,88 @@ describe('CRUD API', function(){
      *********************************** TREATMENTS TESTS **************************************
      *******************************************************************************************/
 
-    it('should be able to create a new treatment', function(){
-        baseAJAX('POST', API.POST_NODES(), false, treatments[0], function(){
-            baseAJAX('GET', API.GET_NODES('treatment'), false, null, function(data){
+    it('should be able to create a new treatment', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, treatments[0], function(){
+            baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                 expect(data.length).toEqual(1);
+                done();
             }, null);
         }, null);
     });
 
-    it('should be able to create a new treatment and retrieve it back by id', function(){
-        baseAJAX('POST', API.POST_NODES(), false, treatments[0], function(){
-            baseAJAX('GET', API.GET_NODES('treatment'), false, null, function(data){
+    it('should be able to create a new treatment and retrieve it back by id', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, treatments[0], function(){
+            baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var treatmentId = data[0]._id;
-                baseAJAX('GET', API.GET_NODE_BY_ID(treatmentId), false, null, function(data){
+                baseAJAX('GET', API.GET_NODE_BY_ID(treatmentId), true, null, function(data){
                     expect(data).toBeTruthy();
                     expect(data.type).toMatch('treatment');
+                    done();
                 }, null);
             }, null);
         }, null);
     });
 
-    xit('should be able to create a new treatment and update it', function(){
-        baseAJAX('POST', API.POST_NODES(), false, treatments[0], function(){
-            baseAJAX('GET', API.GET_NODES('risk'), false, null, function(data){
+    xit('should be able to create a new treatment and update it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, treatments[0], function(){
+            baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var treatmentId = data[0]._id;
                 //Update some field
                 var treatmentModelRetrieved = data[0];
                 treatmentModelRetrieved.name = treatmentModelRetrieved.name.toUpperCase();
-                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(treatmentId), false, treatmentModelRetrieved, function(data){
+                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(treatmentId), true, treatmentModelRetrieved, function(data){
                     expect(data).toBeTruthy();
                     expect(data.name).toBe(treatments[0].name.toUpperCase());
+                    done();
                 }, null);
             }, null)
         }, null);
     });
 
-    it('should be able to create a new treatment and delete it', function(){
-        baseAJAX('POST', API.POST_NODES(), false, treatments[0], function(){
-            baseAJAX('GET', API.GET_NODES('treatment'), false, null, function(data){
+    it('should be able to create a new treatment and delete it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, treatments[0], function(){
+            baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var treatmentId = data[0]._id;
-                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(treatmentId), false, null, function(){
-                    baseAJAX('GET', API.GET_NODES('treatment'), false, null, function(data){
+                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(treatmentId), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                         expect(data.length).toEqual(0);
+                        done();
                     }, null);
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should be able to delete treatments', function(){
-        baseAJAX('POST', API.POST_NODES(), false, treatments, function(){
-            baseAJAX('GET', API.GET_NODES('treatment'), false, null, function(data){
+    it('should be able to delete treatments', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, treatments, function(){
+            baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                 expect(data.length).toEqual(2);
-                baseAJAX('DELETE', API.DELETE_NODES('treatment'), false, null, function(){
-                    baseAJAX('GET', API.GET_NODES('treatment'), false, null, function(data){
+                baseAJAX('DELETE', API.DELETE_NODES('treatment'), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                         expect(data.length).toEqual(0);
+                        done();
                     }, null);
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should be able to create a bulk of treatments', function(){
-        baseAJAX('POST', API.POST_NODES(), false, treatments, function(){
-            baseAJAX('GET', API.GET_NODES('treatment'), false, null, function(data){
+    it('should be able to create a bulk of treatments', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, treatments, function(){
+            baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                 expect(data.length).toEqual(2);
+                done();
             }, null);
         }, null);
     });
 
-    it('should not be able to create an empty list of treatments', function(){
-        baseAJAX('POST', API.POST_NODES(), false, [], function(data){
+    it('should not be able to create an empty list of treatments', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, [], function(data){
             expect(data.error).toBe(true);
-            baseAJAX('GET', API.GET_NODES('treatment'), false, null, function(data){
+            baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                 expect(data.length).toEqual(0);
             }, null);
         }, null);
@@ -852,49 +906,51 @@ describe('CRUD API', function(){
      ************************************* EDGES TESTS *****************************************
      *******************************************************************************************/
 
-    it('should be able to create a new edge between different node types', function(){
+    it('should be able to create a new edge between different node types', function(done){
         var bsoiaId = null;
         var toiaId = null;
         // Create a new BSOIA asset
-        baseAJAX('POST', API.POST_NODES(), false, bsoias[0], function(data){
+        baseAJAX('POST', API.POST_NODES(), true, bsoias[0], function(data){
             bsoiaId = data[0].attributes._id;
             // Create a new TOIA asset
-            baseAJAX('POST', API.POST_NODES(), false, toias[0], function(data){
+            baseAJAX('POST', API.POST_NODES(), true, toias[0], function(data){
                 toiaId = data[0].attributes._id;
                 // Create the edge
-                baseAJAX('POST', API.POST_EDGES(bsoiaId, toiaId), false, {type: 'bsoia_toia', data: {value: 1}}, function(){
-                    baseAJAX('GET', API.GET_EDGES(), false, null, function(data){
+                baseAJAX('POST', API.POST_EDGES(bsoiaId, toiaId), true, {type: 'bsoia_toia', data: {value: 1}}, function(){
+                    baseAJAX('GET', API.GET_EDGES(), true, null, function(data){
                         expect(data.length).toEqual(1);
                         expect(data[0]._from).toBe(bsoiaId);
                         expect(data[0]._to).toBe(toiaId);
+                        done();
                     });
                 }, null);
             }, null);
         }, null);
     });
 
-    it('should not be able to create duplicate edges between different node types', function(){
+    it('should not be able to create duplicate edges between different node types', function(done){
         var bsoiaId = null;
         var toiaId = null;
         // Create a new BSOIA asset
-        baseAJAX('POST', API.POST_NODES(), false, bsoias[0], function(data){
+        baseAJAX('POST', API.POST_NODES(), true, bsoias[0], function(data){
             bsoiaId = data[0].attributes._id;
             // Create a new TOIA asset
-            baseAJAX('POST', API.POST_NODES(), false, toias[0], function(data){
+            baseAJAX('POST', API.POST_NODES(), true, toias[0], function(data){
                 toiaId = data[0].attributes._id;
                 // Create the edge
-                baseAJAX('POST', API.POST_EDGES(bsoiaId, toiaId), false, {type: 'bsoia_toia', data: {value: 1}}, function(){
-                    baseAJAX('GET', API.GET_EDGES(), false, null, function(data){
+                baseAJAX('POST', API.POST_EDGES(bsoiaId, toiaId), true, {type: 'bsoia_toia', data: {value: 1}}, function(){
+                    baseAJAX('GET', API.GET_EDGES(), true, null, function(data){
                         expect(data.length).toEqual(1);
                         expect(data[0]._from).toBe(bsoiaId);
                         expect(data[0]._to).toBe(toiaId);
                     });
                     // Try to create a duplicate
-                    baseAJAX('POST', API.POST_EDGES(bsoiaId, toiaId), false, {type: 'bsoia_toia', data: {value: 1}}, function(data){
-                        baseAJAX('GET', API.GET_EDGES(), false, null, function(data){
+                    baseAJAX('POST', API.POST_EDGES(bsoiaId, toiaId), true, {type: 'bsoia_toia', data: {value: 1}}, function(data){
+                        baseAJAX('GET', API.GET_EDGES(), true, null, function(data){
                             expect(data.length).toEqual(1);
                             expect(data[0]._from).toBe(bsoiaId);
                             expect(data[0]._to).toBe(toiaId);
+                            done();
                         });
                     }, null);
                 }, null);
