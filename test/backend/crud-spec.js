@@ -20,8 +20,8 @@ describe('CRUD API', function(){
         GET_NODES: function(type){
             return ARANGODB_TEST_BASE_URL + 'crud/nodes/' + type;
         },
-        POST_NODES: function(type){
-            return ARANGODB_TEST_BASE_URL + 'crud/nodes/' + type;
+        POST_NODES: function(){
+            return ARANGODB_TEST_BASE_URL + 'crud/nodes';
         }
     };
 
@@ -316,7 +316,7 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a new BSOIA asset', function(){
-        baseAJAX('POST', API.POST_NODES('bsoia'), false, bsoias[0], function(){
+        baseAJAX('POST', API.POST_NODES(), false, bsoias[0], function(){
             baseAJAX('GET', API.GET_NODES('bsoia'), false, null, function(data){
                 expect(data.length).toEqual(1);
             });
@@ -326,7 +326,7 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a bulk of BSOIA assets', function(){
-        baseAJAX('POST', API.POST_NODES('bsoia'), false, bsoias, function(){
+        baseAJAX('POST', API.POST_NODES(), false, bsoias, function(){
             baseAJAX('GET', API.GET_NODES('bsoia'), false, null, function(data){
                 expect(data.length).toEqual(2);
             });
@@ -336,7 +336,7 @@ describe('CRUD API', function(){
     });
 
     it('should not be able to create an empty list of BSOIA assets', function(){
-        baseAJAX('POST', API.POST_NODES('bsoia'), false, [], function(data){
+        baseAJAX('POST', API.POST_NODES(), false, [], function(data){
             expect(data.error).toBe(true);
             baseAJAX('GET', API.GET_NODES('bsoia'), false, null, function(data){
                 expect(data.length).toEqual(0);
@@ -347,7 +347,7 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a new TOIA asset', function(){
-        baseAJAX('POST', API.POST_NODES('toia'), false, toias[0], function(){
+        baseAJAX('POST', API.POST_NODES(), false, toias[0], function(){
             baseAJAX('GET', API.GET_NODES('toia'), false, null, function(data){
                 expect(data.length).toEqual(1);
             });
@@ -357,7 +357,7 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a bulk of TOIA assets', function(){
-        baseAJAX('POST', API.POST_NODES('toia'), false, toias, function(){
+        baseAJAX('POST', API.POST_NODES(), false, toias, function(){
             baseAJAX('GET', API.GET_NODES('toia'), false, null, function(data){
                 expect(data.length).toEqual(2);
             });
@@ -367,7 +367,7 @@ describe('CRUD API', function(){
     });
 
     it('should not be able to create an empty list of TOIA assets', function(){
-        baseAJAX('POST', API.POST_NODES('toia'), false, [], function(data){
+        baseAJAX('POST', API.POST_NODES(), false, [], function(data){
             expect(data.error).toBe(true);
             baseAJAX('GET', API.GET_NODES('toia'), false, null, function(data){
                 expect(data.length).toEqual(0);
@@ -378,7 +378,7 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a new risk', function(){
-        baseAJAX('POST', API.POST_NODES('risk'), false, risks[0], function(){
+        baseAJAX('POST', API.POST_NODES(), false, risks[0], function(){
             baseAJAX('GET', API.GET_NODES('risk'), false, null, function(data){
                 expect(data.length).toEqual(1);
             });
@@ -388,7 +388,7 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a bulk of risks', function(){
-        baseAJAX('POST', API.POST_NODES('risk'), false, risks, function(){
+        baseAJAX('POST', API.POST_NODES(), false, risks, function(){
             baseAJAX('GET', API.GET_NODES('risk'), false, null, function(data){
                 expect(data.length).toEqual(2);
             });
@@ -398,7 +398,7 @@ describe('CRUD API', function(){
     });
 
     it('should not be able to create an empty list of risks', function(){
-        baseAJAX('POST', API.POST_NODES('risk'), false, [], function(data){
+        baseAJAX('POST', API.POST_NODES(), false, [], function(data){
             expect(data.error).toBe(true);
             baseAJAX('GET', API.GET_NODES('risk'), false, null, function(data){
                 expect(data.length).toEqual(0);
@@ -409,7 +409,7 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a new treatment', function(){
-        baseAJAX('POST', API.POST_NODES('treatment'), false, treatments[0], function(){
+        baseAJAX('POST', API.POST_NODES(), false, treatments[0], function(){
             baseAJAX('GET', API.GET_NODES('treatment'), false, null, function(data){
                 expect(data.length).toEqual(1);
             });
@@ -419,7 +419,7 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a bulk of treatments', function(){
-        baseAJAX('POST', API.POST_NODES('treatment'), false, treatments, function(){
+        baseAJAX('POST', API.POST_NODES(), false, treatments, function(){
             baseAJAX('GET', API.GET_NODES('treatment'), false, null, function(data){
                 expect(data.length).toEqual(2);
             });
@@ -429,7 +429,7 @@ describe('CRUD API', function(){
     });
 
     it('should not be able to create an empty list of treatments', function(){
-        baseAJAX('POST', API.POST_NODES('treatment'), false, [], function(data){
+        baseAJAX('POST', API.POST_NODES(), false, [], function(data){
             expect(data.error).toBe(true);
             baseAJAX('GET', API.GET_NODES('treatment'), false, null, function(data){
                 expect(data.length).toEqual(0);

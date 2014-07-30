@@ -354,7 +354,7 @@
     /** Creates a new node or an array of nodes of a certain type.
      *
      */
-    controller.post('/nodes/:type', function (req, res) {
+    controller.post('/nodes', function (req, res) {
 
         var bulk = req.body();
         var modelsAndRepository = createModels(bulk);
