@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-jasmine.DEFAULT_TIMEOUT_INTERVAL=10;
+jasmine.DEFAULT_TIMEOUT_INTERVAL=15000;
 
 describe('CRUD API', function(){
 
@@ -47,13 +47,6 @@ describe('CRUD API', function(){
 
     // Helper function for ajax calls
     var baseAJAX = function(type, url, async, data, success, error){
-        var defaultError = function(jqXHR, testStatus, errorThrown){
-            console.error(errorThrown);
-            console.debug(type);
-            console.debug(url);
-            console.debug(data);
-            expect(false).toBe(true);
-        };
         $.ajax({
             type: type,
             url: url,
@@ -62,19 +55,78 @@ describe('CRUD API', function(){
             dataType: 'json',
             contentType: 'json',
             success: success,
-            error: error ? error : defaultError
+            error: error
         });
     };
 
     //Clean the database before executing any test
     beforeEach(function(done){
         // Drop nodes collections
-        baseAJAX('DELETE', API.DROP_NODES(), false, null, function(){
+        baseAJAX('DELETE', API.DROP_NODES(), true, null, function(){
             // Drop edges collections
-            baseAJAX('DELETE', API.DROP_EDGES(), false, null, function(){
+            baseAJAX('DELETE', API.DROP_EDGES(), true, null, function(){
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    // It should offer no data since the database must be in a clean state
+    beforeEach(function(done){
+        baseAJAX('GET', API.GET_NODES('metric'), true, null, function(data){
+            expect(data.length).toEqual(0);
+            baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
+                expect(data.length).toEqual(0);
+                baseAJAX('GET', API.GET_NODES('service'), true, null, function(data){
+                    expect(data.length).toEqual(0);
+                    baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function(data){
+                        expect(data.length).toEqual(0);
+                        baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
+                            expect(data.length).toEqual(0);
+                            baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
+                                expect(data.length).toEqual(0);
+                                baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
+                                    expect(data.length).toEqual(0);
+                                    baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
+                                        expect(data.length).toEqual(0);
+                                        done();
+                                    }, function(){
+                                        expect(false).toBe(true);
+                                        done();
+                                    });
+                                }, function(){
+                                    expect(false).toBe(true);
+                                    done();
+                                });
+                            }, function(){
+                                expect(false).toBe(true);
+                                done();
+                            });
+                        }, function(){
+                            expect(false).toBe(true);
+                            done();
+                        });
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     // Sample data (metrics, characteristics, providers, services,
@@ -225,42 +277,39 @@ describe('CRUD API', function(){
         }
     ];
 
-
-    it('should offer no available data since the database is empty', function(){
-
-        // Generic success callback, expect result to be empty always
-        var success = function(data){
-            expect(data.length).toEqual(0);
-        };
-
-        baseAJAX('GET', API.GET_NODES('metric'), true, null, success, null);
-
-        baseAJAX('GET', API.GET_NODES('provider'), true, null, success, null);
-
-        baseAJAX('GET', API.GET_NODES('service'), true, null, success, null);
-
-        baseAJAX('GET', API.GET_NODES('characteristic'), true, null, success, null);
-
-        baseAJAX('GET', API.GET_NODES('bsoia'), true, null, success, null);
-
-        baseAJAX('GET', API.GET_NODES('toia'), true, null, success, null);
-
-        baseAJAX('GET', API.GET_NODES('risk'), true, null, success, null);
-
-        baseAJAX('GET', API.GET_NODES('treatment'), true, null, success, null);
-
-    });
-
     /*******************************************************************************************
      ************************************ METRIC TESTS *****************************************
      *******************************************************************************************/
 
     it('should be able to create a new metric', function(done){
         baseAJAX('POST', API.POST_NODES(), true, metrics[0], function(){
-            baseAJAX('GET', API.GET_NODES('metric'), true, function(){
+            baseAJAX('GET', API.GET_NODES('metric'), true, null, function(data){
+                expect(data.length).toEqual(1);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should not be able to create an invalid new metric', function(done){
+        var wrongMetric = $.extend(true, {}, metrics[0]);
+        wrongMetric.type = 'wrongMetric';
+        baseAJAX('POST', API.POST_NODES(), true, wrongMetric, null, function(jqXHR){
+            expect(jqXHR.status).toEqual(500);
+            done();
+        });
+    });
+
+    it('should not be able to retrieve a non existing metric', function(done){
+        baseAJAX('GET', API.GET_NODE_BY_ID('metric/-1'), true, null, null, function(jqXHR){
+            expect(jqXHR.status).toEqual(500);
+            done();
+        });
     });
 
     it('should be able to create a new metric and retrieve it back by id', function(done){
@@ -272,9 +321,18 @@ describe('CRUD API', function(){
                     expect(data).toBeTruthy();
                     expect(data.type).toMatch('metric');
                     done();
-                }, null);
-            }, null);
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(jqXHR, textStatus, errorThrown){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a new metric and update it', function(done){
@@ -289,9 +347,18 @@ describe('CRUD API', function(){
                     expect(data).toBeTruthy();
                     expect(data.name).toBe(metrics[0].name.toUpperCase());
                     done();
-                }, null);
-            }, null)
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            })
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a new metric and delete it', function(done){
@@ -303,10 +370,22 @@ describe('CRUD API', function(){
                     baseAJAX('GET', API.GET_NODES('metric'), true, null, function(data){
                         expect(data.length).toEqual(0);
                         done();
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to delete metrics', function(done){
@@ -317,10 +396,22 @@ describe('CRUD API', function(){
                     baseAJAX('GET', API.GET_NODES('metric'), true, null, function(data){
                         expect(data.length).toEqual(0);
                         done();
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a bulk of metrics', function(done){
@@ -328,8 +419,14 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('metric'), true, null, function(data){
                 expect(data.length).toEqual(2);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should not be able to create an empty list of metrics', function(done){
@@ -338,8 +435,14 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('metric'), true, null, function(data){
                 expect(data.length).toEqual(0);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     /*******************************************************************************************
@@ -351,8 +454,30 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should not be able to create an invalid new provider', function(done){
+        var wrongProvider = $.extend(true, {}, providers[0]);
+        wrongProvider.type = 'wrongProvider';
+        baseAJAX('POST', API.POST_NODES(), true, wrongProvider, null, function(jqXHR){
+            expect(jqXHR.status).toEqual(500);
+            done();
+        });
+    });
+
+    it('should not be able to retrieve a non existing provider', function(done){
+        baseAJAX('GET', API.GET_NODE_BY_ID('provider/-1'), true, null, null, function(jqXHR){
+            expect(jqXHR.status).toEqual(500);
+            done();
+        });
     });
 
     it('should be able to create a new provider and retrieve it back by id', function(done){
@@ -364,12 +489,21 @@ describe('CRUD API', function(){
                     expect(data).toBeTruthy();
                     expect(data.type).toMatch('provider');
                     done();
-                }, null);
-            }, null);
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
-    xit('should be able to create a new provider and update it', function(done){
+    it('should be able to create a new provider and update it', function(done){
         baseAJAX('POST', API.POST_NODES(), true, providers[0], function(){
             baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(1);
@@ -381,9 +515,18 @@ describe('CRUD API', function(){
                     expect(data).toBeTruthy();
                     expect(data.name).toBe(providers[0].name.toUpperCase());
                     done();
-                }, null);
-            }, null)
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            })
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a new provider and delete it', function(done){
@@ -395,10 +538,22 @@ describe('CRUD API', function(){
                     baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                         expect(data.length).toEqual(0);
                         done();
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to delete providers', function(done){
@@ -409,10 +564,22 @@ describe('CRUD API', function(){
                     baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                         expect(data.length).toEqual(0);
                         done();
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a bulk of providers', function(done){
@@ -420,8 +587,14 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(2);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should not be able to create an empty list of providers', function(done){
@@ -430,8 +603,14 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(0);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     /*******************************************************************************************
@@ -452,8 +631,30 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should not be able to create an invalid characteristic', function(done){
+        var wrongCharacteristic = $.extend(true, {}, characteristics[0]);
+        wrongCharacteristic.type = 'wrongCharacteristic';
+        baseAJAX('POST', API.POST_NODES(), true, wrongCharacteristic, null, function(jqXHR){
+            expect(jqXHR.status).toEqual(500);
+            done();
+        });
+    });
+
+    it('should not be able to retrieve a non existing characteristic', function(done){
+        baseAJAX('GET', API.GET_NODE_BY_ID('characteristic/-1'), true, null, null, function(jqXHR){
+            expect(jqXHR.status).toEqual(500);
+            done();
+        });
     });
 
     it('should be able to create a new characteristic and retrieve it back by id', function(done){
@@ -465,12 +666,21 @@ describe('CRUD API', function(){
                     expect(data).toBeTruthy();
                     expect(data.type).toMatch('characteristic');
                     done();
-                }, null);
-            }, null);
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
-    xit('should be able to create a new characteristic and update it', function(done){
+    it('should be able to create a new characteristic and update it', function(done){
         baseAJAX('POST', API.POST_NODES(), true, characteristics[0], function(){
             baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function(data){
                 expect(data.length).toEqual(1);
@@ -482,9 +692,18 @@ describe('CRUD API', function(){
                     expect(data).toBeTruthy();
                     expect(data.name).toBe(characteristics[0].name.toUpperCase());
                     done();
-                }, null);
-            }, null)
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            })
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a new characteristic and delete it', function(done){
@@ -496,10 +715,22 @@ describe('CRUD API', function(){
                     baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function(data){
                         expect(data.length).toEqual(0);
                         done();
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to delete characteristics', function(done){
@@ -510,10 +741,22 @@ describe('CRUD API', function(){
                     baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function(data){
                         expect(data.length).toEqual(0);
                         done();
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a bulk of characteristics', function(done){
@@ -521,8 +764,14 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(2);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should not be able to create an empty list of characteristics', function(done){
@@ -531,8 +780,14 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
                 expect(data.length).toEqual(0);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     /*******************************************************************************************
@@ -544,8 +799,30 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should not be able to create an invalid new BSOIA asset', function(done){
+        var wrongBSOIA = $.extend(true, {}, bsoias[0]);
+        wrongBSOIA.type = 'wrongBSOIA';
+        baseAJAX('POST', API.POST_NODES(), true, wrongBSOIA, null, function(jqXHR){
+            expect(jqXHR.status).toEqual(500);
+            done();
+        });
+    });
+
+    it('should not be able to retrieve a non existing BSOIA asset', function(done){
+        baseAJAX('GET', API.GET_NODE_BY_ID('bsoia/-1'), true, null, null, function(jqXHR){
+            expect(jqXHR.status).toEqual(500);
+            done();
+        });
     });
 
     it('should be able to create a new BSOIA asset and retrieve it back by id', function(done){
@@ -557,12 +834,21 @@ describe('CRUD API', function(){
                     expect(data).toBeTruthy();
                     expect(data.type).toMatch('bsoia');
                     done();
-                }, null);
-            }, null);
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
-    xit('should be able to create a new BSOIA asset and update it', function(done){
+    it('should be able to create a new BSOIA asset and update it', function(done){
         baseAJAX('POST', API.POST_NODES(), true, bsoias[0], function(){
             baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                 expect(data.length).toEqual(1);
@@ -574,9 +860,18 @@ describe('CRUD API', function(){
                     expect(data).toBeTruthy();
                     expect(data.name).toBe(bsoias[0].name.toUpperCase());
                     done();
-                }, null);
-            }, null)
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            })
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a new BSOIA asset and delete it', function(done){
@@ -588,10 +883,22 @@ describe('CRUD API', function(){
                     baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                         expect(data.length).toEqual(0);
                         done();
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to delete BSOIA assets', function(done){
@@ -602,10 +909,22 @@ describe('CRUD API', function(){
                     baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                         expect(data.length).toEqual(0);
                         done();
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a bulk of BSOIA assets', function(done){
@@ -613,8 +932,14 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                 expect(data.length).toEqual(2);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should not be able to create an empty list of BSOIA assets', function(done){
@@ -623,8 +948,14 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('bsoia'), true, null, function(data){
                 expect(data.length).toEqual(0);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     /*******************************************************************************************
@@ -636,8 +967,30 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should not be able to create an invalid new TOIA asset', function(done){
+        var wrongTOIA = $.extend(true, {}, toias[0]);
+        wrongTOIA.type = 'wrongTOIA';
+        baseAJAX('POST', API.POST_NODES(), true, wrongTOIA, null, function(jqXHR){
+            expect(jqXHR.status).toEqual(500);
+            done();
+        });
+    });
+
+    it('should not be able to retrieve a non existing TOIA asset', function(done){
+        baseAJAX('GET', API.GET_NODE_BY_ID('toia/-1'), true, null, null, function(jqXHR){
+            expect(jqXHR.status).toEqual(500);
+            done();
+        });
     });
 
     it('should be able to create a new TOIA asset and retrieve it back by id', function(done){
@@ -649,12 +1002,21 @@ describe('CRUD API', function(){
                     expect(data).toBeTruthy();
                     expect(data.type).toMatch('toia');
                     done();
-                }, null);
-            }, null);
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
-    xit('should be able to create a new TOIA asset and update it', function(done){
+    it('should be able to create a new TOIA asset and update it', function(done){
         baseAJAX('POST', API.POST_NODES(), true, toias[0], function(){
             baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                 expect(data.length).toEqual(1);
@@ -666,9 +1028,18 @@ describe('CRUD API', function(){
                     expect(data).toBeTruthy();
                     expect(data.name).toBe(toias[0].name.toUpperCase());
                     done();
-                }, null);
-            }, null)
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            })
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a new TOIA asset and delete it', function(done){
@@ -680,10 +1051,22 @@ describe('CRUD API', function(){
                     baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                         expect(data.length).toEqual(0);
                         done();
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to delete TOIA assets', function(done){
@@ -694,10 +1077,22 @@ describe('CRUD API', function(){
                     baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                         expect(data.length).toEqual(0);
                         done();
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a bulk of TOIA assets', function(done){
@@ -705,8 +1100,14 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                 expect(data.length).toEqual(2);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should not be able to create an empty list of TOIA assets', function(done){
@@ -715,8 +1116,14 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('toia'), true, null, function(data){
                 expect(data.length).toEqual(0);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     /*******************************************************************************************
@@ -728,8 +1135,30 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should not be able to create an invalid new risk', function(done){
+        var wrongRisk = $.extend(true, {}, risks[0]);
+        wrongRisk.type = 'wrongRisk';
+        baseAJAX('POST', API.POST_NODES(), true, wrongRisk, null, function(jqXHR){
+            expect(jqXHR.status).toEqual(500);
+            done();
+        });
+    });
+
+    it('should not be able to retrieve a non existing risk', function(done){
+        baseAJAX('GET', API.GET_NODE_BY_ID('risk/-1'), true, null, null, function(jqXHR){
+            expect(jqXHR.status).toEqual(500);
+            done();
+        });
     });
 
     it('should be able to create a new risk and retrieve it back by id', function(done){
@@ -741,12 +1170,21 @@ describe('CRUD API', function(){
                     expect(data).toBeTruthy();
                     expect(data.type).toMatch('risk');
                     done();
-                }, null);
-            }, null);
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
-    xit('should be able to create a new risk and update it', function(done){
+    it('should be able to create a new risk and update it', function(done){
         baseAJAX('POST', API.POST_NODES(), true, risks[0], function(){
             baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                 expect(data.length).toEqual(1);
@@ -758,9 +1196,18 @@ describe('CRUD API', function(){
                     expect(data).toBeTruthy();
                     expect(data.name).toBe(risks[0].name.toUpperCase());
                     done();
-                }, null);
-            }, null)
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            })
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a new risk and delete it', function(done){
@@ -772,10 +1219,22 @@ describe('CRUD API', function(){
                     baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                         expect(data.length).toEqual(0);
                         done();
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to delete risks', function(done){
@@ -786,10 +1245,22 @@ describe('CRUD API', function(){
                     baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                         expect(data.length).toEqual(0);
                         done();
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a bulk of risks', function(done){
@@ -797,8 +1268,14 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                 expect(data.length).toEqual(2);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should not be able to create an empty list of risks', function(done){
@@ -807,8 +1284,14 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
                 expect(data.length).toEqual(0);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     /*******************************************************************************************
@@ -820,8 +1303,30 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should not be able to create an invalid new treatment', function(done){
+        var wrongTreatment = $.extend(true, {}, treatments[0]);
+        wrongTreatment.type = 'wrongTreatment';
+        baseAJAX('POST', API.POST_NODES(), true, wrongTreatment, null, function(jqXHR){
+            expect(jqXHR.status).toEqual(500);
+            done();
+        });
+    });
+
+    it('should not be able to retrieve a non existing treatment', function(done){
+        baseAJAX('GET', API.GET_NODE_BY_ID('treatment/-1'), true, null, null, function(jqXHR){
+            expect(jqXHR.status).toEqual(500);
+            done();
+        });
     });
 
     it('should be able to create a new treatment and retrieve it back by id', function(done){
@@ -833,14 +1338,23 @@ describe('CRUD API', function(){
                     expect(data).toBeTruthy();
                     expect(data.type).toMatch('treatment');
                     done();
-                }, null);
-            }, null);
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
-    xit('should be able to create a new treatment and update it', function(done){
+    it('should be able to create a new treatment and update it', function(done){
         baseAJAX('POST', API.POST_NODES(), true, treatments[0], function(){
-            baseAJAX('GET', API.GET_NODES('risk'), true, null, function(data){
+            baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 var treatmentId = data[0]._id;
                 //Update some field
@@ -850,9 +1364,18 @@ describe('CRUD API', function(){
                     expect(data).toBeTruthy();
                     expect(data.name).toBe(treatments[0].name.toUpperCase());
                     done();
-                }, null);
-            }, null)
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            })
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a new treatment and delete it', function(done){
@@ -864,10 +1387,22 @@ describe('CRUD API', function(){
                     baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                         expect(data.length).toEqual(0);
                         done();
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to delete treatments', function(done){
@@ -878,10 +1413,22 @@ describe('CRUD API', function(){
                     baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                         expect(data.length).toEqual(0);
                         done();
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should be able to create a bulk of treatments', function(done){
@@ -889,8 +1436,14 @@ describe('CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                 expect(data.length).toEqual(2);
                 done();
-            }, null);
-        }, null);
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should not be able to create an empty list of treatments', function(done){
@@ -898,8 +1451,15 @@ describe('CRUD API', function(){
             expect(data.error).toBe(true);
             baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                 expect(data.length).toEqual(0);
-            }, null);
-        }, null);
+                done();
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     /*******************************************************************************************
@@ -923,9 +1483,18 @@ describe('CRUD API', function(){
                         expect(data[0]._to).toBe(toiaId);
                         done();
                     });
-                }, null);
-            }, null);
-        }, null);
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     it('should not be able to create duplicate edges between different node types', function(done){
@@ -952,14 +1521,57 @@ describe('CRUD API', function(){
                             expect(data[0]._to).toBe(toiaId);
                             done();
                         });
-                    }, null);
-                }, null);
-            }, null);
-        }, null);
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
-    xit('should not be able to create duplicate edges between different node types', function(){
+    xit('should be able to create a service with an existing provider and existing metrics', function(done){
+        var provider = null;
+        var metrices = null;
+        // Create a new provider
+        baseAJAX('POST', API.POST_NODES(), true, providers[0], function(data){
+            provider = data[0].attributes;
+            // Create multiple metrices
+            baseAJAX('POST', API.POST_NODES(), true, metrics, function(data){
+                metrices = metrics.map(function(metric){
+                    return metric.attributes;
+                });
+                var service = {
+                    name: 'Service A',
+                    type: 'service',
+                    cloudType: 'PaaS',
+                    provider: provider,
+                    metrics: metrices
+                };
+                baseAJAX('POST', API.POST_NODES(), true, service, function(data){
+                    //TODO: bla bla bla
+                    done();
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                })
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            })
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
-
 
 });

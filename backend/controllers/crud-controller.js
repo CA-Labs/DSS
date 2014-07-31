@@ -453,7 +453,7 @@
                     }
                     break;
                 case 'risk':
-                    model = new RiskcModel(raw);
+                    model = new RiskModel(raw);
                     if(model.isValid){
                         res.json(RiskRepository.replaceById(id, model).attributes);
                     } else {
