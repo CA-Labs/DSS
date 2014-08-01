@@ -299,15 +299,23 @@ describe('CRUD API', function(){
     it('should not be able to create an invalid new metric', function(done){
         var wrongMetric = $.extend(true, {}, metrics[0]);
         wrongMetric.type = 'wrongMetric';
-        baseAJAX('POST', API.POST_NODES(), true, wrongMetric, null, function(jqXHR){
-            expect(jqXHR.status).toEqual(500);
+        baseAJAX('POST', API.POST_NODES(), true, wrongMetric, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Model validation failed');
+            done();
+        }, function(){
+            expect(false).toBe(true);
             done();
         });
     });
 
     it('should not be able to retrieve a non existing metric', function(done){
-        baseAJAX('GET', API.GET_NODE_BY_ID('metric/-1'), true, null, null, function(jqXHR){
-            expect(jqXHR.status).toEqual(500);
+        baseAJAX('GET', API.GET_NODE_BY_ID('metric/-1'), true, null, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Document -1 not found');
+            done();
+        }, function(){
+            expect(false).toBe(true);
             done();
         });
     });
@@ -329,7 +337,7 @@ describe('CRUD API', function(){
                 expect(false).toBe(true);
                 done();
             });
-        }, function(jqXHR, textStatus, errorThrown){
+        }, function(){
             expect(false).toBe(true);
             done();
         });
@@ -467,15 +475,23 @@ describe('CRUD API', function(){
     it('should not be able to create an invalid new provider', function(done){
         var wrongProvider = $.extend(true, {}, providers[0]);
         wrongProvider.type = 'wrongProvider';
-        baseAJAX('POST', API.POST_NODES(), true, wrongProvider, null, function(jqXHR){
-            expect(jqXHR.status).toEqual(500);
+        baseAJAX('POST', API.POST_NODES(), true, wrongProvider, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Model validation failed');
+            done();
+        }, function(){
+            expect(false).toBe(true);
             done();
         });
     });
 
     it('should not be able to retrieve a non existing provider', function(done){
-        baseAJAX('GET', API.GET_NODE_BY_ID('provider/-1'), true, null, null, function(jqXHR){
-            expect(jqXHR.status).toEqual(500);
+        baseAJAX('GET', API.GET_NODE_BY_ID('provider/-1'), true, null, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Document -1 not found');
+            done()
+        }, function(){
+            expect(false).toBe(true);
             done();
         });
     });
@@ -644,15 +660,23 @@ describe('CRUD API', function(){
     it('should not be able to create an invalid characteristic', function(done){
         var wrongCharacteristic = $.extend(true, {}, characteristics[0]);
         wrongCharacteristic.type = 'wrongCharacteristic';
-        baseAJAX('POST', API.POST_NODES(), true, wrongCharacteristic, null, function(jqXHR){
-            expect(jqXHR.status).toEqual(500);
+        baseAJAX('POST', API.POST_NODES(), true, wrongCharacteristic, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Model validation failed');
+            done()
+        }, function(){
+            expect(false).toBe(true);
             done();
         });
     });
 
     it('should not be able to retrieve a non existing characteristic', function(done){
-        baseAJAX('GET', API.GET_NODE_BY_ID('characteristic/-1'), true, null, null, function(jqXHR){
-            expect(jqXHR.status).toEqual(500);
+        baseAJAX('GET', API.GET_NODE_BY_ID('characteristic/-1'), true, null, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Document -1 not found');
+            done();
+        }, function(){
+            expect(fase).toBe(true);
             done();
         });
     });
@@ -812,15 +836,23 @@ describe('CRUD API', function(){
     it('should not be able to create an invalid new BSOIA asset', function(done){
         var wrongBSOIA = $.extend(true, {}, bsoias[0]);
         wrongBSOIA.type = 'wrongBSOIA';
-        baseAJAX('POST', API.POST_NODES(), true, wrongBSOIA, null, function(jqXHR){
-            expect(jqXHR.status).toEqual(500);
+        baseAJAX('POST', API.POST_NODES(), true, wrongBSOIA, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Model validation failed');
+            done();
+        }, function(){
+            expect(false).toBe(true);
             done();
         });
     });
 
     it('should not be able to retrieve a non existing BSOIA asset', function(done){
-        baseAJAX('GET', API.GET_NODE_BY_ID('bsoia/-1'), true, null, null, function(jqXHR){
-            expect(jqXHR.status).toEqual(500);
+        baseAJAX('GET', API.GET_NODE_BY_ID('bsoia/-1'), true, null, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Document -1 not found');
+            done();
+        }, function(){
+            expect(false).toBe(true);
             done();
         });
     });
@@ -980,15 +1012,23 @@ describe('CRUD API', function(){
     it('should not be able to create an invalid new TOIA asset', function(done){
         var wrongTOIA = $.extend(true, {}, toias[0]);
         wrongTOIA.type = 'wrongTOIA';
-        baseAJAX('POST', API.POST_NODES(), true, wrongTOIA, null, function(jqXHR){
-            expect(jqXHR.status).toEqual(500);
+        baseAJAX('POST', API.POST_NODES(), true, wrongTOIA, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Model validation failed');
+            done();
+        }, function(){
+            expect(false).toBe(true);
             done();
         });
     });
 
     it('should not be able to retrieve a non existing TOIA asset', function(done){
-        baseAJAX('GET', API.GET_NODE_BY_ID('toia/-1'), true, null, null, function(jqXHR){
-            expect(jqXHR.status).toEqual(500);
+        baseAJAX('GET', API.GET_NODE_BY_ID('toia/-1'), true, null, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Document -1 not found');
+            done();
+        }, function(){
+            expect(false).toBe(true);
             done();
         });
     });
@@ -1148,15 +1188,23 @@ describe('CRUD API', function(){
     it('should not be able to create an invalid new risk', function(done){
         var wrongRisk = $.extend(true, {}, risks[0]);
         wrongRisk.type = 'wrongRisk';
-        baseAJAX('POST', API.POST_NODES(), true, wrongRisk, null, function(jqXHR){
-            expect(jqXHR.status).toEqual(500);
+        baseAJAX('POST', API.POST_NODES(), true, wrongRisk, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Model validation failed');
+            done();
+        }, function(){
+            expect(false).toBe(true);
             done();
         });
     });
 
     it('should not be able to retrieve a non existing risk', function(done){
-        baseAJAX('GET', API.GET_NODE_BY_ID('risk/-1'), true, null, null, function(jqXHR){
-            expect(jqXHR.status).toEqual(500);
+        baseAJAX('GET', API.GET_NODE_BY_ID('risk/-1'), true, null, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Document -1 not found');
+            done();
+        }, function(){
+            expect(false).toBe(true);
             done();
         });
     });
@@ -1316,15 +1364,23 @@ describe('CRUD API', function(){
     it('should not be able to create an invalid new treatment', function(done){
         var wrongTreatment = $.extend(true, {}, treatments[0]);
         wrongTreatment.type = 'wrongTreatment';
-        baseAJAX('POST', API.POST_NODES(), true, wrongTreatment, null, function(jqXHR){
-            expect(jqXHR.status).toEqual(500);
+        baseAJAX('POST', API.POST_NODES(), true, wrongTreatment, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Model validation failed');
+            done();
+        }, function(){
+            expect(false).toBe(true);
             done();
         });
     });
 
     it('should not be able to retrieve a non existing treatment', function(done){
-        baseAJAX('GET', API.GET_NODE_BY_ID('treatment/-1'), true, null, null, function(jqXHR){
-            expect(jqXHR.status).toEqual(500);
+        baseAJAX('GET', API.GET_NODE_BY_ID('treatment/-1'), true, null, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Document -1 not found');
+            done();
+        }, function(){
+            expect(false).toBe(true);
             done();
         });
     });

@@ -73,7 +73,7 @@
 
                     //Check all nodes are of same type
                     if(data.type != firstType){
-                        throw Error('Nodes provided are of different type');
+                        throw new Error('Nodes provided are of different type');
                     }
 
                     switch (data.type) {
@@ -141,11 +141,11 @@
                     if (model && model.isValid) {
                         dataModels.push(model);
                     } else {
-                        throw Error('Model validation failed');
+                        throw new Error('Model validation failed');
                     }
 
                 } else {
-                    throw Error('Node type is undefined');
+                    throw new Error('Node type is undefined');
                 }
 
             });
@@ -195,11 +195,11 @@
                 if(model && model.isValid) {
                     dataModels.push(model);
                 } else {
-                    throw Error('Model validation failed');
+                    throw new Error('Model validation failed');
                 }
 
             } else {
-                throw Error('Nod type is undefined');
+                throw new Error('Nod type is undefined');
             }
         }
 
@@ -336,7 +336,11 @@
         }
 
         if(repository){
-            res.json(repository.byId(id).attributes);
+            try {
+                res.json(repository.byId(id).attributes);
+            } catch (e){
+                res.json({error: true, reason: 'Document ' + id + ' not found'});
+            }
         } else {
             res.json({error: true, reason: 'Unknown type ' + type + ' or invalid id'});
         }
@@ -357,32 +361,29 @@
     controller.post('/nodes', function (req, res) {
 
         var bulk = req.body();
-        var modelsAndRepository = createModels(bulk);
+        var modelsAndRepository = null;
 
-        if(modelsAndRepository){
+        try {
+
+            modelsAndRepository = createModels(bulk);
             var models = modelsAndRepository.models;
             var repository = modelsAndRepository.repository;
 
-            if(repository && models && models.length > 0){
+            // Each save call returns a JSON with the response, we want
+            // to aggregate all them and return them as a single response
+            // after the bulk insertion.
+            var jsonResponse = [];
 
-                // Each save call returns a JSON with the response, we want
-                // to aggregate all them and return them as a single response
-                // after the bulk insertion.
-                var jsonResponse = [];
+            // Iterate over models and save them
+            _.each(models, function(model){
+                jsonResponse.push(repository.save(model));
+            });
 
-                // Iterate over models and save them
-                _.each(models, function(model){
-                    jsonResponse.push(repository.save(model));
-                });
+            // Return save responses aggregation as response
+            res.json(jsonResponse);
 
-                // Return save responses aggregation as response
-                res.json(jsonResponse);
-
-            }  else {
-                res.json({error: true});
-            }
-        } else {
-            res.json({error: true});
+        } catch (e) {
+            res.json({error: true, reason: e.message});
         }
 
     }).pathParam('type', {
@@ -638,7 +639,11 @@
         var toKey = req.params('toKey');
 
         if(fromCollection && fromKey && toCollection && toKey) {
-            res.json(EdgeRepository.getFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey));
+            try {
+                res.json(EdgeRepository.getFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey));
+            } catch (e) {
+                res.json({error: true, reason: e.message});
+            }
         } else {
             if(!fromCollection){
                 res.json({error: true, reason: 'From collection is null or undefined'});
@@ -681,7 +686,11 @@
         var edge = req.body();
 
         if(fromCollection && fromKey && toCollection && toKey && edge) {
-            res.json(EdgeRepository.saveEdge(fromCollection + '/' + fromKey, toCollection + '/' + toKey, edge.type, edge));
+            try {
+                res.json(EdgeRepository.saveEdge(fromCollection + '/' + fromKey, toCollection + '/' + toKey, edge.type, edge));
+            } catch (e) {
+                res.json({error: true, reason: e.message});
+            }
         } else {
             if(!fromCollection){
                 res.json({error: true, reason: 'From collection is null or undefined'});
@@ -726,7 +735,11 @@
         var edge = req.body();
 
         if(fromCollection && fromKey && toCollection && toKey && edge) {
-            res.json(EdgeRepository.updateFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey, edge));
+            try {
+                res.json(EdgeRepository.updateFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey, edge));
+            } catch (e){
+                res.json({error: true, reason: e.message});
+            }
         } else {
             if(!fromCollection){
                 res.json({error: true, reason: 'From collection is null or undefined'});
@@ -770,7 +783,11 @@
         var toKey = req.params('toKey');
 
         if(fromCollection && fromKey && toCollection && toKey) {
-            res.json(EdgeRepository.removeFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey));
+            try {
+                res.json(EdgeRepository.removeFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey));
+            } catch (e) {
+                res.json({error: true, reason: e.message});
+            }
         } else {
             if(!fromCollection){
                 res.json({error: true, reason: 'From collection is null or undefined'});

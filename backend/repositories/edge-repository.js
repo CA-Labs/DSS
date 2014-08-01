@@ -32,24 +32,27 @@ var EdgeRepository = Foxx.Repository.extend({
         var toNode = null;
 
         if(!fromAttrs) {
-            return {error: true, reason: 'Invalid from property'};
+            throw new Error('Invalid from property');
         } else {
-            fromNode = db._collection(fromAttrs[0]).document(fromAttrs[1]);
+            try {
+                fromNode = db._collection(fromAttrs[0]).document(fromAttrs[1]);
+            } catch (e) {
+                throw new Error('From node not found');
+            }
         }
 
         if(!toAttrs) {
-            return {error: true, reason: 'Invalid to property'};
+            throw new Error('Invalid to property');
         } else {
-            toNode = db._collection(toAttrs[0]).document(toAttrs[1]);
-        }
-
-        if(!fromNode) {
-            return {error: true, reason: 'From node not found'};
-        } else if(!toNode) {
-            return {error: true, reason: 'To node not found'};
+            try {
+                toNode = db._collection(toAttrs[0]).document(toAttrs[1]);
+            } catch (e) {
+                throw new Error('To node not found');
+            }
         }
 
         // Before creating the edge, check if it already exists
+        // TODO: This shouldn't be necessary if we set a unique index in edges, but seems not to be available at current ArangoDB version
         var query = "for edge in edges filter edge._from == @from && edge._to == @to && edge.type == @type return edge";
         var stmt = db._createStatement({query: query});
         stmt.bind('from', from);
@@ -58,7 +61,7 @@ var EdgeRepository = Foxx.Repository.extend({
         var result = stmt.execute();
 
         if(result._documents.length > 0){
-            return {error: true, reason: 'Edge from ' + fromAttrs[1] + ' to ' + toAttrs[1] + ' of type ' + type + ' already exists'};
+            throw new Error('Edge from ' + fromAttrs[1] + ' to ' + toAttrs[1] + ' of type ' + type + ' already exists');
         } else {
             return edgesCollection.save(fromNode, toNode, newEdge);
         }
