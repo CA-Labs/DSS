@@ -399,6 +399,7 @@
                 switch(type){
                     case 'service':
                         try {
+                            //console.info('Calling special save method for services...');
                             jsonResponse.push(repository.saveServiceWithProviderAndMetrics(model.forClient()));
                         } catch (e) {
                             res.json({error: true, reason: e.message});

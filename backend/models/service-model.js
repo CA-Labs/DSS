@@ -13,7 +13,7 @@ var Foxx = require('org/arangodb/foxx'),
             type: joi.string().required().default('service'),
             cloudType: joi.string().required().allow('PaaS', 'IaaS', 'SaaS'),
             provider: joi.object().optional(),
-            metrics: joi.array().optional().includes(joi.object())
+            metrics: joi.object().optional()
         }
     });
 

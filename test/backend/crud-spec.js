@@ -208,7 +208,11 @@ describe('CRUD API', function(){
     ];
 
     var services = [
-        // TODO:
+        {
+            "name": "Flexiant",
+            "type": "service",
+            "cloudType": "IaaS"
+        }
     ];
 
     var bsoias = [
@@ -644,9 +648,176 @@ describe('CRUD API', function(){
      ************************************* SERVICE TESTS ***************************************
      *******************************************************************************************/
 
-    xit('should be able to create a new service', function(){
-        // TODO: Pending spec
-        expect(false).toBe(true);
+    it('should be able to create a new service', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, services[0], function(data){
+            baseAJAX('GET', API.GET_NODES('service'), true, null, function(data){
+                expect(data.length).toEqual(1);
+                done();
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should not be able to create an invalid service', function(done){
+        var wrongService = $.extend(true, {}, services[0]);
+        wrongService.type = 'wrongService';
+        baseAJAX('POST', API.POST_NODES(), true, wrongService, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Model validation failed');
+            done()
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should not be able to retrieve a non existing service', function(done){
+        baseAJAX('GET', API.GET_NODE_BY_ID('service/-1'), true, null, function(data){
+            expect(data.error).toBe(true);
+            expect(data.reason).toEqual('Document -1 not found');
+            done();
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should be able to create a new service and retrieve it back by id', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, services[0], function(){
+            baseAJAX('GET', API.GET_NODES('service'), true, null, function(data){
+                expect(data.length).toEqual(1);
+                var serviceId = data[0]._id;
+                baseAJAX('GET', API.GET_NODE_BY_ID(serviceId), true, null, function(data){
+                    expect(data).toBeTruthy();
+                    expect(data.type).toMatch('service');
+                    done();
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should be able to create a new service and update it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, services[0], function(){
+            baseAJAX('GET', API.GET_NODES('service'), true, null, function(data){
+                expect(data.length).toEqual(1);
+                var serviceId = data[0]._id;
+                //Update some field
+                var serviceModelRetrieved = data[0];
+                serviceModelRetrieved.name = serviceModelRetrieved.name.toUpperCase();
+                baseAJAX('PUT', API.UPDATE_NODE_BY_ID(serviceId), true, serviceModelRetrieved, function(data){
+                    expect(data).toBeTruthy();
+                    expect(data.name).toBe(services[0].name.toUpperCase());
+                    done();
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            })
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should be able to create a new service and delete it', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, services[0], function(){
+            baseAJAX('GET', API.GET_NODES('service'), true, null, function(data){
+                expect(data.length).toEqual(1);
+                var serviceId = data[0]._id;
+                baseAJAX('DELETE', API.DELETE_NODE_BY_ID(serviceId), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('service'), true, null, function(data){
+                        expect(data.length).toEqual(0);
+                        done();
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should be able to delete services', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, services, function(){
+            baseAJAX('GET', API.GET_NODES('service'), true, null, function(data){
+                expect(data.length).toEqual(1);
+                baseAJAX('DELETE', API.DELETE_NODES('service'), true, null, function(){
+                    baseAJAX('GET', API.GET_NODES('service'), true, null, function(data){
+                        expect(data.length).toEqual(0);
+                        done();
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should be able to create a bulk of services', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, services, function(){
+            baseAJAX('GET', API.GET_NODES('service'), true, null, function(data){
+                expect(data.length).toEqual(1);
+                done();
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    });
+
+    it('should not be able to create an empty list of services', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, [], function(data){
+            expect(data.error).toBe(true);
+            baseAJAX('GET', API.GET_NODES('service'), true, null, function(data){
+                expect(data.length).toEqual(0);
+                done();
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
     });
 
     /*******************************************************************************************
@@ -654,8 +825,8 @@ describe('CRUD API', function(){
      *******************************************************************************************/
 
     it('should be able to create a new characteristic', function(done){
-        baseAJAX('POST', API.POST_NODES(), true, providers[0], function(){
-            baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
+        baseAJAX('POST', API.POST_NODES(), true, characteristics[0], function(){
+            baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function(data){
                 expect(data.length).toEqual(1);
                 done();
             }, function(){
@@ -795,8 +966,8 @@ describe('CRUD API', function(){
     });
 
     it('should be able to create a bulk of characteristics', function(done){
-        baseAJAX('POST', API.POST_NODES(), true, providers, function(){
-            baseAJAX('GET', API.GET_NODES('provider'), true, null, function(data){
+        baseAJAX('POST', API.POST_NODES(), true, characteristics, function(){
+            baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function(data){
                 expect(data.length).toEqual(2);
                 done();
             }, function(){
@@ -1606,28 +1777,32 @@ describe('CRUD API', function(){
         });
     });
 
-    xit('should be able to create a service with an existing provider and existing metrics', function(done){
+    it('should be able to create a service with an existing provider and existing metrics', function(done){
         var provider = null;
         var metrices = null;
-        // Create a new provider
+        // Create a new provider (1)
         baseAJAX('POST', API.POST_NODES(), true, providers[0], function(data){
             provider = data[0].attributes;
-            // Create multiple metrices
+            // Create multiple metrices (2)
             baseAJAX('POST', API.POST_NODES(), true, metrics, function(data){
                 metrices = data.map(function(metric){
-                    return metric.attributes;
+                    return {name: metric.attributes.name, value: Math.floor(Math.random()*10)};
+                });
+                var metricesObject = {};
+                _.each(metrices, function(metric){
+                    metricesObject[metric.name] = metric.value
                 });
                 var service = {
                     name: 'Service A',
                     type: 'service',
                     cloudType: 'PaaS',
                     provider: provider,
-                    metrics: metrices
+                    metrics: metricesObject
                 };
                 baseAJAX('POST', API.POST_NODES(), true, service, function(){
                     baseAJAX('GET', API.GET_EDGES(), true, null, function(data){
-                        console.debug(data);
-                        expect(data.length).toEqual(2);
+                        // 1 edge to provider + 2 edges to metrices
+                        expect(data.length).toEqual(3);
                         done();
                     })
                 }, function(){
