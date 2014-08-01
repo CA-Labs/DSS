@@ -47,6 +47,9 @@ describe('CRUD API', function(){
 
     // Helper function for ajax calls
     var baseAJAX = function(type, url, async, data, success, error){
+        //console.debug('type', type);
+        //console.debug('url', url);
+        //console.debug(data);
         $.ajax({
             type: type,
             url: url,
@@ -95,35 +98,43 @@ describe('CRUD API', function(){
                                     baseAJAX('GET', API.GET_NODES('treatment'), true, null, function(data){
                                         expect(data.length).toEqual(0);
                                         done();
-                                    }, function(){
+                                    }, function(jqXHR, textStatus, errorThrown){
+                                        console.debug(errorThrown);
                                         expect(false).toBe(true);
                                         done();
                                     });
-                                }, function(){
+                                }, function(jqXHR, textStatus, errorThrown){
+                                    console.debug(errorThrown);
                                     expect(false).toBe(true);
                                     done();
                                 });
-                            }, function(){
+                            }, function(jqXHR, textStatus, errorThrown){
+                                console.debug(errorThrown);
                                 expect(false).toBe(true);
                                 done();
                             });
-                        }, function(){
+                        }, function(jqXHR, textStatus, errorThrown){
+                            console.debug(errorThrown);
                             expect(false).toBe(true);
                             done();
                         });
-                    }, function(){
+                    }, function(jqXHR, textStatus, errorThrown){
+                        console.debug(errorThrown);
                         expect(false).toBe(true);
                         done();
                     });
-                }, function(){
+                }, function(jqXHR, textStatus, errorThrown){
+                    console.debug(errorThrown);
                     expect(false).toBe(true);
                     done();
                 });
-            }, function(){
+            }, function(jqXHR, textStatus, errorThrown){
+                console.debug(errorThrown);
                 expect(false).toBe(true);
                 done();
             });
-        }, function(){
+        }, function(jqXHR, textStatus, errorThrown){
+            console.debug(errorThrown);
             expect(false).toBe(true);
             done();
         });
@@ -1603,7 +1614,7 @@ describe('CRUD API', function(){
             provider = data[0].attributes;
             // Create multiple metrices
             baseAJAX('POST', API.POST_NODES(), true, metrics, function(data){
-                metrices = metrics.map(function(metric){
+                metrices = data.map(function(metric){
                     return metric.attributes;
                 });
                 var service = {
@@ -1613,9 +1624,12 @@ describe('CRUD API', function(){
                     provider: provider,
                     metrics: metrices
                 };
-                baseAJAX('POST', API.POST_NODES(), true, service, function(data){
-                    //TODO: bla bla bla
-                    done();
+                baseAJAX('POST', API.POST_NODES(), true, service, function(){
+                    baseAJAX('GET', API.GET_EDGES(), true, null, function(data){
+                        console.debug(data);
+                        expect(data.length).toEqual(2);
+                        done();
+                    })
                 }, function(){
                     expect(false).toBe(true);
                     done();

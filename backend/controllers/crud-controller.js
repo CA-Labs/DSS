@@ -53,6 +53,7 @@
         var model = null;
         var dataModels = [];
         var repository = null;
+        var type = null;
 
         //Used to validate all models are of same kind
         var firstType = null;
@@ -78,6 +79,7 @@
 
                     switch (data.type) {
                         case 'metric':
+                            type = 'metric';
                             model = new MetricModel(data);
                             if(first) {
                                 first = false;
@@ -85,6 +87,7 @@
                             }
                             break;
                         case 'characteristic':
+                            type = 'characteristic';
                             model = new CharacteristicModel(data);
                             if(first) {
                                 first = false;
@@ -92,6 +95,7 @@
                             }
                             break;
                         case 'provider':
+                            type = 'provider';
                             model = new ProviderModel(data);
                             if(first) {
                                 first = false;
@@ -99,6 +103,7 @@
                             }
                             break;
                         case 'service':
+                            type = 'service';
                             model = new ServiceModel(data);
                             if(first){
                                 first = false;
@@ -106,6 +111,7 @@
                             }
                             break;
                         case 'bsoia':
+                            type = 'bsoia';
                             model = new BSOIAModel(data);
                             if(first){
                                 first = false;
@@ -113,6 +119,7 @@
                             }
                             break;
                         case 'toia':
+                            type = 'toia';
                             model = new TOIAModel(data);
                             if(first){
                                 first = false;
@@ -120,6 +127,7 @@
                             }
                             break;
                         case 'risk':
+                            type = 'risk';
                             model = new RiskModel(data);
                             if(first){
                                 first = false;
@@ -127,6 +135,7 @@
                             }
                             break;
                         case 'treatment':
+                            type = 'treatment';
                             model = new TreatmentModel(data);
                             if(first){
                                 first = false;
@@ -156,34 +165,42 @@
 
                 switch(bulk.type){
                     case 'metric':
+                        type = 'metric';
                         model = new MetricModel(bulk);
                         repository = MetricRepository;
                         break;
                     case 'characteristic':
+                        type = 'characteristic';
                         model = new CharacteristicModel(bulk);
                         repository = CharacteristicRepository;
                         break;
                     case 'provider':
+                        type = 'provider';
                         model = new ProviderModel(bulk);
                         repository = ProviderRepository;
                         break;
                     case 'service':
+                        type = 'service';
                         model = new ServiceModel(bulk);
                         repository = ServiceRepository;
                         break;
                     case 'bsoia':
+                        type = 'bsoia';
                         model = new BSOIAModel(bulk);
                         repository = BSOIARepository;
                         break;
                     case 'toia':
+                        type = 'toia';
                         model = new TOIAModel(bulk);
                         repository = TOIARepository;
                         break;
                     case 'risk':
+                        type = 'risk';
                         model = new RiskModel(bulk);
                         repository = RiskRepository;
                         break;
                     case 'treatment':
+                        type = 'treatment';
                         model = new TreatmentModel(bulk);
                         repository = TreatmentRepository;
                         break;
@@ -199,11 +216,11 @@
                 }
 
             } else {
-                throw new Error('Nod type is undefined');
+                throw new Error('Node type is undefined');
             }
         }
 
-        return {repository: repository, models: dataModels};
+        return {repository: repository, models: dataModels, type: type};
 
     };
 
@@ -368,6 +385,7 @@
             modelsAndRepository = createModels(bulk);
             var models = modelsAndRepository.models;
             var repository = modelsAndRepository.repository;
+            var type = modelsAndRepository.type;
 
             // Each save call returns a JSON with the response, we want
             // to aggregate all them and return them as a single response
@@ -376,7 +394,25 @@
 
             // Iterate over models and save them
             _.each(models, function(model){
-                jsonResponse.push(repository.save(model));
+
+                // Services creation is kind of more complex :)
+                switch(type){
+                    case 'service':
+                        try {
+                            jsonResponse.push(repository.saveServiceWithProviderAndMetrics(model.forClient()));
+                        } catch (e) {
+                            res.json({error: true, reason: e.message});
+                        }
+                        break;
+                    default:
+                        try {
+                            jsonResponse.push(repository.save(model));
+                        } catch (e) {
+                            res.json({error: true, reason: e.message});
+                        }
+                        break;
+                }
+
             });
 
             // Return save responses aggregation as response
@@ -386,10 +422,6 @@
             res.json({error: true, reason: e.message});
         }
 
-    }).pathParam('type', {
-        description: 'The type of the nodes (characteristic|metric|provider|service|bsoia|toia|risk|treatment)',
-        type: 'string',
-        required: true
     });
 
     /** Modifies a node of a certain type by id.

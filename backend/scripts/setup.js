@@ -95,7 +95,7 @@ if(db._collection('edges') === null){
     console.log('Creating edges collection "edges"...');
     db._createEdgeCollection('edges');
     //Create unique index in type property
-    db._collection('edges').ensureUniqueConstraint('_from', '_to', 'type');
+    db._collection('edges').ensureUniqueConstraint('from_to_type');
 } else {
     console.log('Collection "edges" already exists, nothing to do here...');
 }
