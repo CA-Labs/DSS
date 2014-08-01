@@ -10,8 +10,9 @@ var dssApp = angular.module('dssApp', [
     'angular-flash.flash-alert-directive'
 ]);
 
-dssApp.controller('crudController', ['$scope', 'ArangoDBService', '$http', function ($scope, ArangoDBService, $http) {
+dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($scope, ArangoDBService) {
     // Initialize save object
+    $scope.characteristicData = {};
     $scope.providerData = {};
     $scope.metricData = {};
     $scope.serviceData = {};
@@ -131,7 +132,7 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', '$http', funct
                     "serivceType": data.cloudType,
                     "metrics": $scope.metricsValues
                 };
-                ArangoDBService.save('service', data).then(function () {
+                ArangoDBService.save('service', dataToSend).then(function () {
                     $scope.serviceData = {};
                     $scope.metricsValues = {};
                 }).fail(function (err) {
@@ -150,6 +151,14 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', '$http', funct
                 data.type = "provider";
                 ArangoDBService.save('provider', data).then(function () {
                     $scope.providerData = {};
+                }).fail(function (err) {
+                    $scope.error = err;
+                });
+                break;
+            case "characteristic":
+                date.type = "characteristic";
+                ArangoDBService.save('characteristic', data).then(function () {
+                    window.location.reload();
                 }).fail(function (err) {
                     $scope.error = err;
                 });

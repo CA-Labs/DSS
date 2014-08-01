@@ -62,6 +62,23 @@
         </div>
         <div class="col-lg-12" ng-show="showCharacteristicPanel">
             <h4>Add Characteristic</h4>
+
+            <form name="characteristicForm" ng-submit="saveForm('characteristic', characteristicData)">
+                <div class="col-lg-3">
+                    <h5>Metrics</h5>
+                    <button ui-draggable="true" class="btn btn-sm btn-info" style="margin: 7px 5px;"  ng-class="" ng-repeat="metric in metrics">
+                        {{ metric.name }}
+                    </button>
+                </div>
+                <div class="col-lg-9">
+                    <div class="form-group" ng-class="{ 'has-error' : characteristicForm.name.$invalid && !characteristicForm.name.$pristine }">
+                        <label for="name">Name: </label>
+                        <input type="text" name="name" ng-model="characteristicData.name" ng-required="true" class="form-control" autofocus/>
+                        <p ng-show="characteristicForm.name.$invalid" class="help-block">Name is required</p>
+                    </div>
+
+                </div>
+            </form>
         </div>
         <div class="col-lg-12" ng-show="showProviderPanel">
             <h4>Add New Provider</h4>
