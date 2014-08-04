@@ -66,7 +66,7 @@
             <form name="characteristicForm" ng-submit="saveForm('characteristic', characteristicData)">
                 <div class="col-lg-3">
                     <h5>Metrics</h5>
-                    <button ui-draggable="true" class="btn btn-sm btn-info" style="margin: 7px 5px;"  ng-class="" ng-repeat="metric in metrics">
+                    <button ui-draggable="true" drag="metric" class="btn btn-sm btn-info" style="margin: 7px 5px;"  ng-repeat="metric in metrics">
                         {{ metric.name }}
                     </button>
                 </div>
@@ -75,6 +75,29 @@
                         <label for="name">Name: </label>
                         <input type="text" name="name" ng-model="characteristicData.name" ng-required="true" class="form-control" autofocus/>
                         <p ng-show="characteristicForm.name.$invalid" class="help-block">Name is required</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="source">Source: </label>
+                        <input type="text" name="source" ng-model="characteristicData.source" ng-required="false" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="level">Level: </label>
+                        <select name="level" ng-model="characteristicData.level" ng-options="key as value for (key, value) in characteristicLevels" class="form-control">
+                            <option value="">-- choose level --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="formula">Formula:</label>
+                        <textarea name="formula" ng-model="characteristicData.formula" rows="10" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="metrics">Metrics: </label>
+                        <div ui-on-drop="addMetricToCharacteristic($event, $data)" class="dropzone-container">
+                            <button ui-draggable="true" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="metric in characteristicData.metrics">
+                                <small><span class="glyphicon glyphicon-remove remove-bsoia-in-toia-asset" ng-click="removeMetricFromCharactersitic(metric)">&nbsp;</span></small>
+                                {{ metric.name }}
+                            </button>
+                        </div>
                     </div>
 
                 </div>
@@ -191,6 +214,7 @@
 <script src="components/angular/angular.min.js"></script>
 <script src="components/angular-flash/dist/angular-flash.min.js"></script>
 <script src="components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="components/angular-dragdrop/draganddrop.js"></script>
 <script src="components/select2/select2.min.js"></script>
 
 <!--app-->

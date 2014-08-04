@@ -5,9 +5,20 @@
  * @created: 24/07/14
  */
 
+//Show/hide x (close button) when hovering selected bsoia tags in drop zones
+$('body').on('mouseover', '.form-group > .dropzone-container', function(e){
+    $(this).find('.remove-bsoia-in-toia-asset').show();
+});
+
+$('body').on('mouseout', '.form-group > .dropzone-container', function(e){
+    $(this).find('.remove-bsoia-in-toia-asset').hide();
+});
+
+
 var dssApp = angular.module('dssApp', [
     'angular-flash.service',
-    'angular-flash.flash-alert-directive'
+    'angular-flash.flash-alert-directive',
+    'ngDragDrop'
 ]);
 
 dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($scope, ArangoDBService) {
@@ -32,6 +43,13 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
     ArangoDBService.getAll('metric', function (err, data) {
         $scope.metrics = data;
     });
+
+    // characteristic levels
+    $scope.characteristicLevels = {
+        1: "1st level",
+        2: "2nd level",
+        3: "3rd level"
+    };
 
     // Views switch {
     $scope.showAssetPanel = false;
@@ -134,8 +152,7 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
                     "metrics": $scope.metricsValues
                 };
                 ArangoDBService.save('service', dataToSend).then(function () {
-                    $scope.serviceData = {};
-                    $scope.metricsValues = {};
+                    window.location.reload();
                 }, function (err) {
                     $scope.error = err;
                 });
@@ -143,7 +160,7 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
             case "metric":
                 data.type = "metric";
                 ArangoDBService.save('metric', data).then(function () {
-                    $scope.metricData = {};
+                    window.location.reload();
                 }, function (err) {
                     $scope.error = err;
                 });
@@ -151,13 +168,20 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
             case "provider":
                 data.type = "provider";
                 ArangoDBService.save('provider', data).then(function () {
-                    $scope.providerData = {};
+                    window.location.reload();
                 }, function (err) {
                     $scope.error = err;
                 });
                 break;
             case "characteristic":
-                date.type = "characteristic";
+                var data = {
+                    name: $scope.characteristicData.name,
+                    source: $scope.characteristicData.source,
+                    level: $scope.characteristicData.level,
+                    formula: $scope.characteristicData.formula.split(','),
+                    type: "characteristic",
+                    metrics: $scope.characteristicData.metrics
+                };
                 ArangoDBService.save('characteristic', data).then(function () {
                     window.location.reload();
                 }, function (err) {
@@ -165,5 +189,16 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
                 });
                 break;
         }
+    };
+
+    // init
+    $scope.characteristicData.metrics = {};
+
+    $scope.addMetricToCharacteristic = function ($event, $data) {
+        $scope.characteristicData.metrics[$data.name] = $data;
+    };
+
+    $scope.removeMetricFromCharactersitic = function (metric) {
+        delete $scope.characteristicData.metrics[metric.name];
     };
 }]);
