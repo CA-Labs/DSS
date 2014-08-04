@@ -11,7 +11,9 @@ var Foxx = require('org/arangodb/foxx'),
         schema: {
             name: joi.string().required(),
             type: joi.string().required().default('service'),
-            cloudType: joi.string().required().allow('PaaS', 'IaaS', 'SaaS')
+            cloudType: joi.string().required().allow('PaaS', 'IaaS', 'SaaS'),
+            provider: joi.object().optional(),
+            metrics: joi.object().optional()
         }
     });
 

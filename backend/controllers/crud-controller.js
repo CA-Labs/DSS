@@ -53,11 +53,17 @@
         var model = null;
         var dataModels = [];
         var repository = null;
+        var type = null;
 
         //Used to validate all models are of same kind
         var firstType = null;
 
         if(_.isArray(bulk)){
+
+            // We should not accept to post no content
+            if(bulk.length == 0){
+                return;
+            }
 
             var first = true;
             var firstType = bulk[0].type;
@@ -68,11 +74,12 @@
 
                     //Check all nodes are of same type
                     if(data.type != firstType){
-                        throw Error('Nodes provided are of different type');
+                        throw new Error('Nodes provided are of different type');
                     }
 
                     switch (data.type) {
                         case 'metric':
+                            type = 'metric';
                             model = new MetricModel(data);
                             if(first) {
                                 first = false;
@@ -80,6 +87,7 @@
                             }
                             break;
                         case 'characteristic':
+                            type = 'characteristic';
                             model = new CharacteristicModel(data);
                             if(first) {
                                 first = false;
@@ -87,6 +95,7 @@
                             }
                             break;
                         case 'provider':
+                            type = 'provider';
                             model = new ProviderModel(data);
                             if(first) {
                                 first = false;
@@ -94,6 +103,7 @@
                             }
                             break;
                         case 'service':
+                            type = 'service';
                             model = new ServiceModel(data);
                             if(first){
                                 first = false;
@@ -101,6 +111,7 @@
                             }
                             break;
                         case 'bsoia':
+                            type = 'bsoia';
                             model = new BSOIAModel(data);
                             if(first){
                                 first = false;
@@ -108,6 +119,7 @@
                             }
                             break;
                         case 'toia':
+                            type = 'toia';
                             model = new TOIAModel(data);
                             if(first){
                                 first = false;
@@ -115,6 +127,7 @@
                             }
                             break;
                         case 'risk':
+                            type = 'risk';
                             model = new RiskModel(data);
                             if(first){
                                 first = false;
@@ -122,6 +135,7 @@
                             }
                             break;
                         case 'treatment':
+                            type = 'treatment';
                             model = new TreatmentModel(data);
                             if(first){
                                 first = false;
@@ -136,11 +150,11 @@
                     if (model && model.isValid) {
                         dataModels.push(model);
                     } else {
-                        throw Error('Model validation failed');
+                        throw new Error('Model validation failed');
                     }
 
                 } else {
-                    throw Error('Node type is undefined');
+                    throw new Error('Node type is undefined');
                 }
 
             });
@@ -151,35 +165,42 @@
 
                 switch(bulk.type){
                     case 'metric':
+                        type = 'metric';
                         model = new MetricModel(bulk);
                         repository = MetricRepository;
                         break;
                     case 'characteristic':
+                        type = 'characteristic';
                         model = new CharacteristicModel(bulk);
                         repository = CharacteristicRepository;
                         break;
                     case 'provider':
+                        type = 'provider';
                         model = new ProviderModel(bulk);
                         repository = ProviderRepository;
                         break;
                     case 'service':
-                        bulk.metrics = undefined;
+                        type = 'service';
                         model = new ServiceModel(bulk);
                         repository = ServiceRepository;
                         break;
                     case 'bsoia':
+                        type = 'bsoia';
                         model = new BSOIAModel(bulk);
                         repository = BSOIARepository;
                         break;
                     case 'toia':
+                        type = 'toia';
                         model = new TOIAModel(bulk);
                         repository = TOIARepository;
                         break;
                     case 'risk':
+                        type = 'risk';
                         model = new RiskModel(bulk);
                         repository = RiskRepository;
                         break;
                     case 'treatment':
+                        type = 'treatment';
                         model = new TreatmentModel(bulk);
                         repository = TreatmentRepository;
                         break;
@@ -191,15 +212,15 @@
                 if(model && model.isValid) {
                     dataModels.push(model);
                 } else {
-                    throw Error('Model validation failed');
+                    throw new Error('Model validation failed');
                 }
 
             } else {
-                throw Error('Node type is undefined');
+                throw new Error('Node type is undefined');
             }
         }
 
-        return {repository: repository, models: dataModels};
+        return {repository: repository, models: dataModels, type: type};
 
     };
 
@@ -220,7 +241,7 @@
                 // Don't return the model, but its data
                 var characteristics = CharacteristicRepository.all();
                 characteristics = _.map(characteristics, function(characteristic){
-                    return characteristic.forClient();
+                    return characteristic.attributes;
                 });
                 res.json(characteristics);
                 break;
@@ -228,7 +249,7 @@
                 // Don't return the model, but its data
                 var metrics = MetricRepository.all();
                 metrics = _.map(metrics, function(metric){
-                    return metric.forClient();
+                    return metric.attributes;
                 });
                 res.json(metrics);
                 break;
@@ -236,7 +257,7 @@
                 // Don't return the model, but its data
                 var providers = ProviderRepository.all();
                 providers = _.map(providers, function(provider){
-                    return provider.forClient();
+                    return provider.attributes;
                 });
                 res.json(providers);
                 break;
@@ -244,7 +265,7 @@
                 // Don't return the model, but its data
                 var services = ServiceRepository.all();
                 services = _.map(services, function(service){
-                    return service.forClient();
+                    return service.attributes;
                 });
                 res.json(services);
                 break;
@@ -252,7 +273,7 @@
                 // Don't return the model, but its data
                 var bsoias = BSOIARepository.all();
                 bsoias = _.map(bsoias, function(bsoia){
-                    return bsoia.forClient();
+                    return bsoia.attributes;
                 });
                 res.json(bsoias);
                 break;
@@ -260,7 +281,7 @@
                 // Don't return the model, but its data
                 var toias = TOIARepository.all();
                 toias = _.map(toias, function(toia){
-                    return toia.forClient();
+                    return toia.attributes;
                 });
                 res.json(toias);
                 break;
@@ -268,7 +289,7 @@
                 // Don't return the model, but its data
                 var risks = RiskRepository.all();
                 risks = _.map(risks, function(risk){
-                    return risk.forClient();
+                    return risk.attributes;
                 });
                 res.json(risks);
                 break;
@@ -276,7 +297,7 @@
                 // Don't return the model, but its data
                 var treatments = TreatmentRepository.all();
                 treatments = _.map(treatments, function(treatment){
-                   return treatment.forClient();
+                   return treatment.attributes;
                 });
                 res.json(treatments);
                 break;
@@ -332,7 +353,11 @@
         }
 
         if(repository){
-            res.json(repository.byId(type + '/' + id).forClient());
+            try {
+                res.json(repository.byId(id).attributes);
+            } catch (e){
+                res.json({error: true, reason: 'Document ' + id + ' not found'});
+            }
         } else {
             res.json({error: true, reason: 'Unknown type ' + type + ' or invalid id'});
         }
@@ -350,14 +375,17 @@
     /** Creates a new node or an array of nodes of a certain type.
      *
      */
-    controller.post('/nodes/:type', function (req, res) {
+    controller.post('/nodes', function (req, res) {
 
         var bulk = req.body();
-        var modelsAndRepository = createModels(bulk);
-        var models = modelsAndRepository.models;
-        var repository = modelsAndRepository.repository;
+        var modelsAndRepository = null;
 
-        if(repository && models.length > 0){
+        try {
+
+            modelsAndRepository = createModels(bulk);
+            var models = modelsAndRepository.models;
+            var repository = modelsAndRepository.repository;
+            var type = modelsAndRepository.type;
 
             // Each save call returns a JSON with the response, we want
             // to aggregate all them and return them as a single response
@@ -366,20 +394,35 @@
 
             // Iterate over models and save them
             _.each(models, function(model){
-                jsonResponse.push(repository.save(model));
+
+                // Services creation is kind of more complex :)
+                switch(type){
+                    case 'service':
+                        try {
+                            //console.info('Calling special save method for services...');
+                            jsonResponse.push(repository.saveServiceWithProviderAndMetrics(model.forClient()));
+                        } catch (e) {
+                            res.json({error: true, reason: e.message});
+                        }
+                        break;
+                    default:
+                        try {
+                            jsonResponse.push(repository.save(model));
+                        } catch (e) {
+                            res.json({error: true, reason: e.message});
+                        }
+                        break;
+                }
+
             });
 
             // Return save responses aggregation as response
             res.json(jsonResponse);
 
-        }  else {
-            res.json({error: true});
+        } catch (e) {
+            res.json({error: true, reason: e.message});
         }
 
-    }).pathParam('type', {
-        description: 'The type of the nodes (characteristic|metric|provider|service|bsoia|toia|risk|treatment)',
-        type: 'string',
-        required: true
     });
 
     /** Modifies a node of a certain type by id.
@@ -398,7 +441,7 @@
                 case 'characteristic':
                     model = new CharacteristicModel(raw);
                     if(model.isValid){
-                        res.json(CharacteristicRepository.replaceById(id, model).forClient());
+                        res.json(CharacteristicRepository.replaceById(id, model).attributes);
                     } else {
                        validationError = true;
                     }
@@ -406,7 +449,7 @@
                 case 'metric':
                     model = new MetricModel(raw);
                     if(model.isValid){
-                        res.json(MetricRepository.replaceById(id, model).forClient());
+                        res.json(MetricRepository.replaceById(id, model).attributes);
                     } else {
                         validationError = true;
                     }
@@ -414,7 +457,7 @@
                 case 'provider':
                     model = new ProviderModel(raw);
                     if(model.isValid){
-                        res.json(ProviderRepository.replaceById(id, model).forClient());
+                        res.json(ProviderRepository.replaceById(id, model).attributes);
                     } else {
                         validationError = true;
                     }
@@ -422,7 +465,7 @@
                 case 'service':
                     model = new ServiceModel(raw);
                     if(model.isValid){
-                        res.json(ServiceRepository.replaceById(id, model).forClient());
+                        res.json(ServiceRepository.replaceById(id, model).attributes);
                     } else {
                         validationError = true;
                     }
@@ -430,7 +473,7 @@
                 case 'bsoia':
                     model = new BSOIAModel(raw);
                     if(model.isValid){
-                        res.json(BSOIARepository.replaceById(id, model).forClient());
+                        res.json(BSOIARepository.replaceById(id, model).attributes);
                     } else {
                         validationError = true;
                     }
@@ -438,15 +481,15 @@
                 case 'toia':
                     model = new TOIAModel(raw);
                     if(model.isValid){
-                        res.json(TOIARepository.replaceById(id, model).forClient());
+                        res.json(TOIARepository.replaceById(id, model).attributes);
                     } else {
                         validationError = true;
                     }
                     break;
                 case 'risk':
-                    model = new RiskcModel(raw);
+                    model = new RiskModel(raw);
                     if(model.isValid){
-                        res.json(RiskRepository.replaceById(id, model).forClient());
+                        res.json(RiskRepository.replaceById(id, model).attributes);
                     } else {
                         validationError = true;
                     }
@@ -454,7 +497,7 @@
                 case 'treatment':
                     model = new TreatmentModel(raw);
                     if(model.isValid){
-                        res.json(TreatmentRepository.replaceById(id, model).forClient());
+                        res.json(TreatmentRepository.replaceById(id, model).attributes);
                     } else {
                         validationError = true;
                     }
@@ -500,28 +543,36 @@
 
             switch(type){
                 case 'characteristic':
-                    res.json(CharacteristicRepository.removeById(id));
+                    CharacteristicRepository.removeById(id);
+                    res.json({error: false});
                     break;
                 case 'metric':
-                    res.json(MetricRepository.removeById(id));
+                    MetricRepository.removeById(id);
+                    res.json({error: false});
                     break;
                 case 'provider':
-                    res.json(ProviderRepository.removeById(id));
+                    ProviderRepository.removeById(id);
+                    res.json({error: false});
                     break;
                 case 'service':
-                    res.json(ServiceRepository.removeById(id));
+                    ServiceRepository.removeById(id);
+                    res.json({error: false});
                     break;
                 case 'bsoia':
-                    res.json(BSOIARepository.removeById(id));
+                    BSOIARepository.removeById(id);
+                    res.json({error: false});
                     break;
                 case 'toia':
-                    res.json(TOIARepository.removeById(id));
+                    TOIARepository.removeById(id);
+                    res.json({error: false});
                     break;
                 case 'risk':
-                    res.json(RiskRepository.removeById(id));
+                    RiskRepository.removeById(id);
+                    res.json({error: false});
                     break;
                 case 'treatment':
-                    res.json(TreatmentRepository.removeById(id));
+                    TreatmentRepository.removeById(id);
+                    res.json({error: false});
                     break;
                 default:
                     res.json({error: true, reason: 'Unknown node type'});
@@ -548,13 +599,65 @@
         required: true
     });
 
+    /** Deletes all nodes of a certain type.
+     *
+     */
+    controller.delete('/nodes/:type', function(req, res){
+
+        var type = req.params('type');
+
+        if(type){
+            switch(type){
+                case 'characteristic':
+                    db._collection('characteristic').truncate();
+                    res.json({error: false});
+                    break;
+                case 'metric':
+                    db._collection('metric').truncate();
+                    res.json({error: false});
+                    break;
+                case 'provider':
+                    db._collection('provider').truncate();
+                    res.json({error: false});
+                    break;
+                case 'service':
+                    db._collection('service').truncate();
+                    res.json({error: false});
+                    break;
+                case 'bsoia':
+                    db._collection('bsoia').truncate();
+                    res.json({error: false});
+                    break;
+                case 'toia':
+                    db._collection('toia').truncate();
+                    res.json({error: false});
+                    break;
+                case 'risk':
+                    db._collection('risk').truncate();
+                    res.json({error: false});
+                    break;
+                case 'treatment':
+                    db._collection('treatment').truncate();
+                    res.json({error: false});
+                    break;
+                default:
+                    res.json({error: true, reason: 'Unknown node type'});
+                    break;
+            }
+        } else {
+            res.json({error: true, reason: 'Type is null or undefined'});
+        }
+
+    }).pathParam('type', {
+        description: 'The type of the nodes (characteristic|metric|provider|service|bsoia|toia|risk|treatment)',
+        type: 'string',
+        required: true
+    });
+
     /** Retrieves all edges.
      *
      */
     controller.get('/edges', function(req, res){
-        Object.keys(EdgeRepository).forEach(function(key){
-            console.log(key);
-        });
         res.json(EdgeRepository.all());
     });
 
@@ -569,7 +672,11 @@
         var toKey = req.params('toKey');
 
         if(fromCollection && fromKey && toCollection && toKey) {
-            res.json(EdgeRepository.getFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey));
+            try {
+                res.json(EdgeRepository.getFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey));
+            } catch (e) {
+                res.json({error: true, reason: e.message});
+            }
         } else {
             if(!fromCollection){
                 res.json({error: true, reason: 'From collection is null or undefined'});
@@ -612,7 +719,11 @@
         var edge = req.body();
 
         if(fromCollection && fromKey && toCollection && toKey && edge) {
-            res.json(EdgeRepository.save(fromCollection + '/' + fromKey, toCollection + '/' + toKey, edge));
+            try {
+                res.json(EdgeRepository.saveEdge(fromCollection + '/' + fromKey, toCollection + '/' + toKey, edge.type, edge));
+            } catch (e) {
+                res.json({error: true, reason: e.message});
+            }
         } else {
             if(!fromCollection){
                 res.json({error: true, reason: 'From collection is null or undefined'});
@@ -657,7 +768,11 @@
         var edge = req.body();
 
         if(fromCollection && fromKey && toCollection && toKey && edge) {
-            res.json(EdgeRepository.updateFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey, edge));
+            try {
+                res.json(EdgeRepository.updateFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey, edge));
+            } catch (e){
+                res.json({error: true, reason: e.message});
+            }
         } else {
             if(!fromCollection){
                 res.json({error: true, reason: 'From collection is null or undefined'});
@@ -701,7 +816,11 @@
         var toKey = req.params('toKey');
 
         if(fromCollection && fromKey && toCollection && toKey) {
-            res.json(EdgeRepository.removeFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey));
+            try {
+                res.json(EdgeRepository.removeFromTo(fromCollection + '/' + fromKey, toCollection + '/' + toKey));
+            } catch (e) {
+                res.json({error: true, reason: e.message});
+            }
         } else {
             if(!fromCollection){
                 res.json({error: true, reason: 'From collection is null or undefined'});
@@ -730,6 +849,26 @@
         description: 'A valid node key for ending vertex',
         type: 'string',
         required: true
+    });
+
+    // Used in tests for database clean-up
+    controller.delete('/nodes/all', function(req, res){
+        // TODO: Verify request ip is localhost so that we get rid of hacking issues
+        db._collection('metric').truncate();
+        db._collection('provider').truncate();
+        db._collection('service').truncate();
+        db._collection('characteristic').truncate();
+        db._collection('bsoia').truncate();
+        db._collection('toia').truncate();
+        db._collection('risk').truncate();
+        db._collection('treatment').truncate();
+        res.json({error: false});
+    });
+
+    controller.delete('/edges/all', function(req, res){
+        //TODO: Verify request ip is localhost so that we get rid of hacking issues
+        db._collection('edges').truncate();
+        res.json({error: false});
     });
 
 })();

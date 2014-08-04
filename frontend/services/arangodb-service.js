@@ -10,33 +10,33 @@
  * Manages all data retrieval from the
  * ArangoDB database instance.
  */
-dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService', function($http, $q, AssetsService, RisksService){
+dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', function($http, AssetsService, RisksService){
 
     //TODO: Fix an stable arangoDB server base URL
     //var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/api/';
-    var ARANGODB_BASE_URL = 'http://localhost:8529/_db/dss/dss/';
+    this.ARANGODB_BASE_URL = 'http://localhost:8529/_db/dss/dss/';
+
+    //Closures
+    var self = this;
 
     //FOXX API endpoints
-    var FOXX_API = {
-        getUrl: function (url) {
-            return ARANGODB_BASE_URL + 'crud/nodes/' + url
-        },
+    this.FOXX_API = {
         getBSOIA: function(){
-            return ARANGODB_BASE_URL + 'crud/nodes/bsoia'
+            return self.ARANGODB_BASE_URL + 'crud/nodes/bsoia'
         },
         getTOIA: function(){
-            return ARANGODB_BASE_URL + 'crud/nodes/toia'
+            return self.ARANGODB_BASE_URL + 'crud/nodes/toia'
         },
         getRisks: function(){
-            return ARANGODB_BASE_URL + 'crud/nodes/risk';
+            return self.ARANGODB_BASE_URL + 'crud/nodes/risk';
         },
         getTreatments: function(){
-            return ARANGODB_BASE_URL + 'crud/nodes/treatment';
+            return self.ARANGODB_BASE_URL + 'crud/nodes/treatment';
         },
         getPotentialRisks: function(selectedBsoias, selectedToias){
             //Build correct URL from selectedBsoias/Toias lists
             var firstBsoia = firstToia = true;
-            var url = ARANGODB_BASE_URL + 'graph/potentialRisks?';
+            var url = self.ARANGODB_BASE_URL + 'graph/potentialRisks?';
             _.each(selectedBsoias, function(bsoia){
                if(firstBsoia){
                    firstBsoia = false;
@@ -57,7 +57,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
         },
         getPotentialTreatments: function(selectedRisks){
             var firstRisk = true;
-            var url = ARANGODB_BASE_URL + 'graph/potentialTreatments?';
+            var url = self.ARANGODB_BASE_URL + 'graph/potentialTreatments?';
             _.each(selectedRisks, function(risk){
                 if(firstRisk){
                     firstRisk = false;
@@ -76,7 +76,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
      * on data retrieval.
      */
     this.getBSOIA = function(callback){
-        $http({method: 'GET', url: FOXX_API.getBSOIA()})
+        $http({method: 'GET', url: self.FOXX_API.getBSOIA()})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })
@@ -91,7 +91,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
      * on data retrieval.
      */
     this.getTOIA = function(callback){
-        $http({method: 'GET', url: FOXX_API.getTOIA()})
+        $http({method: 'GET', url: self.FOXX_API.getTOIA()})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })
@@ -106,7 +106,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
      * on data retrieval.
      */
     this.getRisks = function(callback){
-        $http({method: 'GET', url: FOXX_API.getRisks()})
+        $http({method: 'GET', url: self.FOXX_API.getRisks()})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })
@@ -121,7 +121,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
      * on data retrieval.
      */
     this.getTreatments = function(callback) {
-        $http({method: 'GET', url: FOXX_API.getTreatments()})
+        $http({method: 'GET', url: self.FOXX_API.getTreatments()})
             .success(function (data, status, headers, config) {
                 callback(null, data);
             })
@@ -137,7 +137,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
      * on data retrieval.
      */
     this.getPotentialRisks = function(callback) {
-        $http({method: 'GET', url: FOXX_API.getPotentialRisks(AssetsService.getBSOIA(), AssetsService.getTA())})
+        $http({method: 'GET', url: self.FOXX_API.getPotentialRisks(AssetsService.getBSOIA(), AssetsService.getTA())})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })
@@ -153,7 +153,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
      * on data retrieval.
      */
     this.getPotentialTreatments = function(callback){
-        $http({method: 'GET', url: FOXX_API.getPotentialTreatments(RisksService.getRisks())})
+        $http({method: 'GET', url: self.FOXX_API.getPotentialTreatments(RisksService.getRisks())})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })
@@ -162,50 +162,4 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
             });
     };
 
-    /**
-     * Get all the data from the given url API endpoint
-     * @param {string} urlEndPoint - valid url end point
-     * @returns {promise}
-     */
-    this.getAll = function (urlEndPoint, callback) {
-        $http.get(FOXX_API.getUrl(urlEndPoint)).success(function (data) {
-            callback(null, data);
-        }).error(function (err) {
-            callback(err, null);
-        });
-    };
-
-    /**
-     * Save new object
-     * @param {string} urlEndPoint - valid url end point
-     * @param {object} data - data to be saved
-     * @returns {promise}
-     */
-    this.save = function (urlEndPoint, data) {
-        var deffered = $q.defer();
-        $http.post(FOXX_API.getUrl(urlEndPoint), data).success(function (data) {
-            deffered.resolve(data);
-        }).error(function (err) {
-            deffered.reject(err);
-        });
-
-        return deffered.promise;
-    };
-
-    /**
-     * Update existing object
-     * @param {string} urlEndPoint - valid url end point - need to contain the key
-     * @param {object} data - data to be saved
-     * @returns {promise}
-     */
-    this.update = function (urlEndPoint, data) {
-        var deffered = $q.defer();
-        $http.post(FOXX_API.getUrl(urlEndPoint), data).success(function (data) {
-            deffered.resolve(data);
-        }).error(function (err) {
-            deffered.reject(err);
-        });
-
-        return deffered.promise;
-    };
 }]);

@@ -12,6 +12,8 @@ var graphs = require("org/arangodb/general-graph");
 if(db._collection('bsoia') === null) {
     console.log('Creating nodes collection "bsoia" in "dss" database...');
 	db._createDocumentCollection('bsoia');
+    //Create unique index in name property
+    db._collection('bsoia').ensureUniqueConstraint('name');
 } else {
     console.log('Collection "bsoia" already exists, nothing to do here...');
 }
@@ -20,6 +22,8 @@ if(db._collection('bsoia') === null) {
 if(db._collection('toia') === null) {
     console.log('Creating nodes collection "toia" in "dss" database...');
     db._createDocumentCollection('toia');
+    //Create unique index in name property
+    db._collection('toia').ensureUniqueConstraint('name');
 } else {
     console.log('Collection "toia" already exists, nothing to do here...');
 }
@@ -28,6 +32,8 @@ if(db._collection('toia') === null) {
 if(db._collection('risk') === null) {
     console.log('Creating nodes collection "risk" in "dss" database...');
     db._createDocumentCollection('risk');
+    //Create unique index in name property
+    db._collection('risk').ensureUniqueConstraint('name');
 } else {
     console.log('Collection "risk" already exists, nothing to do here...');
 }
@@ -36,6 +42,8 @@ if(db._collection('risk') === null) {
 if(db._collection('treatment') === null) {
     console.log('Creating nodes collection "treatment" in "dss" database...');
     db._createDocumentCollection('treatment');
+    //Create unique index in name property
+    db._collection('treatment').ensureUniqueConstraint('name');
 } else {
     console.log('Collection "treatment" already exists, nothing to do here...');
 }
@@ -44,6 +52,8 @@ if(db._collection('treatment') === null) {
 if(db._collection('characteristic') === null) {
     console.log('Creating nodes collection "characteristic" in "dss" database...');
     db._createDocumentCollection('characteristic');
+    //Create unique index in name property
+    db._collection('characteristic').ensureUniqueConstraint('name');
 } else {
     console.log('Collection "characteristic" already exists, nothing to do here...');
 }
@@ -52,6 +62,8 @@ if(db._collection('characteristic') === null) {
 if(db._collection('metric') === null) {
     console.log('Creating nodes collection "metric" in "dss" database...');
     db._createDocumentCollection('metric');
+    //Create unique index in name property
+    db._collection('metric').ensureUniqueConstraint('name');
 } else {
     console.log('Collection "metric" already exists, nothing to do here...');
 }
@@ -60,6 +72,8 @@ if(db._collection('metric') === null) {
 if(db._collection('provider') === null) {
     console.log('Creating nodes collection "provider" in "dss" database...');
     db._createDocumentCollection('provider');
+    //Create unique index in name property
+    db._collection('provider').ensureUniqueConstraint('name');
 } else {
     console.log('Collection "provider" already exists, nothing to do here...');
 }
@@ -68,6 +82,8 @@ if(db._collection('provider') === null) {
 if(db._collection('service') === null) {
     console.log('Creating nodes collection "service" in "dss" database...');
     db._createDocumentCollection('service');
+    //Create unique index in name property
+    db._collection('service').ensureUniqueConstraint('name');
 } else {
     console.log('Collection "service" already exists, nothing to do here...');
 }
@@ -78,6 +94,8 @@ if(db._collection('service') === null) {
 if(db._collection('edges') === null){
     console.log('Creating edges collection "edges"...');
     db._createEdgeCollection('edges');
+    //Create unique index in type property
+    db._collection('edges').ensureUniqueConstraint('from_to_type');
 } else {
     console.log('Collection "edges" already exists, nothing to do here...');
 }
