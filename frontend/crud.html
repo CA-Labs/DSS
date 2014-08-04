@@ -95,7 +95,7 @@
                         <div ui-on-drop="addMetricToCharacteristic($event, $data)" class="dropzone-container">
                             <button ui-draggable="true" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="metric in characteristicData.metrics">
                                 <small><span class="glyphicon glyphicon-remove remove-bsoia-in-toia-asset" ng-click="removeMetricFromCharactersitic(metric)">&nbsp;</span></small>
-                                {{ metric.name }}
+                                {{ metric }}
                             </button>
                         </div>
                     </div>
