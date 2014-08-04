@@ -20,6 +20,7 @@ module.exports = function (grunt) {
                         'frontend/controllers/ta-controller.js',
                         'frontend/controllers/risks-controller.js',
                         'frontend/controllers/treatments-controller.js',
+                        'frontend/controllers/crud-controller.js',
                         'frontend/controllers/main-controller.js',
                         'frontend/services/assets-service.js',
                         'frontend/services/risks-service.js',
@@ -33,7 +34,7 @@ module.exports = function (grunt) {
             }
         },
         watch: {
-            files: ['frontend/*', 'frontend/*/*.js'],
+            files: ['frontend/{con,s,d}*/*.js'],
             tasks: ['uglify'],
             options: {
                 nospawn: true

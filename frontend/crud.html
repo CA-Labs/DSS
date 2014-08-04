@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>DSS Crud Operations Panel</title>
+    <link rel="stylesheet" href="assets/css/bootstrap.css"/>
+    <link rel="stylesheet" href="assets/css/dss.css"/>
+</head>
+<body ng-app="dssApp">
+<div class="container-fluid margin-10" ng-controller="crudController">
+    <div class="row">
+        <div class="col-lg-4 logo"></div>
+        <div class="col-lg-8 logo-text">
+            <h3>DSS Crud Operations Panel</h3>
+        </div>
+    </div>
+    <!--navbar-->
+    <div class="row">
+        <div class="navbar navbar-inverse">
+            <ul class="nav navbar-nav navbar-right">
+                <li>
+                    <a href="#" ng-click="switchPanel('asset')"><span class="glyphicon glyphicon-plus-sign"></span> Add Asset</a>
+                </li>
+                <li>
+                    <a href="#" ng-click="switchPanel('risk')"><span class="glyphicon glyphicon-plus-sign"></span> Add Risk</a>
+                </li>
+                <li>
+                    <a href="#" ng-click="switchPanel('treatment')"><span class="glyphicon glyphicon-plus-sign"></span> Add Treatment</a>
+                </li>
+                <li>
+                    <a href="#" ng-click="switchPanel('characteristic')"><span class="glyphicon glyphicon-plus-sign"></span> Add Characteristic</a>
+                </li>
+                <li>
+                    <a href="#" ng-click="switchPanel('provider')"><span class="glyphicon glyphicon-plus-sign"></span> Add Provider</a>
+                </li>
+                <li>
+                    <a href="#" ng-click="switchPanel('metric')"><span class="glyphicon glyphicon-plus-sign"></span> Add Metric</a>
+                </li>
+                <li style="margin-right: 25px;">
+                    <a href="#" ng-click="switchPanel('service')"><span class="glyphicon glyphicon-plus-sign"></span> Add Service</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="row" ng-show="error.length > 0">
+        <div class="alert alert-warning alert-dismissible" role="alert">
+            <button type="button" class="close" data-dismiss="alert"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            {{ error }}
+        </div>
+    </div>
+    <!--/navbar-->
+    <!--main container-->
+    <div class="row mainContainer">
+        <div class="col-lg-12" ng-show="showAssetPanel">
+            <h4>Add Asset</h4>
+        </div>
+        <div class="col-lg-12" ng-show="showRiskPanel">
+            <h4>Add Risk</h4>
+        </div>
+        <div class="col-lg-12" ng-show="showTreatmentPanel">
+            <h4>Add Treatment</h4>
+        </div>
+        <div class="col-lg-12" ng-show="showCharacteristicPanel">
+            <h4>Add Characteristic</h4>
+
+            <form name="characteristicForm" ng-submit="saveForm('characteristic', characteristicData)">
+                <div class="col-lg-3">
+                    <h5>Metrics</h5>
+                    <button ui-draggable="true" drag="metric" class="btn btn-sm btn-info" style="margin: 7px 5px;"  ng-repeat="metric in metrics">
+                        {{ metric.name }}
+                    </button>
+                </div>
+                <div class="col-lg-9">
+                    <div class="form-group" ng-class="{ 'has-error' : characteristicForm.name.$invalid && !characteristicForm.name.$pristine }">
+                        <label for="name">Name: </label>
+                        <input type="text" name="name" ng-model="characteristicData.name" ng-required="true" class="form-control" autofocus/>
+                        <p ng-show="characteristicForm.name.$invalid" class="help-block">Name is required</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="source">Source: </label>
+                        <input type="text" name="source" ng-model="characteristicData.source" ng-required="false" class="form-control"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="level">Level: </label>
+                        <select name="level" ng-model="characteristicData.level" ng-options="key as value for (key, value) in characteristicLevels" class="form-control">
+                            <option value="">-- choose level --</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="formula">Formula:</label>
+                        <textarea name="formula" ng-model="characteristicData.formula" rows="10" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="metrics">Metrics: </label>
+                        <div ui-on-drop="addMetricToCharacteristic($event, $data)" class="dropzone-container">
+                            <button ui-draggable="true" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="metric in characteristicData.metrics">
+                                <small><span class="glyphicon glyphicon-remove remove-bsoia-in-toia-asset" ng-click="removeMetricFromCharactersitic(metric)">&nbsp;</span></small>
+                                {{ metric.name }}
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </form>
+        </div>
+        <div class="col-lg-12" ng-show="showProviderPanel">
+            <h4>Add New Provider</h4>
+
+            <form name="providerForm" ng-submit="saveForm('provider', providerData)">
+                <div class="col-lg-12">
+                    <div class="form-group" ng-class="{ 'has-error' : providerForm.name.$invalid && !providerForm.name.$pristine }">
+                        <label for="name">Name: </label>
+                        <input type="text" name="name" ng-model="providerData.name" ng-required="true" class="form-control" autofocus/>
+                        <p ng-show="providerForm.name.$invalid" class="help-block">Name is required</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="year_founding">Year Founding (yyyy): </label>
+                        <input type="number" name="year_founding" ng-model="providerData.year_founding" class="form-control" min="1900" max="maxYear" ng-minlenght="4" ng-maxlength="4"/>
+                        <p ng-show="providerForm.year_founding.$error.minlength || providerForm.year_founding.$error.maxlength" class="help-block">Incorrect year</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="website">Website: </label>
+                        <input type="url" name="website" ng-model="providerData.website" class="form-control" ng-required="true"/>
+                        <p ng-show="providerForm.website.$invalid" class="help-block">Website is required</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="logo_url">Logo URL: </label>
+                        <input type="url" name="logo_url" ng-model="providerData.logo_url" class="form-control" ng-required="false"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description: </label>
+                        <textarea name="description" ng-model="providerData.description" rows="10" class="form-control"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="number_of_employees">Number of Employees: </label>
+                        <input type="number" name="number_of_employees" ng-model="providerData.number_of_employees" class="form-control" ng-required="false" min="1"/>
+                        <p ng-show="!providerForm.number_of_employees.$valid">Can't be lower than 1</p>
+                    </div>
+                    <div class="form-group">
+                        <label for="headquarters">Headquarters: </label>
+                        <input type="text" name="headquarters" ng-model="providerData.headquarters" class="form-control" ng-required="false"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="headquarters_country">Headquarters Country: </label>
+                        <input type="text" name="headquarters_country" ng-model="providerData.headquarters_country" class="form-control" ng-required="false"/>
+                    </div>
+                    <div class="form-group">
+                        <label for="headquarters_continent">Headquarters Continent: </label>
+                        <input type="text" name="headquarters_continent" ng-model="providerData.headquarters_continent" class="form-control" ng-required="false"/>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary pull-right">Save</button>
+            </form>
+        </div>
+        <div class="col-lg-12" ng-show="showMetricPanel">
+            <h4>Add New Metric</h4>
+            <form name="metricForm" ng-submit="saveForm('metric', metricData)">
+                <div class="form-group" ng-class="{ 'has-error' : metricForm.name.$invalid && !metricForm.name.$pristine }">
+                    <label for="name">Name: </label>
+                    <input type="text" name="name" ng-model="metricData.name" ng-required="true" class="form-control" autofocus/>
+                    <p ng-show="metricForm.name.$invalid" class="help-block">Name is required</p>
+                </div>
+                <div class="form-group" ng-class="{ 'has-error' : metricForm.name.$invalid && !metricForm.name.$pristine }">
+                    <label for="options">Options: </label>
+                    <textarea name="options" class="form-control" ng-model="metricData.options" rows="10" required></textarea>
+                    <p ng-show="metricForm.options.$invalid && !metricForm.options.$pristine" class="help-block">Options are invalid. They should be a object</p>
+                </div>
+                <button type="submit" class="btn btn-primary pull-right">Save</button>
+            </form>
+        </div>
+        <div class="col-lg-12" ng-show="showServicePanel">
+            <h4>Add New Service</h4>
+                <form name="serviceForm" ng-submit="saveForm('service', serviceForm)">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label for="name">Name</label>
+                                <input type="text" ng-model="serviceForm.name" ng-required="true" class="form-control" autofocus/>
+                                <p ng-show="serviceForm.name.$invalid" class="help-block">Name is required</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="provider">Provider</label>
+                                <select name="provider" ng-model="serviceData.provider" ng-required="true" class="form-control" ng-options="p.name for p in providers">
+                                    <option value="">-- select provider --</option>
+                                </select>
+                                <p ng-show="serviceForm.provider.$error.required">Please select a provider from the list</p>
+                            </div>
+                            <div class="form-group">
+                                <label for="cloudType">Service Type</label>
+                                <select name="cloudType" ng-model="serviceData.cloudType" ng-required="true" class="form-control">
+                                    <option value="">-- select service Type --</option>
+                                    <option value="IaaS">IaaS</option>
+                                    <option value="PaaS">PaaS</option>
+                                    <option value="SaaS">SaaS</option>
+                                </select>
+                                <p ng-show="serviceForm.cloudType.$error.required">Please select service type from the list</p>
+                            </div>
+                            <div class="form-group" ng-repeat="metric in metrics">
+                                <p>{{ metric.name }}</p>
+                                <select name="metric" ng-model="metricsValues[metric.name]" ng-options="key as value for (key, value) in metric.options" class="form-control">
+                                    <option value="">-- select option --</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary pull-right">Save</button>
+                </form>
+        </div>
+    </div>
+    <!--/main container-->
+</div>
+<script src="components/jquery/dist/jquery.min.js"></script>
+<script src="components/jquery-ui/jquery-ui.min.js"></script>
+<script src="components/angular/angular.min.js"></script>
+<script src="components/angular-flash/dist/angular-flash.min.js"></script>
+<script src="components/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="components/angular-dragdrop/draganddrop.js"></script>
+<script src="components/select2/select2.min.js"></script>
+
+<!--app-->
+<script src="app.min.js"></script>
+</body>
+</html>
