@@ -129,13 +129,14 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
                 var dataToSend = {
                     "name": data.name,
                     "type": "service",
-                    "serivceType": data.cloudType,
+                    "provider": $scope.serviceData.provider,
+                    "cloudType": $scope.serviceData.cloudType,
                     "metrics": $scope.metricsValues
                 };
                 ArangoDBService.save('service', dataToSend).then(function () {
                     $scope.serviceData = {};
                     $scope.metricsValues = {};
-                }).fail(function (err) {
+                }).error(function (err) {
                     $scope.error = err;
                 });
                 break;

@@ -147,7 +147,7 @@
         </div>
         <div class="col-lg-12" ng-show="showServicePanel">
             <h4>Add New Service</h4>
-                <form name="serviceForm">
+                <form name="serviceForm" ng-submit="saveForm('service', serviceForm)">
                     <div class="row">
                         <div class="col-lg-12">
                             <div class="form-group">

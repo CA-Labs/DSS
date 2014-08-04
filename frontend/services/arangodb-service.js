@@ -10,7 +10,7 @@
  * Manages all data retrieval from the
  * ArangoDB database instance.
  */
-dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', function($http, AssetsService, RisksService){
+dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService', function($http, $q, AssetsService, RisksService){
 
     //TODO: Fix an stable arangoDB server base URL
     //var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/api/';
@@ -21,6 +21,12 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', fun
 
     //FOXX API endpoints
     this.FOXX_API = {
+        getUrl: function (url) {
+            return self.ARANGODB_BASE_URL + 'crud/nodes/' + url
+        },
+        postUrl: function () {
+            return self.ARANGODB_BASE_URL + 'crud/nodes';
+        },
         getBSOIA: function(){
             return self.ARANGODB_BASE_URL + 'crud/nodes/bsoia'
         },
@@ -162,4 +168,50 @@ dssApp.service('ArangoDBService', ['$http', 'AssetsService', 'RisksService', fun
             });
     };
 
+    /**
+     * Get all the data from the given url API endpoint
+     * @param {string} urlEndPoint - valid url end point
+     * @returns {promise}
+     */
+    this.getAll = function (urlEndPoint, callback) {
+        $http.get(self.FOXX_API.getUrl(urlEndPoint)).success(function (data) {
+            callback(null, data);
+        }).error(function (err) {
+            callback(err, null);
+        });
+    };
+
+    /**
+     * Save new object
+     * @param {string} urlEndPoint - valid url end point
+     * @param {object} data - data to be saved
+     * @returns {promise}
+     */
+    this.save = function (urlEndPoint, data) {
+        var deffered = $q.defer();
+        $http.post(self.FOXX_API.postUrl(), data).success(function (data) {
+            deffered.resolve(data);
+        }).error(function (err) {
+            deffered.reject(err);
+        });
+
+        return deffered.promise;
+    };
+
+    /**
+     * Update existing object
+     * @param {string} urlEndPoint - valid url end point - need to contain the key
+     * @param {object} data - data to be saved
+     * @returns {promise}
+     */
+    this.update = function (urlEndPoint, data) {
+        var deffered = $q.defer();
+        $http.post(self.FOXX_API.getUrl(urlEndPoint), data).success(function (data) {
+            deffered.resolve(data);
+        }).error(function (err) {
+            deffered.reject(err);
+        });
+
+        return deffered.promise;
+    };
 }]);
