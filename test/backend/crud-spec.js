@@ -170,13 +170,15 @@ describe('CRUD API', function(){
             "name": "Accountability",
             "type": "characteristic",
             "source": "SMI",
-            "level": "1"
+            "level": "1",
+            "formula": ["a,b", "return a*b"]
         },
         {
             "name": "Agility",
             "type": "characteristic",
             "source": "SMI",
-            "level": "1"
+            "level": "1",
+            "formula": ["a,b", "return a*b"]
         }
     ];
 
@@ -1808,14 +1810,49 @@ describe('CRUD API', function(){
                 }, function(){
                     expect(false).toBe(true);
                     done();
-                })
+                });
             }, function(){
                 expect(false).toBe(true);
                 done();
-            })
+            });
         }, function(){
             expect(false).toBe(true);
             done();
+        });
+    });
+
+    it('should be able to create a characteristic with existing metrics', function(done){
+        var metrices = null;
+        // Create multiple metrices (2)
+        baseAJAX('POST', API.POST_NODES(), true, metrics, function(data){
+            metrices = data.map(function(metric){
+                return {name: metric.attributes.name, value: Math.floor(Math.random()*10)};
+            });
+            var metricesObject = {};
+            _.each(metrices, function(metric){
+               metricesObject[metric.name] = metric.value;
+            });
+            var characteristic = {
+                name: characteristics[0].name,
+                type: characteristics[0].type,
+                source: characteristics[0].source,
+                level: characteristics[0].level,
+                formula: ['a,b', 'return a + b'],
+                metrics: metricesObject
+            };
+            baseAJAX('POST', API.POST_NODES(), true , characteristic, function(){
+                baseAJAX('GET', API.GET_EDGES(), true, null, function(data){
+                    // 2 edges to metrices
+                    expect(data.length).toEqual(2);
+                    done();
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
         });
     });
 

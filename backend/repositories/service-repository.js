@@ -31,7 +31,7 @@ var ServiceRepository = Foxx.Repository.extend({
                 var data = params[0];
                 var repository = params[1];
 
-                //console.info('Starting transaction execution...');
+                console.info('Starting transaction execution in saveServiceWithProviderAndMetrics...');
 
                 var service = {
                     name: data.name,
@@ -69,14 +69,13 @@ var ServiceRepository = Foxx.Repository.extend({
                     try {
                         db._collection('edges').save(createdService._id, foundProvider._id, {from_to_type: createdService._id + '_' + foundProvider._id + '_service_provider', data: {value: -1}});
                     } catch (e) {
-                        console.info(JSON.stringify(e.message));
                         throw new Error('Edge between ' + createdService._id + ' and ' + foundProvider._id + ' already exists');
                     }
 
                     // Iterate over the metrics hash object, and create an edge from each one to the service previously created with the value of the metric
                     for(key in metrics){
                         if(metrics.hasOwnProperty(key)){
-                            console.info('Metric key', key);
+                            //console.info('Metric key', key);
                             var metric = db._collection('metric').byExample({name: key}).toArray()[0];
                             if(!metric){
                                 throw new Error('Metric ' + key + ' does not exist');
