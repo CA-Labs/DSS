@@ -402,7 +402,7 @@
                             console.info('Calling special save method for services...');
                             jsonResponse.push(repository.saveServiceWithProviderAndMetrics(model.forClient()));
                         } catch (e) {
-                            res.json({error: true, reason: e.message});
+                            jsonResponse.push({error: true, reason: e.message});
                         }
                         break;
                     case 'characteristic':
@@ -410,14 +410,14 @@
                             console.info('Calling special save method for characteristics...');
                             jsonResponse.push(repository.saveCharacteristicWithMetrics(model.forClient()));
                         } catch (e) {
-                            res.json({error: true, reason: e.message});
+                            jsonResponse.push({error: true, reason: e.message});
                         }
                         break;
                     default:
                         try {
                             jsonResponse.push(repository.save(model));
                         } catch (e) {
-                            res.json({error: true, reason: e.message});
+                            jsonResponse.push({error: true, reason: e.message});
                         }
                         break;
                 }
