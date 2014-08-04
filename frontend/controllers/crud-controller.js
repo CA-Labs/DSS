@@ -136,7 +136,7 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
                 ArangoDBService.save('service', dataToSend).then(function () {
                     $scope.serviceData = {};
                     $scope.metricsValues = {};
-                }).error(function (err) {
+                }, function (err) {
                     $scope.error = err;
                 });
                 break;
@@ -144,7 +144,7 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
                 data.type = "metric";
                 ArangoDBService.save('metric', data).then(function () {
                     $scope.metricData = {};
-                }).fail(function (err) {
+                }, function (err) {
                     $scope.error = err;
                 });
                 break;
@@ -152,7 +152,7 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
                 data.type = "provider";
                 ArangoDBService.save('provider', data).then(function () {
                     $scope.providerData = {};
-                }).fail(function (err) {
+                }, function (err) {
                     $scope.error = err;
                 });
                 break;
@@ -160,7 +160,7 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
                 date.type = "characteristic";
                 ArangoDBService.save('characteristic', data).then(function () {
                     window.location.reload();
-                }).fail(function (err) {
+                }, function (err) {
                     $scope.error = err;
                 });
                 break;
