@@ -15,11 +15,11 @@ $('body').on('mouseout', '.form-group > .dropzone-container', function(e){
 });
 
 
-var dssApp = angular.module('dssApp', [
-    'angular-flash.service',
-    'angular-flash.flash-alert-directive',
-    'ngDragDrop'
-]);
+//var dssApp = angular.module('dssApp', [
+//    'angular-flash.service',
+//    'angular-flash.flash-alert-directive',
+//    'ngDragDrop'
+//]);
 
 dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($scope, ArangoDBService) {
     // Initialize save object
