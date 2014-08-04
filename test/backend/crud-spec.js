@@ -1825,12 +1825,8 @@ describe('CRUD API', function(){
         var metrices = null;
         // Create multiple metrices (2)
         baseAJAX('POST', API.POST_NODES(), true, metrics, function(data){
-            metrices = data.map(function(metric){
-                return {name: metric.attributes.name, value: Math.floor(Math.random()*10)};
-            });
-            var metricesObject = {};
-            _.each(metrices, function(metric){
-               metricesObject[metric.name] = metric.value;
+            metricesArray = data.map(function(metric){
+                return metric.attributes.name;
             });
             var characteristic = {
                 name: characteristics[0].name,
@@ -1838,7 +1834,7 @@ describe('CRUD API', function(){
                 source: characteristics[0].source,
                 level: characteristics[0].level,
                 formula: ['a,b', 'return a + b'],
-                metrics: metricesObject
+                metrics: metricesArray
             };
             baseAJAX('POST', API.POST_NODES(), true , characteristic, function(){
                 baseAJAX('GET', API.GET_EDGES(), true, null, function(data){

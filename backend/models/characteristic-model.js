@@ -13,7 +13,8 @@ var Foxx = require('org/arangodb/foxx'),
             type: joi.string().required().default('characteristic'),
             source: joi.string().required().default('SMI'),
             level: joi.string().optional(),
-            formula: joi.array().optional()
+            formula: joi.array().optional(),
+            metrics: joi.array().optional()
         }
     });
 

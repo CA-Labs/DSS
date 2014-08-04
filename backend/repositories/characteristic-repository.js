@@ -54,23 +54,20 @@ var CharacteristicRepository = Foxx.Repository.extend({
                 }
 
                 if(metrics){
-
-                    // Iterate over the metrics hash object, and create an edge from each one to the characteristic previously created with the value of the metric
-                    for(key in metrics){
-                        if(metrics.hasOwnProperty(key)){
-                            //console.info('Metric key', key);
-                            var metric = db._collection('metric').byExample({name: key}).toArray()[0];
-                            if(!metric){
-                                throw new Error('Metric ' + key + ' does not exist');
-                            }
-                            // This may trigger an exception due to edge already existing
-                            try {
-                                db._collection('edges').save(metric._id, createdCharacteristic._id, {type: 'metric_characteristic', data: {value: metrics[key]}});
-                            } catch (e) {
-                                throw new Error('Edge between ' + metric._id + ' and ' + createdCharacteristic._id + ' already exists');
-                            }
+                    // Iterate over the metrics array, and create an edge from each one to the characteristic previously created with the value of the metric
+                    _.each(metrics, function(metricName){
+                        console.info(metricName);
+                        var metric = db._collection('metric').byExample({name: metricName}).toArray()[0];
+                        if(!metric){
+                            throw new Error('Metric ' + key + ' does not exist');
                         }
-                    }
+                        // This may trigger an exception due to edge already existing
+                        try {
+                            db._collection('edges').save(metric._id, createdCharacteristic._id, {type: 'metric_characteristic'});
+                        } catch (e) {
+                            throw new Error('Edge between ' + metric._id + ' and ' + createdCharacteristic._id + ' already exists');
+                        }
+                    });
                 }
             },
             params: [characteristicWithMetrics, self]
