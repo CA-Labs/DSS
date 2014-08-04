@@ -192,10 +192,10 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
     };
 
     // init
-    $scope.characteristicData.metrics = {};
+    $scope.characteristicData.metrics = [];
 
     $scope.addMetricToCharacteristic = function ($event, $data) {
-        $scope.characteristicData.metrics[$data.name] = $data;
+        $scope.characteristicData.metrics.push($data.name);
     };
 
     $scope.removeMetricFromCharactersitic = function (metric) {
