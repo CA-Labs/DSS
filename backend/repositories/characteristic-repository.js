@@ -56,7 +56,6 @@ var CharacteristicRepository = Foxx.Repository.extend({
                 if(metrics){
                     // Iterate over the metrics array, and create an edge from each one to the characteristic previously created with the value of the metric
                     _.each(metrics, function(metricName){
-                        console.info(metricName);
                         var metric = db._collection('metric').byExample({name: metricName}).toArray()[0];
                         if(!metric){
                             throw new Error('Metric ' + key + ' does not exist');
