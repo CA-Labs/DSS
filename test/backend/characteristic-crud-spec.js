@@ -90,14 +90,14 @@ describe('Characteristics CRUD API', function(){
             "type": "characteristic",
             "source": "SMI",
             "level": "1",
-            "formula": ["a,b", "return a*b"]
+            "formula": ["json,a,b", "return JSON.stringify(a) + \" -> \" + JSON.stringify(b);"]
         },
         {
             "name": "Agility",
             "type": "characteristic",
             "source": "SMI",
             "level": "1",
-            "formula": ["a,b", "return a*b"]
+            "formula": ["json,a,b", "return JSON.stringify(a) + \" -> \" + JSON.stringify(b);"]
         }
     ];
 
@@ -275,6 +275,29 @@ describe('Characteristics CRUD API', function(){
             expect(false).toBe(true);
             done();
         });
+    });
+
+    it('should be able to compute its formula function', function(done){
+        baseAJAX('POST', API.POST_NODES(), true, characteristics, function(){
+            baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function(data) {
+                expect(data.length).toEqual(2);
+                var firstCharacteristicFormula = data[0].formula;
+                var firstFunction = new Function(firstCharacteristicFormula[0], firstCharacteristicFormula[1]);
+                var firstResult = firstFunction(JSON, {a: 1, b: 2}, {a: 3, b: 4});
+                expect(firstResult).toEqual('{"a":1,"b":2} -> {"a":3,"b":4}');
+                var secondCharacteristicFormula = data[1].formula;
+                var secondFunction = new Function(secondCharacteristicFormula[0], secondCharacteristicFormula[1]);
+                var secondResult = secondFunction(JSON, {a: 3, b: 4}, {a: 5, b: 6});
+                expect(secondResult).toEqual('{"a":3,"b":4} -> {"a":5,"b":6}');
+                done()
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            })
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        })
     });
 
 });
