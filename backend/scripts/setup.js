@@ -3,10 +3,15 @@
  * Its main function is collections/graph initialization.
  **/
 
-var console = require("console");
-var arangodb = require("org/arangodb");
-var db = arangodb.db;
-var graphs = require("org/arangodb/general-graph");
+var console         = require('console')
+    arangodb        = require('org/arangodb');
+    db              = arangodb.db;
+    graphs          = require('org/arangodb/general-graph'),
+    aqlfunctions    = require('org/arangodb/aql/functions');
+
+/*****************************************************************************
+ **************************** DATABASE MANAGEMENT ****************************
+ *****************************************************************************/
 
 //Check if bsoia collection exists
 if(db._collection('bsoia') === null) {
@@ -105,7 +110,92 @@ var available_graphs = graphs._list();
 
 if(available_graphs.indexOf('dss') == -1){
     console.log('Graph "dss" does not exist, creating it from "edges" definition and documents collections...');
-    graphs._create("dss", [graphs._directedRelation('edges', ['bsoia', 'toia', 'risk'], ['toia', 'risk', 'treatments'])], ['characteristic', 'metric', 'provider', 'service']);
+    graphs._create("dss", [graphs._directedRelation('edges', ['bsoia', 'toia', 'risk', 'metric', 'characteristic', 'service'], ['toia', 'risk', 'treatments', 'service', 'provider', 'metric'])], ['bsoia', 'toia', 'risk', 'treatment', 'provider', 'service', 'metric', 'characteristic']);
 } else {
     console.log("Graph 'dss' exists already, nothing to do here...");
 }
+
+/*****************************************************************************
+ **************************** AQL CUSTOM FUNCTIONS ***************************
+ *****************************************************************************/
+
+/**
+ * Returns service edges connected to the metric
+ */
+aqlfunctions.register('dss::graph::servicesFromMetric', function(metricId){
+    var db = require('internal').db;
+    var metric = db._collection('metric').document(metricId);
+    return db._collection('edges').outEdges(metric);
+}, false);
+
+/**
+ * Returns characteristics connected to the metric
+ */
+aqlfunctions.register('dss::graph::characteristicsFromMetric', function(metricId){
+    var db = require('internal').db;
+    var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
+                'let sourceType = (p.source.type)' +
+                'let destinationType = (p.destination.type)' +
+                'let destinationId = (p.destination._id)' +
+                'filter (sourceType == "characteristic") && (destinationType == "metric") && (destinationId == @metricId)' +
+                'return p';
+
+    var stmt = db._createStatement({query: query});
+    stmt.bind('metricId', metricId);
+    var result = stmt.execute();
+
+    return result.toArray().map(function(path){
+        return path.source;
+    });
+
+}, false);
+
+/**
+ * Returns services edges connected to the characteristic
+ */
+aqlfunctions.register('dss::graph::servicesFromCharacteristic', function(characteristicId){
+    var db = require('internal').db;
+    var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
+        'let sourceType = (p.source.type)' +
+        'let sourceId = (p.source._id)' +
+        'let destinationType = (p.destination.type)' +
+        'filter (sourceType == "characteristic") && (destinationType == "service") && (sourceId == @characteristicId)' +
+        'return p.edges';
+
+    var stmt = db._createStatement({query: query});
+    stmt.bind('characteristicId', characteristicId);
+    var result = stmt.execute();
+
+    return result.toArray().map(function(edges){
+        return edges[0];
+    });
+}, false);
+
+
+/**
+ * Returns metric edges connected to the service
+ */
+aqlfunctions.register('dss::graph::metricesFromService', function(serviceId){
+    var db = require('internal').db;
+    var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
+        'let sourceType = (p.source.type)' +
+        'let destinationType = (p.destination.type)' +
+        'let destinationId = (p.destination._id)' +
+        'filter (sourceType == "metric") && (destinationType == "service") && (destinationId == @serviceId)' +
+        'return p.edges';
+
+    var stmt = db._createStatement({query: query});
+    stmt.bind('serviceId', serviceId);
+    var result = stmt.execute();
+
+    return result.toArray().map(function(edges){
+        return edges[0];
+    });
+}, false);
+
+/**
+ * Updates the whole graph from metrics values
+ */
+aqlfunctions.register('dss::graph::updateGraph', function(){
+    throw new Error('Not implemented yet!');
+}, false);
