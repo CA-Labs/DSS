@@ -449,6 +449,7 @@
             var model = null;
             switch(type){
                 case 'characteristic':
+                    // In this case, formula needs to be recomputed for all service edges
                     model = new CharacteristicModel(raw);
                     if(model.isValid){
                         res.json(CharacteristicRepository.replaceById(id, model).attributes);

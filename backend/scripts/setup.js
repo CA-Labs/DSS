@@ -151,7 +151,6 @@ aqlfunctions.register('dss::graph::serviceEdgeFromMetric', function(metricName, 
     var result = stmt.execute();
 
     return result.toArray()[0];
-
 });
 
 /**
@@ -175,7 +174,6 @@ aqlfunctions.register('dss::graph::characteristicNodesFromMetric', function(metr
     return result.toArray().map(function(path){
         return path.source;
     });
-
 }, false);
 
 /**
@@ -197,7 +195,6 @@ aqlfunctions.register('dss::graph::serviceEdgesFromCharacteristic', function(cha
     var result = stmt.execute();
 
     return result.toArray();
-
 }, false);
 
 /**
@@ -222,7 +219,28 @@ aqlfunctions.register('dss::graph::serviceEdgeFromCharacteristic', function(char
     var result = stmt.execute();
 
     return result.toArray()[0];
+}, false);
 
+/**
+ * Returns service nodes connected to the characteristic (1..*)
+ */
+
+aqlfunctions.register('dss::graph::serviceNodesFromCharacteristic', function(characteristicName){
+    var db = require('internal').db;
+    var console = require('console');
+    console.info('Calling custom AQL function dss::graph::serviceNodesFromCharacteristic...');
+    var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
+        'let sourceType = (p.source.type)' +
+        'let sourceName = (p.source.name)' +
+        'let destinationType = (p.destination.type)' +
+        'filter (sourceType == "characteristic") && (destinationType == "service") && (sourceName == @characteristicName)' +
+        'return p.destination';
+
+    var stmt = db._createStatement({query: query});
+    stmt.bind('characteristicName', characteristicName);
+    var result = stmt.execute();
+
+    return result.toArray();
 }, false);
 
 
