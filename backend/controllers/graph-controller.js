@@ -81,4 +81,81 @@
         required: false
     });
 
+    /**
+     * Updates a metric edge value and updates the graph properly
+     */
+    controller.put('updateMetric', function(req, res){
+
+        var metricId = req.params('metricId');
+        var serviceId = req.params('serviceId');
+
+        var newValue = req.body().newValue;
+
+        db._executeTransaction({
+            collections: {
+                write: ['edges', 'metric', 'service', 'characteristic']
+            },
+            action: function(params){
+
+                var db = require('internal').db;
+                var console = require('console');
+                var _ = require('underscore');
+
+                var metricId = params[0];
+                var serviceId = params[1];
+
+                var newValue = params[2];
+
+                console.info('Starting update process on metric ' + metricId + ' for service ' + serviceId + ' with new value ' + newValue);
+
+                // Update metric - service edge with new value
+                var query = 'for edge in dss::graph::serviceEdgeFromMetric(@metricId, @serviceId)' +
+                            'update edge with {"value": @newValue} in edges';
+
+                var stmt = db._createStatement({query: query});
+                stmt.bind('metricId', metricId);
+                stmt.bind('serviceId', serviceId);
+                stmt.bind('newValue', newValue);
+                stmt.execute();
+
+                // Recompute affected characteristic - service edges values
+
+                // 1) Grab characteristic nodes connected to the metric
+                console.info('Trying to retrieve characteristic nodes from metric ' + metricId + '.');
+                var query = 'for node in dss::graph::characteristicNodesFromMetric(@metricId) return node';
+                var stmt = db._createStatement({query: query});
+                stmt.bind('metricId', metricId);
+                var characteristics = stmt.execute()._documents;
+                console.info('Successful retrieval.');
+
+                // 2) Compute formula value for each characteristic and update characteristic - service edge
+                _.each(characteristics, function(characteristic){
+                    var characteristicId = characteristic._id;
+                    var characteristicFormula = eval(characteristic.formula);
+                    console.info('Characteristic formula', characteristicFormula);
+                    var characteristicFunction = Function.apply(null, characteristicFormula);
+                    var newValue = characteristicFunction(serviceId);
+                    console.info(newValue);
+                    var query = 'for edge in dss::graph::serviceEdgeFromCharacteristic(@characteristicId, @serviceId)' +
+                                'update edge with {"value": @newValue} in edges';
+                    var stmt = db._createStatement({query: query});
+                    stmt.bind('characteristicId', characteristicId);
+                    stmt.bind('serviceId', serviceId);
+                    stmt.bind('newValue', newValue);
+                    stmt.execute();
+                })
+            },
+            params: [metricId, serviceId, newValue]
+        });
+
+    }).queryParam('metricId', {
+        descripton: 'A valid metric node id',
+        type: 'string',
+        required: true
+    }).queryParam('serviceId', {
+        description: 'A valid service node id',
+        type: 'string',
+        required: true
+    });
+
 })();

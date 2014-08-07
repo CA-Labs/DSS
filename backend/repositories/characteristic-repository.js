@@ -62,7 +62,7 @@ var CharacteristicRepository = Foxx.Repository.extend({
                         }
                         // This may trigger an exception due to edge already existing
                         try {
-                            db._collection('edges').save(metric._id, createdCharacteristic._id, {type: 'metric_characteristic'});
+                            db._collection('edges').save(createdCharacteristic._id, metric._id, {type: 'metric_characteristic'});
                         } catch (e) {
                             throw new Error('Edge between ' + metric._id + ' and ' + createdCharacteristic._id + ' already exists');
                         }

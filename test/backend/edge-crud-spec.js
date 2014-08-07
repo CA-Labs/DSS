@@ -369,7 +369,7 @@ describe('Edges CRUD API', function(){
                 type: characteristics[0].type,
                 source: characteristics[0].source,
                 level: characteristics[0].level,
-                formula: ['a,b', 'return a + b'],
+                formula: "['a,b', 'return a + b']",
                 metrics: metricesArray
             };
             baseAJAX('POST', API.POST_NODES(), true , characteristic, function(){

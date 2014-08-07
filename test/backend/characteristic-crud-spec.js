@@ -90,14 +90,14 @@ describe('Characteristics CRUD API', function(){
             "type": "characteristic",
             "source": "SMI",
             "level": "1",
-            "formula": ["json,a,b", "return JSON.stringify(a) + \" -> \" + JSON.stringify(b);"]
+            "formula": "[\"json\",\"a\",\"b\", \"return JSON.stringify(a)\"]"
         },
         {
             "name": "Agility",
             "type": "characteristic",
             "source": "SMI",
             "level": "1",
-            "formula": ["json,a,b", "return JSON.stringify(a) + \" -> \" + JSON.stringify(b);"]
+            "formula": "[\"json\",\"a\",\"b\", \"return JSON.stringify(a)\"]"
         }
     ];
 
@@ -282,13 +282,13 @@ describe('Characteristics CRUD API', function(){
             baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function(data) {
                 expect(data.length).toEqual(2);
                 var firstCharacteristicFormula = data[0].formula;
-                var firstFunction = new Function(firstCharacteristicFormula[0], firstCharacteristicFormula[1]);
+                var firstFunction = Function.apply(null, eval(firstCharacteristicFormula));
                 var firstResult = firstFunction(JSON, {a: 1, b: 2}, {a: 3, b: 4});
-                expect(firstResult).toEqual('{"a":1,"b":2} -> {"a":3,"b":4}');
+                expect(firstResult).toEqual('{"a":1,"b":2}');
                 var secondCharacteristicFormula = data[1].formula;
-                var secondFunction = new Function(secondCharacteristicFormula[0], secondCharacteristicFormula[1]);
-                var secondResult = secondFunction(JSON, {a: 3, b: 4}, {a: 5, b: 6});
-                expect(secondResult).toEqual('{"a":3,"b":4} -> {"a":5,"b":6}');
+                var secondFunction = Function.apply(null, eval(secondCharacteristicFormula));
+                var secondResult = secondFunction(JSON, {a: 1, b: 2}, {a: 3, b: 4});
+                expect(secondResult).toEqual('{"a":1,"b":2}');
                 done()
             }, function(){
                 expect(false).toBe(true);

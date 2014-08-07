@@ -110,7 +110,7 @@ var available_graphs = graphs._list();
 
 if(available_graphs.indexOf('dss') == -1){
     console.log('Graph "dss" does not exist, creating it from "edges" definition and documents collections...');
-    graphs._create("dss", [graphs._directedRelation('edges', ['bsoia', 'toia', 'risk', 'metric', 'characteristic', 'service'], ['toia', 'risk', 'treatments', 'service', 'provider', 'metric'])], ['bsoia', 'toia', 'risk', 'treatment', 'provider', 'service', 'metric', 'characteristic']);
+    graphs._create("dss", [graphs._directedRelation('edges', ['bsoia', 'toia', 'risk', 'treatment', 'metric', 'characteristic', 'service'], ['toia', 'risk', 'treatment', 'service', 'provider', 'metric'])], []);
 } else {
     console.log("Graph 'dss' exists already, nothing to do here...");
 }
@@ -120,19 +120,42 @@ if(available_graphs.indexOf('dss') == -1){
  *****************************************************************************/
 
 /**
- * Returns service edges connected to the metric
+ * Returns service edges connected to the metric (1..*)
  */
-aqlfunctions.register('dss::graph::servicesFromMetric', function(metricId){
+aqlfunctions.register('dss::graph::serviceEdgesFromMetric', function(metricId){
     var db = require('internal').db;
+    var console = require('console');
+    console.info('Calling custom AQL function dss::graph::serviceEdgesFromMetric...');
     var metric = db._collection('metric').document(metricId);
     return db._collection('edges').outEdges(metric);
 }, false);
 
 /**
+ * Returns service edge connected to the metric (1..1)
+ */
+aqlfunctions.register('dss::graph::serviceEdgeFromMetric', function(metricId, serviceId){
+    var db = require('internal').db;
+    var console = require('console');
+    console.info('Calling custom AQL function dss::graph::serviceEdgeFromMetric...');
+    var metric = db._collection('metric').document(metricId);
+    var edges = db._collection('edges').outEdges(metric);
+    var edge = edges.filter(function(edge){
+        return edge._to == serviceId;
+    });
+    if(edge){
+        return edge;
+    } else {
+        throw new Error('Edge between ' + metricId + ' and ' + serviceId + ' not found.');
+    }
+});
+
+/**
  * Returns characteristics connected to the metric
  */
-aqlfunctions.register('dss::graph::characteristicsFromMetric', function(metricId){
+aqlfunctions.register('dss::graph::characteristicNodesFromMetric', function(metricId){
     var db = require('internal').db;
+    var console = require('console');
+    console.info('Calling custom AQL function dss::graph::characteristicNodesFromMetric...');
     var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
                 'let sourceType = (p.source.type)' +
                 'let destinationType = (p.destination.type)' +
@@ -151,10 +174,12 @@ aqlfunctions.register('dss::graph::characteristicsFromMetric', function(metricId
 }, false);
 
 /**
- * Returns services edges connected to the characteristic
+ * Returns services edges connected to the characteristic (1..*)
  */
-aqlfunctions.register('dss::graph::servicesFromCharacteristic', function(characteristicId){
+aqlfunctions.register('dss::graph::serviceEdgesFromCharacteristic', function(characteristicId){
     var db = require('internal').db;
+    var console = require('console');
+    console.info('Calling custom AQL function dss::graph::serviceEdgesFromCharacteristic...');
     var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
         'let sourceType = (p.source.type)' +
         'let sourceId = (p.source._id)' +
@@ -166,36 +191,42 @@ aqlfunctions.register('dss::graph::servicesFromCharacteristic', function(charact
     stmt.bind('characteristicId', characteristicId);
     var result = stmt.execute();
 
-    return result.toArray().map(function(edges){
-        return edges[0];
-    });
+    return result.toArray();
+
 }, false);
 
-
 /**
- * Returns metric edges connected to the service
+ * Returns service edge connected to the characteristic (1..1)
  */
-aqlfunctions.register('dss::graph::metricesFromService', function(serviceId){
+
+aqlfunctions.register('dss::graph::serviceEdgeFromCharacteristic', function(characteristicId, serviceId){
     var db = require('internal').db;
+    var console = require('console');
+    console.info('Calling custom AQL function dss::graph::serviceEdgeFromCharacteristic...');
     var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
         'let sourceType = (p.source.type)' +
+        'let sourceId = (p.source._id)' +
         'let destinationType = (p.destination.type)' +
         'let destinationId = (p.destination._id)' +
-        'filter (sourceType == "metric") && (destinationType == "service") && (destinationId == @serviceId)' +
+        'filter (sourceType == "characteristic") && (destinationType == "service") && (sourceId == @characteristicId) && (destinationId == @serviceId)' +
         'return p.edges';
 
     var stmt = db._createStatement({query: query});
+    stmt.bind('characteristicId', characteristicId);
     stmt.bind('serviceId', serviceId);
     var result = stmt.execute();
 
-    return result.toArray().map(function(edges){
-        return edges[0];
-    });
+    return result.toArray()[0];
+
 }, false);
+
 
 /**
  * Updates the whole graph from metrics values
  */
 aqlfunctions.register('dss::graph::updateGraph', function(){
+    var db = require('internal').db;
+    var console = require('console');
+    console.info('Calling custom AQL function dss::graph::updateGraph...');
     throw new Error('Not implemented yet!');
 }, false);
