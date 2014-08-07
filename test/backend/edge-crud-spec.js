@@ -388,4 +388,112 @@ describe('Edges CRUD API', function(){
         });
     });
 
+    it('should update a metric value and hence the characteristic value to the corresponding service', function(done){
+        var metricName = null;
+        var metricId = null;
+        var providerName = null;
+        var providerId = null;
+        var serviceName = null;
+        var serviceId = null;
+        var characteristicName = null;
+        var characteristicId = null;
+        // Create a metric
+        baseAJAX('POST', API.POST_NODES(), true, metrics[0], function(data){
+            expect(data.length).toEqual(1);
+            metricName = data[0].attributes.name;
+            metricId = data[0].attributes._id;
+            // console.debug('MetricId is', metricId);
+            // console.debug('MetricName is', metricName);
+            // Create a provider
+            baseAJAX('POST', API.POST_NODES(), true, providers[0], function(data){
+                expect(data.length).toEqual(1);
+                providerName = data[0].attributes.name;
+                providerId = data[0].attributes._id;
+                // console.debug('ProviderId is', providerId);
+                // console.debug('ProviderName is', providerName);
+                // Create a service with existing metrices and provider
+                var metricesObject = {};
+                metricesObject[metricName] = 10;
+                var service = {
+                    name: 'Service A',
+                    type: 'service',
+                    cloudType: 'PaaS',
+                    provider: data[0].attributes,
+                    metrics: metricesObject
+                };
+                baseAJAX('POST', API.POST_NODES(), true, service, function(data){
+                    expect(data.length).toEqual(1);
+                    serviceName = data[0].name;
+                    serviceId = data[0]._id;
+                    // console.debug('ServiceId is', serviceId);
+                    // console.debug('ServiceName is', serviceName);
+                    // Create a characteristic connected to that metric
+                    // The formula is pretty simple, just return the associated metric value and multiply it by two
+                    var characteristic = {
+                        name: characteristics[0].name,
+                        type: characteristics[0].type,
+                        source: characteristics[0].source,
+                        level: characteristics[0].level,
+                        formula: "[\"serviceName\", \"a\", \"var db = require(\\\"internal\\\").db;\" +\n \"var query = 'for edge in dss::graph::serviceEdgeFromMetric(\\\"security_provider_certificates\\\", @serviceName) return edge';\" +\n \"var stmt = db._createStatement({query: query});\" +\n \"stmt.bind(\\\"serviceName\\\", serviceName);\" +\n \"var result = stmt.execute()._documents;\" +\n \"a = result[0].value;\" +\n \"return a*2;\"]",
+                        metrics: [metricName]
+                    };
+                    baseAJAX('POST', API.POST_NODES(), false, characteristic, function() {
+                        baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function (data) {
+                            expect(data.length).toEqual(1);
+                            characteristicName = data[0].name;
+                            characteristicId = data[0]._id;
+                            // console.debug('CharacteristicId is', characteristicId);
+                            // console.debug('CharacteristicName is', characteristicName);
+                            // Connect characteristic to service
+                            baseAJAX('POST', API.POST_EDGES(characteristicId, serviceId), true, {type: 'characteristic_service', data: {value: 1}}, function () {
+                                baseAJAX('GET', API.GET_EDGES(), true, null, function (data) {
+                                    // characteristic -> metric, metric -> service, service -> provider, characteristic -> service
+                                    expect(data.length).toEqual(4);
+                                    // Update metric, characteristic-service edge should update
+                                    baseAJAX('PUT', API.UPDATE_METRIC(metricName, serviceName), true, {newValue: 10}, function(data){
+                                        expect(data.error).toBe(false);
+                                        // Retrieve characteristic service edge and expect value to be 10*2 = 20 as specified in the characteristic formula
+                                        baseAJAX('GET', API.GET_EDGE_FROM_TO(characteristicId, serviceId), true, null, function(data){
+                                            expect(data.length).toEqual(1);
+                                            expect(data[0].value).toEqual(20);
+                                            done();
+                                        }, function(){
+                                            expect(false).toBe(true);
+                                            done();
+                                        })
+                                    }, function(jqXHR, textStatus, errorThrown){
+                                        console.debug(errorThrown);
+                                        expect(false).toBe(true);
+                                        done();
+                                    });
+                                }, function () {
+                                    expect(false).toBe(true);
+                                    done();
+                                });
+                            }, function () {
+                                expect(false).toBe(true);
+                                done();
+                            });
+                        }, function () {
+                            expect(false).toBe(true);
+                            done();
+                        });
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    });
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        });
+    })
+
 });

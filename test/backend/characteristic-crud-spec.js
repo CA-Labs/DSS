@@ -139,7 +139,7 @@ describe('Characteristics CRUD API', function(){
             expect(data.reason).toEqual('Document -1 not found');
             done();
         }, function(){
-            expect(fase).toBe(true);
+            expect(false).toBe(true);
             done();
         });
     });

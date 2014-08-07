@@ -400,8 +400,8 @@
                     case 'service':
                         try {
                             console.info('Calling special save method for services...');
-                            repository.saveServiceWithProviderAndMetrics(model.forClient());
-                            jsonResponse.push({error: false});
+                            var createdService = repository.saveServiceWithProviderAndMetrics(model.forClient());
+                            jsonResponse.push(createdService);
                         } catch (e) {
                             jsonResponse.push({error: true, reason: e.message});
                         }
@@ -409,8 +409,8 @@
                     case 'characteristic':
                         try {
                             console.info('Calling special save method for characteristics...');
-                            repository.saveCharacteristicWithMetrics(model.forClient())
-                            jsonResponse.push({error: false});
+                            var createdCharacteristic = repository.saveCharacteristicWithMetrics(model.forClient());
+                            jsonResponse.push(createdCharacteristic);
                         } catch (e) {
                             jsonResponse.push({error: true, reason: e.message});
                         }

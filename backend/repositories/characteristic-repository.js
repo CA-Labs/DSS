@@ -19,7 +19,7 @@ var CharacteristicRepository = Foxx.Repository.extend({
         var self = this;
 
         // Multiple db operations involved, wrap everything within a transaction
-        db._executeTransaction({
+        var result = db._executeTransaction({
             collections: {
                 write: ['characteristic', 'metric', 'edges']
             },
@@ -68,9 +68,14 @@ var CharacteristicRepository = Foxx.Repository.extend({
                         }
                     });
                 }
+
+                return createdCharacteristic;
             },
-            params: [characteristicWithMetrics, self]
+            params: [characteristicWithMetrics, self],
+            waitForSync: false
         });
+
+        return result;
 
     }
 

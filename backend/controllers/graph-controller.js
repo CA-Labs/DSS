@@ -86,12 +86,12 @@
      */
     controller.put('updateMetric', function(req, res){
 
-        var metricId = req.params('metricId');
-        var serviceId = req.params('serviceId');
+        var metricName = req.params('metricName');
+        var serviceName = req.params('serviceName');
 
         var newValue = req.body().newValue;
 
-        db._executeTransaction({
+        var result = db._executeTransaction({
             collections: {
                 write: ['edges', 'metric', 'service', 'characteristic']
             },
@@ -101,59 +101,63 @@
                 var console = require('console');
                 var _ = require('underscore');
 
-                var metricId = params[0];
-                var serviceId = params[1];
+                var metricName = params[0];
+                var serviceName = params[1];
 
                 var newValue = params[2];
 
-                console.info('Starting update process on metric ' + metricId + ' for service ' + serviceId + ' with new value ' + newValue);
+                console.info('Starting update process on metric ' + metricName + ' for service ' + serviceName + ' with new value ' + newValue);
 
                 // Update metric - service edge with new value
-                var query = 'for edge in dss::graph::serviceEdgeFromMetric(@metricId, @serviceId)' +
+                var query = 'for edge in dss::graph::serviceEdgeFromMetric(@metricName, @serviceName)' +
                             'update edge with {"value": @newValue} in edges';
 
                 var stmt = db._createStatement({query: query});
-                stmt.bind('metricId', metricId);
-                stmt.bind('serviceId', serviceId);
+                stmt.bind('metricName', metricName);
+                stmt.bind('serviceName', serviceName);
                 stmt.bind('newValue', newValue);
                 stmt.execute();
 
                 // Recompute affected characteristic - service edges values
 
                 // 1) Grab characteristic nodes connected to the metric
-                console.info('Trying to retrieve characteristic nodes from metric ' + metricId + '.');
-                var query = 'for node in dss::graph::characteristicNodesFromMetric(@metricId) return node';
+                var query = 'for node in dss::graph::characteristicNodesFromMetric(@metricName) return node';
                 var stmt = db._createStatement({query: query});
-                stmt.bind('metricId', metricId);
+                stmt.bind('metricName', metricName);
                 var characteristics = stmt.execute()._documents;
-                console.info('Successful retrieval.');
 
                 // 2) Compute formula value for each characteristic and update characteristic - service edge
                 _.each(characteristics, function(characteristic){
-                    var characteristicId = characteristic._id;
+                    var characteristicName = characteristic.name;
                     var characteristicFormula = eval(characteristic.formula);
                     console.info('Characteristic formula', characteristicFormula);
                     var characteristicFunction = Function.apply(null, characteristicFormula);
-                    var newValue = characteristicFunction(serviceId);
-                    console.info(newValue);
-                    var query = 'for edge in dss::graph::serviceEdgeFromCharacteristic(@characteristicId, @serviceId)' +
+                    var newValue = characteristicFunction(serviceName);
+                    console.info('Computed value', newValue);
+                    var query = 'for edge in dss::graph::serviceEdgeFromCharacteristic(@characteristicName, @serviceName)' +
                                 'update edge with {"value": @newValue} in edges';
                     var stmt = db._createStatement({query: query});
-                    stmt.bind('characteristicId', characteristicId);
-                    stmt.bind('serviceId', serviceId);
+                    stmt.bind('characteristicName', characteristicName);
+                    stmt.bind('serviceName', serviceName);
                     stmt.bind('newValue', newValue);
                     stmt.execute();
-                })
+                });
+
+                return {error: false};
+
             },
-            params: [metricId, serviceId, newValue]
+            params: [metricName, serviceName, newValue],
+            waitForSync: false
         });
 
-    }).queryParam('metricId', {
-        descripton: 'A valid metric node id',
+        res.json(result);
+
+    }).queryParam('metricName', {
+        descripton: 'A valid metric node name',
         type: 'string',
         required: true
-    }).queryParam('serviceId', {
-        description: 'A valid service node id',
+    }).queryParam('serviceName', {
+        description: 'A valid service node name',
         type: 'string',
         required: true
     });
