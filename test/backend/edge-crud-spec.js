@@ -496,4 +496,67 @@ describe('Edges CRUD API', function(){
         });
     })
 
+    xit('should update characteristic formula and characteristic-service edge values', function(done){
+        var metrices = null;
+        var metricesObject = {};
+        var provider = null;
+        // Create metrics (2)
+        baseAJAX('POST', API.POST_NODES(), true, metrics, function(data){
+            metrices = data.map(function(metric, index){
+                if(index == 0){
+                    return {name: metric.attributes.name, value: Math.floor(Math.random()*10)};
+                } else {
+                    return;
+                }
+            });
+            metricesObject = {};
+            _.each(metrices, function(metric){
+                metricesObject[metric.name] = metric.value
+            });
+            // Create a provider
+            baseAJAX('POST', API.POST_NODES(), true, providers[0], function(data){
+                provider = data[0].attributes;
+                // Create one service with existing metrices and provider
+                var service1 = {
+                    name: 'Service A',
+                    type: 'service',
+                    cloudType: 'PaaS',
+                    provider: provider,
+                    metrics: metricesObject
+                };
+                baseAJAX('POST', API.POST_NODES(), true, service1, function(data){
+                    // Create another service with existing metrices and provider
+                    var service2 = {
+                        name: 'Service B',
+                        type: 'service',
+                        cloudType: 'PaaS',
+                        provider: provider,
+                        metrics: metricesObject
+                    };
+                    baseAJAX('POST', API.POST_NODES(), true, service2, function(data){
+                        // TODO: Create characteristic1 connected to metric1
+                        // TODO: Create characteristic-service edge between characteristic1-serviceA with some value
+                        // TODO: Create characteristic2 connected to metric2
+                        // TODO: Create characteristic-service edge between characteristic2-serviceB with some value
+                        // TODO: Update characteristic1 and check characteristic1-serviceA edge value changes
+                        // TODO: Update characteristic2 and check characteristic2-serviceB edge value changes
+                        done();
+                    }, function(){
+                        expect(false).toBe(true);
+                        done();
+                    })
+                }, function(){
+                    expect(false).toBe(true);
+                    done();
+                });
+            }, function(){
+                expect(false).toBe(true);
+                done();
+            });
+        }, function(){
+            expect(false).toBe(true);
+            done();
+        })
+    });
+
 });

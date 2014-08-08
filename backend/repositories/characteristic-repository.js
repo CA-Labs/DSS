@@ -78,7 +78,7 @@ var CharacteristicRepository = Foxx.Repository.extend({
         return result;
 
     },
-    updateFormula: function(id, newCharacteristicModel){
+    updateCharacteristicFormula: function(id, newCharacteristicModel){
 
         // Reference to repository object
         var self = this;
@@ -98,6 +98,8 @@ var CharacteristicRepository = Foxx.Repository.extend({
                 var characteristicModel = params[1];
                 var repository = params[2];
 
+                console.info('Starting transaction execution in updateCharacteristicFormula...');
+
                 // First, update the characteristic values
                 var result = repository.replaceById(id, characteristicModel);
 
@@ -114,10 +116,13 @@ var CharacteristicRepository = Foxx.Repository.extend({
                 stmt.bind('characteristicName', characteristicName);
                 var services = stmt.execute();
 
+                console.info('Services connected to characteristic characteristicId', JSON.stringify(services));
+
                 _.each(services, function(service){
                     var serviceId = service._id;
                     // Update characteristic - service edge value
                     var newValue = characteristicFunction(service.name);
+                    console.info('New value for characteristic-service edge', characteristicId, serviceId, newValue);
                     var newEdge = {value: newValue};
 
                     var query = 'for edge in edges filter edge._from==@characteristicId && edge._to==@serviceId update edge with @newEdge in edges'
