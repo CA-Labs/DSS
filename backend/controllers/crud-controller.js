@@ -454,7 +454,11 @@
                     if(model.isValid){
                         if(updateFormula) {
                             // In this case, formula needs to be recomputed for all service edges when it is updated
-                            res.json(CharacteristicRepository.updateCharacteristicFormula(id, model));
+                            try {
+                                res.json(CharacteristicRepository.updateCharacteristicFormula(type + '/' + id, model));
+                            } catch (e) {
+                                res.json({error: true, reason: e.message});
+                            }
                         } else {
                             res.json(CharacteristicRepository.replaceById(id, model).attributes);
                         }

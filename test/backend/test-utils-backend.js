@@ -46,6 +46,9 @@ var API = {
     POST_EDGES: function(_from, _to){
         return ARANGODB_TEST_BASE_URL + 'crud/edges/' + _from + '/' + _to;
     },
+    UPDATE_FORMULA: function(_id){
+        return ARANGODB_TEST_BASE_URL + 'crud/nodes/' + _id + '?updateFormula=true';
+    },
     UPDATE_METRIC: function(_from, _to){
         return ARANGODB_TEST_BASE_URL + 'graph/updateMetric?metricName=' + _from + '&serviceName=' + _to;
     }

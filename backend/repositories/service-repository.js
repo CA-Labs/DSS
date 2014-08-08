@@ -46,7 +46,7 @@ var ServiceRepository = Foxx.Repository.extend({
                 // Save the service (this may trigger an exception due to unique index)
                 try {
                     // No need for validation, this was validated first in the CRUD controller
-                    createdService = repository.save(new ServiceModel(service)).attributes;
+                    createdService = repository.save(new ServiceModel(service));
                 } catch (e){
                     throw new Error('Service ' + JSON.stringify(service) + ' already exists');
                 }
@@ -58,7 +58,9 @@ var ServiceRepository = Foxx.Repository.extend({
                     // (this may trigger an exception due to document not found)
                     var foundProvider = null;
                     try {
+                        console.info('Looking up provider ' + provider._id);
                         foundProvider = db._collection('provider').document(provider._id);
+                        console.info(JSON.stringify(foundProvider));
                     } catch (e) {
                         throw new Error('Provider ' + JSON.stringify(provider) + ' does not exist');
                     }
@@ -67,12 +69,14 @@ var ServiceRepository = Foxx.Repository.extend({
                     // (this may trigger an exception due to edge already existing)
                     // TODO: What value should be associated to this edge?
                     try {
-                        db._collection('edges').save(createdService._id, foundProvider._id, {from_to_type: createdService._id + '_' + foundProvider._id + '_service_provider', data: {value: -1}});
+                        console.info('Creating link between ' + createdService.attributes._id + ' and ' + foundProvider._id);
+                        db._collection('edges').save(createdService.attributes._id, foundProvider._id, {from_to_type: createdService.attributes._id + '_' + foundProvider._id + '_service_provider', data: {value: -1}});
                     } catch (e) {
-                        throw new Error('Edge between ' + createdService._id + ' and ' + foundProvider._id + ' already exists');
+                        throw new Error('Edge between ' + createdService.attributes._id + ' and ' + foundProvider._id + ' already exists');
                     }
 
                     // Iterate over the metrics hash object, and create an edge from each one to the service previously created with the value of the metric
+                    console.info('Metrics provided', JSON.stringify(metrics));
                     for(key in metrics){
                         if(metrics.hasOwnProperty(key)){
                             //console.info('Metric key', key);
@@ -82,9 +86,10 @@ var ServiceRepository = Foxx.Repository.extend({
                             }
                             // This may trigger an exception due to edge already existing
                             try {
-                                db._collection('edges').save(metric._id, createdService._id, {type: 'metric_service', data: {value: metrics[key]}});
+                                console.info('Creating link between ' + metric._id + ' and ' + createdService.attributes._id);
+                                db._collection('edges').save(metric._id, createdService.attributes._id, {type: 'metric_service', data: {value: metrics[key]}});
                             } catch (e) {
-                                throw new Error('Edge between ' + metric._id + ' and ' + createdService._id + ' already exists');
+                                throw new Error('Edge between ' + metric._id + ' and ' + createdService.attributes._id + ' already exists');
                             }
                         }
                     }
