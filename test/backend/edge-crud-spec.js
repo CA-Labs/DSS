@@ -132,7 +132,7 @@ describe('Edges CRUD API', function(){
             "name": "Flexiant",
             "year_founding": 2009,
             "website": "http://www.flexiant.com",
-            "logo_url": "https://www.google.com/url?q=http%3A%2F%2Fwww.interxion.com%2FGlobal%2FHomepage%2FCustomer%2520Logos%2FFlexiant.png",
+            "logo_url": "http://www.flexiant.com",
             "description": "Flexiant provides cloud orchestration software focused solely to the global service provider market.",
             "number_of_employees": 50,
             "headquarters": "Edinburgh, Scotland",
@@ -144,7 +144,7 @@ describe('Edges CRUD API', function(){
             "name": "Insomer",
             "year_founding": 2013,
             "website": "http://www.insomer.com",
-            "logo_url": "http://www.insomer.com/wp-content/uploads/2014/07/Rectangular-oscuro-big.png",
+            "logo_url": "http://www.insomer.com",
             "description": "En Insomer creemos que tener un proyecto es un fin en sí mismo, y este, el nuestro, nace precisamente con el objetivo de ayudar y colaborar con aquellos que tienen otros proyectos. Somos de esas personas convencidas de que el mundo se mejora emprendiendo, de que trabajar debería implicar disfrutar, de que las formalidades no sirven de mucho, y de que Jack y Rose cabían perfectamente en la tabla.",
             "number_of_employees": 3,
             "headquarters": "Rubi, Spain",
@@ -423,8 +423,8 @@ describe('Edges CRUD API', function(){
                 };
                 baseAJAX('POST', API.POST_NODES(), true, service, function(data){
                     expect(data.length).toEqual(1);
-                    serviceName = data[0].name;
-                    serviceId = data[0]._id;
+                    serviceName = data[0].attributes.name;
+                    serviceId = data[0].attributes._id;
                     // console.debug('ServiceId is', serviceId);
                     // console.debug('ServiceName is', serviceName);
                     // Create a characteristic connected to that metric
@@ -434,10 +434,10 @@ describe('Edges CRUD API', function(){
                         type: characteristics[0].type,
                         source: characteristics[0].source,
                         level: characteristics[0].level,
-                        formula: "[\"serviceName\", \"a\", \"var db = require(\\\"internal\\\").db;\" +\n \"var query = 'for edge in dss::graph::serviceEdgeFromMetric(\\\"security_provider_certificates\\\", @serviceName) return edge';\" +\n \"var stmt = db._createStatement({query: query});\" +\n \"stmt.bind(\\\"serviceName\\\", serviceName);\" +\n \"var result = stmt.execute()._documents;\" +\n \"a = result[0].value;\" +\n \"return a*2;\"]",
+                        formula: "[\"serviceName\", \"a\", \"var db = require(\\\"internal\\\").db;\" +\n \"var query = 'for edge in dss::graph::serviceEdgeFromMetric(\\\"security_provider_certificates\\\", @serviceName) return edge';\" +\n \"var stmt = db._createStatement({query: query});\" +\n \"stmt.bind(\\\"serviceName\\\", serviceName);\" +\n \"var result = stmt.execute()._documents;\" +\n \"a = result[0].data.value;\" +\n \"return a*2;\"]",
                         metrics: [metricName]
                     };
-                    baseAJAX('POST', API.POST_NODES(), false, characteristic, function() {
+                    baseAJAX('POST', API.POST_NODES(), false, characteristic, function(data) {
                         baseAJAX('GET', API.GET_NODES('characteristic'), true, null, function (data) {
                             expect(data.length).toEqual(1);
                             characteristicName = data[0].name;
@@ -494,27 +494,22 @@ describe('Edges CRUD API', function(){
             expect(false).toBe(true);
             done();
         });
-    })
+    });
 
-    xit('should update characteristic formula and characteristic-service edge values', function(done){
+    it('should update characteristic formula and characteristic-service edge values', function(done){
         var metrices = null;
         var metricesObject = {};
         var provider = null;
-        // Create metrics (2)
-        baseAJAX('POST', API.POST_NODES(), true, metrics, function(data){
+        baseAJAX('POST', API.POST_NODES(), false, metrics[0], function(data){
             metrices = data.map(function(metric, index){
-                if(index == 0){
-                    return {name: metric.attributes.name, value: Math.floor(Math.random()*10)};
-                } else {
-                    return;
-                }
+                return {name: metric.attributes.name, value: 1};
             });
             metricesObject = {};
             _.each(metrices, function(metric){
                 metricesObject[metric.name] = metric.value
             });
             // Create a provider
-            baseAJAX('POST', API.POST_NODES(), true, providers[0], function(data){
+            baseAJAX('POST', API.POST_NODES(), false, providers[0], function(data){
                 provider = data[0].attributes;
                 // Create one service with existing metrices and provider
                 var service1 = {
@@ -524,27 +519,48 @@ describe('Edges CRUD API', function(){
                     provider: provider,
                     metrics: metricesObject
                 };
-                baseAJAX('POST', API.POST_NODES(), true, service1, function(data){
-                    // Create another service with existing metrices and provider
-                    var service2 = {
-                        name: 'Service B',
-                        type: 'service',
-                        cloudType: 'PaaS',
-                        provider: provider,
-                        metrics: metricesObject
+                baseAJAX('POST', API.POST_NODES(), false, service1, function(data){
+                    var serviceId = data[0].attributes._id;
+                    // Create a characteristic connected to the first metric
+                    // The formula is pretty simple, just return the associated metric value and multiply it by two (should be 1*2)
+                    var characteristic = {
+                        name: characteristics[0].name,
+                        type: characteristics[0].type,
+                        source: characteristics[0].source,
+                        level: characteristics[0].level,
+                        formula: "[\"serviceName\", \"a\", \"var db = require(\\\"internal\\\").db;\" +\n \"var console = require(\\\"console\\\");\" +\n \"var query = 'for edge in dss::graph::serviceEdgeFromMetric(\\\"security_provider_certificates\\\", @serviceName) return edge';\" +\n \"var stmt = db._createStatement({query: query});\" +\n \"stmt.bind(\\\"serviceName\\\", serviceName);\" +\n \"var result = stmt.execute()._documents;\" +\n \"console.info(JSON.stringify(result));\" +\n \"a = result[0].data.value;\" +\n \"return a*2;\"]",
+                        metrics: [metrics[0].name]
                     };
-                    baseAJAX('POST', API.POST_NODES(), true, service2, function(data){
-                        // TODO: Create characteristic1 connected to metric1
-                        // TODO: Create characteristic-service edge between characteristic1-serviceA with some value
-                        // TODO: Create characteristic2 connected to metric2
-                        // TODO: Create characteristic-service edge between characteristic2-serviceB with some value
-                        // TODO: Update characteristic1 and check characteristic1-serviceA edge value changes
-                        // TODO: Update characteristic2 and check characteristic2-serviceB edge value changes
-                        done();
+                    baseAJAX('POST', API.POST_NODES(), false, characteristic, function(data){
+                        var characteristicId = data[0].attributes._id;
+                        // Create characteristic-service edge between characteristic-service with some incorrect value (should be 2)
+                        baseAJAX('POST', API.POST_EDGES(characteristicId, serviceId), true, {type: 'characteristic_service', data: {value: 10}}, function(data) {
+                            baseAJAX('GET', API.GET_EDGE_FROM_TO(characteristicId, serviceId), true, null, function (data) {
+                                expect(data[0].data.value).toEqual(10);
+                                baseAJAX('PUT', API.UPDATE_FORMULA(characteristicId), true, characteristic, function(data){
+                                    baseAJAX('GET', API.GET_EDGE_FROM_TO(characteristicId, serviceId), true, null, function (data) {
+                                        expect(data[0].data.value).toEqual(2);
+                                        done();
+                                    }, function(){
+                                        expect(false).toBe(true);
+                                        done();
+                                    });
+                                }, function(){
+                                    expect(false).toBe(true);
+                                    done();
+                                });
+                            }, function () {
+                                expect(false).toBe(true);
+                                done();
+                            });
+                        }, function(){
+                            expect(false).toBe(true);
+                            done();
+                        });
                     }, function(){
                         expect(false).toBe(true);
                         done();
-                    })
+                    });
                 }, function(){
                     expect(false).toBe(true);
                     done();

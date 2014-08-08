@@ -48,7 +48,7 @@ var CharacteristicRepository = Foxx.Repository.extend({
                 // Save the characteristic (this may trigger an exception due to unique index)
                 try {
                     // No need for validation, this was validated first in the CRUD controller
-                    createdCharacteristic = repository.save(new CharacteristicModel(characteristic)).attributes;
+                    createdCharacteristic = repository.save(new CharacteristicModel(characteristic));
                 } catch (e){
                     throw new Error('Characteristic ' + JSON.stringify(characteristic) + ' already exists');
                 }
@@ -58,13 +58,14 @@ var CharacteristicRepository = Foxx.Repository.extend({
                     _.each(metrics, function(metricName){
                         var metric = db._collection('metric').byExample({name: metricName}).toArray()[0];
                         if(!metric){
-                            throw new Error('Metric ' + key + ' does not exist');
+                            throw new Error('Metric ' + metricName + ' does not exist');
                         }
                         // This may trigger an exception due to edge already existing
                         try {
-                            db._collection('edges').save(createdCharacteristic._id, metric._id, {type: 'metric_characteristic'});
+                            console.info('Creating link between ' + createdCharacteristic.attributes._id + ' and ' + metric._id);
+                            db._collection('edges').save(createdCharacteristic.attributes._id, metric._id, {type: 'metric_characteristic'});
                         } catch (e) {
-                            throw new Error('Edge between ' + metric._id + ' and ' + createdCharacteristic._id + ' already exists');
+                            throw new Error('Edge between ' + createdCharacteristic.attributes._id + ' and ' + metric._id + ' already exists');
                         }
                     });
                 }
@@ -101,34 +102,52 @@ var CharacteristicRepository = Foxx.Repository.extend({
                 console.info('Starting transaction execution in updateCharacteristicFormula...');
 
                 // First, update the characteristic values
-                var result = repository.replaceById(id, characteristicModel);
+                var result = null;
+                try {
+                    result = repository.replaceById(id, characteristicModel);
+                } catch (e) {
+                    throw new Error('An error occurred while trying to update characteristic ' + id);
+                }
 
                 // Formula update process
                 // 1. Retrieve all services connected to the characteristic and execute characteristic formula to grab the new value
                 // WARNING: This assumes a correct characteristic formula!
 
-                var characteristicName = characteristicModel.name;
-                var characteristicFormula = characteristicModel.formula;
-                var characteristicFunction = Function.apply(null, eval(characteristicFormula));
+                var characteristicName = result.attributes.name;
+                var characteristicFormula = result.attributes.formula;
 
-                var query = 'for node in dss::graph::serviceNodesFromCharacterstic(@characteristicName) return node';
+                var characteristicFunction = null;
+                try {
+                    characteristicFunction = Function.apply(null, eval(characteristicFormula));
+                } catch (e) {
+                    throw new Error('An error occurred while trying to parse formula function for characteristic ' + id);
+                }
+
+                console.info('Characteristic formula', characteristicFormula);
+                var query = 'for node in dss::graph::serviceNodesFromCharacteristic(@characteristicName) return node';
                 var stmt = db._createStatement({query: query});
                 stmt.bind('characteristicName', characteristicName);
-                var services = stmt.execute();
-
-                console.info('Services connected to characteristic characteristicId', JSON.stringify(services));
+                var services = stmt.execute()._documents;
 
                 _.each(services, function(service){
                     var serviceId = service._id;
                     // Update characteristic - service edge value
-                    var newValue = characteristicFunction(service.name);
+                    var newValue = null;
+                    try {
+                        newValue = characteristicFunction(service.name);
+                    } catch (e) {
+                        console.info('Exception', JSON.stringify(e));
+                        throw new Error('It is not possible to compute value with provided formula in characteristic ' + id);
+                    }
+
+                    var newEdge = {data: {value: newValue}};
                     console.info('New value for characteristic-service edge', characteristicId, serviceId, newValue);
-                    var newEdge = {value: newValue};
+                    console.info('New edge', JSON.stringify(newEdge));
 
                     var query = 'for edge in edges filter edge._from==@characteristicId && edge._to==@serviceId update edge with @newEdge in edges'
                     var stmt = db._createStatement({query: query});
                     stmt.bind('characteristicId', characteristicId);
-                    stmt.bind('service', service);
+                    stmt.bind('serviceId', serviceId);
                     stmt.bind('newEdge', newEdge);
                     stmt.execute();
                 });
