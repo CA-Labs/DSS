@@ -18,7 +18,7 @@ var ServiceRepository = Foxx.Repository.extend({
         var self = this;
 
         // Multiple db operations involved, wrap everything within a transaction
-        db._executeTransaction({
+         var result = db._executeTransaction({
             collections: {
                 write: ['provider', 'service', 'metric', 'edges']
             },
@@ -89,9 +89,14 @@ var ServiceRepository = Foxx.Repository.extend({
                         }
                     }
                 }
+
+                return createdService;
             },
-            params: [serviceWithProviderAndMetrics, self]
+            params: [serviceWithProviderAndMetrics, self],
+            waitForSync: false
         });
+
+        return result;
 
     }
 

@@ -18,7 +18,8 @@ var Foxx = require('org/arangodb/foxx'),
             number_of_employees: joi.number().optional(),
             headquarters: joi.string().optional(),
             headquarters_country: joi.string().optional(),
-            headquarters_continent: joi.string().optional()
+            headquarters_continent: joi.string().optional(),
+            stock: joi.string().optional()
         }
     });
 

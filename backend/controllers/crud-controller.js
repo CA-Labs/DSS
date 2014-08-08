@@ -400,7 +400,8 @@
                     case 'service':
                         try {
                             console.info('Calling special save method for services...');
-                            jsonResponse.push(repository.saveServiceWithProviderAndMetrics(model.forClient()));
+                            var createdService = repository.saveServiceWithProviderAndMetrics(model.forClient());
+                            jsonResponse.push(createdService);
                         } catch (e) {
                             jsonResponse.push({error: true, reason: e.message});
                         }
@@ -408,7 +409,8 @@
                     case 'characteristic':
                         try {
                             console.info('Calling special save method for characteristics...');
-                            jsonResponse.push(repository.saveCharacteristicWithMetrics(model.forClient()));
+                            var createdCharacteristic = repository.saveCharacteristicWithMetrics(model.forClient());
+                            jsonResponse.push(createdCharacteristic);
                         } catch (e) {
                             jsonResponse.push({error: true, reason: e.message});
                         }
@@ -447,9 +449,15 @@
             var model = null;
             switch(type){
                 case 'characteristic':
+                    var updateFormula = req.params('updateFormula');
                     model = new CharacteristicModel(raw);
                     if(model.isValid){
-                        res.json(CharacteristicRepository.replaceById(id, model).attributes);
+                        if(updateFormula) {
+                            // In this case, formula needs to be recomputed for all service edges when it is updated
+                            res.json(CharacteristicRepository.updateCharacteristicFormula(id, model));
+                        } else {
+                            res.json(CharacteristicRepository.replaceById(id, model).attributes);
+                        }
                     } else {
                        validationError = true;
                     }
@@ -537,6 +545,10 @@
         description: 'Id of the node to be updated',
         type: 'string',
         required: true
+    }).queryParam('updateFormula', {
+        description: 'Boolean flag indicating formula updare requires service edge values to be recomputed (only applies for characteristics)',
+        type: 'string',
+        required: false
     });
 
     /** Deletes a node of a certain type by id.

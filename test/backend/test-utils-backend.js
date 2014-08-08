@@ -40,16 +40,24 @@ var API = {
     GET_EDGES: function(){
         return ARANGODB_TEST_BASE_URL + 'crud/edges'
     },
+    GET_EDGE_FROM_TO: function(_from, _to){
+        return ARANGODB_TEST_BASE_URL + 'crud/edges/' + _from + '/' + _to
+    },
     POST_EDGES: function(_from, _to){
         return ARANGODB_TEST_BASE_URL + 'crud/edges/' + _from + '/' + _to;
+    },
+    UPDATE_METRIC: function(_from, _to){
+        return ARANGODB_TEST_BASE_URL + 'graph/updateMetric?metricName=' + _from + '&serviceName=' + _to;
     }
 };
 
 // Helper function for ajax calls
 var baseAJAX = function(type, url, async, data, success, error){
-    //console.debug('type', type);
-    //console.debug('url', url);
-    //console.debug(data);
+    /*
+    console.debug('type', type);
+    console.debug('url', url);
+    console.debug(data);
+    */
     $.ajax({
         type: type,
         url: url,

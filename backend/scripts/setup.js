@@ -110,7 +110,7 @@ var available_graphs = graphs._list();
 
 if(available_graphs.indexOf('dss') == -1){
     console.log('Graph "dss" does not exist, creating it from "edges" definition and documents collections...');
-    graphs._create("dss", [graphs._directedRelation('edges', ['bsoia', 'toia', 'risk', 'metric', 'characteristic', 'service'], ['toia', 'risk', 'treatments', 'service', 'provider', 'metric'])], ['bsoia', 'toia', 'risk', 'treatment', 'provider', 'service', 'metric', 'characteristic']);
+    graphs._create("dss", [graphs._directedRelation('edges', ['bsoia', 'toia', 'risk', 'treatment', 'metric', 'characteristic', 'service'], ['toia', 'risk', 'treatment', 'service', 'provider', 'metric'])], []);
 } else {
     console.log("Graph 'dss' exists already, nothing to do here...");
 }
@@ -120,82 +120,136 @@ if(available_graphs.indexOf('dss') == -1){
  *****************************************************************************/
 
 /**
- * Returns service edges connected to the metric
+ * Returns service edges connected to the metric (1..*)
  */
-aqlfunctions.register('dss::graph::servicesFromMetric', function(metricId){
+aqlfunctions.register('dss::graph::serviceEdgesFromMetric', function(metricName){
     var db = require('internal').db;
-    var metric = db._collection('metric').document(metricId);
+    var console = require('console');
+    console.info('Calling custom AQL function dss::graph::serviceEdgesFromMetric...');
+    var metric = db._collection('metric').firstExample('name',metricName);
     return db._collection('edges').outEdges(metric);
 }, false);
 
 /**
+ * Returns service edge connected to the metric (1..1)
+ */
+aqlfunctions.register('dss::graph::serviceEdgeFromMetric', function(metricName, serviceName){
+    var db = require('internal').db;
+    var console = require('console');
+    console.info('Calling custom AQL function dss::graph::serviceEdgeFromMetric...');
+    var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
+        'let sourceType = (p.source.type)' +
+        'let sourceName = (p.source.name)' +
+        'let destinationType = (p.destination.type)' +
+        'let destinationName = (p.destination.name)' +
+        'filter (sourceType == "metric") && (sourceName == @metricName) && (destinationType == "service") && (destinationName == @serviceName)' +
+        'return p.edges';
+
+    var stmt = db._createStatement({query: query});
+    stmt.bind('metricName', metricName);
+    stmt.bind('serviceName', serviceName);
+    var result = stmt.execute();
+
+    return result.toArray()[0];
+});
+
+/**
  * Returns characteristics connected to the metric
  */
-aqlfunctions.register('dss::graph::characteristicsFromMetric', function(metricId){
+aqlfunctions.register('dss::graph::characteristicNodesFromMetric', function(metricName){
     var db = require('internal').db;
+    var console = require('console');
+    console.info('Calling custom AQL function dss::graph::characteristicNodesFromMetric...');
     var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
                 'let sourceType = (p.source.type)' +
                 'let destinationType = (p.destination.type)' +
-                'let destinationId = (p.destination._id)' +
-                'filter (sourceType == "characteristic") && (destinationType == "metric") && (destinationId == @metricId)' +
+                'let destinationName = (p.destination.name)' +
+                'filter (sourceType == "characteristic") && (destinationType == "metric") && (destinationName == @metricName)' +
                 'return p';
 
     var stmt = db._createStatement({query: query});
-    stmt.bind('metricId', metricId);
+    stmt.bind('metricName', metricName);
     var result = stmt.execute();
 
     return result.toArray().map(function(path){
         return path.source;
     });
-
 }, false);
 
 /**
- * Returns services edges connected to the characteristic
+ * Returns services edges connected to the characteristic (1..*)
  */
-aqlfunctions.register('dss::graph::servicesFromCharacteristic', function(characteristicId){
+aqlfunctions.register('dss::graph::serviceEdgesFromCharacteristic', function(characteristicName){
     var db = require('internal').db;
+    var console = require('console');
+    console.info('Calling custom AQL function dss::graph::serviceEdgesFromCharacteristic...');
     var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
         'let sourceType = (p.source.type)' +
-        'let sourceId = (p.source._id)' +
+        'let sourceName = (p.source.name)' +
         'let destinationType = (p.destination.type)' +
-        'filter (sourceType == "characteristic") && (destinationType == "service") && (sourceId == @characteristicId)' +
+        'filter (sourceType == "characteristic") && (destinationType == "service") && (sourceName == @characteristicName)' +
         'return p.edges';
 
     var stmt = db._createStatement({query: query});
-    stmt.bind('characteristicId', characteristicId);
+    stmt.bind('characteristicName', characteristicName);
     var result = stmt.execute();
 
-    return result.toArray().map(function(edges){
-        return edges[0];
-    });
+    return result.toArray();
 }, false);
-
 
 /**
- * Returns metric edges connected to the service
+ * Returns service edge connected to the characteristic (1..1)
  */
-aqlfunctions.register('dss::graph::metricesFromService', function(serviceId){
+
+aqlfunctions.register('dss::graph::serviceEdgeFromCharacteristic', function(characteristicName, serviceName){
     var db = require('internal').db;
+    var console = require('console');
+    console.info('Calling custom AQL function dss::graph::serviceEdgeFromCharacteristic...');
     var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
         'let sourceType = (p.source.type)' +
+        'let sourceName = (p.source.name)' +
         'let destinationType = (p.destination.type)' +
-        'let destinationId = (p.destination._id)' +
-        'filter (sourceType == "metric") && (destinationType == "service") && (destinationId == @serviceId)' +
+        'let destinationName = (p.destination.name)' +
+        'filter (sourceType == "characteristic") && (destinationType == "service") && (sourceName == @characteristicName) && (destinationName == @serviceName)' +
         'return p.edges';
 
     var stmt = db._createStatement({query: query});
-    stmt.bind('serviceId', serviceId);
+    stmt.bind('characteristicName', characteristicName);
+    stmt.bind('serviceName', serviceName);
     var result = stmt.execute();
 
-    return result.toArray().map(function(edges){
-        return edges[0];
-    });
+    return result.toArray()[0];
 }, false);
+
+/**
+ * Returns service nodes connected to the characteristic (1..*)
+ */
+
+aqlfunctions.register('dss::graph::serviceNodesFromCharacteristic', function(characteristicName){
+    var db = require('internal').db;
+    var console = require('console');
+    console.info('Calling custom AQL function dss::graph::serviceNodesFromCharacteristic...');
+    var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
+        'let sourceType = (p.source.type)' +
+        'let sourceName = (p.source.name)' +
+        'let destinationType = (p.destination.type)' +
+        'filter (sourceType == "characteristic") && (destinationType == "service") && (sourceName == @characteristicName)' +
+        'return p.destination';
+
+    var stmt = db._createStatement({query: query});
+    stmt.bind('characteristicName', characteristicName);
+    var result = stmt.execute();
+
+    return result.toArray();
+}, false);
+
 
 /**
  * Updates the whole graph from metrics values
  */
 aqlfunctions.register('dss::graph::updateGraph', function(){
+    var db = require('internal').db;
+    var console = require('console');
+    console.info('Calling custom AQL function dss::graph::updateGraph...');
     throw new Error('Not implemented yet!');
 }, false);

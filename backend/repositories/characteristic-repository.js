@@ -19,7 +19,7 @@ var CharacteristicRepository = Foxx.Repository.extend({
         var self = this;
 
         // Multiple db operations involved, wrap everything within a transaction
-        db._executeTransaction({
+        var result = db._executeTransaction({
             collections: {
                 write: ['characteristic', 'metric', 'edges']
             },
@@ -62,15 +62,85 @@ var CharacteristicRepository = Foxx.Repository.extend({
                         }
                         // This may trigger an exception due to edge already existing
                         try {
-                            db._collection('edges').save(metric._id, createdCharacteristic._id, {type: 'metric_characteristic'});
+                            db._collection('edges').save(createdCharacteristic._id, metric._id, {type: 'metric_characteristic'});
                         } catch (e) {
                             throw new Error('Edge between ' + metric._id + ' and ' + createdCharacteristic._id + ' already exists');
                         }
                     });
                 }
+
+                return createdCharacteristic;
             },
-            params: [characteristicWithMetrics, self]
+            params: [characteristicWithMetrics, self],
+            waitForSync: false
         });
+
+        return result;
+
+    },
+    updateCharacteristicFormula: function(id, newCharacteristicModel){
+
+        // Reference to repository object
+        var self = this;
+
+        // Multiple db operations involved, wrap everything within a transaction
+        var result = db._executeTransaction({
+            collections: {
+                write: ['characteristic', 'edges', 'metric', 'service']
+            },
+            action: function(params){
+
+                var db = require('internal').db;
+                var console = require('console');
+                var _ = require('underscore');
+
+                var characteristicId = params[0];
+                var characteristicModel = params[1];
+                var repository = params[2];
+
+                console.info('Starting transaction execution in updateCharacteristicFormula...');
+
+                // First, update the characteristic values
+                var result = repository.replaceById(id, characteristicModel);
+
+                // Formula update process
+                // 1. Retrieve all services connected to the characteristic and execute characteristic formula to grab the new value
+                // WARNING: This assumes a correct characteristic formula!
+
+                var characteristicName = characteristicModel.name;
+                var characteristicFormula = characteristicModel.formula;
+                var characteristicFunction = Function.apply(null, eval(characteristicFormula));
+
+                var query = 'for node in dss::graph::serviceNodesFromCharacterstic(@characteristicName) return node';
+                var stmt = db._createStatement({query: query});
+                stmt.bind('characteristicName', characteristicName);
+                var services = stmt.execute();
+
+                console.info('Services connected to characteristic characteristicId', JSON.stringify(services));
+
+                _.each(services, function(service){
+                    var serviceId = service._id;
+                    // Update characteristic - service edge value
+                    var newValue = characteristicFunction(service.name);
+                    console.info('New value for characteristic-service edge', characteristicId, serviceId, newValue);
+                    var newEdge = {value: newValue};
+
+                    var query = 'for edge in edges filter edge._from==@characteristicId && edge._to==@serviceId update edge with @newEdge in edges'
+                    var stmt = db._createStatement({query: query});
+                    stmt.bind('characteristicId', characteristicId);
+                    stmt.bind('service', service);
+                    stmt.bind('newEdge', newEdge);
+                    stmt.execute();
+                });
+
+                return result;
+
+            },
+            params: [id, newCharacteristicModel, self],
+            waitForSync: false
+        });
+
+        return result;
 
     }
 
