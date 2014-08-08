@@ -22,6 +22,9 @@ $('body').on('mouseout', '.form-group > .dropzone-container', function(e){
 //]);
 
 dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($scope, ArangoDBService) {
+
+    $scope.modifyExisting = false;
+
     // Initialize save object
     $scope.characteristicData = {};
     $scope.providerData = {};
@@ -187,6 +190,15 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
                 }, function (err) {
                     $scope.error = err;
                 });
+                break;
+        }
+    };
+
+    $scope.clearForm = function (formType) {
+        switch (formType) {
+            case 'metric':
+                $scope.metricData = {};
+                $scope.modifyExisting = false;
                 break;
         }
     };

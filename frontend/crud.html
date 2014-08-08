@@ -19,25 +19,25 @@
         <div class="navbar navbar-inverse">
             <ul class="nav navbar-nav navbar-right">
                 <li>
-                    <a href="#" ng-click="switchPanel('asset')"><span class="glyphicon glyphicon-plus-sign"></span> Add Asset</a>
+                    <a href="#" ng-click="switchPanel('asset')"><span class="glyphicon glyphicon-plus-sign"></span> Assets</a>
                 </li>
                 <li>
-                    <a href="#" ng-click="switchPanel('risk')"><span class="glyphicon glyphicon-plus-sign"></span> Add Risk</a>
+                    <a href="#" ng-click="switchPanel('risk')"><span class="glyphicon glyphicon-plus-sign"></span> Risks</a>
                 </li>
                 <li>
-                    <a href="#" ng-click="switchPanel('treatment')"><span class="glyphicon glyphicon-plus-sign"></span> Add Treatment</a>
+                    <a href="#" ng-click="switchPanel('treatment')"><span class="glyphicon glyphicon-plus-sign"></span> Treatments</a>
                 </li>
                 <li>
-                    <a href="#" ng-click="switchPanel('characteristic')"><span class="glyphicon glyphicon-plus-sign"></span> Add Characteristic</a>
+                    <a href="#" ng-click="switchPanel('characteristic')"><span class="glyphicon glyphicon-plus-sign"></span> Characteristics</a>
                 </li>
                 <li>
-                    <a href="#" ng-click="switchPanel('provider')"><span class="glyphicon glyphicon-plus-sign"></span> Add Provider</a>
+                    <a href="#" ng-click="switchPanel('provider')"><span class="glyphicon glyphicon-plus-sign"></span> Providers</a>
                 </li>
                 <li>
-                    <a href="#" ng-click="switchPanel('metric')"><span class="glyphicon glyphicon-plus-sign"></span> Add Metric</a>
+                    <a href="#" ng-click="switchPanel('metric')"><span class="glyphicon glyphicon-plus-sign"></span> Metrics</a>
                 </li>
                 <li style="margin-right: 25px;">
-                    <a href="#" ng-click="switchPanel('service')"><span class="glyphicon glyphicon-plus-sign"></span> Add Service</a>
+                    <a href="#" ng-click="switchPanel('service')"><span class="glyphicon glyphicon-plus-sign"></span> Services</a>
                 </li>
             </ul>
         </div>
@@ -153,7 +153,12 @@
             </form>
         </div>
         <div class="col-lg-12" ng-show="showMetricPanel">
-            <h4>Add New Metric</h4>
+            <h4>Add New / Modify Existing Metric</h4>
+            <select name="metrics" ng-model="availableMetrics" ng-options="m.name for m in metrics" class="form-control">
+                <option value="">-- select metric to modify --</option>
+            </select>
+            <hr/>
+            <h4>Metric Data</h4>
             <form name="metricForm" ng-submit="saveForm('metric', metricData)">
                 <div class="form-group" ng-class="{ 'has-error' : metricForm.name.$invalid && !metricForm.name.$pristine }">
                     <label for="name">Name: </label>
@@ -165,6 +170,7 @@
                     <textarea name="options" class="form-control" ng-model="metricData.options" rows="10" required></textarea>
                     <p ng-show="metricForm.options.$invalid && !metricForm.options.$pristine" class="help-block">Options are invalid. They should be a object</p>
                 </div>
+                <button ng-click="clearForm('metric')" class="btn pull-right">Clear</button>
                 <button type="submit" class="btn btn-primary pull-right">Save</button>
             </form>
         </div>
