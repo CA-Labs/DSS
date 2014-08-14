@@ -162,11 +162,19 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
                 break;
             case "metric":
                 data.type = "metric";
-                ArangoDBService.save('metric', data).then(function () {
-                    window.location.reload();
-                }, function (err) {
-                    $scope.error = err;
-                });
+                if ($scope.modifyExisting) {
+                    ArangoDBService.update($scope.chosenMetric._id, data).then(function () {
+                        window.location.reload();
+                    }, function (err) {
+                        $scope.error = err;
+                    });
+                } else {
+                    ArangoDBService.save('metric', data).then(function () {
+                        window.location.reload();
+                    }, function (err) {
+                        $scope.error = err;
+                    });
+                }
                 break;
             case "provider":
                 data.type = "provider";
@@ -199,6 +207,18 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
             case 'metric':
                 $scope.metricData = {};
                 $scope.modifyExisting = false;
+                break;
+        }
+    };
+
+    $scope.chosenMetric = {};
+
+    $scope.updateForm = function (formType) {
+        switch (formType) {
+            case 'metric':
+                $scope.modifyExisting = true;
+                $scope.metricData.name = $scope.chosenMetric.name;
+                $scope.metricData.options = JSON.stringify($scope.chosenMetric.options);
                 break;
         }
     };
