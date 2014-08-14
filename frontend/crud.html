@@ -61,8 +61,12 @@
             <h4>Add Treatment</h4>
         </div>
         <div class="col-lg-12" ng-show="showCharacteristicPanel">
-            <h4>Add Characteristic</h4>
-
+            <h4>Add / Modify Characteristic</h4>
+            <select name="metrics" ng-options="c.name for c in characteristic" class="form-control" ng-model="chosenCharacteristic" ng-change="updateForm('characteristic')">
+                <option value="">-- select metric to modify --</option>
+            </select>
+            <hr/>
+            <h4>Characteristic Data</h4>
             <form name="characteristicForm" ng-submit="saveForm('characteristic', characteristicData)">
                 <div class="col-lg-3">
                     <h5>Metrics</h5>
@@ -101,6 +105,7 @@
                     </div>
                 </div>
                 <button type="submit" class="btn btn-primary pull-right">Save</button>
+                <button ng-click="clearForm('characteristic')" class="btn pull-right">Clear</button>
             </form>
         </div>
         <div class="col-lg-12" ng-show="showProviderPanel">

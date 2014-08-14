@@ -47,6 +47,10 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
         $scope.metrics = data;
     });
 
+    ArangoDBService.getAll('characteristic', function (err, data) {
+        $scope.characteristics = data;
+    });
+
     // characteristic levels
     $scope.characteristicLevels = {
         1: "1st level",
@@ -193,11 +197,19 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
                     type: "characteristic",
                     metrics: $scope.characteristicData.metrics
                 };
-                ArangoDBService.save('characteristic', data).then(function () {
-                    window.location.reload();
-                }, function (err) {
-                    $scope.error = err;
-                });
+                if ($scope.modifyExisting) {
+                    ArangoDBService.update($scope.characteristicData._id, data).then(function () {
+                        window.location.reload();
+                    }, function (err) {
+                        $scope.error = err;
+                    });
+                } else {
+                    ArangoDBService.save('characteristic', data).then(function () {
+                        window.location.reload();
+                    }, function (err) {
+                        $scope.error = err;
+                    });
+                }
                 break;
         }
     };
@@ -208,10 +220,15 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
                 $scope.metricData = {};
                 $scope.modifyExisting = false;
                 break;
+            case 'characteristic':
+                $scope.characteristicData = {};
+                $scope.modifyExisting = false;
+                break;
         }
     };
 
     $scope.chosenMetric = {};
+    $scope.chosenCharacteristic = {};
 
     $scope.updateForm = function (formType) {
         switch (formType) {
@@ -219,6 +236,14 @@ dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($sco
                 $scope.modifyExisting = true;
                 $scope.metricData.name = $scope.chosenMetric.name;
                 $scope.metricData.options = JSON.stringify($scope.chosenMetric.options);
+                break;
+            case 'characteristic':
+                $scope.modifyExisting = true;
+                $scope.characteristicData.name = $scope.chosenCharacteristic.name;
+                $scope.characteristicData.source = $scope.chosenCharacteristic.source;
+                $scope.characteristicData.level = $scope.chosenCharacteristic.level;
+                $scope.characteristicData.formula = JSON.stringify($scope.chosenCharacteristic.formula);
+                $scope.characteristicData.metrics = $scope.chosenCharacteristic.metrics;
                 break;
         }
     };
