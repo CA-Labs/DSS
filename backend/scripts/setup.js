@@ -93,6 +93,14 @@ if(db._collection('service') === null) {
     console.log('Collection "service" already exists, nothing to do here...');
 }
 
+//Check if meta collection exists (used for setting a parent and global graph vertex)
+if(db._collection('meta') === null){
+    console.log('Creating nodes collection "meta" in "dss" database...');
+    db._createDocumentCollection('meta');
+    //Create unique index in name property
+    db._collection('meta').ensureUniqueConstraint('name');
+}
+
 //TODO: Review edges collection and graph (we probably need to distinguish different edge types)
 
 //Check if dss_edges collection exists
@@ -110,7 +118,7 @@ var available_graphs = graphs._list();
 
 if(available_graphs.indexOf('dss') == -1){
     console.log('Graph "dss" does not exist, creating it from "edges" definition and documents collections...');
-    graphs._create("dss", [graphs._directedRelation('edges', ['bsoia', 'toia', 'risk', 'treatment', 'metric', 'characteristic', 'service'], ['toia', 'risk', 'treatment', 'service', 'provider', 'metric'])], []);
+    graphs._create("dss", [graphs._directedRelation('edges', ['meta', 'bsoia', 'toia', 'risk', 'treatment', 'metric', 'characteristic', 'service'], ['bsoia', 'toia', 'risk', 'treatment', 'service', 'provider', 'metric'])], []);
 } else {
     console.log("Graph 'dss' exists already, nothing to do here...");
 }
