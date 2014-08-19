@@ -111,8 +111,9 @@
                     <div class="active item bsoia-slide" ng-controller="bsoiaController">
                         <div class="col-lg-4 form-group form-inline">
                             <select label="assets" class="form-control form assets-select item-select" ng-model="bsoiaAsset" ng-options="a.name for a in bsoiaAssets">
+                                <option></option>
                             </select>
-                            <button class="btn btn-success" ng-click="addBsoiaAsset(bsoiaAsset)">Add</button>
+                            <button class="btn btn-success" ng-click="addBsoiaAsset(bsoiaAsset)" style="width: 19% !important;">Add</button>
                         </div>
                         <div class="col-lg-8" ng-if="bsoiaAssetsSelected.length > 0">
                             <h4>Assets Selected</h4>
@@ -129,14 +130,17 @@
                     <div class="item toia-slide" ng-controller="toiaController">
                         <div class="col-lg-4 form-group form-inline">
                             <select label="assets" class="form-control form assets-select item-select" ng-model="toiaAsset" ng-options="a.name for a in toiaAssets">
+                                <option></option>
                             </select>
-                            <button class="btn btn-success" ng-click="addToiaAsset(toiaAsset)">Add</button>
+                            <button class="btn btn-success" ng-click="addToiaAsset(toiaAsset)" style="width: 19% !important;">Add</button>
                             <!-- bsoia tags -->
                             <div ng-if="bsoiaAssetsSelected.length > 0" style="margin-top: 45px;">
-                                <strong>You have previously selected the following BSOIA:</strong>
+                                <p>You have previously selected the following BSOIA:</p>
                             </div>
                             <div ng-if="bsoiaAssetsSelected.length == 0" style="margin-top: 45px;">
-                                <strong>No BSOIA selected</strong>
+                                <div class="alert alert-danger" role="alert">
+                                    No BSOIA selected.
+                                </div>
                             </div>
                             <div id="selected-bsoia" class="col-lg-4">
                                 <button ui-draggable="true" drag="bsoiaAssetSelected" class="btn btn-sm bsoia-tag" ng-class="isBsoiaEverUsed(bsoiaAssetSelected) ? 'btn-info' : 'btn-warning'" ng-repeat="bsoiaAssetSelected in bsoiaAssetsSelected">
@@ -169,7 +173,9 @@
                         <div class="col-lg-12">
                             <div class="list-group">
                                 <div ng-if="taAssets.length == 0" style="margin-top: 45px;">
-                                    <strong>No cloud resources have been loaded yet</strong>
+                                    <div class="alert alert-danger" role="alert">
+                                        <strong>Oops!</strong>&nbsp;No cloud resources have been loaded yet.
+                                    </div>
                                 </div>
                                 <a class="list-group-item selected-asset" href="#" ng-repeat="taAsset in taAssets">
                                     <strong>{{ taAsset.cloudResource._serviceName }}</strong>
@@ -184,8 +190,9 @@
                         <div class="col-lg-4 form-group form-inline">
                             <!-- TODO: Apply unique filter in potential risks -->
                             <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.destination.name for r in potentialRisks">
+                                <option></option>
                             </select>
-                            <button class="btn btn-success" ng-click="addRisk(risk)">Add</button>
+                            <button class="btn btn-success" ng-click="addRisk(risk)" style="width: 19% !important;">Add</button>
                         </div>
                         <div class="col-lg-8">
                             <div class="list-group">
@@ -261,12 +268,13 @@
                             </div>
                         </div>
                     </div>
-                    <!--requirements slide-->
+                    <!--treatments slide-->
                     <div class="item treatments-slide" ng-controller="treatmentsController">
                         <div class="col-lg-4 form-group form-inline">
-                            <select label="assets" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.destination.name for potentialTreatment in potentialTreatments">
+                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.destination.name for potentialTreatment in potentialTreatments">
+                                <option></option>
                             </select>
-                            <button class="btn btn-success" ng-click="addTreatment(potentialTreatment)">Add</button>
+                            <button class="btn btn-success" ng-click="addTreatment(potentialTreatment)" style="width: 19% !important;">Add</button>
                         </div>
                         <div class="col-lg-8">
                             <div class="list-group">
@@ -289,8 +297,52 @@
                         </div>
                     </div>
                     <!--services slide-->
-                    <div class="item services-slide">
-                        <!-- TODO: -->
+                    <div class="item services-slide" ng-controller="cloudController">
+                        <div class="col-lg-12">
+                            <div class="panel-group" id="services-accordion">
+                                <div class="panel panel-default" ng-repeat="proposal in proposals track by $index">
+                                    <div class="panel heading" style="background-color: #e8fdf9 !important;">
+                                        <h4 class="panel-title">
+                                            <a data-toggle="collapse" data-target="{{'#collapse' + $index}}" ng-href="{{'#collapse' + $index}}">
+                                                <strong>{{proposal.name}}</strong>
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div ng-attr-id="{{'collapse' + $index}}" class="panel-collapse collapse in">
+                                        <div class="panel-body">
+                                            <div class="service-proposal">
+                                                <div class="service-proposal-logo">
+                                                    <img ng-src="{{proposal.logo}}"/>
+                                                </div>
+                                                <div class="service-proposal-description">
+                                                    <strong>{{proposal.name}}</strong>
+                                                    <p>{{proposal.description}}</p>
+                                                    <div class="service-proposal-details">
+                                                        <ul>
+                                                            <li>Detail #1</li>
+                                                            <li>Detail #2</li>
+                                                            <li>Detail #3</li>
+                                                        </ul>
+                                                    </div>
+                                                </div>
+                                                <div class="service-proposal-info">
+                                                    <div class="service-proposal-score">
+                                                        <div ng-if="proposal.score >= 50.0">
+                                                            <span class="service-proposal-score">{{proposal.score}}</span>
+                                                            <div class="service-proposal-score-positive"></div>
+                                                        </div>
+                                                        <div ng-if="proposal.score < 50.0">
+                                                            <span class="service-proposal-score">{{proposal.score}}</span>
+                                                            <div class="service-proposal-score-negative"></div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <!--slides end-->
                 </div>
@@ -315,6 +367,8 @@
 <script src="components/angular/angular.js"></script>
 <script src="components/ngstorage/ngStorage.min.js"></script>
 <script src="components/bootstrap/dist/js/bootstrap.js"></script>
+<script src="components/bootstrap/js/transition.js"></script>
+<script src="components/bootstrap/js/collapse.js"></script>
 <script src="components/nouislider/jquery.nouislider.js"></script>
 <script src="components/nouislider/Link.js"></script>
 <script src="components/angular-nouislider/src/nouislider.js"></script>

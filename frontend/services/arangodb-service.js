@@ -182,6 +182,37 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
     };
 
     /**
+     * Get a list of cloud service possibilities given a list of treatments.
+     * @returns
+     */
+    this.getProposals = function(treatments){
+        //TODO: By now, we just return a mock to fill in the view
+        return [
+            {
+                name: 'Windows Azure',
+                description: 'A brief and fancy description #1',
+                url: 'http://azure.microsoft.com',
+                logo: 'http://blog.alebanzas.com.ar/wp-content/uploads/2011/08/7217.Windows-Azure-logo-v_6556EF52.png',
+                score: 81.8
+            },
+            {
+                name: 'Amazon EC2',
+                description: 'A brief and fancy description #2',
+                url: 'http://aws.amazon.com',
+                logo: 'http://zentera.net/wp-content/uploads/2013/08/AWSLogo.png',
+                score: 75.2
+            },
+            {
+                name: 'Rackspace',
+                description: 'A brief and fancy description #3',
+                url: 'http://www.rackspace.com',
+                logo: 'http://www.hatchpitch.com/wp-content/uploads/2013/03/Rackspace_Cloud_Company_Logo_clr.png',
+                score: 43.5
+            }
+        ];
+    };
+
+    /**
      * Save new object
      * @param {string} urlEndPoint - valid url end point
      * @param {object} data - data to be saved

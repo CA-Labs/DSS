@@ -112,5 +112,9 @@ $('select[label="assets"]').select2({
 });
 
 $('select[label="risks"]').select2({
-    placeholder: 'Select an asset'
+    placeholder: 'Select a risk'
+});
+
+$('select[label="treatments"]').select2({
+    placeholder: 'Select a treatment'
 });
