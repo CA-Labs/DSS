@@ -118,7 +118,7 @@ var available_graphs = graphs._list();
 
 if(available_graphs.indexOf('dss') == -1){
     console.log('Graph "dss" does not exist, creating it from "edges" definition and documents collections...');
-    graphs._create("dss", [graphs._directedRelation('edges', ['meta', 'bsoia', 'toia', 'risk', 'treatment', 'metric', 'characteristic', 'service'], ['bsoia', 'toia', 'risk', 'treatment', 'service', 'provider', 'metric'])], []);
+    graphs._create("dss", [graphs._directedRelation('edges', ['meta', 'bsoia', 'toia', 'risk', 'treatment', 'metric', 'characteristic', 'service', 'provider'], ['bsoia', 'toia', 'risk', 'treatment', 'service', 'provider', 'metric', 'meta'])], []);
 } else {
     console.log("Graph 'dss' exists already, nothing to do here...");
 }
