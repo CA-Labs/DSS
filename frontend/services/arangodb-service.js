@@ -17,7 +17,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
 
     //TODO: Fix an stable arangoDB server base URL
     //var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/api/';
-    this.ARANGODB_BASE_URL = 'http://localhost:8529/_db/dss/dss/';
+    this.ARANGODB_BASE_URL = 'http://5.9.56.155:8529/_db/dss/dss/';
 
     //Closures
     var self = this;
@@ -100,7 +100,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
      * on data retrieval.
      */
     this.getTOIA = function(callback){
-        $http({method: 'GET', url: self.FOXX_API.getTOIA()})
+        $http({method: 'GET', url: self.FOXX_API.getTOIA(), headers: {}})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })
