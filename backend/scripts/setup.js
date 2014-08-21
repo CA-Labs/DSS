@@ -261,3 +261,12 @@ aqlfunctions.register('dss::graph::updateGraph', function(){
     console.info('Calling custom AQL function dss::graph::updateGraph...');
     throw new Error('Not implemented yet!');
 }, false);
+
+/**
+ * Used in the service graph query for grouping providers by services and characteristic values
+ */
+aqlfunctions.register('dss::utils::pathsToCharacteristicValues', function(paths){
+    return paths.map(function(path){
+        return {name: path.vertices[2].name , value: path.edges[1].data.value}
+    })
+}, false);
