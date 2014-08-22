@@ -263,6 +263,35 @@ aqlfunctions.register('dss::graph::updateGraph', function(){
 }, false);
 
 /**
+ * Main services lookup graph function
+ */
+aqlfunctions.register('dss::graph::lookupServices', function(cloudType, treatmentNamesList){
+    var db = require('internal').db;
+    var console = require('console');
+    console.info('**************************************');
+    console.info('********** SERVICES SEARCH ***********');
+    console.info('**************************************');
+    var query = 'for path in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 3, maxLength: 3})' +
+        'let sourceType = path.source.type' +
+        'let destinationType = path.destination.type' +
+        'let serviceType = path.vertices[1].cloudType' +
+        'let treatmentName = path.destination.name' +
+        'let value = path.edges[1].data.value' +
+        'filter (sourceType == "provider") && (destinationType == "treatment") && (serviceType == @cloudType) && (treatmentName in @treatmentNamesList)' +
+        'collect serviceName = path.vertices[1].name,' +
+        'providerName = path.source.name into providers' +
+        'return {provider: providerName, service: serviceName, characteristics: dss::utils::pathsToCharacteristicValues(providers[*].path)}';
+
+    var stmt = db._createStatement({query: query});
+    stmt.bind('cloudType', cloudType);
+    stmt.bind('treatmentNamesList', treatmentNamesList);
+    var result = stmt.execute();
+
+    return result;
+
+}, false);
+
+/**
  * Used in the service graph query for grouping providers by services and characteristic values
  */
 aqlfunctions.register('dss::utils::pathsToCharacteristicValues', function(paths){
