@@ -271,23 +271,24 @@ aqlfunctions.register('dss::graph::lookupServices', function(cloudType, treatmen
     console.info('**************************************');
     console.info('********** SERVICES SEARCH ***********');
     console.info('**************************************');
-    var query = 'for path in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 3, maxLength: 3})' +
-        'let sourceType = path.source.type' +
-        'let destinationType = path.destination.type' +
-        'let serviceType = path.vertices[1].cloudType' +
-        'let treatmentName = path.destination.name' +
-        'let value = path.edges[1].data.value' +
-        'filter (sourceType == "provider") && (destinationType == "treatment") && (serviceType == @cloudType) && (treatmentName in @treatmentNamesList)' +
-        'collect serviceName = path.vertices[1].name,' +
-        'providerName = path.source.name into providers' +
-        'return {provider: providerName, service: serviceName, characteristics: dss::utils::pathsToCharacteristicValues(providers[*].path)}';
+    var query = 'for path in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 3, maxLength: 3}) ' +
+        'let sourceType = path.source.type ' +
+        'let destinationType = path.destination.type ' +
+        'let serviceType = path.vertices[1].cloudType ' +
+        'let treatmentName = path.destination.name ' +
+        'let value = path.edges[1].data.value ' +
+        'filter (sourceType == "provider") && (destinationType == "treatment") && (serviceType == @cloudType) && (treatmentName in @treatmentNamesList) ' +
+        'collect service = path.vertices[1],' +
+        'provider = path.source,' +
+        'providerName = path.source.name into providers ' +
+        'return {provider: provider, service: service, characteristics: dss::utils::pathsToCharacteristicValues(providers[*].path)}';
 
     var stmt = db._createStatement({query: query});
     stmt.bind('cloudType', cloudType);
     stmt.bind('treatmentNamesList', treatmentNamesList);
     var result = stmt.execute();
 
-    return result;
+    return result.toArray();
 
 }, false);
 
