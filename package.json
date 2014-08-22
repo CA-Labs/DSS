@@ -4,7 +4,8 @@
   "version": "0.0.1",
   "author": "Jacek Dominiak",
   "dependencies": {
-    "joi": "~4.6.1"
+    "joi": "~4.6.1",
+    "libxmljs": "~0.11.0"
   },
   "devDependencies": {
     "grunt": "~0.4.4",
