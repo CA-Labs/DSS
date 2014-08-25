@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('treatmentsController', ['$scope', 'ArangoDBService', 'TreatmentsService', 'flash', '$timeout', function($scope, ArangoDBService, TreatmentsService, flash, $timeout){
+dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBService', 'TreatmentsService', 'flash', '$timeout', function($scope, $rootScope, ArangoDBService, TreatmentsService, flash, $timeout){
 
     $scope.potentialTreatments = [];                                        // The list of potential treatments
     $scope.treatmentsSelected = TreatmentsService.getTreatments();          // The list of selected treatments
@@ -63,23 +63,12 @@ dssApp.controller('treatmentsController', ['$scope', 'ArangoDBService', 'Treatme
 
         $scope.treatmentsSelected = newTreatments;
 
-        //Hack: Show select elements with Select2 style
-        /*
-        $timeout(function(){
-            console.log($('select[label="treatments"]').length);
-            $('select[label="treatments"]').select2({
-                width: 'element'
-            });
-        }, 10)
-        */
-
     }, true);
 
     $scope.$watch(function(){
         return $scope.treatmentValues;
     }, function(newValue, oldValue){
-        console.log('old', oldValue);
-        console.log('new', newValue);
+        //TODO:
     }, true);
 
     /**

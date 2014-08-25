@@ -78,6 +78,20 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
             });
             return url;
         },
+        getProposals: function(cloudType, treatments){
+            var firstTreatment = true;
+            var url = self.ARANGODB_BASE_URL + 'graph/lookupServices?';
+            _.each(treatments, function(treatment){
+                if(firstTreatment){
+                    firstTreatment = false;
+                    url += 'treatments=' + treatment.destination.name;
+                } else {
+                    url += ',' + treatment.destination.name;
+                }
+            });
+            url += '&cloudType=' + cloudType;
+            return url;
+        },
         validateDocument: function(){
             return self.XSD_SERVICE_BASE_URL + 'validateDSSXML';
         }
@@ -190,33 +204,18 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
 
     /**
      * Get a list of cloud service possibilities given a list of treatments.
-     * @returns
+     * @param {string} cloudType The cloud type we are interested in (IaaS,PaaS,SaaS).
+     * @param {string} treatments A comma-separated list of treatment names.
+     * @returns Service proposal array matching requested criteria.
      */
-    this.getProposals = function(treatments){
-        //TODO: By now, we just return a mock to fill in the view
-        return [
-            {
-                name: 'Windows Azure',
-                description: 'A brief and fancy description #1',
-                url: 'http://azure.microsoft.com',
-                logo: 'http://blog.alebanzas.com.ar/wp-content/uploads/2011/08/7217.Windows-Azure-logo-v_6556EF52.png',
-                score: 81.8
-            },
-            {
-                name: 'Amazon EC2',
-                description: 'A brief and fancy description #2',
-                url: 'http://aws.amazon.com',
-                logo: 'http://zentera.net/wp-content/uploads/2013/08/AWSLogo.png',
-                score: 75.2
-            },
-            {
-                name: 'Rackspace',
-                description: 'A brief and fancy description #3',
-                url: 'http://www.rackspace.com',
-                logo: 'http://www.hatchpitch.com/wp-content/uploads/2013/03/Rackspace_Cloud_Company_Logo_clr.png',
-                score: 43.5
-            }
-        ];
+    this.getProposals = function(cloudType, treatments, callback){
+        $http.get(self.FOXX_API.getProposals(cloudType, treatments))
+            .success(function(data, status, headers, config){
+                callback(null, data);
+            })
+            .error(function(data, status, headers, config){
+                callback(data, null);
+            });
     };
 
     /**
