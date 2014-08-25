@@ -17,7 +17,8 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
 
     //TODO: Fix an stable arangoDB server base URL
     //var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/api/';
-    this.ARANGODB_BASE_URL = 'http://5.9.56.155:8529/_db/dss/dss/';
+    this.ARANGODB_BASE_URL = 'http://dss.jarandaf.com:8529/_db/dss/dss/';
+    this.XSD_SERVICE_BASE_URL = 'http://dss.jarandaf.com:3999/';
 
     //Closures
     var self = this;
@@ -76,6 +77,9 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
                 }
             });
             return url;
+        },
+        validateDocument: function(){
+            return self.XSD_SERVICE_BASE_URL + 'validateDSSXML';
         }
     };
 
@@ -248,4 +252,20 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
 
         return deffered.promise;
     };
+
+    /**
+     * Validates a cloud descriptor XML file using server-side validation
+     * @param xmlString XML string to validate.
+     * @param callback Callback fn to execute.
+     */
+    this.validateSchema = function(xmlString, callback){
+        $http({method: 'POST', url: self.FOXX_API.validateDocument(), data: {xmlString: xmlString}})
+            .success(function (data) {
+                callback(null, data);
+            })
+            .error(function (err) {
+                callback(err, null);
+            });
+    };
+
 }]);

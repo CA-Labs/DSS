@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('mainController', ['$scope', '$upload', 'flash', 'AssetsService', function($scope, $upload, flash, AssetsService){
+dssApp.controller('mainController', ['$scope', '$upload', 'flash', '$http', '$q', 'AssetsService', 'ArangoDBService', function($scope, $upload, flash, $http, $q, AssetsService, ArangoDBService){
 
     //Initialization
 
@@ -61,9 +61,16 @@ dssApp.controller('mainController', ['$scope', '$upload', 'flash', 'AssetsServic
         var file = $files[0];
         if(file !== null && typeof file !== 'undefined'){
             AssetsService.loadResourcesFromXML(file).then(function(xmlString){
-                var resources = x2js.xml_str2json(xmlString).resourceModelExtension.resourceContainer;
-                _.each(resources, function(resource){
-                    AssetsService.addTA(resource);
+                //Check if XML document is correct using the XSD schema validation service on server-side
+                ArangoDBService.validateSchema(xmlString, function(error, data){
+                    if(error){
+                        flash.error = 'Some error occurred while trying to upload your requirements';
+                    } else {
+                        var resources = x2js.xml_str2json(xmlString).resourceModelExtension.resourceContainer;
+                        _.each(resources, function(resource){
+                            AssetsService.addTA(resource);
+                        });
+                    }
                 });
             });
         } else {
