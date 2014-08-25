@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('taController', ['$scope', 'AssetsService', '$localStorage', function($scope, AssetsService, $localStorage){
+dssApp.controller('taController', ['$scope', 'AssetsService', function($scope, AssetsService){
 
     //Initialization
     $scope.taAssets = AssetsService.getTA();                     //The list of TA assets read from the cloud services descriptor xml file

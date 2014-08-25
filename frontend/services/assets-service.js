@@ -14,6 +14,15 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', '$localStorage', f
     var ta = ($localStorage.ta) ? $localStorage.ta : $localStorage.ta = [];            //TA assets selected by the user
 
     /**
+     * Clean all assets selection by reseting the initialized objects to empty arrays.
+     */
+    this.clearSelection = function () {
+        $localStorage.bsoia = [];
+        $localStorage.toia = [];
+        $localStorage.ta = [];
+    };
+
+    /**
      * Adds an asset to the list of selected
      * BSOIA assets.
      * @param bsoiaAsset The selected asset to add.

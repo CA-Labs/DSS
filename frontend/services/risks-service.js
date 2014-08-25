@@ -4,9 +4,9 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.service('RisksService', ['flash', function(flash){
+dssApp.service('RisksService', ['flash', '$localStorage', function(flash, $localStorage){
 
-    var risks = [];                             //The list of selected risks by the user.
+    var risks = ($localStorage.risks) ? $localStorage.risks : $localStorage = [];                             //The list of selected risks by the user.
 
     var risksLikelihoodConsequence = {};        //Likelihood/consequences values for each risk (as a whole) of the form
                                                 //riskname_likelihood/riskname_consequence
@@ -53,6 +53,13 @@ dssApp.service('RisksService', ['flash', function(flash){
      */
     this.getRisks = function(){
         return risks;
+    };
+
+    /**
+     * Clear selection of risks
+     */
+    this.clearSelection = function () {
+        $localStorage.risks = [];
     };
 
     /**

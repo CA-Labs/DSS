@@ -4,9 +4,9 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.service('TreatmentsService', ['flash', function(flash){
+dssApp.service('TreatmentsService', ['flash', '$localStorage', function(flash, $localStorage){
 
-    var treatments = [];            // Treatments selected by the user
+    var treatments = ($localStorage.treatments) ? $localStorage.treatments : $localStorage.treatments = [];            // Treatments selected by the user
     var treatmentsValues = {};      // Treatments values model used to store select/sliders/radio UI components values
 
     /**
@@ -49,6 +49,13 @@ dssApp.service('TreatmentsService', ['flash', function(flash){
      */
     this.getTreatments = function(){
         return treatments;
+    };
+
+    /**
+     * Clear Selection of treatments
+     */
+    this.clearSelection = function () {
+        $localStorage.treatments = [];
     };
 
     /**

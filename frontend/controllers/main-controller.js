@@ -4,7 +4,28 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('mainController', ['$scope', '$upload', 'flash', '$http', '$q', '$localStorage', 'AssetsService', 'ArangoDBService', function($scope, $upload, flash, $http, $q, $localStorage, AssetsService, ArangoDBService){
+dssApp.controller('mainController', [
+    '$scope'
+    , '$upload'
+    , 'flash'
+    , '$http'
+    , '$q'
+    , '$localStorage'
+    , 'AssetsService'
+    , 'RisksService'
+    , 'TreatmentsService'
+    , 'ArangoDBService'
+    , function(
+        $scope
+        , $upload
+        , flash
+        , $http
+        , $q
+        , $localStorage
+        , AssetsService
+        , RisksService
+        , TreatmentsService
+        , ArangoDBService){
 
     //Initialization
 
@@ -16,12 +37,7 @@ dssApp.controller('mainController', ['$scope', '$upload', 'flash', '$http', '$q'
     var lastRequirementsLoaded = "";
 
     $scope.clearSelection = function () {
-        $localStorage.bsoia = [];
-        $localStorage.toia = [];
-        $localStorage.ta = [];
-        $localStorage.risks = [];
-        $localStorage.treatments = [];
-        $localStorage.services = [];
+        AssetsService.clearSelection();
         window.location.reload();
     };
 
@@ -42,10 +58,13 @@ dssApp.controller('mainController', ['$scope', '$upload', 'flash', '$http', '$q'
     $scope.loadLocalSessionContent = function ($fileContent) {
         if (dssApp.isJSON($fileContent)) {
             var fileContent = JSON.parse($fileContent);
-            $localStorage.assetsSelected = $rootScope.assetsSelected = fileContent.assetsSelected;
-            $localStorage.risksSelected = $rootScope.risksSelected = fileContent.risksSelected;
-            $localStorage.requirementsSelected = $rootScope.requirementsSelected = fileContent.requirementsSelected;
-            // TODO: extend with cloud services selected
+            $localStorage.bsoia = fileContent.bsoia;
+            $localStorage.toia = fileContent.toia;
+            $localStorage.ta = fileContent.ta;
+            $localStorage.risks = fileContent.risks;
+            $localStorage.treatments = fileContent.treatments;
+            $localStorage.services = fileContent.services;
+            window.location.reload();
         }
     };
 
