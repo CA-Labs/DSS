@@ -7,8 +7,8 @@
 dssApp.controller('bsoiaController', ['$scope', '$rootScope', '$localStorage', 'AssetsService', 'ArangoDBService', 'flash', function($scope, $rootScope, $localStorage, AssetsService, ArangoDBService, flash){
 
     //Initialization
-    $scope.bsoiaAssets = $localStorage.bsoiaAssets = [];                                            //BSOIA assets retrieved from the DB
-    $scope.bsoiaAssetsSelected = $localStorage.bsoiaAssetsSelected = AssetsService.getBSOIA();      //BSOIA assets selected by the user (shared across the Assets service)
+    $scope.bsoiaAssets = [];                                            //BSOIA assets retrieved from the DB
+    $scope.bsoiaAssetsSelected = AssetsService.getBSOIA();      //BSOIA assets selected by the user (shared across the Assets service)
 
     /**
      * Adds a new BSOIA asset, calling the

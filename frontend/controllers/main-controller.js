@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('mainController', ['$scope', '$upload', 'flash', '$http', '$q', 'AssetsService', 'ArangoDBService', function($scope, $upload, flash, $http, $q, AssetsService, ArangoDBService){
+dssApp.controller('mainController', ['$scope', '$upload', 'flash', '$http', '$q', '$localStorage', 'AssetsService', 'ArangoDBService', function($scope, $upload, flash, $http, $q, $localStorage, AssetsService, ArangoDBService){
 
     //Initialization
 
@@ -16,11 +16,13 @@ dssApp.controller('mainController', ['$scope', '$upload', 'flash', '$http', '$q'
     var lastRequirementsLoaded = "";
 
     $scope.clearSelection = function () {
-        $localStorage.bsoiaAssetsSelected = $rootScope.bsoiaAssetsSelected = [];
-        $localStorage.toiaAssetsSelected = $rootScope.toiaAssetsSelected = [];
-        $localStorage.risksSelected = $rootScope.risksSelected = [];
-        $localStorage.treatmentsSelected = $rootScope.treatmentsSelected = [];
-        // TODO: extend with cloud services selected
+        $localStorage.bsoia = [];
+        $localStorage.toia = [];
+        $localStorage.ta = [];
+        $localStorage.risks = [];
+        $localStorage.treatments = [];
+        $localStorage.services = [];
+        window.location.reload();
     };
 
     $scope.saveSessionFile = function (event) {

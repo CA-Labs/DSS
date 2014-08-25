@@ -7,7 +7,7 @@
 dssApp.controller('toiaController', ['$scope', '$rootScope', '$localStorage', 'AssetsService', 'ArangoDBService', 'flash', function($scope, $rootScope, $localStorage, AssetsService, ArangoDBService, flash){
 
     //Initialization
-    $scope.toiaAssets = $localStorage.toiaAssets = [];      //The TOIA assets retrieved from the DB
+    $scope.toiaAssets = [];      //The TOIA assets retrieved from the DB
     $scope.toiaAssetsSelected = AssetsService.getTOIA();    //TOIA assets selected by the user (shared across the Assets service)
     $scope.bsoiaAssetsSelected = AssetsService.getBSOIA();  //BSOIA assets selected by the user (shared across the Assets service)
 

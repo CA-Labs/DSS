@@ -4,14 +4,14 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.service('AssetsService', ['flash', '$q', '$rootScope', function(flash, $q, $rootScope){
+dssApp.service('AssetsService', ['flash', '$q', '$rootScope', '$localStorage', function(flash, $q, $rootScope, $localStorage){
 
     //BSOIA assets
-    var bsoia = [];         //BSOIA assets selected by the user
+    var bsoia = ($localStorage.bsoia) ? $localStorage.bsoia : $localStorage.bsoia = [];         //BSOIA assets selected by the user
     //TOIA assets
-    var toia = [];          //TOIA assets selected by the user
+    var toia = ($localStorage.toia) ? $localStorage.toia : $localStorage.toia = [];          //TOIA assets selected by the user
     //TA assets
-    var ta = [];            //TA assets selected by the user
+    var ta = ($localStorage.ta) ? $localStorage.ta : $localStorage.ta = [];            //TA assets selected by the user
 
     /**
      * Adds an asset to the list of selected
