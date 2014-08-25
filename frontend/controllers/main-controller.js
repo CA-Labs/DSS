@@ -66,10 +66,14 @@ dssApp.controller('mainController', ['$scope', '$upload', 'flash', '$http', '$q'
                     if(error){
                         flash.error = 'Some error occurred while trying to upload your requirements';
                     } else {
-                        var resources = x2js.xml_str2json(xmlString).resourceModelExtension.resourceContainer;
-                        _.each(resources, function(resource){
-                            AssetsService.addTA(resource);
-                        });
+                        if(data.correct){
+                            var resources = x2js.xml_str2json(xmlString).resourceModelExtension.resourceContainer;
+                            _.each(resources, function(resource){
+                                AssetsService.addTA(resource);
+                            });
+                        } else {
+                            flash.error = 'Some error occurred while trying to upload your requirements';
+                        }
                     }
                 });
             });
