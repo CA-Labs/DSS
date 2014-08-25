@@ -69,6 +69,9 @@ var baseAJAX = function(type, url, async, data, success, error){
         dataType: 'json',
         contentType: 'json',
         success: success,
-        error: error
+        error: error,
+        beforeSend: function(xhr){
+            xhr.setRequestHeader('Authorization', 'Basic ' + btoa('root:CATech2014!'));   //DB user/password authentication
+        }
     });
 };

@@ -162,4 +162,39 @@
         required: true
     });
 
+    /**
+     * Services lookup endpoint
+     */
+    controller.get('lookupServices', function(req, res){
+        var cloudType = req.params('cloudType');
+        var treatmentsList = req.params('treatments').split(',');
+
+        if(cloudType && treatmentsList){
+            if(treatmentsList.length == 0){
+                res.json({error: true, reason: 'Treatments names list can\'t be empty'});
+            } else {
+                var query = 'for result in dss::graph::lookupServices(@cloudType, @treatmentsList) return result';
+                var stmt = db._createStatement({query: query});
+                stmt.bind('cloudType', cloudType);
+                stmt.bind('treatmentsList', treatmentsList);
+                var result = stmt.execute();
+                res.json(result);
+            }
+        } else {
+            if(!cloudType){
+                res.json({error: true, reason: 'Invalid cloud type (must be a value between ["Paas", "IaaS", "SaaS"'});
+            } else if(!treatmentsList){
+                res.json({error: true, reason: 'Provided treatments list is not valid'});
+            }
+        }
+    }).queryParam('cloudType', {
+        description: 'Type of cloud (PaaS|IaaS|SaaS)',
+        type: 'string',
+        required: true
+    }).queryParam('treatments', {
+        description: 'A comma-separated list of treatments names values',
+        type: 'string',
+        required: true
+    });
+
 })();

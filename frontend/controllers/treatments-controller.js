@@ -17,7 +17,7 @@ dssApp.controller('treatmentsController', ['$scope', 'ArangoDBService', 'Treatme
     $scope.$on('risksSelectedChanged', function(){
         ArangoDBService.getPotentialTreatments(function(error, data){
             if(error){
-                flash.error = 'Some error occurred whehn trying to compute potential treatments after selected risks changed';
+                flash.error = 'Some error occurred when trying to compute potential treatments after selected risks changed';
             } else {
                 var seen = [];
                 var aux = [];

@@ -93,6 +93,14 @@ if(db._collection('service') === null) {
     console.log('Collection "service" already exists, nothing to do here...');
 }
 
+//Check if meta collection exists (used for setting a parent and global graph vertex)
+if(db._collection('meta') === null){
+    console.log('Creating nodes collection "meta" in "dss" database...');
+    db._createDocumentCollection('meta');
+    //Create unique index in name property
+    db._collection('meta').ensureUniqueConstraint('name');
+}
+
 //TODO: Review edges collection and graph (we probably need to distinguish different edge types)
 
 //Check if dss_edges collection exists
@@ -110,7 +118,7 @@ var available_graphs = graphs._list();
 
 if(available_graphs.indexOf('dss') == -1){
     console.log('Graph "dss" does not exist, creating it from "edges" definition and documents collections...');
-    graphs._create("dss", [graphs._directedRelation('edges', ['bsoia', 'toia', 'risk', 'treatment', 'metric', 'characteristic', 'service'], ['toia', 'risk', 'treatment', 'service', 'provider', 'metric'])], []);
+    graphs._create("dss", [graphs._directedRelation('edges', ['meta', 'bsoia', 'toia', 'risk', 'treatment', 'metric', 'characteristic', 'service', 'provider'], ['bsoia', 'toia', 'risk', 'treatment', 'service', 'provider', 'metric', 'meta'])], []);
 } else {
     console.log("Graph 'dss' exists already, nothing to do here...");
 }
@@ -252,4 +260,43 @@ aqlfunctions.register('dss::graph::updateGraph', function(){
     var console = require('console');
     console.info('Calling custom AQL function dss::graph::updateGraph...');
     throw new Error('Not implemented yet!');
+}, false);
+
+/**
+ * Main services lookup graph function
+ */
+aqlfunctions.register('dss::graph::lookupServices', function(cloudType, treatmentNamesList){
+    var db = require('internal').db;
+    var console = require('console');
+    console.info('**************************************');
+    console.info('********** SERVICES SEARCH ***********');
+    console.info('**************************************');
+    var query = 'for path in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 3, maxLength: 3}) ' +
+        'let sourceType = path.source.type ' +
+        'let destinationType = path.destination.type ' +
+        'let serviceType = path.vertices[1].cloudType ' +
+        'let treatmentName = path.destination.name ' +
+        'let value = path.edges[1].data.value ' +
+        'filter (sourceType == "provider") && (destinationType == "treatment") && (serviceType == @cloudType) && (treatmentName in @treatmentNamesList) ' +
+        'collect service = path.vertices[1],' +
+        'provider = path.source,' +
+        'providerName = path.source.name into providers ' +
+        'return {provider: provider, service: service, characteristics: dss::utils::pathsToCharacteristicValues(providers[*].path)}';
+
+    var stmt = db._createStatement({query: query});
+    stmt.bind('cloudType', cloudType);
+    stmt.bind('treatmentNamesList', treatmentNamesList);
+    var result = stmt.execute();
+
+    return result.toArray();
+
+}, false);
+
+/**
+ * Used in the service graph query for grouping providers by services and characteristic values
+ */
+aqlfunctions.register('dss::utils::pathsToCharacteristicValues', function(paths){
+    return paths.map(function(path){
+        return {name: path.vertices[2].name , value: path.edges[1].data.value}
+    })
 }, false);

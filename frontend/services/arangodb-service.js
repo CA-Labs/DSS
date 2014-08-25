@@ -12,9 +12,12 @@
  */
 dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService', function($http, $q, AssetsService, RisksService){
 
+    //Set Authorization header
+    $http.defaults.headers.common['Authorization'] = 'Basic ' + btoa('root:CATech2014!');
+
     //TODO: Fix an stable arangoDB server base URL
     //var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/api/';
-    this.ARANGODB_BASE_URL = 'http://localhost:8529/_db/dss/dss/';
+    this.ARANGODB_BASE_URL = 'http://5.9.56.155:8529/_db/dss/dss/';
 
     //Closures
     var self = this;
@@ -97,7 +100,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
      * on data retrieval.
      */
     this.getTOIA = function(callback){
-        $http({method: 'GET', url: self.FOXX_API.getTOIA()})
+        $http({method: 'GET', url: self.FOXX_API.getTOIA(), headers: {}})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })
@@ -179,6 +182,37 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
         }).error(function (err) {
             callback(err, null);
         });
+    };
+
+    /**
+     * Get a list of cloud service possibilities given a list of treatments.
+     * @returns
+     */
+    this.getProposals = function(treatments){
+        //TODO: By now, we just return a mock to fill in the view
+        return [
+            {
+                name: 'Windows Azure',
+                description: 'A brief and fancy description #1',
+                url: 'http://azure.microsoft.com',
+                logo: 'http://blog.alebanzas.com.ar/wp-content/uploads/2011/08/7217.Windows-Azure-logo-v_6556EF52.png',
+                score: 81.8
+            },
+            {
+                name: 'Amazon EC2',
+                description: 'A brief and fancy description #2',
+                url: 'http://aws.amazon.com',
+                logo: 'http://zentera.net/wp-content/uploads/2013/08/AWSLogo.png',
+                score: 75.2
+            },
+            {
+                name: 'Rackspace',
+                description: 'A brief and fancy description #3',
+                url: 'http://www.rackspace.com',
+                logo: 'http://www.hatchpitch.com/wp-content/uploads/2013/03/Rackspace_Cloud_Company_Logo_clr.png',
+                score: 43.5
+            }
+        ];
     };
 
     /**

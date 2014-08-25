@@ -173,3 +173,45 @@ blockquote {
   border: 1px solid transparent; }
 
 /*.carousel-inner > .item > img {border: 1px solid red;}*/
+.service-proposal {
+  width: 100%;
+  height: 150px;
+  max-height: 450px !important; }
+
+.service-proposal-logo {
+  width: 150px;
+  height: 150px;
+  float: left; }
+
+.service-proposal-logo > img {
+  width: 150px;
+  height: auto; }
+
+.service-proposal-description {
+  float: left;
+  margin-left: 30px !important; }
+
+.service-proposal-info {
+  float: right;
+  text-align: center; }
+
+.service-proposal-score {
+  font-size: 2em;
+  font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
+  color: black; }
+
+.service-proposal-score-positive {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 25px 25px 25px;
+  border-color: transparent transparent #0a8212 transparent;
+  margin: 0 auto; }
+
+.service-proposal-score-negative {
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 25px 25px 0 25px;
+  border-color: #e01010 transparent transparent transparent;
+  margin: 0 auto; }

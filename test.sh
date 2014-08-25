@@ -30,7 +30,7 @@ if ! ps aux | grep "arangod" | grep -v grep > /dev/null; then
     fi
 
     echo "Deploying DSS foxx application..."
-    sh deploy.sh test
+    sh deploy.sh test root CATech2014!
     sleep 10s
     echo "Installing dependencies..."
     npm install -d --loglevel=silent
@@ -41,7 +41,7 @@ else
 
     echo "ArangoDB instance already running."
     echo "Deploying DSS foxx application..."
-    sh deploy.sh test
+    sh deploy.sh test root CATech2014!
     sleep 10s
     echo "Installing dependencies..."
     npm install -d --loglevel=silent

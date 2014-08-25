@@ -2,7 +2,8 @@
 
 // bootstrap definitions and UI interactions
 $('#dssSlides').carousel('pause' ,{
-    wrap: false
+    wrap: false,
+    interval: false
 }).on('slid.bs.carousel', function () {
 
     var topMenu = $('.topMenu');
@@ -111,5 +112,9 @@ $('select[label="assets"]').select2({
 });
 
 $('select[label="risks"]').select2({
-    placeholder: 'Select an asset'
+    placeholder: 'Select a risk'
+});
+
+$('select[label="treatments"]').select2({
+    placeholder: 'Select a treatment'
 });
