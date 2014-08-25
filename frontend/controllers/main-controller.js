@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('mainController', ['$scope', '$upload', 'flash', 'AssetsService', function($scope, $upload, flash, AssetsService){
+dssApp.controller('mainController', ['$scope', '$upload', 'flash', 'AssetsService', '$localStorage', function($scope, $upload, flash, AssetsService, $localStorage){
 
     //Initialization
 
