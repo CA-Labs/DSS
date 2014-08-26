@@ -79,23 +79,26 @@ dssApp.controller('risksController', ['$scope', '$rootScope', '$localStorage', '
      * by the user. This allows to recompute the potential risks.
      */
     $scope.$on('bsoiaChanged', function(){
-        ArangoDBService.getPotentialRisks(function(error, data){
-            if(error){
-                flash.error = 'Some error occurred when trying to compute potential risks after selected BSOIA changed';
-            } else {
-                var seen = [];
-                var aux = [];
-                _.each(data._documents, function(risk){
-                    //TODO: Move this logic to an Angular filter
-                    //Filter repeated risks by hand since AngularJS filter "unique" does not seem to work properly
-                    if(seen.indexOf(risk.destination.name) === -1){
-                        seen.push(risk.destination.name);
-                        aux.push(risk);
-                    }
-                });
-                $scope.potentialRisks = aux;
-            }
-        });
+        // Only update if we have at least one BSOIA asset
+        if(AssetsService.getBSOIA().length > 0) {
+            ArangoDBService.getPotentialRisks(function(error, data){
+                if(error){
+                    flash.error = 'Some error occurred when trying to compute potential risks after selected BSOIA changed';
+                } else {
+                    var seen = [];
+                    var aux = [];
+                    _.each(data._documents, function(risk){
+                        //TODO: Move this logic to an Angular filter
+                        //Filter repeated risks by hand since AngularJS filter "unique" does not seem to work properly
+                        if(seen.indexOf(risk.destination.name) === -1){
+                            seen.push(risk.destination.name);
+                            aux.push(risk);
+                        }
+                    });
+                    $scope.potentialRisks = aux;
+                }
+            });
+        }
     });
 
     /**
@@ -175,26 +178,68 @@ dssApp.controller('risksController', ['$scope', '$rootScope', '$localStorage', '
         //Keys removed
         _.each(oldTaAssets, function(oldAsset){
             var found = false;
+            var cloudType = oldAsset.cloudType;
             _.each(newTaAssets, function(newAsset){
-                if(newAsset.cloudResource._serviceName == oldAsset.cloudResource._serviceName){
-                    found = true;
+                switch(newAsset.cloudType){
+                    case 'IaaS':
+                        if(newAsset.cloudResource._serviceName == oldAsset.cloudResource._serviceName){
+                            found = true;
+                        }
+                        break;
+                    case 'PaaS':
+                        if(newAsset.cloudPlatform._serviceName == oldAsset.cloudPlatform._serviceName){
+                            found = true;
+                        }
+                        break;
+                    default:
+                        break;
                 }
             });
             if(!found){
-                keysToRemove.push(oldAsset.cloudResource._serviceName);
+                switch(cloudType){
+                    case 'IaaS':
+                        keysToRemove.push(oldAsset.cloudResource._serviceName);
+                        break;
+                    case 'PaaS':
+                        keysToRemove.push(oldAsset.cloudPlatform._serviceName);
+                        break;
+                    default:
+                        break;
+                }
             }
         });
 
         //Keys added
         _.each(newTaAssets, function(newTaAsset) {
             var found = false;
+            var cloudType = newTaAsset.cloudType;
             _.each(oldTaAssets, function (oldTaAsset) {
-                if(oldTaAsset.cloudResource._serviceName == newTaAsset.cloudResource._serviceName){
-                    found = true;
+                switch(oldTaAsset.cloudType){
+                    case 'IaaS':
+                        if(oldTaAsset.cloudResource._serviceName == newTaAsset.cloudResource._serviceName){
+                            found = true;
+                        }
+                        break;
+                    case 'PaaS':
+                        if(oldTaAsset.cloudPlatform._serviceName == newTaAsset.cloudPlatform._serviceName){
+                            found = true;
+                        }
+                        break;
+                    default:
+                        break;
                 }
             });
             if(!found){
-                keysToAdd.push(newTaAsset.cloudResource._serviceName);
+                switch(cloudType){
+                    case 'IaaS':
+                        keysToAdd.push(newTaAsset.cloudResource._serviceName);
+                        break;
+                    case 'PaaS':
+                        keysToAdd.push(newTaAsset.cloudPlatform._serviceName);
+                        break;
+                    default:
+                        break;
+                }
             }
         });
 
@@ -263,8 +308,18 @@ dssApp.controller('risksController', ['$scope', '$rootScope', '$localStorage', '
             RisksService.addRiskLikelihood(key.name, key.value);
             RisksService.addRiskConsequence(key.name, key.value);
             _.each($scope.taAssets, function(taAsset){
-                RisksService.addRiskTALikelihood(key.name, taAsset.cloudResource._serviceName, key.value);
-                RisksService.addRiskTAConsequence(key.name, taAsset.cloudResource._serviceName, key.value);
+                switch(taAsset.cloudType){
+                    case 'IaaS':
+                        RisksService.addRiskTALikelihood(key.name, taAsset.cloudResource._serviceName, key.value);
+                        RisksService.addRiskTAConsequence(key.name, taAsset.cloudResource._serviceName, key.value);
+                        break;
+                    case 'PaaS':
+                        RisksService.addRiskTALikelihood(key.name, taAsset.cloudPlatform._serviceName, key.value);
+                        RisksService.addRiskTAConsequence(key.name, taAsset.cloudPlatform._serviceName, key.value);
+                        break;
+                    default:
+                        break;
+                }
             });
         });
 

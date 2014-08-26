@@ -92,6 +92,14 @@ dssApp.controller('mainController', [
                         if(data.correct){
                             var resources = x2js.xml_str2json(xmlString).resourceModelExtension.resourceContainer;
                             _.each(resources, function(resource){
+                                // IaaS
+                                if(resource.hasOwnProperty('cloudResource')){
+                                    resource.cloudType = 'IaaS';
+                                }
+                                // PaaS
+                                else if(resource.hasOwnProperty('cloudPlatform')){
+                                    resource.cloudType = 'PaaS';
+                                }
                                 AssetsService.addTA(resource);
                             });
                         } else {
