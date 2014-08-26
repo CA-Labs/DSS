@@ -16,3 +16,7 @@ results
 
 npm-debug.log
 node_modules
+
+# Project specific
+frontend/app.min.js
+frontend/app.min.map
