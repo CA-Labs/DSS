@@ -6,7 +6,7 @@
 
 dssApp.service('RisksService', ['flash', '$localStorage', function(flash, $localStorage){
 
-    var risks = ($localStorage.risks) ? $localStorage.risks : $localStorage = [];                             //The list of selected risks by the user.
+    var risks = [];
 
     var risksLikelihoodConsequence = {};        //Likelihood/consequences values for each risk (as a whole) of the form
                                                 //riskname_likelihood/riskname_consequence

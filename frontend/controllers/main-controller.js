@@ -36,9 +36,11 @@ dssApp.controller('mainController', [
     //Last requirements loaded (string XML)
     var lastRequirementsLoaded = "";
 
+    /**
+     * Clear local storage and reload the window
+     */
     $scope.clearSelection = function () {
-        AssetsService.clearSelection();
-        window.location.reload();
+        $localStorage.$reset();
     };
 
     $scope.saveSessionFile = function (event) {

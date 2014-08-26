@@ -21,7 +21,6 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', '$localStorage', f
         $localStorage.toia = [];
         $localStorage.ta = [];
     };
-
     /**
      * Adds an asset to the list of selected
      * BSOIA assets.
