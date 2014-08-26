@@ -1,12 +1,25 @@
 {
-  "name": "ModaClouds-DSS",
+  "name": "modaclouds-dss",
   "description": "ModaClouds Decision Support System WP2",
   "version": "0.0.1",
   "author": "Jacek Dominiak",
-  "dependencies": {},
+  "dependencies": {
+    "joi": "~4.6.1",
+    "libxmljs": "~0.11.0"
+  },
   "devDependencies": {
     "grunt": "~0.4.4",
     "grunt-contrib-concat": "~0.3.0",
-    "grunt-contrib-uglify": "~0.4.0"
+    "grunt-contrib-sass": "~0.7.3",
+    "grunt-contrib-uglify": "~0.4.0",
+    "grunt-contrib-watch": "~0.6.1",
+    "karma": "^0.12.19",
+    "karma-chrome-launcher": "^0.1.4",
+    "karma-jasmine": "~0.2.0",
+    "karma-spec-reporter": "0.0.13",
+    "karma-phantomjs-launcher": "~0.1.4"
+  },
+  "scripts": {
+    "test": "karma start karma.config.js"
   }
 }

@@ -7,33 +7,40 @@ module.exports = function (grunt) {
             my_target: {
                 options: {
                     sourceMap: true,
-                    sourceMapName: 'app/app.min.map',
+                    sourceMapName: 'frontend/app.min.map',
                     banner: '/*! <%= pkg.name %> - v<%= pkg.version %> - ' +
                         'author: <%= pkg.author %> - ' +
                         '<%= grunt.template.today("yyyy-mm-dd") %> */'
                 },
                 files: {
-                    'app/app.min.js': [
-                        'app/app.js',
-
-                        'app/common/filters.js',
-                        'app/common/dssFactories.js',
-
-                        'app/common/baseController.js',
-
-                        'app/assets/assetsController.js',
-
-                        'requirements/requiremetnsController.js',
-                        'requirements/requiremetnsInterfacesDirective.js'
+                    'frontend/app.min.js': [
+                        'frontend/app.js',
+                        'frontend/controllers/bsoia-controller.js',
+                        'frontend/controllers/toia-controller.js',
+                        'frontend/controllers/ta-controller.js',
+                        'frontend/controllers/risks-controller.js',
+                        'frontend/controllers/treatments-controller.js',
+                        'frontend/controllers/crud-controller.js',
+                        'frontend/controllers/main-controller.js',
+                        'frontend/controllers/cloud-controller.js',
+                        'frontend/services/assets-service.js',
+                        'frontend/services/risks-service.js',
+                        'frontend/services/arangodb-service.js',
+                        'frontend/services/treatments-service.js',
+                        'frontend/common/filters.js',
+                        'frontend/common/mainInterfaces.js',
+                        'frontend/directives/*.js'
                     ]
                 }
             }
         },
         watch: {
-            files: ['<config:uglify.my_target.files["app/app.min.js"]>'],
-            tasks: ['uglify']
+            files: ['frontend/{con,s,d}*/*.js'],
+            tasks: ['uglify'],
+            options: {
+                nospawn: true
+            }
         }
-
     });
 
     // Load packages
@@ -41,5 +48,5 @@ module.exports = function (grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
 
     // Tasks
-    grunt.registerTask('default', ['uglify']);
+    grunt.registerTask('default', ['watch']);
 };
