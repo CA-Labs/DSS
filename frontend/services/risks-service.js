@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.service('RisksService', ['flash', '$localStorage', function(flash, $localStorage){
+dssApp.service('RisksService', ['flash', 'localStorageService', function(flash, localStorageService){
 
     var risks = [];
 
@@ -53,13 +53,6 @@ dssApp.service('RisksService', ['flash', '$localStorage', function(flash, $local
      */
     this.getRisks = function(){
         return risks;
-    };
-
-    /**
-     * Clear selection of risks
-     */
-    this.clearSelection = function () {
-        $localStorage.risks = [];
     };
 
     /**

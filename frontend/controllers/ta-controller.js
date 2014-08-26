@@ -4,10 +4,11 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('taController', ['$scope', 'AssetsService', function($scope, AssetsService){
+dssApp.controller('taController', ['$scope', 'AssetsService', 'localStorageService', function($scope, AssetsService, localStorageService){
 
     //Initialization
     $scope.taAssets = AssetsService.getTA();                     //The list of TA assets read from the cloud services descriptor xml file
+    localStorageService.bind($scope, 'taAssets', $scope.taAssets); // Bind the taAssets to localStorage
 
     /**
      * Removes a TA asset from the list of assets selected

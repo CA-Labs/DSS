@@ -10,7 +10,7 @@ dssApp.controller('mainController', [
     , 'flash'
     , '$http'
     , '$q'
-    , '$localStorage'
+    , 'localStorageService'
     , 'AssetsService'
     , 'RisksService'
     , 'TreatmentsService'
@@ -21,7 +21,7 @@ dssApp.controller('mainController', [
         , flash
         , $http
         , $q
-        , $localStorage
+        , localStorageService
         , AssetsService
         , RisksService
         , TreatmentsService
@@ -40,7 +40,7 @@ dssApp.controller('mainController', [
      * Clear local storage and reload the window
      */
     $scope.clearSelection = function () {
-        $localStorage.$reset();
+        localStorageService.clearAll();
     };
 
     $scope.saveSessionFile = function (event) {

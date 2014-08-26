@@ -4,10 +4,27 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBService', 'RisksService', 'TreatmentsService', 'flash', '$timeout', function($scope, $rootScope, ArangoDBService, RisksService, TreatmentsService, flash, $timeout){
+dssApp.controller('treatmentsController'
+        , ['$scope'
+        , '$rootScope'
+        , 'ArangoDBService'
+        , 'RisksService'
+        , 'TreatmentsService'
+        , 'flash'
+        , '$timeout'
+        , 'localStorageService'
+    , function($scope
+        , $rootScope
+        , ArangoDBService
+        , RisksService
+        , TreatmentsService
+        , flash
+        , $timeout
+        , localStorageService){
 
     $scope.potentialTreatments = [];                                        // The list of potential treatments
     $scope.treatmentsSelected = TreatmentsService.getTreatments();          // The list of selected treatments
+    localStorageService.bind($scope, 'treatmentsSelected', $scope.treatmentsSelected);
     $scope.treatmentValues = TreatmentsService.getTreatmentsValues();       // The treatments values model
 
     /**

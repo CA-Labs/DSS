@@ -4,23 +4,18 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.service('AssetsService', ['flash', '$q', '$rootScope', '$localStorage', function(flash, $q, $rootScope, $localStorage){
+dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageService', function(flash, $q, $rootScope, localStorageService){
 
     //BSOIA assets
-    var bsoia = ($localStorage.bsoia) ? $localStorage.bsoia : $localStorage.bsoia = [];         //BSOIA assets selected by the user
+    var bsoiaFromStorage = localStorageService.get('bsoiaAssetsSelected');
+    var bsoia = (!_.isNull(bsoiaFromStorage)) ? bsoiaFromStorage : [];         //BSOIA assets selected by the user
     //TOIA assets
-    var toia = ($localStorage.toia) ? $localStorage.toia : $localStorage.toia = [];          //TOIA assets selected by the user
+    var toiaFromStorage = localStorageService.get('toiaAssetsSelected');
+    var toia = (!_.isNull(toiaFromStorage)) ? toiaFromStorage : [];          //TOIA assets selected by the user
     //TA assets
-    var ta = ($localStorage.ta) ? $localStorage.ta : $localStorage.ta = [];            //TA assets selected by the user
+    var taFromStorage = localStorageService.get('ta');
+    var ta = (!_.isNull(taFromStorage)) ? taFromStorage : [];            //TA assets selected by the user
 
-    /**
-     * Clean all assets selection by reseting the initialized objects to empty arrays.
-     */
-    this.clearSelection = function () {
-        $localStorage.bsoia = [];
-        $localStorage.toia = [];
-        $localStorage.ta = [];
-    };
     /**
      * Adds an asset to the list of selected
      * BSOIA assets.
@@ -258,14 +253,5 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', '$localStorage', f
         };
         return deferred.promise;
     };
-
-    /**
-     * Removes all assets (BSOIA/TOIA/TA).
-     */
-    this.removeAll = function(){
-        bsoia = [];
-        toia = [];
-        ta = [];
-    }
 
 }]);
