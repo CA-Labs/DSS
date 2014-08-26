@@ -185,11 +185,13 @@ blockquote {
 
 .service-proposal-logo > img {
   width: 150px;
-  height: auto; }
+  height: auto;
+  margin-top: 50px; }
 
 .service-proposal-description {
   float: left;
-  margin-left: 30px !important; }
+  margin-left: 30px !important;
+  max-width: 75%; }
 
 .service-proposal-info {
   float: right;

@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBService', 'TreatmentsService', 'flash', '$timeout', function($scope, $rootScope, ArangoDBService, TreatmentsService, flash, $timeout){
+dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBService', 'RisksService', 'TreatmentsService', 'flash', '$timeout', function($scope, $rootScope, ArangoDBService, RisksService, TreatmentsService, flash, $timeout){
 
     $scope.potentialTreatments = [];                                        // The list of potential treatments
     $scope.treatmentsSelected = TreatmentsService.getTreatments();          // The list of selected treatments
@@ -15,23 +15,26 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
      * the list of potential treatments can be recomputed.
      */
     $scope.$on('risksSelectedChanged', function(){
-        ArangoDBService.getPotentialTreatments(function(error, data){
-            if(error){
-                flash.error = 'Some error occurred when trying to compute potential treatments after selected risks changed';
-            } else {
-                var seen = [];
-                var aux = [];
-                _.each(data._documents, function(treatment){
-                    //TODO: Move this logic to an Angular filter
-                    //Filter repeated treatments by hand since AngularJS filter "unique" does not seem to work properly
-                    if(seen.indexOf(treatment.destination.name) === -1){
-                        seen.push(treatment.destination.name);
-                        aux.push(treatment);
-                    }
-                });
-                $scope.potentialTreatments = aux;
-            }
-        })
+        // Only update if we have at least one risk selected
+        if(RisksService.getRisks().length > 0){
+            ArangoDBService.getPotentialTreatments(function(error, data){
+                if(error){
+                    flash.error = 'Some error occurred when trying to compute potential treatments after selected risks changed';
+                } else {
+                    var seen = [];
+                    var aux = [];
+                    _.each(data._documents, function(treatment){
+                        //TODO: Move this logic to an Angular filter
+                        //Filter repeated treatments by hand since AngularJS filter "unique" does not seem to work properly
+                        if(seen.indexOf(treatment.destination.name) === -1){
+                            seen.push(treatment.destination.name);
+                            aux.push(treatment);
+                        }
+                    });
+                    $scope.potentialTreatments = aux;
+                }
+            });
+        }
     });
 
     /**
