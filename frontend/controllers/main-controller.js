@@ -41,6 +41,7 @@ dssApp.controller('mainController', [
      */
     $scope.clearSelection = function () {
         localStorageService.clearAll();
+        window.location.reload();
     };
 
     $scope.saveSessionFile = function (event) {
