@@ -6,8 +6,10 @@
 
 dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(flash, localStorageService){
 
-    var treatments = (localStorageService.get('treatments')) ? localStorageService.get('treatments') : [];
-    var treatmentsValues = {};      // Treatments values model used to store select/sliders/radio UI components values
+    var treatmentsFromStorage = localStorageService.get('treatmentsSelected');
+    var treatments = (!_.isNull(treatmentsFromStorage)) ? treatmentsFromStorage : [];
+    var treatmentsValuesFromStorage = localStorageService.get('treatmentValues');
+    var treatmentsValues = (!_.isNull(treatmentsValuesFromStorage)) ? treatmentsValuesFromStorage : {};      // Treatments values model used to store select/sliders/radio UI components values
 
     /**
      * Adds a treatment to the list of selected treatments.

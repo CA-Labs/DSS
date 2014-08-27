@@ -26,6 +26,7 @@ dssApp.controller('treatmentsController'
     $scope.treatmentsSelected = TreatmentsService.getTreatments();          // The list of selected treatments
     localStorageService.bind($scope, 'treatmentsSelected', $scope.treatmentsSelected);
     $scope.treatmentValues = TreatmentsService.getTreatmentsValues();       // The treatments values model
+    localStorageService.bind($scope, 'treatmentValues', $scope.treatmentValues);
 
     /**
      * Event received when the list of selected risks changes, so that

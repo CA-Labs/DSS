@@ -31,7 +31,9 @@ dssApp.controller('risksController'
     $scope.multiple = false;                                                                        //Switch button to allow evaluate risks for each TA
     $scope.taAssets = AssetsService.getTA();                                                        //The selected TA assets
     $scope.simpleRisksLikelihoodConsequence = RisksService.getRisksLikelihoodConsequence();         //Likelihood/Consequence values for simple risks model
+    localStorageService.bind($scope, 'simpleRisksLikelihoodConsequence', $scope.simpleRisksLikelihoodConsequence);
     $scope.multipleRisksLikelihoodConsequence = RisksService.getRisksTALikelihoodConsequence();     //Likelihood/Consequence values for multiple risks model
+    localStorageService.bind($scope, 'multipleRisksLikelihoodConsequence', $scope.multipleRisksLikelihoodConsequence);
 
     //List of available categories to categorize risks level
     var CATEGORY = {

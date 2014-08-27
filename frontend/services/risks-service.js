@@ -8,7 +8,8 @@ dssApp.service('RisksService', ['flash', 'localStorageService', function(flash, 
 
     var risks = [];
 
-    var risksLikelihoodConsequence = {};        //Likelihood/consequences values for each risk (as a whole) of the form
+    var risksLikelihoodConsequenceFromStorage = localStorageService.get('simpleRisksLikelihoodConsequence');
+    var risksLikelihoodConsequence = (!_.isNull(risksLikelihoodConsequenceFromStorage)) ? risksLikelihoodConsequenceFromStorage : {};        //Likelihood/consequences values for each risk (as a whole) of the form
                                                 //riskname_likelihood/riskname_consequence
 
     var risksTALikelihoodConsequence = {};      //Likelihood/consequences values for each TA and risk of the form
