@@ -4,11 +4,13 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsService', 'AssetsService', function($scope, ArangoDBService, TreatmentsService, AssetsService){
+dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'localStorageService', function($scope, ArangoDBService, TreatmentsService, AssetsService, localStorageService){
 
     $scope.treatments = TreatmentsService.getTreatments();              // The selected treatments
     $scope.ta = AssetsService.getTA();                                  // The selected TA assets loaded from the cloud descriptor xml file
     $scope.proposals = {};                                              // The cloud service proposals (by TA) offered by the graph engine
+    localStorageService.bind($scope, 'proposals', $scope.proposals);
+
 
     $scope.$watch(function(){
         return $scope.treatments

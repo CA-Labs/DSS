@@ -254,4 +254,10 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         return deferred.promise;
     };
 
+    this.clearAssets = function () {
+        bsoia = [];
+        toia = [];
+        ta = [];
+    }
+
 }]);
