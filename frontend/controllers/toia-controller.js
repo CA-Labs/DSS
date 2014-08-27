@@ -40,6 +40,8 @@ dssApp.controller('toiaController', ['$scope', '$rootScope', 'localStorageServic
      */
     $scope.removeBsoiaFromToiaAsset = function(bsoiaAsset, toiaAsset){
         AssetsService.removeBSOIAfromTOIA(bsoiaAsset.name, toiaAsset.asset.name);
+        // update local storage as well
+        localStorageService.set('toiaAssetsSelected', $scope.toiaAssetsSelected);
     };
 
     /**
@@ -59,6 +61,8 @@ dssApp.controller('toiaController', ['$scope', '$rootScope', 'localStorageServic
         } else {
             toiaAsset.bsoiaRelations.push($data);
             AssetsService.updateTOIAbyName(toiaAsset.asset.name, toiaAsset);
+            // udpate local storage as well
+            localStorageService.set('toiaAssetsSelected', $scope.toiaAssetsSelected);
         }
     };
 
