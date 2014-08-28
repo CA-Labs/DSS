@@ -75,9 +75,8 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     };
 
     $scope.getTAProposals = function(taAssetName){
-        console.log('getting proposals for TA ' + taAssetName);
+        // console.log('getting proposals for TA ' + taAssetName);
         if($scope.proposals[taAssetName]){
-            console.log('found');
             console.log($scope.proposals[taAssetName]);
             return $scope.proposals[taAssetName];
         } else {

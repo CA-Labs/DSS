@@ -41,6 +41,7 @@ dssApp.controller('mainController', [
      */
     $scope.clearSelection = function () {
         localStorageService.clearAll();
+        window.location.reload();
     };
 
     $scope.saveSessionFile = function (event) {
@@ -64,15 +65,17 @@ dssApp.controller('mainController', [
     };
 
     $scope.loadLocalSessionContent = function ($fileContent) {
+        console.log($fileContent);
         if (dssApp.isJSON($fileContent)) {
+            console.log('json');
             var fileContent = JSON.parse($fileContent);
-            $localStorage.bsoia = fileContent.bsoia;
-            $localStorage.toia = fileContent.toia;
-            $localStorage.ta = fileContent.ta;
-            $localStorage.risks = fileContent.risks;
-            $localStorage.treatments = fileContent.treatments;
-            $localStorage.services = fileContent.services;
-            window.location.reload();
+            localStorageService.bsoiaAssetsSelected = fileContent.bsoiaAssetsSelected;
+            localStorageService.toiaAssetsSelected = fileContent.toiaAssetsSelected;
+            localStorageService.taAssets = fileContent.taAssets;
+            localStorageService.risksSelected = fileContent.risksSelected;
+            localStorageService.treatmentsSelected = fileContent.treatmentsSelected;
+            //localStorageService.services = fileContent.services;
+            //window.location.reload();
         }
     };
 
@@ -81,15 +84,15 @@ dssApp.controller('mainController', [
         $(inputId).trigger('click');
     };
 
-    /**************** FILE UPLOAD ***************
-    *********************************************
-    *********************************************/
+    /********************* DSS CLOUD RESOURCE FILE UPLOAD *******************
+    *************************************************************************
+    ************************************************************************/
 
-    $scope.onFileSelect = function($files){
+    $scope.onDSSCloudResourceFileSelect = function($files){
 
         var file = $files[0];
         if(file !== null && typeof file !== 'undefined'){
-            AssetsService.loadResourcesFromXML(file).then(function(xmlString){
+            readFile(file).then(function(xmlString){
                 //Check if XML document is correct using the XSD schema validation service on server-side
                 ArangoDBService.validateSchema(xmlString, function(error, data){
                     if(error){
@@ -122,6 +125,41 @@ dssApp.controller('mainController', [
         // can be uploaded first (wrap the input element within a form element and reset the form)
         jQuery('#cloud-descriptor-file-selector').get(0).reset();
 
+    };
+
+    /************************ USER SESSION FILE UPLOAD ***********************
+     *************************************************************************
+     ************************************************************************/
+
+    $scope.onSessionFileSelect = function($files){
+        var file = $files[0];
+        if(file !== null && typeof file !== 'undefined'){
+            readFile(file).then(function(jsonString){
+                localStorageValues = JSON.parse(jsonString);
+                // Don't touch this, order matters!
+                AssetsService.loadingLocalStorageData(true);
+                RisksService.loadingLocalStorageData(true);
+                AssetsService.setBSOIA(localStorageValues.bsoiaAssetsSelected);
+                AssetsService.setTOIA(localStorageValues.toiaAssetsSelected);
+                RisksService.setSimpleRisksLikelihoodConsequence(localStorageValues.simpleRisksLikelihoodConsequence);
+                RisksService.setMultipleRisksLikelihoodConsequence(localStorageValues.multipleRisksLikelihoodConsequence);
+                RisksService.setRisks(localStorageValues.risksSelected);
+                AssetsService.setTA(localStorageValues.taAssets);
+            });
+        } else {
+            flash.error = 'Some error occured while trying to upload DSS session file';
+        }
+    };
+
+    // Private function to read files as strings
+    var readFile = function(file){
+        var fileReader = new FileReader();
+        var deferred = $q.defer();
+        var string = fileReader.readAsText(file);
+        fileReader.onload = function(){
+            deferred.resolve(fileReader.result);
+        };
+        return deferred.promise;
     };
 
 }]);

@@ -9,11 +9,15 @@ dssApp.service('RisksService', ['flash', 'localStorageService', function(flash, 
     var risks = [];
 
     var risksLikelihoodConsequenceFromStorage = localStorageService.get('simpleRisksLikelihoodConsequence');
-    var risksLikelihoodConsequence = (!_.isNull(risksLikelihoodConsequenceFromStorage)) ? risksLikelihoodConsequenceFromStorage : {};        //Likelihood/consequences values for each risk (as a whole) of the form
-                                                //riskname_likelihood/riskname_consequence
+    var risksLikelihoodConsequence = (!_.isNull(risksLikelihoodConsequenceFromStorage)) ? risksLikelihoodConsequenceFromStorage : {};           //Likelihood/consequences values for each risk (as a whole) of the form
+                                                                                                                                                //riskname_likelihood/riskname_consequence
 
-    var risksTALikelihoodConsequence = {};      //Likelihood/consequences values for each TA and risk of the form
-                                                //riskname_taAssetName_likelihood/riskname_taAssetName_consequence
+    var risksTALikelihoodConsequenceFromStorage = localStorageService.get('multipleRisksLikelihoodConsequence');
+    var risksTALikelihoodConsequence = (!_.isNull(risksTALikelihoodConsequenceFromStorage)) ? risksTALikelihoodConsequenceFromStorage : {};     //Likelihood/consequences values for each TA and risk of the form
+                                                                                                                                                //riskname_taAssetName_likelihood/riskname_taAssetName_consequence
+
+    var loadingDataFromLocalStorage = false;                                                                                                    //Flag to control local storage restore state
+
     /**
      * Adds a risk to the list of selected risks.
      * @param risk The risk to be added.
@@ -150,5 +154,44 @@ dssApp.service('RisksService', ['flash', 'localStorageService', function(flash, 
     this.getRisksTALikelihoodConsequence = function(){
         return risksTALikelihoodConsequence;
     };
+
+    /**
+     *
+     * @param risksLoadedFromLocalStorage
+     */
+    this.setRisks = function(risksLoadedFromLocalStorage){
+        console.log('Setting risks in RisksService from user session', risksLoadedFromLocalStorage);
+        risks = risksLoadedFromLocalStorage;
+    };
+
+    /**
+     *
+     * @param simpleRisksLikelihoodConsequenceLoadedFromLocalStorage
+     */
+    this.setSimpleRisksLikelihoodConsequence = function(simpleRisksLikelihoodConsequenceLoadedFromLocalStorage){
+        console.log('Setting simpleRisks in RisksService from user session', simpleRisksLikelihoodConsequenceLoadedFromLocalStorage);
+        risksLikelihoodConsequence = simpleRisksLikelihoodConsequenceLoadedFromLocalStorage;
+    };
+
+    /**
+     *
+     * @param multipleRisksLikelihoodConsequenceLoadedFromLocalStorage
+     */
+    this.setMultipleRisksLikelihoodConsequence = function(multipleRisksLikelihoodConsequenceLoadedFromLocalStorage){
+        console.log('Setting multipleRisks in RisksService from user session', multipleRisksLikelihoodConsequenceLoadedFromLocalStorage);
+        risksTALikelihoodConsequence = multipleRisksLikelihoodConsequenceLoadedFromLocalStorage;
+    };
+
+    /**
+     *
+     * @param loading
+     */
+    this.loadingLocalStorageData = function(loading){
+        loadingDataFromLocalStorage = loading;
+    }
+
+    this.isLoadingLocalStorageData = function(){
+        return loadingDataFromLocalStorage;
+    }
 
 }]);

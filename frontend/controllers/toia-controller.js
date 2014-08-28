@@ -12,6 +12,24 @@ dssApp.controller('toiaController', ['$scope', '$rootScope', 'localStorageServic
     localStorageService.bind($scope, 'toiaAssetsSelected', $scope.toiaAssetsSelected); // Bind toiaAssets to localStorage
     $scope.bsoiaAssetsSelected = AssetsService.getBSOIA();  //BSOIA assets selected by the user (shared across the Assets service)
 
+    // Kind of a hack: this is necessary when loading TOIA assets from local storage,
+    // since the reference seems to be lost when setting the new TOIA assets in the service
+    // variable.
+    $scope.$watch(function(){
+        return AssetsService.getTOIA();
+    }, function(newTOIA){
+        $scope.toiaAssetsSelected = newTOIA;
+    }, true);
+
+    // Kind of a hack: this is necessary when loading BSOIA assets from local storage,
+    // since the reference seems to be lost when setting the new BSOIA assets in the service
+    // variable.
+    $scope.$watch(function(){
+        return AssetsService.getBSOIA();
+    }, function(newBSOIA){
+        $scope.bsoiaAssetsSelected = newBSOIA;
+    }, true);
+
     /**
      * Adds a new TOIA asset to the list of selected TOIA,
      * by calling the Assets service.

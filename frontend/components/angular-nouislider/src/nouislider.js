@@ -40,7 +40,7 @@ angular.module('nouislider', []).directive('slider', function () {
                         toParsed = parseFloat(to);
 
                         //Propagate event upwards
-                        scope.$emit('sliderValueChanged', {slider: slider, value: slider.val()});
+                        scope.$emit('sliderValueChanged', {slider: slider, value: slider.val(), init: false});
 
                         return scope.$apply(function () {
                             scope.ngFrom = fromParsed;
@@ -78,7 +78,7 @@ angular.module('nouislider', []).directive('slider', function () {
                         parsedValue = parseFloat(slider.val());
 
                         //Propagate event upwards
-                        scope.$emit('sliderValueChanged', {slider: slider, value: slider.val()});
+                        scope.$emit('sliderValueChanged', {slider: slider, value: slider.val(), init: false});
 
                         return scope.$apply(function () {
                             return scope.ngModel = parsedValue;
