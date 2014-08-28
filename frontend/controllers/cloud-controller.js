@@ -89,12 +89,17 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
         }
     };
 
+    /**
+     * Save selected services
+     * @param {object} proposal - service object selected by the user
+     * @param {object} taAsset - ta asset object to which the proposal is assigned to
+     */
     $scope.selectService = function (proposal, taAsset) {
         var data = {
             ta: taAsset,
             serviceSelected: proposal
         };
         $scope.servicesSelected[taAsset._id] = data;
-    }
+    };
 
 }]);
