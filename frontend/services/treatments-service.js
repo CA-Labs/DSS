@@ -80,4 +80,40 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
         return treatmentsValues;
     }
 
+    /**
+     * check if TA exists in the treatment
+     * @param treatment
+     * @param ta
+     * @returns {boolean}
+     */
+    this.taAssetExists = function (treatment, ta) {
+        if (_.isUndefined(treatment.taRelations)) return false;
+        return (_.indexOf(treatment.taRelations, ta) > -1);
+    };
+
+    /**
+     * Add TA to Treatment
+     * @param treatment
+     * @param ta
+     */
+    this.addTAToTreatment = function (treatment, ta) {
+        if (_.isUndefined(treatment.taRelations)) treatment.taRelations = [];
+        treatment.taRelations.push(ta);
+    };
+
+    /**
+     * Remove Tangible Asset from Treatment
+     * @param treatment
+     * @param ta
+     * @returns {boolean}
+     */
+    this.removeTaFromTreatment = function (treatment, ta) {
+        if (_.isUndefined(treatment.taRelations)) return false;
+        var taPos = _.indexOf(treatment.taRelations, ta);
+        if (taPos > -1) {
+            treatment.taRelations.splice(taPos, 1);
+            return;
+        }
+    };
+
 }]);

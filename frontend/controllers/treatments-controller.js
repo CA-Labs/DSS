@@ -9,6 +9,7 @@ dssApp.controller('treatmentsController'
         , '$rootScope'
         , 'ArangoDBService'
         , 'RisksService'
+        , 'AssetsService'
         , 'TreatmentsService'
         , 'flash'
         , '$timeout'
@@ -17,11 +18,13 @@ dssApp.controller('treatmentsController'
         , $rootScope
         , ArangoDBService
         , RisksService
+        , AssetsService
         , TreatmentsService
         , flash
         , $timeout
         , localStorageService){
 
+    $scope.taAssets = AssetsService.getTA();                                // The list of the TA assets
     $scope.potentialTreatments = [];                                        // The list of potential treatments
     $scope.treatmentsSelected = TreatmentsService.getTreatments();          // The list of selected treatments
     localStorageService.bind($scope, 'treatmentsSelected', $scope.treatmentsSelected);
@@ -119,5 +122,23 @@ dssApp.controller('treatmentsController'
     $scope.removeTreatment = function(treatment){
         TreatmentsService.removeTreatment(treatment);
     };
+
+    $scope.taDropped = function (event, data, treatment) {
+        if (TreatmentsService.taAssetExists(treatment, data)) {
+            flash.warn = 'TA asset already added';
+        } else {
+            TreatmentsService.addTAToTreatment(treatment, data);
+        }
+
+    };
+
+    $scope.makeObjectFromString = function (string) {
+        return eval('{' + string + '}');
+    };
+
+
+    $scope.removeTaFromTreatment = function (treatment, ta) {
+        TreatmentsService.removeTaFromTreatment(treatment, ta);
+    }
 
 }]);
