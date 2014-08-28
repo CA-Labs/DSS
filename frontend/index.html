@@ -317,7 +317,7 @@
                                         <div class="panel-body" ng-switch="taAsset.cloudType">
                                             <div ng-switch-when="IaaS">
                                                 <div class="panel-group">
-                                                    <div class="panel panel-default" ng-repeat="result in getTAProposals(taAsset.cloudResource._serviceName) track by $index">
+                                                    <div class="panel panel-default service-proposal-panel" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudResource._serviceName) track by $index">
                                                         <div class="panel heading" style="background-color: #d3d3d3">
                                                             <h4 class="panel-title">
                                                                 <a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">
@@ -354,7 +354,7 @@
                                             </div>
                                             <div ng-switch-when="PaaS">
                                                 <div class="panel-group">
-                                                    <div class="panel panel-default" ng-repeat="result in getTAProposals(taAsset.cloudPlatform._serviceName) track by $index">
+                                                    <div class="panel panel-default service-proposal-panel" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudPlatform._serviceName) track by $index">
                                                         <div class="panel heading" style="background-color: #d3d3d3">
                                                             <h4 class="panel-title">
                                                                 <a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">
