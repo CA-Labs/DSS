@@ -42,7 +42,6 @@ dssApp.controller('risksController'
     $scope.$watch(function(){
         return RisksService.getRisksLikelihoodConsequence();
     }, function(newSimpleRisksLikelihoodConsequence){
-        console.log(newSimpleRisksLikelihoodConsequence);
         $scope.simpleRisksLikelihoodConsequence = newSimpleRisksLikelihoodConsequence;
     }, true);
 
@@ -52,7 +51,6 @@ dssApp.controller('risksController'
     $scope.$watch(function(){
         return RisksService.getRisksTALikelihoodConsequence();
     }, function(newMultipleRisksLikelihoodConsequence){
-        console.log(newMultipleRisksLikelihoodConsequence);
         $scope.multipleRisksLikelihoodConsequence = newMultipleRisksLikelihoodConsequence;
     }, true);
 
@@ -107,7 +105,7 @@ dssApp.controller('risksController'
     };
 
     /**
-     * Listen for changes in potential risks, so that
+     * Listen for changes in selected risks, so that
      * treatments can be recomputed.
      */
     $scope.$watch(function(){
@@ -311,14 +309,10 @@ dssApp.controller('risksController'
             RisksService.loadingLocalStorageData(false);
             // Restore UI sliders using bounded models
             Object.keys($scope.simpleRisksLikelihoodConsequence).forEach(function(key){
-                if($('div[data-hash-key=\'' + key + '\']').children()){
-                    $scope.riskBoundModels[key] = $scope.simpleRisksLikelihoodConsequence[key];
-                };
+                $scope.riskBoundModels[key] = $scope.simpleRisksLikelihoodConsequence[key];
             });
             Object.keys($scope.multipleRisksLikelihoodConsequence).forEach(function(key){
-                if($('div[data-hash-key=\'' + key + '\']').children()){
-                    $scope.riskBoundModels[key] = $scope.multipleRisksLikelihoodConsequence[key];
-                };
+                $scope.riskBoundModels[key] = $scope.multipleRisksLikelihoodConsequence[key];
             });
             return;
         };

@@ -22,11 +22,16 @@ dssApp.controller('treatmentsController'
         , $timeout
         , localStorageService){
 
-    $scope.potentialTreatments = [];                                        // The list of potential treatments
-    $scope.treatmentsSelected = TreatmentsService.getTreatments();          // The list of selected treatments
+    $scope.potentialTreatments = [];                                                    // The list of potential treatments
+    $scope.treatmentsSelected = TreatmentsService.getTreatments();                      // The list of selected treatments
+
     localStorageService.bind($scope, 'treatmentsSelected', $scope.treatmentsSelected);
-    $scope.treatmentValues = TreatmentsService.getTreatmentsValues();       // The treatments values model
+
+    $scope.treatmentValues = TreatmentsService.getTreatmentsValues();                   // The treatments values model
     localStorageService.bind($scope, 'treatmentValues', $scope.treatmentValues);
+
+    $scope.treatmentsBoundModels = {};
+
 
     /**
      * Event received when the list of selected risks changes, so that
@@ -57,11 +62,18 @@ dssApp.controller('treatmentsController'
 
     /**
      * Every time the list of selected treatments changes, we should update the treatments
-     * values model, since it doesn't change automatically.
+     * values model, since it doesn't change automatically and also retrieve new service proposals.
      */
     $scope.$watch(function(){
-        return $scope.treatmentsSelected;
+        return TreatmentsService.getTreatments();
     }, function(newTreatments, oldTreatments){
+
+        // If we are loaading treatments from local storage, don't update treatments models
+        if(TreatmentsService.isLoadingTreatmentsFromLocalStorage()){
+            TreatmentsService.loadingTreatmentsFromLocalStorage(false);
+            $scope.treatmentsSelected = newTreatments;
+            return;
+        }
 
         //Update treatments values model
         var keysToRemove = [];
@@ -87,9 +99,18 @@ dssApp.controller('treatmentsController'
     }, true);
 
     $scope.$watch(function(){
-        return $scope.treatmentValues;
-    }, function(newValue, oldValue){
-        //TODO:
+        return TreatmentsService.getTreatmentsValues();
+    }, function(newValue){
+        if(TreatmentsService.isLoadingTreatmentsValuesFromLocalStorage()){
+            TreatmentsService.loadingTreatmentsValuesFromLocalStorage(false);
+            $scope.treatmentValues = newValue;
+            // Bound corresponding models
+            Object.keys($scope.treatmentValues).forEach(function(key){
+                $scope.treatmentsBoundModels[key] = treatmentValueToDescription(key, $scope.treatmentValues[key]);
+            });
+            return;
+        }
+        $scope.treatmentValues = newValue;
     }, true);
 
     /**
@@ -119,5 +140,20 @@ dssApp.controller('treatmentsController'
     $scope.removeTreatment = function(treatment){
         TreatmentsService.removeTreatment(treatment);
     };
+
+    var treatmentValueToDescription = function(treatmentName, treatmentValue){
+        var description = '';
+        _.each($scope.treatmentsSelected, function(treatment){
+            if(treatment.destination.name == treatmentName){
+                var treatmentOptions = $scope.$eval('{' + treatment.destination.options + '}');
+                Object.keys(treatmentOptions).forEach(function(option){
+                    if(option == treatmentValue){
+                        description = treatmentOptions[option];
+                    }
+                });
+            }
+        });
+        return description;
+    }
 
 }]);

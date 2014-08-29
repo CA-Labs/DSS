@@ -139,11 +139,15 @@ dssApp.controller('mainController', [
                 // Don't touch this, order matters!
                 AssetsService.loadingLocalStorageData(true);
                 RisksService.loadingLocalStorageData(true);
+                TreatmentsService.loadingTreatmentsFromLocalStorage(true);
+                TreatmentsService.loadingTreatmentsValuesFromLocalStorage(true);
                 AssetsService.setBSOIA(localStorageValues.bsoiaAssetsSelected);
                 AssetsService.setTOIA(localStorageValues.toiaAssetsSelected);
                 RisksService.setSimpleRisksLikelihoodConsequence(localStorageValues.simpleRisksLikelihoodConsequence);
                 RisksService.setMultipleRisksLikelihoodConsequence(localStorageValues.multipleRisksLikelihoodConsequence);
                 RisksService.setRisks(localStorageValues.risksSelected);
+                TreatmentsService.setTreatmentValues(localStorageValues.treatmentValues);
+                TreatmentsService.setTreatments(localStorageValues.treatmentsSelected);
                 AssetsService.setTA(localStorageValues.taAssets);
             });
         } else {

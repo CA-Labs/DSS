@@ -11,7 +11,7 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     $scope.proposals = {};                                              // The cloud service proposals (by TA) offered by the graph engine
 
     $scope.$watch(function(){
-        return $scope.treatments
+        return TreatmentsService.getTreatments();
     }, function(newTreatments, oldTreatments){
         $scope.treatments = newTreatments;
 
@@ -43,7 +43,7 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     }, true);
 
     $scope.$watch(function(){
-        return $scope.ta;
+        return AssetsService.getTA();
     }, function(newTA, oldTA){
         $scope.ta = newTA;
         // Only query service proposals if we have at least one treatment and tangible asset

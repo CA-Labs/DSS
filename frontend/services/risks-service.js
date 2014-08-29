@@ -156,40 +156,43 @@ dssApp.service('RisksService', ['flash', 'localStorageService', function(flash, 
     };
 
     /**
-     *
-     * @param risksLoadedFromLocalStorage
+     * Sets the risks to that ones loaded from local storage.
+     * @param risksLoadedFromLocalStorage Local storage risks.
      */
     this.setRisks = function(risksLoadedFromLocalStorage){
-        console.log('Setting risks in RisksService from user session', risksLoadedFromLocalStorage);
         risks = risksLoadedFromLocalStorage;
     };
 
     /**
-     *
-     * @param simpleRisksLikelihoodConsequenceLoadedFromLocalStorage
+     * Sets the simple risk model to that one loaded from local storage.
+     * @param simpleRisksLikelihoodConsequenceLoadedFromLocalStorage Local
+     * storage simple risk model.
      */
     this.setSimpleRisksLikelihoodConsequence = function(simpleRisksLikelihoodConsequenceLoadedFromLocalStorage){
-        console.log('Setting simpleRisks in RisksService from user session', simpleRisksLikelihoodConsequenceLoadedFromLocalStorage);
         risksLikelihoodConsequence = simpleRisksLikelihoodConsequenceLoadedFromLocalStorage;
     };
 
     /**
-     *
-     * @param multipleRisksLikelihoodConsequenceLoadedFromLocalStorage
+     * Sets the multiple risk model to that one loaded from local storage.
+     * @param multipleRisksLikelihoodConsequenceLoadedFromLocalStorage Local
+     * storage multiple risk model.
      */
     this.setMultipleRisksLikelihoodConsequence = function(multipleRisksLikelihoodConsequenceLoadedFromLocalStorage){
-        console.log('Setting multipleRisks in RisksService from user session', multipleRisksLikelihoodConsequenceLoadedFromLocalStorage);
         risksTALikelihoodConsequence = multipleRisksLikelihoodConsequenceLoadedFromLocalStorage;
     };
 
     /**
-     *
-     * @param loading
+     * Sets a flag indicating local storage data is being loaded.
+     * @param loading A boolean indicating the loading state.
      */
     this.loadingLocalStorageData = function(loading){
         loadingDataFromLocalStorage = loading;
     }
 
+    /**
+     * Whether local storage data is being loaded or not.
+     * @returns {boolean}
+     */
     this.isLoadingLocalStorageData = function(){
         return loadingDataFromLocalStorage;
     }

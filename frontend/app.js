@@ -61,8 +61,7 @@ var dssApp = angular.module('dssApp', [
     'frapontillo.bootstrap-switch',
     'nouislider'
 ]).config(['cfpLoadingBarProvider', 'localStorageServiceProvider', function(cfpLoadingBarProvider, localStorageServiceProvider) {
-        cfpLoadingBarProvider.includeSpinner = false;
-
+    cfpLoadingBarProvider.includeSpinner = false;
     localStorageServiceProvider.setPrefix('DSS');
 }]);
 

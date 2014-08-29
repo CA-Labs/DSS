@@ -70,7 +70,6 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * be set.
      */
     this.setBSOIA = function(bsoiaLoadedFromLocalStorage){
-        console.log('Setting BSOIA assets in AssetsService from user session', bsoiaLoadedFromLocalStorage);
         bsoia = bsoiaLoadedFromLocalStorage;
     };
 
@@ -126,7 +125,6 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * be set.
      */
     this.setTOIA = function(toiaLoadedFromLocalStorage){
-        console.log('Setting TOIA assets in AssetsService from user session', toiaLoadedFromLocalStorage);
         toia = toiaLoadedFromLocalStorage;
     };
 
@@ -275,14 +273,22 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * be set.
      */
     this.setTA = function(taLoadedFromLocalStorage){
-        console.log('Setting TA assets in Assets Service from user session', taLoadedFromLocalStorage);
         ta = taLoadedFromLocalStorage;
     };
 
+    /**
+     * Sets a flag indicating local storage data is being
+     * loaded.
+     * @param loading A boolean indicating the loading state.
+     */
     this.loadingLocalStorageData = function(loading){
         loadingDataFromLocalStorage = loading;
     };
 
+    /**
+     * Whether local storage data is being loaded or not.
+     * @returns {boolean}
+     */
     this.isLoadingLocalStorageData = function(){
         return loadingDataFromLocalStorage;
     }
