@@ -29,6 +29,8 @@ if ! ps aux | grep "arangod" | grep -v grep > /dev/null; then
         echo "ArangoDB instance successfully started."
     fi
 
+    echo "Minifying files..."
+    grunt uglify
     echo "Deploying DSS foxx application..."
     sh deploy.sh test root CATech2014!
     sleep 10s
@@ -40,6 +42,8 @@ if ! ps aux | grep "arangod" | grep -v grep > /dev/null; then
 else
 
     echo "ArangoDB instance already running."
+    echo "Minifying files..."
+    grunt uglify
     echo "Deploying DSS foxx application..."
     sh deploy.sh test root CATech2014!
     sleep 10s
