@@ -272,8 +272,10 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * @param taLoadedFromLocalStorage The TA assets to
      * be set.
      */
-    this.setTA = function(taLoadedFromLocalStorage){
+    this.setTA = function(taLoadedFromLocalStorage) {
         ta = taLoadedFromLocalStorage;
+    };
+
     this.loadResourcesFromXML = function(file){
         var fileReader = new FileReader();
         var deferred = $q.defer();
