@@ -24,6 +24,7 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
                 return treatment.destination.name == t.destination.name;
             }).length > 0;
             if(!exists){
+                // objectify options
                 treatments.push(treatment);
             } else {
                 flash.warn = 'This treatment has been already added';
@@ -79,5 +80,47 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
     this.getTreatmentsValues = function(){
         return treatmentsValues;
     }
+
+    /**
+     * check if TA exists in the treatment
+     * @param treatment
+     * @param ta
+     * @returns {boolean}
+     */
+    this.taAssetExists = function (treatment, ta) {
+        var bool = false;
+        if (_.isUndefined(treatment.taRelations)) treatment.taRelations = [];
+        _.each(treatment.taRelations, function (taAssigned) {
+            if (taAssigned._id == ta._id) {
+                bool = true;
+            }
+        });
+        return bool;
+    };
+
+    /**
+     * Add TA to Treatment
+     * @param treatment
+     * @param ta
+     */
+    this.addTAToTreatment = function (treatment, ta) {
+        if (_.isUndefined(treatment.taRelations)) treatment.taRelations = [];
+        treatment.taRelations.push(ta);
+    };
+
+    /**
+     * Remove Tangible Asset from Treatment
+     * @param treatment
+     * @param ta
+     * @returns {boolean}
+     */
+    this.removeTaFromTreatment = function (treatment, ta) {
+        if (_.isUndefined(treatment.taRelations)) return false;
+        var taPos = _.indexOf(treatment.taRelations, ta);
+        if (taPos > -1) {
+            treatment.taRelations.splice(taPos, 1);
+            return;
+        }
+    };
 
 }]);

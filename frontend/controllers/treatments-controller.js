@@ -9,6 +9,7 @@ dssApp.controller('treatmentsController'
         , '$rootScope'
         , 'ArangoDBService'
         , 'RisksService'
+        , 'AssetsService'
         , 'TreatmentsService'
         , 'flash'
         , '$timeout'
@@ -17,11 +18,13 @@ dssApp.controller('treatmentsController'
         , $rootScope
         , ArangoDBService
         , RisksService
+        , AssetsService
         , TreatmentsService
         , flash
         , $timeout
         , localStorageService){
 
+    $scope.taAssets = AssetsService.getTA();                                // The list of the TA assets
     $scope.potentialTreatments = [];                                        // The list of potential treatments
     $scope.treatmentsSelected = TreatmentsService.getTreatments();          // The list of selected treatments
     localStorageService.bind($scope, 'treatmentsSelected', $scope.treatmentsSelected);
@@ -82,6 +85,13 @@ dssApp.controller('treatmentsController'
             TreatmentsService.removeTreatmentValue(key);
         });
 
+
+        // Objectify the options of the treatment
+        _.each(newTreatments, function (newTreatment) {
+            if (typeof newTreatment.destination.options == "string") {
+                newTreatment.destination.options = $scope.$eval("{" + newTreatment.destination.options + "}");
+            }
+        });
         $scope.treatmentsSelected = newTreatments;
 
     }, true);
@@ -96,9 +106,9 @@ dssApp.controller('treatmentsController'
      * Event received when a treatment value changes, so that treatment
      * values model can be updated.
      */
-    $scope.$on('treatmentValueChanged', function($event, update){
-        TreatmentsService.addTreatmentValue(update.name, update.value);
-    });
+//    $scope.$on('treatmentValueChanged', function($event, update){
+//        TreatmentsService.addTreatmentValue(update.name, update.value);
+//    });
 
     /**
      * Adds a new treatment to the list of selected treatments,
@@ -120,4 +130,39 @@ dssApp.controller('treatmentsController'
         TreatmentsService.removeTreatment(treatment);
     };
 
+    $scope.taDropped = function (event, data, treatment) {
+        if (TreatmentsService.taAssetExists(treatment, data)) {
+            flash.warn = 'Tangible Asset [TA] already added';
+        } else {
+            TreatmentsService.addTAToTreatment(treatment, data);
+            localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
+        }
+
+    };
+
+    $scope.removeTaFromTreatment = function (treatment, ta) {
+        TreatmentsService.removeTaFromTreatment(treatment, ta);
+        localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
+    }
+
+    $scope.showTreatmentValues = false;
+
+    $scope.toggleTreatmentValues = function () {
+        $scope.showTreatmentValues = !$scope.showTreatmentValues;
+    };
+
+    $scope.treatmentValueChanged = function (treatmentValueString, treatment) {
+        var key = null;
+        for (optionValue in treatment.destination.options) {
+            if(treatment.destination.options[optionValue] == treatmentValueString){
+                key = optionValue;
+                break;
+            }
+        }
+        var update = {
+            name: treatment.destination.name,
+            value: key
+        };
+        TreatmentsService.addTreatmentValue(update.name, update.value);
+    };
 }]);

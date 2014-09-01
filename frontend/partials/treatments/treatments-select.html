@@ -1,3 +1,10 @@
 <select label="treatments" class="form-control" data-hash-key="item.destination.name" ng-model="treatment" ng-options="value for (key,value) in options | orderBy:'':true" ng-change="change(treatment)">
     <option value="" disabled selected>--- Select a value ---</option>
 </select>
+<br/>
+<div ui-on-drop="taDropped($event, $data, item)" class="dropzone-container">
+    <button ui-draggable="true" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in item.taRelations">
+        <small><span class="glyphicon glyphicon-remove remove-bsoia-in-toia-asset" ng-click="removeTaFromTreatment(taRelation, item)">&nbsp;</span></small>
+        {{taAsset.cloudType}} - {{taAsset.cloudResource._serviceType}}
+    </button>
+</div>
