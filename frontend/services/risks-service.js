@@ -8,12 +8,12 @@ dssApp.service('RisksService', ['flash', 'localStorageService', function(flash, 
 
     var risks = [];
 
-    var risksLikelihoodConsequenceFromStorage = localStorageService.get('simpleRisksLikelihoodConsequence');
-    var risksLikelihoodConsequence = (!_.isNull(risksLikelihoodConsequenceFromStorage)) ? risksLikelihoodConsequenceFromStorage : {};           //Likelihood/consequences values for each risk (as a whole) of the form
+    var risksLikelihoodConsequenceFromStorage = localStorageService.get('simpleRisksLikelihoodConsequence') || {};
+    var risksLikelihoodConsequence = risksLikelihoodConsequenceFromStorage;                                                                     //Likelihood/consequences values for each risk (as a whole) of the form
                                                                                                                                                 //riskname_likelihood/riskname_consequence
 
-    var risksTALikelihoodConsequenceFromStorage = localStorageService.get('multipleRisksLikelihoodConsequence');
-    var risksTALikelihoodConsequence = (!_.isNull(risksTALikelihoodConsequenceFromStorage)) ? risksTALikelihoodConsequenceFromStorage : {};     //Likelihood/consequences values for each TA and risk of the form
+    var risksTALikelihoodConsequenceFromStorage = localStorageService.get('multipleRisksLikelihoodConsequence') || {};
+    var risksTALikelihoodConsequence = risksTALikelihoodConsequenceFromStorage;                                                                 //Likelihood/consequences values for each TA and risk of the form
                                                                                                                                                 //riskname_taAssetName_likelihood/riskname_taAssetName_consequence
 
     var loadingDataFromLocalStorage = false;                                                                                                    //Flag to control local storage restore state
