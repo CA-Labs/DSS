@@ -8,8 +8,12 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
 
     var treatmentsFromStorage = localStorageService.get('treatmentsSelected');
     var treatments = (!_.isNull(treatmentsFromStorage)) ? treatmentsFromStorage : [];
+
     var treatmentsValuesFromStorage = localStorageService.get('treatmentValues');
     var treatmentsValues = (!_.isNull(treatmentsValuesFromStorage)) ? treatmentsValuesFromStorage : {};      // Treatments values model used to store select/sliders/radio UI components values
+
+    var loadingTreatmentsFromLocalStorage = false;                                                           // Flag to control local storage restore state
+    var loadingTreatmentsValuesFromLocalStorage = false;                                                     // IDEM
 
     /**
      * Adds a treatment to the list of selected treatments.
@@ -60,7 +64,6 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
      * @param treatmentValue The treatment value.
      */
     this.addTreatmentValue = function(treatmentName, treatmentValue){
-        console.log('adding treatment value', treatmentName, treatmentValue);
         treatmentsValues[treatmentName] = treatmentValue;
     };
 
@@ -69,7 +72,6 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
      * @param treatmentName The treatment name.
      */
     this.removeTreatmentValue = function(treatmentName){
-        console.log('removing treatment value', treatmentName);
         delete treatmentsValues[treatmentName];
     };
 
@@ -79,6 +81,30 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
      */
     this.getTreatmentsValues = function(){
         return treatmentsValues;
+    };
+
+    this.setTreatments = function(treatmentsLoadedFromLocalStorage){
+        treatments = treatmentsLoadedFromLocalStorage;
+    };
+
+    this.setTreatmentValues = function(treatmentValuesLoadedFromLocalStorage){
+        treatmentsValues = treatmentValuesLoadedFromLocalStorage;
+    };
+
+    this.loadingTreatmentsFromLocalStorage = function(loading){
+        loadingTreatmentsFromLocalStorage = loading;
+    };
+
+    this.loadingTreatmentsValuesFromLocalStorage = function(loading){
+        loadingTreatmentsValuesFromLocalStorage = loading;
+    };
+
+    this.isLoadingTreatmentsFromLocalStorage = function(){
+        return loadingTreatmentsFromLocalStorage;
+    };
+
+    this.isLoadingTreatmentsValuesFromLocalStorage = function(){
+        return loadingTreatmentsValuesFromLocalStorage;
     }
 
     /**
@@ -124,3 +150,4 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
     };
 
 }]);
+

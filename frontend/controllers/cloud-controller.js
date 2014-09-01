@@ -15,7 +15,7 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
 
 
     $scope.$watch(function(){
-        return $scope.treatments
+        return TreatmentsService.getTreatments();
     }, function(newTreatments, oldTreatments){
         $scope.treatments = newTreatments;
 
@@ -47,7 +47,7 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     }, true);
 
     $scope.$watch(function(){
-        return $scope.ta;
+        return AssetsService.getTA();
     }, function(newTA, oldTA){
         $scope.ta = newTA;
         // Only query service proposals if we have at least one treatment and tangible asset
@@ -79,9 +79,8 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     };
 
     $scope.getTAProposals = function(taAssetName){
-        console.log('getting proposals for TA ' + taAssetName);
+        // console.log('getting proposals for TA ' + taAssetName);
         if($scope.proposals[taAssetName]){
-            console.log('found');
             console.log($scope.proposals[taAssetName]);
             return $scope.proposals[taAssetName];
         } else {

@@ -25,15 +25,34 @@ dssApp.controller('risksController'
            , $interpolate){
 
     //Initialization
-    $scope.potentialRisks = [];                                                                     //List of current potential risks depending on BSOIA/TOIA assets selected by the user
-    $scope.risksSelected = RisksService.getRisks();                                                 //Risks selected by the user
+    $scope.potentialRisks = [];                                                                                         //List of current potential risks depending on BSOIA/TOIA assets selected by the user
+    $scope.risksSelected = RisksService.getRisks();                                                                     //Risks selected by the user
     localStorageService.bind($scope, 'risksSelected', $scope.risksSelected);
-    $scope.multiple = false;                                                                        //Switch button to allow evaluate risks for each TA
-    $scope.taAssets = AssetsService.getTA();                                                        //The selected TA assets
-    $scope.simpleRisksLikelihoodConsequence = RisksService.getRisksLikelihoodConsequence();         //Likelihood/Consequence values for simple risks model
+    $scope.multiple = false;                                                                                            //Switch button to allow evaluate risks for each TA
+    $scope.taAssets = AssetsService.getTA();                                                                            //The selected TA assets
+    $scope.simpleRisksLikelihoodConsequence = RisksService.getRisksLikelihoodConsequence();                             //Likelihood/Consequence values for simple risks model
     localStorageService.bind($scope, 'simpleRisksLikelihoodConsequence', $scope.simpleRisksLikelihoodConsequence);
-    $scope.multipleRisksLikelihoodConsequence = RisksService.getRisksTALikelihoodConsequence();     //Likelihood/Consequence values for multiple risks model
+    $scope.multipleRisksLikelihoodConsequence = RisksService.getRisksTALikelihoodConsequence();                         //Likelihood/Consequence values for multiple risks model
     localStorageService.bind($scope, 'multipleRisksLikelihoodConsequence', $scope.multipleRisksLikelihoodConsequence);
+    $scope.riskBoundModels = {};
+
+    // Kind of a hack: this is necessary when loading simple risks model from local storage,
+    // since the reference seems to be lost when setting the new simple risks model in the service
+    // variable.
+    $scope.$watch(function(){
+        return RisksService.getRisksLikelihoodConsequence();
+    }, function(newSimpleRisksLikelihoodConsequence){
+        $scope.simpleRisksLikelihoodConsequence = newSimpleRisksLikelihoodConsequence;
+    }, true);
+
+    // Kind of a hack: this is necessary when loading multiple risks model from local storage,
+    // since the reference seems to be lost when setting the new multiple risks model in the service
+    // variable.
+    $scope.$watch(function(){
+        return RisksService.getRisksTALikelihoodConsequence();
+    }, function(newMultipleRisksLikelihoodConsequence){
+        $scope.multipleRisksLikelihoodConsequence = newMultipleRisksLikelihoodConsequence;
+    }, true);
 
     //List of available categories to categorize risks level
     var CATEGORY = {
@@ -86,13 +105,14 @@ dssApp.controller('risksController'
     };
 
     /**
-     * Listen for changes in potential risks, so that
+     * Listen for changes in selected risks, so that
      * treatments can be recomputed.
      */
     $scope.$watch(function(){
-        return $scope.risksSelected;
-    }, function(newVal, oldVal){
+        return RisksService.getRisks();
+    }, function(newRisks){
         $rootScope.$broadcast('risksSelectedChanged');
+        $scope.risksSelected = newRisks;
     }, true);
 
     /**
@@ -146,24 +166,6 @@ dssApp.controller('risksController'
         });
     });
 
-    /*
-    $scope.$watch(function(){
-        return $scope.simpleRisksLikelihoodConsequence;
-    }, function(newVal, oldVal){
-        console.log('simple model has changed');
-        console.log('old was', oldVal);
-        console.log('new is', newVal);
-    }, true);
-
-    $scope.$watch(function(){
-        return $scope.multipleRisksLikelihoodConsequence;
-    }, function(newVal, oldVal){
-        console.log('multiple model has changed');
-        console.log('old was', oldVal);
-        console.log('new is', newVal);
-    }, true);
-    */
-
     /**
      * Handles toggle event in risks switch component and manages
      * the logic of when the user can specify risks per each tangible
@@ -185,7 +187,21 @@ dssApp.controller('risksController'
      * Every time the set of TA assets changes, we should update the
      * likelihood/consequence models, since they are not modified automatically.
      */
-    $scope.$watch('taAssets', function(newTaAssets, oldTaAssets){
+    $scope.$watch(function(){
+        return AssetsService.getTA();
+    }, function(newTaAssets, oldTaAssets){
+
+        // If we have loaded ta assets from local storage, don't update risks models
+        if(AssetsService.isLoadingLocalStorageData()){
+            $scope.taAssets = newTaAssets;
+            // Check switch button status
+            if($scope.taAssets.length > 0){
+                $scope.multiple = true;
+            }
+            // Local storage finished loading assets scope data
+            AssetsService.loadingLocalStorageData(false);
+            return;
+        }
 
         //Check switch button status
         if(newTaAssets.length == 0){
@@ -288,6 +304,19 @@ dssApp.controller('risksController'
      */
     $scope.$watch('risksSelected', function(newRisks, oldRisks){
 
+        // If we have loaded risks from local storage, don't update risks models
+        if(RisksService.isLoadingLocalStorageData()){
+            RisksService.loadingLocalStorageData(false);
+            // Restore UI sliders using bounded models
+            Object.keys($scope.simpleRisksLikelihoodConsequence).forEach(function(key){
+                $scope.riskBoundModels[key] = $scope.simpleRisksLikelihoodConsequence[key];
+            });
+            Object.keys($scope.multipleRisksLikelihoodConsequence).forEach(function(key){
+                $scope.riskBoundModels[key] = $scope.multipleRisksLikelihoodConsequence[key];
+            });
+            return;
+        };
+
         //Update risks simple model
         var keysToRemove = [];
         var keysToAdd = [];
@@ -375,6 +404,11 @@ dssApp.controller('risksController'
      */
     $scope.$on('sliderValueChanged', function($event, element){
 
+        // Ignore this event if we have no slider values available or if we are still loading data from local storage
+        if(_.isEmpty($scope.simpleRisksLikelihoodConsequence || _.isEmpty($scope.multipleRisksLikelihoodConsequence))){
+            return;
+        };
+
         //Current slider value
         var sliderValue = element.value;
 
@@ -383,14 +417,14 @@ dssApp.controller('risksController'
             .addClass(numberToCategoryClass(sliderValue))
             .text(numberToCategoryName(sliderValue));
 
-        //Retrieve the unique hash key to know what must be updated in risks services, wheter simple or multiple models
+        //Retrieve the unique hash key to know what must be updated in risks services, whether simple or multiple models
         var hashKey = element.slider.data('hash-key');
         var hashAttributes = hashKey.split('_');
 
         if(hashAttributes.length < 2){
             flash.error = 'Incorrect hash key for slider value!';
             return;
-        }
+        };
 
         var riskName = hashAttributes[0];
 

@@ -13,8 +13,8 @@ dssApp.directive('onRisksType', ['$timeout', function($timeout){
         scope: false,
         link: function(scope, element, attrs){
             $timeout(function(){
-                scope.$emit('sliderValueChanged', {slider: $(element.children().first()), value: $(element.children().first()).val()});
-            }, 10);
+                scope.$emit('sliderValueChanged', {slider: $(element.children().first()), value: $(element.children().first()).val(), init: true});
+            }, 100);
         }
     };
 }]);

@@ -8,13 +8,15 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
 
     //BSOIA assets
     var bsoiaFromStorage = localStorageService.get('bsoiaAssetsSelected');
-    var bsoia = (!_.isNull(bsoiaFromStorage)) ? bsoiaFromStorage : [];         //BSOIA assets selected by the user
+    var bsoia = (!_.isNull(bsoiaFromStorage)) ? bsoiaFromStorage : [];          //BSOIA assets selected by the user
     //TOIA assets
     var toiaFromStorage = localStorageService.get('toiaAssetsSelected');
-    var toia = (!_.isNull(toiaFromStorage)) ? toiaFromStorage : [];          //TOIA assets selected by the user
+    var toia = (!_.isNull(toiaFromStorage)) ? toiaFromStorage : [];             //TOIA assets selected by the user
     //TA assets
     var taFromStorage = localStorageService.get('ta');
-    var ta = (!_.isNull(taFromStorage)) ? taFromStorage : [];            //TA assets selected by the user
+    var ta = (!_.isNull(taFromStorage)) ? taFromStorage : [];                   //TA assets selected by the user
+
+    var loadingDataFromLocalStorage = false;                                    //Flag to control local storage restore state
 
     /**
      * Adds an asset to the list of selected
@@ -62,6 +64,16 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     };
 
     /**
+     * Sets the current BSOIA assets, loading them from
+     * local storage.
+     * @param bsoiaLoadedFromLocalStorage The BSOIA assets to
+     * be set.
+     */
+    this.setBSOIA = function(bsoiaLoadedFromLocalStorage){
+        bsoia = bsoiaLoadedFromLocalStorage;
+    };
+
+    /**
      * Adds an asset to the list of selected
      * TOIA assets.
      * @param toiaAsset The selected asset to add.
@@ -104,6 +116,16 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      */
     this.getTOIA = function(){
         return toia;
+    };
+
+    /**
+     * Sets the current TOIA assets, loading them from
+     * local storage.
+     * @param toiaLoadedFromLocalStorage The TOIA assets to
+     * be set.
+     */
+    this.setTOIA = function(toiaLoadedFromLocalStorage){
+        toia = toiaLoadedFromLocalStorage;
     };
 
     /**
@@ -244,6 +266,14 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         return ta;
     };
 
+    /**
+     * Sets the current TA assets, loading them from
+     * local storage.
+     * @param taLoadedFromLocalStorage The TA assets to
+     * be set.
+     */
+    this.setTA = function(taLoadedFromLocalStorage){
+        ta = taLoadedFromLocalStorage;
     this.loadResourcesFromXML = function(file){
         var fileReader = new FileReader();
         var deferred = $q.defer();
@@ -254,10 +284,21 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         return deferred.promise;
     };
 
-    this.clearAssets = function () {
-        bsoia = [];
-        toia = [];
-        ta = [];
+    /**
+     * Sets a flag indicating local storage data is being
+     * loaded.
+     * @param loading A boolean indicating the loading state.
+     */
+    this.loadingLocalStorageData = function(loading){
+        loadingDataFromLocalStorage = loading;
+    };
+
+    /**
+     * Whether local storage data is being loaded or not.
+     * @returns {boolean}
+     */
+    this.isLoadingLocalStorageData = function(){
+        return loadingDataFromLocalStorage;
     }
 
 }]);
