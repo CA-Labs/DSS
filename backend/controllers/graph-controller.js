@@ -82,6 +82,25 @@
     });
 
     /**
+     * Retrieves risks-treatments mapping
+     */
+    controller.get('risksTreatmentsMapping', function(req, res){
+        //TODO: Return projections and not full paths?
+        var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1}) ' +
+            'let sourceType = (p.source.type) ' +
+            'let destinationType = (p.destination.type) ' +
+            'let sourceName = (lower(p.source.name)) ' +
+            'filter (sourceType == "risk") && (destinationType == "treatment") ' +
+            'collect risk = (p.source.name) into treatments ' +
+            'return {risk: risk, treatments: treatments[*].p.destination.name}';
+
+        var stmt = db._createStatement({query: query});
+
+        var result = stmt.execute();
+        res.json(result);
+    });
+
+    /**
      * Updates a metric edge value and updates the graph properly
      */
     controller.put('updateMetric', function(req, res){

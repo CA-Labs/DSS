@@ -7,16 +7,16 @@
 dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageService', function(flash, $q, $rootScope, localStorageService){
 
     //BSOIA assets
-    var bsoiaFromStorage = localStorageService.get('bsoiaAssetsSelected');
-    var bsoia = (!_.isNull(bsoiaFromStorage)) ? bsoiaFromStorage : [];          //BSOIA assets selected by the user
+    var bsoiaFromStorage = localStorageService.get('bsoiaAssetsSelected') || [];
+    var bsoia = bsoiaFromStorage;               //BSOIA assets selected by the user
     //TOIA assets
-    var toiaFromStorage = localStorageService.get('toiaAssetsSelected');
-    var toia = (!_.isNull(toiaFromStorage)) ? toiaFromStorage : [];             //TOIA assets selected by the user
+    var toiaFromStorage = localStorageService.get('toiaAssetsSelected') || [];
+    var toia = toiaFromStorage;                 //TOIA assets selected by the user
     //TA assets
-    var taFromStorage = localStorageService.get('ta');
-    var ta = (!_.isNull(taFromStorage)) ? taFromStorage : [];                   //TA assets selected by the user
+    var taFromStorage = localStorageService.get('ta') || [];
+    var ta = taFromStorage;                     //TA assets selected by the user
 
-    var loadingDataFromLocalStorage = false;                                    //Flag to control local storage restore state
+    var loadingDataFromLocalStorage = false;    //Flag to control local storage restore state
 
     /**
      * Adds an asset to the list of selected
@@ -299,6 +299,15 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      */
     this.isLoadingLocalStorageData = function(){
         return loadingDataFromLocalStorage;
-    }
+    };
+
+    /**
+     * Removes all assets (BSOIA/TOIA/TA).
+     */
+    this.removeAll = function(){
+        bsoia = [];
+        toia = [];
+        ta = [];
+    };
 
 }]);

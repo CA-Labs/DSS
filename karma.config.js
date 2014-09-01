@@ -20,7 +20,7 @@ module.exports = function(config) {
         'frontend/components/jquery-ui/jquery-ui.min.js',
         'frontend/components/ng-file-upload/angular-file-upload-shim.js',
         'frontend/components/angular/angular.js',
-        'frontend/components/ngstorage/ngStorage.min.js',
+        'frontend/components/angular-local-storage/angular-local-storage.js',
         'frontend/components/bootstrap/dist/js/bootstrap.js',
         'frontend/components/nouislider/jquery.nouislider.js',
         'frontend/components/nouislider/Link.js',
