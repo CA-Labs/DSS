@@ -9,6 +9,9 @@ lib-cov
 *.map
 *.min.js
 
+# Merge files origins
+**/*/*.orig
+
 pids
 logs
 results
