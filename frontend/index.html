@@ -321,10 +321,10 @@
                                                 <input type="text" class="form-control" value="{{value}}" readonly="readonly" style="background-color: #18bc9c !important; cursor: default !important;">
                                             </div>
                                             <br/>
-                                            <div ui-on-drop="taDropped($event, $data, item)" class="dropzone-container">
-                                                <button ui-draggable="true" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in item.taRelations">
-                                                    <small><span class="glyphicon glyphicon-remove remove-bsoia-in-toia-asset" ng-click="removeTaFromTreatment(taRelation, item)">&nbsp;</span></small>
-                                                    {{taAsset.cloudType}} - {{taAsset.cloudResource._serviceType}}
+                                            <div ui-on-drop="taDropped($event, $data, treatmentSelected.destination)" class="dropzone-container">
+                                                <button ui-draggable="true" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.destination.taRelations">
+                                                    <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected.destination, taRelation)">&nbsp;</span></small>
+                                                    {{taRelation.cloudType}} - {{taRelation.cloudResource._serviceType}}
                                                 </button>
                                             </div>
                                             <!--<treat-radio item="treatmentSelected"></treat-radio>-->
