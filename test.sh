@@ -34,6 +34,8 @@ if ! ps aux | grep "arangod" | grep -v grep > /dev/null; then
     sleep 10s
     echo "Installing dependencies..."
     npm install -d --loglevel=silent
+    echo "Compiling assets..."
+    grunt uglify
     echo "Starting tests..."
     npm test
 
@@ -45,6 +47,8 @@ else
     sleep 10s
     echo "Installing dependencies..."
     npm install -d --loglevel=silent
+    echo "Compiling assets..."
+    grunt uglify
     echo "Starting tests..."
     npm test
 

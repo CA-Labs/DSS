@@ -4,10 +4,12 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.service('TreatmentsService', ['flash', '$localStorage', function(flash, $localStorage){
+dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(flash, localStorageService){
 
-    var treatments = ($localStorage.treatments) ? $localStorage.treatments : $localStorage.treatments = [];            // Treatments selected by the user
-    var treatmentsValues = {};      // Treatments values model used to store select/sliders/radio UI components values
+    var treatmentsFromStorage = localStorageService.get('treatmentsSelected');
+    var treatments = (!_.isNull(treatmentsFromStorage)) ? treatmentsFromStorage : [];
+    var treatmentsValuesFromStorage = localStorageService.get('treatmentValues');
+    var treatmentsValues = (!_.isNull(treatmentsValuesFromStorage)) ? treatmentsValuesFromStorage : {};      // Treatments values model used to store select/sliders/radio UI components values
 
     /**
      * Adds a treatment to the list of selected treatments.
@@ -22,6 +24,7 @@ dssApp.service('TreatmentsService', ['flash', '$localStorage', function(flash, $
                 return treatment.destination.name == t.destination.name;
             }).length > 0;
             if(!exists){
+                // objectify options
                 treatments.push(treatment);
             } else {
                 flash.warn = 'This treatment has been already added';
@@ -52,13 +55,6 @@ dssApp.service('TreatmentsService', ['flash', '$localStorage', function(flash, $
     };
 
     /**
-     * Clear Selection of treatments
-     */
-    this.clearSelection = function () {
-        $localStorage.treatments = [];
-    };
-
-    /**
      * Adds a new treatment value to the model of selected treatments values.
      * @param treatmentName The treatment name.
      * @param treatmentValue The treatment value.
@@ -84,5 +80,47 @@ dssApp.service('TreatmentsService', ['flash', '$localStorage', function(flash, $
     this.getTreatmentsValues = function(){
         return treatmentsValues;
     }
+
+    /**
+     * check if TA exists in the treatment
+     * @param treatment
+     * @param ta
+     * @returns {boolean}
+     */
+    this.taAssetExists = function (treatment, ta) {
+        var bool = false;
+        if (_.isUndefined(treatment.taRelations)) treatment.taRelations = [];
+        _.each(treatment.taRelations, function (taAssigned) {
+            if (taAssigned._id == ta._id) {
+                bool = true;
+            }
+        });
+        return bool;
+    };
+
+    /**
+     * Add TA to Treatment
+     * @param treatment
+     * @param ta
+     */
+    this.addTAToTreatment = function (treatment, ta) {
+        if (_.isUndefined(treatment.taRelations)) treatment.taRelations = [];
+        treatment.taRelations.push(ta);
+    };
+
+    /**
+     * Remove Tangible Asset from Treatment
+     * @param treatment
+     * @param ta
+     * @returns {boolean}
+     */
+    this.removeTaFromTreatment = function (treatment, ta) {
+        if (_.isUndefined(treatment.taRelations)) return false;
+        var taPos = _.indexOf(treatment.taRelations, ta);
+        if (taPos > -1) {
+            treatment.taRelations.splice(taPos, 1);
+            return;
+        }
+    };
 
 }]);

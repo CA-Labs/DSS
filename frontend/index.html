@@ -199,7 +199,8 @@
                         <div class="col-lg-8">
                             <div class="list-group">
                                 <div ng-show="risksSelected.length > 0">
-                                    <input name="risks-per-ta" bs-switch ng-model="multiple" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="ON" switch-off-text="OFF" switch-on-color="success" ng-change="toggleActivation()"/>
+                                    <input name="risks-per-ta" bs-switch ng-model="multiple" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleActivation()"/>
+                                    <label for="showTreatmentValues" class="pull-right">Specify Risk per Tengible Asset&nbsp;</label>
                                     <h4>Risks Selected</h4>
                                 </div>
                                 <div class="list-group-item selected-risk risk-container" href="#" ng-repeat="risk in risksSelected track by $index">
@@ -277,10 +278,25 @@
                                 <option></option>
                             </select>
                             <button class="btn btn-success" ng-click="addTreatment(potentialTreatment)" style="width: 19% !important;">Add</button>
+                            <div ng-if="taAssets.length > 0" style="margin-top: 45px;">
+                                <p>Tangible Assets</p>
+                            </div>
+                            <div ng-if="taAssets.length == 0" style="margin-top: 45px;">
+                                <div class="alert alert-danger" role="alert">
+                                    No tangible assets added.
+                                </div>
+                            </div>
+                            <div id="selected-ta" class="col-lg-4">
+                                <button ui-draggable="true" drag="taAsset" class="btn btn-sm bsoia-tag" ng-class="isTaEverUsed(taAsset) ? 'btn-info' : 'btn-warning'" ng-repeat="taAsset in taAssets">
+                                    {{taAsset.cloudType}} - {{taAsset.cloudResource._serviceType}}
+                                </button>
+                            </div>
                         </div>
                         <div class="col-lg-8">
                             <div class="list-group">
                                 <div  ng-if="treatmentsSelected.length > 0">
+                                    <input name="showTreatmentValues" bs-switch ng-model="showTreatmentValues" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleTreatmentValues()"/>
+                                    <label for="showTreatmentValues" class="pull-right">Specify Treatment Values&nbsp;</label>
                                     <h4>Treatments Selected</h4>
                                 </div>
                                 <a class="list-group-item selected-treatment" href="#" ng-repeat="treatmentSelected in treatmentsSelected">
@@ -288,10 +304,33 @@
                                     <span class="glyphicon glyphicon-remove remove-treatment" ng-click="removeTreatment(treatmentSelected)">&nbsp;</span>
                                     <div ng-switch="treatmentSelected.destination.representation">
                                         <div ng-switch-when="select">
-                                            <treat-select item="treatmentSelected"></treat-select>
+                                            <select ng-show="showTreatmentValues" label="treatmentValue" class="form-control" data-hash-key="treatmentSelected.destination.name" ng-model="treatmentValue" ng-options="value for (key,value) in treatmentSelected.destination.options | orderBy:'':true" ng-change="treatmentValueChanged(treatmentValue, treatmentSelected)"/>
+                                                <option value="" disabled selected>--- Select a value ---</option>
+                                            </select>
+                                            <br/>
+                                            <div ui-on-drop="taDropped($event, $data, treatmentSelected.destination)" class="dropzone-container">
+                                                <button ui-draggable="true" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.destination.taRelations">
+                                                    <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected.destination, taRelation)">&nbsp;</span></small>
+                                                    {{taRelation.cloudType}} - {{taRelation.cloudResource._serviceType}}
+                                                </button>
+                                            </div>
+                                            <!--<treat-select item="treatmentSelected"></treat-select>-->
                                         </div>
                                         <div ng-switch-when="radio">
-                                            <treat-radio item="treatmentSelected"></treat-radio>
+                                            <div style="margin-top: 20px; width: 300px; text-align: right;" class="input-group" ng-repeat="(key,value) in options">
+                                                <span class="input-group-addon">
+                                                    <input type="radio" name="{{value}}" value="{{key}}" ng-model="$parent.aux" ng-change="change(value)">
+                                                </span>
+                                                <input type="text" class="form-control" value="{{value}}" readonly="readonly" style="background-color: #18bc9c !important; cursor: default !important;">
+                                            </div>
+                                            <br/>
+                                            <div ui-on-drop="taDropped($event, $data, treatmentSelected.destination)" class="dropzone-container">
+                                                <button ui-draggable="true" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.destination.taRelations">
+                                                    <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected.destination, taRelation)">&nbsp;</span></small>
+                                                    {{taRelation.cloudType}} - {{taRelation.cloudResource._serviceType}}
+                                                </button>
+                                            </div>
+                                            <!--<treat-radio item="treatmentSelected"></treat-radio>-->
                                         </div>
                                     </div>
                                 </a>
@@ -317,7 +356,7 @@
                                         <div class="panel-body" ng-switch="taAsset.cloudType">
                                             <div ng-switch-when="IaaS">
                                                 <div class="panel-group">
-                                                    <div class="panel panel-default" ng-repeat="result in getTAProposals(taAsset.cloudResource._serviceName) track by $index">
+                                                    <div class="panel panel-default service-proposal-panel" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudResource._serviceName) track by $index">
                                                         <div class="panel heading" style="background-color: #d3d3d3">
                                                             <h4 class="panel-title">
                                                                 <a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">
@@ -354,7 +393,7 @@
                                             </div>
                                             <div ng-switch-when="PaaS">
                                                 <div class="panel-group">
-                                                    <div class="panel panel-default" ng-repeat="result in getTAProposals(taAsset.cloudPlatform._serviceName) track by $index">
+                                                    <div class="panel panel-default service-proposal-panel" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudPlatform._serviceName) track by $index">
                                                         <div class="panel heading" style="background-color: #d3d3d3">
                                                             <h4 class="panel-title">
                                                                 <a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">
@@ -415,7 +454,7 @@
 <script src="components/jquery-ui/jquery-ui.min.js"></script>
 <script src="components/ng-file-upload/angular-file-upload-shim.js"></script>
 <script src="components/angular/angular.js"></script>
-<script src="components/ngstorage/ngStorage.min.js"></script>
+<script src="components/angular-local-storage/angular-local-storage.js"></script>
 <script src="components/bootstrap/dist/js/bootstrap.js"></script>
 <script src="components/bootstrap/js/transition.js"></script>
 <script src="components/bootstrap/js/collapse.js"></script>

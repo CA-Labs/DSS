@@ -4,11 +4,12 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.service('RisksService', ['flash', '$localStorage', function(flash, $localStorage){
+dssApp.service('RisksService', ['flash', 'localStorageService', function(flash, localStorageService){
 
     var risks = [];
 
-    var risksLikelihoodConsequence = {};        //Likelihood/consequences values for each risk (as a whole) of the form
+    var risksLikelihoodConsequenceFromStorage = localStorageService.get('simpleRisksLikelihoodConsequence');
+    var risksLikelihoodConsequence = (!_.isNull(risksLikelihoodConsequenceFromStorage)) ? risksLikelihoodConsequenceFromStorage : {};        //Likelihood/consequences values for each risk (as a whole) of the form
                                                 //riskname_likelihood/riskname_consequence
 
     var risksTALikelihoodConsequence = {};      //Likelihood/consequences values for each TA and risk of the form
@@ -53,13 +54,6 @@ dssApp.service('RisksService', ['flash', '$localStorage', function(flash, $local
      */
     this.getRisks = function(){
         return risks;
-    };
-
-    /**
-     * Clear selection of risks
-     */
-    this.clearSelection = function () {
-        $localStorage.risks = [];
     };
 
     /**

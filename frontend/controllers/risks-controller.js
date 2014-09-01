@@ -4,15 +4,36 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('risksController', ['$scope', '$rootScope', '$localStorage', 'ArangoDBService', 'flash', 'AssetsService', 'RisksService', '$timeout', '$interpolate', function($scope, $rootScope, $localStorage,  ArangoDBService, flash, AssetsService, RisksService, $timeout, $interpolate){
+dssApp.controller('risksController'
+        , ['$scope'
+        , '$rootScope'
+        , 'ArangoDBService'
+        , 'flash'
+        , 'localStorageService'
+        , 'AssetsService'
+        , 'RisksService'
+        , '$timeout'
+        , '$interpolate'
+    , function($scope
+           , $rootScope
+           , ArangoDBService
+           , flash
+           , localStorageService
+           , AssetsService
+           , RisksService
+           , $timeout
+           , $interpolate){
 
     //Initialization
     $scope.potentialRisks = [];                                                                     //List of current potential risks depending on BSOIA/TOIA assets selected by the user
     $scope.risksSelected = RisksService.getRisks();                                                 //Risks selected by the user
+    localStorageService.bind($scope, 'risksSelected', $scope.risksSelected);
     $scope.multiple = false;                                                                        //Switch button to allow evaluate risks for each TA
     $scope.taAssets = AssetsService.getTA();                                                        //The selected TA assets
     $scope.simpleRisksLikelihoodConsequence = RisksService.getRisksLikelihoodConsequence();         //Likelihood/Consequence values for simple risks model
+    localStorageService.bind($scope, 'simpleRisksLikelihoodConsequence', $scope.simpleRisksLikelihoodConsequence);
     $scope.multipleRisksLikelihoodConsequence = RisksService.getRisksTALikelihoodConsequence();     //Likelihood/Consequence values for multiple risks model
+    localStorageService.bind($scope, 'multipleRisksLikelihoodConsequence', $scope.multipleRisksLikelihoodConsequence);
 
     //List of available categories to categorize risks level
     var CATEGORY = {

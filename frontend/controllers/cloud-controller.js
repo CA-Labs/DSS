@@ -4,11 +4,15 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsService', 'AssetsService', function($scope, ArangoDBService, TreatmentsService, AssetsService){
+dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'localStorageService', function($scope, ArangoDBService, TreatmentsService, AssetsService, localStorageService){
 
     $scope.treatments = TreatmentsService.getTreatments();              // The selected treatments
     $scope.ta = AssetsService.getTA();                                  // The selected TA assets loaded from the cloud descriptor xml file
     $scope.proposals = {};                                              // The cloud service proposals (by TA) offered by the graph engine
+    localStorageService.bind($scope, 'proposals', $scope.proposals);
+    $scope.servicesSelected = {};
+    localStorageService.bind($scope, 'servicesSelected', $scope.servicesSelected);
+
 
     $scope.$watch(function(){
         return $scope.treatments
@@ -83,6 +87,19 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
         } else {
             return [];
         }
-    }
+    };
+
+    /**
+     * Save selected services
+     * @param {object} proposal - service object selected by the user
+     * @param {object} taAsset - ta asset object to which the proposal is assigned to
+     */
+    $scope.selectService = function (proposal, taAsset) {
+        var data = {
+            ta: taAsset,
+            serviceSelected: proposal
+        };
+        $scope.servicesSelected[taAsset._id] = data;
+    };
 
 }]);

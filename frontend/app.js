@@ -52,7 +52,7 @@ $('#dssSlides').carousel('pause' ,{
 });
 
 var dssApp = angular.module('dssApp', [
-    'ngStorage',
+    'LocalStorageModule',
     'angular-flash.service',
     'angular-flash.flash-alert-directive',
     'ngDragDrop',
@@ -60,8 +60,10 @@ var dssApp = angular.module('dssApp', [
     'angularFileUpload',
     'frapontillo.bootstrap-switch',
     'nouislider'
-]).config(['cfpLoadingBarProvider', function(cfpLoadingBarProvider) {
+]).config(['cfpLoadingBarProvider', 'localStorageServiceProvider', function(cfpLoadingBarProvider, localStorageServiceProvider) {
         cfpLoadingBarProvider.includeSpinner = false;
+
+    localStorageServiceProvider.setPrefix('DSS');
 }]);
 
 /******************************************************

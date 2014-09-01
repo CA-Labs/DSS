@@ -4,11 +4,12 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('toiaController', ['$scope', '$rootScope', '$localStorage', 'AssetsService', 'ArangoDBService', 'flash', function($scope, $rootScope, $localStorage, AssetsService, ArangoDBService, flash){
+dssApp.controller('toiaController', ['$scope', '$rootScope', 'localStorageService', 'AssetsService', 'ArangoDBService', 'flash', function($scope, $rootScope, localStorageService, AssetsService, ArangoDBService, flash){
 
     //Initialization
     $scope.toiaAssets = [];      //The TOIA assets retrieved from the DB
     $scope.toiaAssetsSelected = AssetsService.getTOIA();    //TOIA assets selected by the user (shared across the Assets service)
+    localStorageService.bind($scope, 'toiaAssetsSelected', $scope.toiaAssetsSelected); // Bind toiaAssets to localStorage
     $scope.bsoiaAssetsSelected = AssetsService.getBSOIA();  //BSOIA assets selected by the user (shared across the Assets service)
 
     /**
@@ -39,6 +40,8 @@ dssApp.controller('toiaController', ['$scope', '$rootScope', '$localStorage', 'A
      */
     $scope.removeBsoiaFromToiaAsset = function(bsoiaAsset, toiaAsset){
         AssetsService.removeBSOIAfromTOIA(bsoiaAsset.name, toiaAsset.asset.name);
+        // update local storage as well
+        localStorageService.set('toiaAssetsSelected', $scope.toiaAssetsSelected);
     };
 
     /**
@@ -58,6 +61,8 @@ dssApp.controller('toiaController', ['$scope', '$rootScope', '$localStorage', 'A
         } else {
             toiaAsset.bsoiaRelations.push($data);
             AssetsService.updateTOIAbyName(toiaAsset.asset.name, toiaAsset);
+            // udpate local storage as well
+            localStorageService.set('toiaAssetsSelected', $scope.toiaAssetsSelected);
         }
     };
 
