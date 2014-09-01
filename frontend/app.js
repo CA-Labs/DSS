@@ -65,6 +65,25 @@ var dssApp = angular.module('dssApp', [
     localStorageServiceProvider.setPrefix('DSS');
 }]);
 
+// Initialize UI if local storage data is available
+dssApp.run(['AssetsService', 'RisksService', 'TreatmentsService', 'localStorageService', function(AssetsService, RisksService, TreatmentsService, localStorageService){
+    // Don't touch this, order matters!
+    /*
+    AssetsService.loadingLocalStorageData(true);
+    RisksService.loadingLocalStorageData(true);
+    TreatmentsService.loadingTreatmentsFromLocalStorage(true);
+    TreatmentsService.loadingTreatmentsValuesFromLocalStorage(true);
+    AssetsService.setBSOIA(localStorageService.get('bsoiaAssetsSelected'));
+    AssetsService.setTOIA(localStorageService.get('toiaAssetsSelected'));
+    RisksService.setSimpleRisksLikelihoodConsequence(localStorageService.get('simpleRisksLikelihoodConsequence'));
+    RisksService.setMultipleRisksLikelihoodConsequence(localStorageService.get('multipleRisksLikelihoodConsequence'));
+    RisksService.setRisks(localStorageService.get('risksSelected'));
+    TreatmentsService.setTreatmentValues(localStorageService.get('treatmentValues'));
+    TreatmentsService.setTreatments(localStorageService.get('treatmentsSelected'));
+    AssetsService.setTA(localStorageService.get('taAssets'));
+    */
+}]);
+
 /******************************************************
  ********************* BSOIA SLIDE ********************
  *****************************************************/

@@ -291,6 +291,15 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      */
     this.isLoadingLocalStorageData = function(){
         return loadingDataFromLocalStorage;
-    }
+    };
+
+    /**
+     * Removes all assets (BSOIA/TOIA/TA).
+     */
+    this.removeAll = function(){
+        bsoia = [];
+        toia = [];
+        ta = [];
+    };
 
 }]);
