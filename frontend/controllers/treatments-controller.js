@@ -132,18 +132,13 @@ dssApp.controller('treatmentsController'
 
     $scope.taDropped = function (event, data, treatment) {
         if (TreatmentsService.taAssetExists(treatment, data)) {
-            flash.warn = 'TA asset already added';
+            flash.warn = 'Tangible Asset [TA] already added';
         } else {
             TreatmentsService.addTAToTreatment(treatment, data);
             localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
         }
 
     };
-
-    $scope.makeObjectFromString = function (string) {
-        return eval('{' + string + '}');
-    };
-
 
     $scope.removeTaFromTreatment = function (treatment, ta) {
         TreatmentsService.removeTaFromTreatment(treatment, ta);

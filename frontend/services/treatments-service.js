@@ -88,13 +88,14 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
      * @returns {boolean}
      */
     this.taAssetExists = function (treatment, ta) {
-        if (_.isUndefined(treatment.taRelations)) return false;
+        var bool = false;
+        if (_.isUndefined(treatment.taRelations)) treatment.taRelations = [];
         _.each(treatment.taRelations, function (taAssigned) {
             if (taAssigned._id == ta._id) {
-                return true;
+                bool = true;
             }
         });
-        return false;
+        return bool;
     };
 
     /**
