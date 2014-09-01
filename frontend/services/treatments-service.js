@@ -98,6 +98,7 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
      */
     this.addTAToTreatment = function (treatment, ta) {
         if (_.isUndefined(treatment.taRelations)) treatment.taRelations = [];
+        console.log("ta: " + ta);
         treatment.taRelations.push(ta);
     };
 

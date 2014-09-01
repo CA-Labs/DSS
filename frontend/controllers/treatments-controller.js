@@ -128,6 +128,7 @@ dssApp.controller('treatmentsController'
             flash.warn = 'TA asset already added';
         } else {
             TreatmentsService.addTAToTreatment(treatment, data);
+            localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
         }
 
     };
@@ -139,6 +140,7 @@ dssApp.controller('treatmentsController'
 
     $scope.removeTaFromTreatment = function (treatment, ta) {
         TreatmentsService.removeTaFromTreatment(treatment, ta);
+        localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
     }
 
 }]);
