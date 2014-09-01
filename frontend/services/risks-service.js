@@ -18,8 +18,6 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
 
     var loadingDataFromLocalStorage = false;                                                                                                    //Flag to control local storage restore state
 
-    var risksTreatmentsMapping = {};
-
     /**
      * Adds a risk to the list of selected risks.
      * @param risk The risk to be added.
@@ -270,15 +268,5 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
             return Math.ceil(this.getRiskLikelihoodValue(riskName)/10 * this.getRiskConsequenceValue(riskName));
         }
     };
-
-    // Initial fetch: risks treatments mapping
-    ArangoDBService.getRisksTreatmentsMapping(function(error, data){
-        if(error){
-            flash.error = 'Some error occurred while trying to fetch risks and treatments mapping';
-        } else {
-            risksTreatmentsMapping = data._documents;
-        }
-    });
-
 
 }]);

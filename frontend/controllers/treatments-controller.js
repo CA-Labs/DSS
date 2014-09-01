@@ -41,7 +41,7 @@ dssApp.controller('treatmentsController'
     $scope.$on('risksSelectedChanged', function(){
         // Only update if we have at least one risk selected
         if(RisksService.getRisks().length > 0){
-            ArangoDBService.getPotentialTreatments(function(error, data){
+            ArangoDBService.getPotentialTreatments(RisksService.getRisks(), function(error, data){
                 if(error){
                     flash.error = 'Some error occurred when trying to compute potential treatments after selected risks changed';
                 } else {

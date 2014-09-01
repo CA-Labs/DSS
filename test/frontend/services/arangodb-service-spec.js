@@ -128,7 +128,7 @@ describe('ArangoDBService - Check API calls', function(){
 
         $httpBackend.expect('GET', ARANGODB_TEST_BASE_URL + 'graph/potentialRisks?').respond('200', [{}, {}, {}]);
 
-        ArangoDBService.getPotentialRisks(function(error, data){
+        ArangoDBService.getPotentialRisks([], [], function(error, data){
             expect(data).not.toBe(null);
             expect(data.length).toBe(3);
         });
@@ -141,7 +141,7 @@ describe('ArangoDBService - Check API calls', function(){
 
         $httpBackend.expect('GET', ARANGODB_TEST_BASE_URL + 'graph/potentialTreatments?').respond('200', [{}, {}, {}]);
 
-        ArangoDBService.getPotentialTreatments(function(error, data){
+        ArangoDBService.getPotentialTreatments([], function(error, data){
             expect(data).not.toBe(null);
             expect(data.length).toBe(3);
         });

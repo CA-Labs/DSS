@@ -10,7 +10,7 @@
  * Manages all data retrieval from the
  * ArangoDB database instance.
  */
-dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService', function($http, $q, AssetsService, RisksService){
+dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
 
     //Set Authorization header
     $http.defaults.headers.common['Authorization'] = 'Basic ' + btoa('root:CATech2014!');
@@ -163,11 +163,13 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
     /**
      * Retrieves potential risks by looking up
      * risks connected to BSOIA or TOIA assets.
+     * @param bsoia List of BSOIA assets.
+     * @param toia List of TOIA assets.
      * @param callback Callback fn to execute
      * on data retrieval.
      */
-    this.getPotentialRisks = function(callback) {
-        $http({method: 'GET', url: self.FOXX_API.getPotentialRisks(AssetsService.getBSOIA(), AssetsService.getTOIA())})
+    this.getPotentialRisks = function(bsoia, toia, callback) {
+        $http({method: 'GET', url: self.FOXX_API.getPotentialRisks(bsoia, toia)})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })
@@ -179,11 +181,12 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
     /**
      * Retrieves potential treatments connected to
      * a list of risks.
-     * @param callback Callback fn to execute
+     * @param risks List of risks.
+     * @param callback Callback fn to execute.
      * on data retrieval.
      */
-    this.getPotentialTreatments = function(callback){
-        $http({method: 'GET', url: self.FOXX_API.getPotentialTreatments(RisksService.getRisks())})
+    this.getPotentialTreatments = function(risks, callback){
+        $http({method: 'GET', url: self.FOXX_API.getPotentialTreatments(risks)})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })

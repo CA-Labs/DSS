@@ -122,7 +122,7 @@ dssApp.controller('risksController'
     $scope.$on('bsoiaChanged', function(){
         // Only update if we have at least one BSOIA asset
         if(AssetsService.getBSOIA().length > 0) {
-            ArangoDBService.getPotentialRisks(function(error, data){
+            ArangoDBService.getPotentialRisks(AssetsService.getBSOIA(), AssetsService.getTOIA(), function(error, data){
                 if(error){
                     flash.error = 'Some error occurred when trying to compute potential risks after selected BSOIA changed';
                 } else {
@@ -147,7 +147,7 @@ dssApp.controller('risksController'
      * by the user. This allows to recompute the potential risks.
      */
     $scope.$on('toiaChanged', function(){
-        ArangoDBService.getPotentialRisks(function(error, data){
+        ArangoDBService.getPotentialRisks(AssetsService.getBSOIA(), AssetsService.getTOIA(), function(error, data){
            if(error){
                flash.error = 'Some error occurred when trying to compute potential risks after selected TOIA changed';
            } else {
