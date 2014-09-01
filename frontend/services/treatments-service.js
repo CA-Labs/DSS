@@ -24,6 +24,7 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
                 return treatment.destination.name == t.destination.name;
             }).length > 0;
             if(!exists){
+                // objectify options
                 treatments.push(treatment);
             } else {
                 flash.warn = 'This treatment has been already added';
@@ -88,7 +89,12 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
      */
     this.taAssetExists = function (treatment, ta) {
         if (_.isUndefined(treatment.taRelations)) return false;
-        return (_.indexOf(treatment.taRelations, ta) > -1);
+        _.each(treatment.taRelations, function (taAssigned) {
+            if (taAssigned._id == ta._id) {
+                return true;
+            }
+        });
+        return false;
     };
 
     /**
@@ -98,7 +104,6 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
      */
     this.addTAToTreatment = function (treatment, ta) {
         if (_.isUndefined(treatment.taRelations)) treatment.taRelations = [];
-        console.log("ta: " + ta);
         treatment.taRelations.push(ta);
     };
 

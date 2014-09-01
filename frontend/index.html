@@ -199,7 +199,8 @@
                         <div class="col-lg-8">
                             <div class="list-group">
                                 <div ng-show="risksSelected.length > 0">
-                                    <input name="risks-per-ta" bs-switch ng-model="multiple" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="ON" switch-off-text="OFF" switch-on-color="success" ng-change="toggleActivation()"/>
+                                    <input name="risks-per-ta" bs-switch ng-model="multiple" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleActivation()"/>
+                                    <label for="showTreatmentValues" class="pull-right">Specify Risk per Tengible Asset&nbsp;</label>
                                     <h4>Risks Selected</h4>
                                 </div>
                                 <div class="list-group-item selected-risk risk-container" href="#" ng-repeat="risk in risksSelected track by $index">
@@ -286,7 +287,7 @@
                                 </div>
                             </div>
                             <div id="selected-ta" class="col-lg-4">
-                                <button ui-draggable="true" drag="taAsset" class="btn btn-sm bsoia-tag" ng-class="isTaEverUser(taAsset) ? 'btn-info' : 'btn-warning'" ng-repeat="taAsset in taAssets">
+                                <button ui-draggable="true" drag="taAsset" class="btn btn-sm bsoia-tag" ng-class="isTaEverUsed(taAsset) ? 'btn-info' : 'btn-warning'" ng-repeat="taAsset in taAssets">
                                     {{taAsset.cloudType}} - {{taAsset.cloudResource._serviceType}}
                                 </button>
                             </div>
@@ -294,6 +295,8 @@
                         <div class="col-lg-8">
                             <div class="list-group">
                                 <div  ng-if="treatmentsSelected.length > 0">
+                                    <input name="showTreatmentValues" bs-switch ng-model="showTreatmentValues" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleTreatmentValues()"/>
+                                    <label for="showTreatmentValues" class="pull-right">Specify Treatment Values&nbsp;</label>
                                     <h4>Treatments Selected</h4>
                                 </div>
                                 <a class="list-group-item selected-treatment" href="#" ng-repeat="treatmentSelected in treatmentsSelected">
@@ -301,7 +304,7 @@
                                     <span class="glyphicon glyphicon-remove remove-treatment" ng-click="removeTreatment(treatmentSelected)">&nbsp;</span>
                                     <div ng-switch="treatmentSelected.destination.representation">
                                         <div ng-switch-when="select">
-                                            <select label="treatments" class="form-control" data-hash-key="treatmentSelected.destination.name" ng-model="treatment" ng-options="value for (key,value) in treatmentSelected.destination.options | orderBy:'':true" ng-change="change(treatment)">
+                                            <select ng-show="showTreatmentValues" label="treatmentValue" class="form-control" data-hash-key="treatmentSelected.destination.name" ng-model="treatmentValue" ng-options="value for (key,value) in treatmentSelected.destination.options | orderBy:'':true" ng-change="treatmentValueChanged(treatmentValue, treatmentSelected)"/>
                                                 <option value="" disabled selected>--- Select a value ---</option>
                                             </select>
                                             <br/>
