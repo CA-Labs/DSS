@@ -78,6 +78,9 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
             });
             return url;
         },
+        getRisksTreatmentsMapping: function(){
+            return self.ARANGODB_BASE_URL + 'graph/risksTreatmentsMapping';
+        },
         getProposals: function(cloudType, treatments){
             var firstTreatment = true;
             var url = self.ARANGODB_BASE_URL + 'graph/lookupServices?';
@@ -181,6 +184,20 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'AssetsService', 'RisksService
      */
     this.getPotentialTreatments = function(callback){
         $http({method: 'GET', url: self.FOXX_API.getPotentialTreatments(RisksService.getRisks())})
+            .success(function(data, status, headers, config){
+                callback(null, data);
+            })
+            .error(function(data, status, headers, config){
+                callback(data, null);
+            });
+    };
+
+    /**
+     * Retrieves risks-treatments mapping.
+     * @param callback Callback fn to execute on data retrieval.
+     */
+    this.getRisksTreatmentsMapping = function(callback){
+        $http({method: 'GET', url: self.FOXX_API.getRisksTreatmentsMapping()})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })

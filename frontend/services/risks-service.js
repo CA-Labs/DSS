@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.service('RisksService', ['flash', 'localStorageService', function(flash, localStorageService){
+dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService', function(flash, localStorageService, ArangoDBService){
 
     var risks = [];
 
@@ -17,6 +17,8 @@ dssApp.service('RisksService', ['flash', 'localStorageService', function(flash, 
                                                                                                                                                 //riskname_taAssetName_likelihood/riskname_taAssetName_consequence
 
     var loadingDataFromLocalStorage = false;                                                                                                    //Flag to control local storage restore state
+
+    var risksTreatmentsMapping = {};
 
     /**
      * Adds a risk to the list of selected risks.
@@ -187,7 +189,7 @@ dssApp.service('RisksService', ['flash', 'localStorageService', function(flash, 
      */
     this.loadingLocalStorageData = function(loading){
         loadingDataFromLocalStorage = loading;
-    }
+    };
 
     /**
      * Whether local storage data is being loaded or not.
@@ -195,6 +197,88 @@ dssApp.service('RisksService', ['flash', 'localStorageService', function(flash, 
      */
     this.isLoadingLocalStorageData = function(){
         return loadingDataFromLocalStorage;
-    }
+    };
+
+    /**
+     * Given a treatment name, returns the risk associated to it.
+     * @param treatmentName The treatment name to look up.
+     * @returns {string}
+     */
+    this.getRiskFromTreatment = function(treatmentName){
+        var riskName = '';
+        Object.keys(risksTreatmentMapping).forEach(function(risk){
+            var treatments = risksTreatmentsMapping[risk];
+            _.each(treatments, function(treatment){
+                if(treatment == treatmentName){
+                    riskName = risk;
+                    return;
+                }
+            });
+        });
+        return riskName;
+    };
+
+    /**
+     * Retrieves a certain risk likelihood.
+     * @param riskName The risk name to look up.
+     * @param taAssetName The technical asset associated to the risk, if specified.
+     */
+    this.getRiskLikelihoodValue = function(riskName, taAssetName){
+        if(taAssetName){
+            // Multiple likelihood/consequence model
+            return risksTALikelihoodConsequence[riskName + '_' + taAssetName + '_likelihood'];
+        } else {
+            // Simple likelihood/consequence model
+            return risksLikelihoodConsequence[riskName + '_likelihood'];
+        }
+    };
+
+    /**
+     * Retrieves a certain risk consequence.
+     * @param riskName The risk name to look up.
+     * @param taAssetName The technical asset associated to the risk, if specified.
+     */
+    this.getRiskConsequenceValue = function(riskName, taAssetName){
+        if(taAssetName){
+            // Multiple likelihood/consequence model
+            return risksTALikelihoodConsequence[riskName + '_' + taAssetName + '_consequence'];
+        } else {
+            // Simple likelihood/consequence model
+            return risksLikelihoodConsequence[riskName + '_consequence'];
+        }
+    };
+
+    /**
+     * TODO: A great function to set threshold acceptability related to a risk.
+     * @param riskName The risk to look up.
+     * @returns {number}
+     */
+    this.getAcceptableRiskThreshold = function(riskName) {
+        return 5;
+    };
+
+    /**
+     * Computes the related risk value.
+     * @param riskName The risk value to look up.
+     * @param taAssetName The TA asset associated to it, if specified.
+     * @returns {number}
+     */
+    this.getRiskValue = function(riskName, taAssetName) {
+        if(taAssetName){
+            return Math.ceil(this.getRiskLikelihoodValue(riskName, taAssetName)/10 * this.getRiskConsequenceValue(riskName, taAssetName));
+        } else {
+            return Math.ceil(this.getRiskLikelihoodValue(riskName)/10 * this.getRiskConsequenceValue(riskName));
+        }
+    };
+
+    // Initial fetch: risks treatments mapping
+    ArangoDBService.getRisksTreatmentsMapping(function(error, data){
+        if(error){
+            flash.error = 'Some error occurred while trying to fetch risks and treatments mapping';
+        } else {
+            risksTreatmentsMapping = data._documents;
+        }
+    });
+
 
 }]);
