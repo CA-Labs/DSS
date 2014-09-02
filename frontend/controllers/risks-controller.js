@@ -184,7 +184,8 @@ dssApp.controller('risksController'
     };
 
     /**
-     * Upon load of Tangible assets, set the values of the risks to be automatically enabled
+     * Upon load of Tangible assets,
+     * set the values of the risks to be automatically enabled
      */
     $rootScope.$on('loadedTA', function () {
         $scope.multiple = true;
