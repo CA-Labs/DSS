@@ -201,14 +201,14 @@
                         <div class="col-lg-8">
                             <div class="list-group">
                                 <div ng-show="risksSelected.length > 0">
-                                    <input name="risks-per-ta" bs-switch ng-model="multiple" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleActivation()"/>
+                                    <input name="risks-per-ta" bs-switch ng-model="showRiskPerTA" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleActivation()"/>
                                     <label for="showTreatmentValues" class="pull-right">Specify Risk per Tengible Asset&nbsp;</label>
                                     <h4>Risks Selected</h4>
                                 </div>
                                 <div class="list-group-item selected-risk risk-container" href="#" ng-repeat="risk in risksSelected track by $index">
                                     <span class="glyphicon glyphicon-remove remove-risk" ng-click="removeRisk(risk)">&nbsp;</span>
-                                    <!-- Not multiple selection -->
-                                    <div style="margin-top: 10px" ng-show="!multiple">
+                                    <!-- Not showRiskPerTA selection -->
+                                    <div style="margin-top: 10px" ng-show="!showRiskPerTA">
                                         <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
                                         <br/>
                                         <div class="col-lg-6" style="margin-top: 10px;" >
@@ -229,7 +229,7 @@
                                         </div>
                                     </div>
                                     <!-- Multiple selection -->
-                                    <div style="margin-top: 10px" ng-show="multiple">
+                                    <div style="margin-top: 10px" ng-show="showRiskPerTA">
                                         <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
                                         <br/>
                                         <div ng-repeat="taAsset in taAssets" on-repeat-done="repeatDone" class="col-lg-12">
@@ -240,7 +240,7 @@
                                             <br/>
                                             <div class="col-lg-6" style="margin-top: 10px; display: block;">
                                                 <p style="margin-bottom: 15px">Likelihood: </p>
-                                                <div on-risks-type="multiple" ng-switch="taAsset.cloudType">
+                                                <div on-risks-type="showRiskPerTA" ng-switch="taAsset.cloudType">
                                                     <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_likelihood'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_likelihood']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
                                                         <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                                                     </div>
@@ -251,7 +251,7 @@
                                             </div>
                                             <div class="col-lg-6" style="margin-top: 10px; display: block">
                                                 <p style="margin-bottom: 15px;">Consequence :</p>
-                                                <div on-risks-type="multiple" ng-switch="taAsset.cloudType">
+                                                <div on-risks-type="showRiskPerTA" ng-switch="taAsset.cloudType">
                                                     <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_consequence'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_consequence']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
                                                         <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                                                     </div>

@@ -165,6 +165,7 @@ dssApp.controller('treatmentsController'
     }
 
     $scope.showTreatmentValues = false;
+    localStorageService.bind($scope, 'showTreatmentValues', $scope.showTreatmentValues);
 
     $scope.toggleTreatmentValues = function () {
         $scope.showTreatmentValues = !$scope.showTreatmentValues;
