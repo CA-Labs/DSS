@@ -109,7 +109,7 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
      */
     $scope.isSelected = function (taAssetId, serviceId) {
         var bool = false;
-        if (_.contains($scope.servicesSelected, taAssetId) && _.contains($scope.servicesSelected[taAssetId].serviceSelected.service[serviceId])) {
+        if (_.has($scope.servicesSelected, taAssetId) && $scope.servicesSelected[taAssetId].serviceSelected.service._id == serviceId) {
             bool = true;
         }
         return bool;

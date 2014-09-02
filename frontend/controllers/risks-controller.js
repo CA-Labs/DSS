@@ -428,6 +428,7 @@ dssApp.controller('risksController'
 
         var riskName = hashAttributes[0];
 
+
         if($scope.multiple){
             //Look up what TA asset we are referring to
             var taKey = hashAttributes[1];
