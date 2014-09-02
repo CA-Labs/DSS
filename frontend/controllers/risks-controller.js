@@ -40,6 +40,12 @@ dssApp.controller('risksController'
     $scope.multipleRisksLikelihoodConsequence = RisksService.getRisksTALikelihoodConsequence();                         //Likelihood/Consequence values for multiple risks model
     localStorageService.bind($scope, 'multipleRisksLikelihoodConsequence', $scope.multipleRisksLikelihoodConsequence);
 
+    $scope.simpleRisksLikelihoodConsequenceAcceptance = RisksService.getRisksLikelihoodConsequenceAcceptance();                             //Likelihood/Consequence values for simple risks model
+    localStorageService.bind($scope, 'simpleRisksLikelihoodConsequenceAcceptance', $scope.simpleRisksLikelihoodConsequenceAcceptance);
+
+    $scope.multipleRisksLikelihoodConsequenceAcceptance = RisksService.getRisksTALikelihoodConsequenceAcceptance();                         //Likelihood/Consequence values for multiple risks model
+    localStorageService.bind($scope, 'multipleRisksLikelihoodConsequenceAcceptance', $scope.multipleRisksLikelihoodConsequenceAcceptance);
+
     $scope.riskBoundModels = {};
 
     // Kind of a hack: this is necessary when loading simple risks model from local storage,
@@ -372,6 +378,12 @@ dssApp.controller('risksController'
             Object.keys($scope.multipleRisksLikelihoodConsequence).forEach(function(key){
                 $scope.riskBoundModels[key] = $scope.multipleRisksLikelihoodConsequence[key];
             });
+            Object.keys($scope.simpleRisksLikelihoodConsequenceAcceptance).forEach(function(key){
+                $scope.riskBoundModels[key] = $scope.simpleRisksLikelihoodConsequenceAcceptance[key];
+            });
+            Object.keys($scope.multipleRisksLikelihoodConsequenceAcceptance).forEach(function(key){
+                $scope.riskBoundModels[key] = $scope.multipleRisksLikelihoodConsequenceAcceptance[key];
+            });
             return;
         };
 
@@ -470,7 +482,6 @@ dssApp.controller('risksController'
         //Current slider value
         var sliderValue = element.value;
         var sliderType = element.type;
-        console.log('slider type', sliderType);
 
         //Update category tag with current slider value
         removeClasses(element.slider.children().first())
@@ -493,22 +504,48 @@ dssApp.controller('risksController'
             var taKey = hashAttributes[1];
             //Likelihood or consequence?
             var valueToUpdate = hashAttributes[2];
+            //Acceptance?
+            var acceptance = hashAttributes[3];
             if(valueToUpdate == "likelihood"){
-                //Update likelihood for a certain TA in multiple model
-                RisksService.addRiskTALikelihood(riskName, taKey, sliderValue);
+                if(acceptance){
+                    //Update likelihood acceptance value for a certain TA in multiple model
+                    RisksService.addRiskTALikelihoodAcceptance(riskName, taKey, sliderValue);
+                } else {
+                    //Update likelihood for a certain TA in multiple model
+                    RisksService.addRiskTALikelihood(riskName, taKey, sliderValue);
+                }
+
             } else {
-                //Update consequence for a certain TA in multiple model
-                RisksService.addRiskTAConsequence(riskName, taKey, sliderValue);
+                if(acceptance){
+                    //Update consequence acceptance value for a certain TA in multiple model
+                    RisksService.addRiskTAConsequenceAcceptance(riskName, taKey, sliderValue);
+                } else {
+                    //Update consequence for a certain TA in multiple model
+                    RisksService.addRiskTAConsequence(riskName, taKey, sliderValue);
+                }
             }
         } else {
             //Likelihood or consequence?
             var valueToUpdate = hashAttributes[1];
+            //Acceptance?
+            console.log('hash', hashAttributes);
+            var acceptance = hashAttributes[2];
             if(valueToUpdate == "likelihood"){
-                //Update likelihood in simple model
-                RisksService.addRiskLikelihood(riskName, sliderValue)
+                if(acceptance){
+                    //Update likelihood acceptance value in simple model
+                    RisksService.addRiskLikelihoodAcceptance(riskName, sliderValue)
+                } else {
+                    //Update likelihood in simple model
+                    RisksService.addRiskLikelihood(riskName, sliderValue)
+                }
             } else {
-                //Update consequence in simple model
-                RisksService.addRiskConsequence(riskName, sliderValue);
+                if(acceptance){
+                    //Update consequence acceptance value in simple model
+                    RisksService.addRiskConsequenceAcceptance(riskName, sliderValue);
+                } else {
+                    //Update consequence in simple model
+                    RisksService.addRiskConsequence(riskName, sliderValue);
+                }
             }
         }
 

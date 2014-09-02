@@ -137,7 +137,7 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         risksTALikelihoodConsequence[riskName + '_' + taAssetName + '_likelihood'] = parseInt(likelihood);
     };
 
-    this.addRiskTaLikelihoodAcceptance = function(riskName, taAssetName, likelihood){
+    this.addRiskTALikelihoodAcceptance = function(riskName, taAssetName, likelihood){
         risksTALikelihoodConsequenceAcceptance[riskName + '_' + taAssetName + '_likelihood_acceptance'] = parseInt(likelihood);
     };
 
