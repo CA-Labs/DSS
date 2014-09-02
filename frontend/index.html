@@ -341,6 +341,7 @@
                                                 <!--<input type="text" class="form-control" value="{{value}}" readonly="readonly" style="background-color: #18bc9c !important; cursor: default !important;">-->
                                             <!--</div>-->
                                             <!--<br/>-->
+                                            <div ng-init="addRadioValue(treatmentSelected.destination.name)"></div>
                                             <div ui-on-drop="taDropped($event, $data, treatmentSelected.destination)" class="dropzone-container">
                                                 <button ui-draggable="false" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.destination.taRelations">
                                                     <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected.destination, taRelation)">&nbsp;</span></small>

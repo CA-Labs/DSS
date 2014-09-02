@@ -200,4 +200,12 @@ dssApp.controller('treatmentsController'
         return description;
     }
 
+    /**
+     * Function used when the treatment is added to the treatmentSelected list to pass the value to the treatment as acepted.
+     * @param treatmentName
+     */
+    $scope.addRadioValue = function (treatmentName) {
+        TreatmentsService.addTreatmentValue(treatmentName, 1);
+    };
+
 }]);
