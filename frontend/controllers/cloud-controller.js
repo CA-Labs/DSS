@@ -101,4 +101,18 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
         $scope.servicesSelected[taAsset._id] = data;
     };
 
+    /**
+     * Is services selected sets the appropriate true value for only those services which are selected per TA
+     * @param taAssetId
+     * @param serviceId
+     * @returns {boolean}
+     */
+    $scope.isSelected = function (taAssetId, serviceId) {
+        var bool = false;
+        if (_.has($scope.servicesSelected, taAssetId) && $scope.servicesSelected[taAssetId].serviceSelected.service._id == serviceId) {
+            bool = true;
+        }
+        return bool;
+    };
+
 }]);

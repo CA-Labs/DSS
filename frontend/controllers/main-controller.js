@@ -111,6 +111,7 @@ dssApp.controller('mainController', [
                                 }
                                 AssetsService.addTA(resource);
                             });
+                            $scope.$emit('loadedTA');
                         } else {
                             flash.error = 'Some error occurred while trying to upload your requirements';
                         }

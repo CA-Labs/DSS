@@ -28,12 +28,13 @@ dssApp.controller('risksController'
     $scope.potentialRisks = [];                                                                                         //List of current potential risks depending on BSOIA/TOIA assets selected by the user
     $scope.risksSelected = RisksService.getRisks();                                                                     //Risks selected by the user
     localStorageService.bind($scope, 'risksSelected', $scope.risksSelected);
-    $scope.multiple = false;                                                                                            //Switch button to allow evaluate risks for each TA
+    $scope.showRiskPerTA = false;                                                                                            //Switch button to allow evaluate risks for each TA
+    localStorageService.bind($scope, 'showRiskPerTA', $scope.showRiskPerTA);
     $scope.taAssets = AssetsService.getTA();                                                                            //The selected TA assets
     $scope.simpleRisksLikelihoodConsequence = RisksService.getRisksLikelihoodConsequence();                             //Likelihood/Consequence values for simple risks model
     localStorageService.bind($scope, 'simpleRisksLikelihoodConsequence', $scope.simpleRisksLikelihoodConsequence);
-    $scope.multipleRisksLikelihoodConsequence = RisksService.getRisksTALikelihoodConsequence();                         //Likelihood/Consequence values for multiple risks model
-    localStorageService.bind($scope, 'multipleRisksLikelihoodConsequence', $scope.multipleRisksLikelihoodConsequence);
+    $scope.showRiskPerTARisksLikelihoodConsequence = RisksService.getRisksTALikelihoodConsequence();                         //Likelihood/Consequence values for showRiskPerTA risks model
+    localStorageService.bind($scope, 'showRiskPerTARisksLikelihoodConsequence', $scope.showRiskPerTARisksLikelihoodConsequence);
     $scope.riskBoundModels = {};
 
     // Kind of a hack: this is necessary when loading simple risks model from local storage,
@@ -45,13 +46,13 @@ dssApp.controller('risksController'
         $scope.simpleRisksLikelihoodConsequence = newSimpleRisksLikelihoodConsequence;
     }, true);
 
-    // Kind of a hack: this is necessary when loading multiple risks model from local storage,
-    // since the reference seems to be lost when setting the new multiple risks model in the service
+    // Kind of a hack: this is necessary when loading showRiskPerTA risks model from local storage,
+    // since the reference seems to be lost when setting the new showRiskPerTA risks model in the service
     // variable.
     $scope.$watch(function(){
         return RisksService.getRisksTALikelihoodConsequence();
     }, function(newMultipleRisksLikelihoodConsequence){
-        $scope.multipleRisksLikelihoodConsequence = newMultipleRisksLikelihoodConsequence;
+        $scope.showRiskPerTARisksLikelihoodConsequence = newMultipleRisksLikelihoodConsequence;
     }, true);
 
     //List of available categories to categorize risks level
@@ -172,16 +173,24 @@ dssApp.controller('risksController'
      * asset.
      */
     $scope.toggleActivation = function(){
-        if($scope.multiple){
+        if($scope.showRiskPerTA){
             if($scope.taAssets.length == 0){
                 flash.warn = 'You can\'t define risks per each tangible asset since you did not specify any of them';
-                $scope.multiple = false;
+                $scope.showRiskPerTA = false;
                 return;
             } else {
-                $scope.multiple = true;
+                $scope.showRiskPerTA = true;
             }
         }
     };
+
+    /**
+     * Upon load of Tangible assets,
+     * set the values of the risks to be automatically enabled
+     */
+    $rootScope.$on('loadedTA', function () {
+        $scope.showRiskPerTA = true;
+    });
 
     /**
      * Every time the set of TA assets changes, we should update the
@@ -196,7 +205,7 @@ dssApp.controller('risksController'
             $scope.taAssets = newTaAssets;
             // Check switch button status
             if($scope.taAssets.length > 0){
-                $scope.multiple = true;
+                $scope.showRiskPerTA = true;
             }
             // Local storage finished loading assets scope data
             AssetsService.loadingLocalStorageData(false);
@@ -205,10 +214,10 @@ dssApp.controller('risksController'
 
         //Check switch button status
         if(newTaAssets.length == 0){
-            $scope.multiple = false;
+            $scope.showRiskPerTA = false;
         }
 
-        //Update risks multiple model
+        //Update risks showRiskPerTA model
         var keysToRemove = [];
         var keysToAdd = [];
 
@@ -311,8 +320,8 @@ dssApp.controller('risksController'
             Object.keys($scope.simpleRisksLikelihoodConsequence).forEach(function(key){
                 $scope.riskBoundModels[key] = $scope.simpleRisksLikelihoodConsequence[key];
             });
-            Object.keys($scope.multipleRisksLikelihoodConsequence).forEach(function(key){
-                $scope.riskBoundModels[key] = $scope.multipleRisksLikelihoodConsequence[key];
+            Object.keys($scope.showRiskPerTARisksLikelihoodConsequence).forEach(function(key){
+                $scope.riskBoundModels[key] = $scope.showRiskPerTARisksLikelihoodConsequence[key];
             });
             return;
         };
@@ -405,7 +414,7 @@ dssApp.controller('risksController'
     $scope.$on('sliderValueChanged', function($event, element){
 
         // Ignore this event if we have no slider values available or if we are still loading data from local storage
-        if(_.isEmpty($scope.simpleRisksLikelihoodConsequence || _.isEmpty($scope.multipleRisksLikelihoodConsequence))){
+        if(_.isEmpty($scope.simpleRisksLikelihoodConsequence || _.isEmpty($scope.showRiskPerTARisksLikelihoodConsequence))){
             return;
         };
 
@@ -417,7 +426,7 @@ dssApp.controller('risksController'
             .addClass(numberToCategoryClass(sliderValue))
             .text(numberToCategoryName(sliderValue));
 
-        //Retrieve the unique hash key to know what must be updated in risks services, whether simple or multiple models
+        //Retrieve the unique hash key to know what must be updated in risks services, whether simple or showRiskPerTA models
         var hashKey = element.slider.data('hash-key');
         var hashAttributes = hashKey.split('_');
 
@@ -428,16 +437,17 @@ dssApp.controller('risksController'
 
         var riskName = hashAttributes[0];
 
-        if($scope.multiple){
+
+        if($scope.showRiskPerTA){
             //Look up what TA asset we are referring to
             var taKey = hashAttributes[1];
             //Likelihood or consequence?
             var valueToUpdate = hashAttributes[2];
             if(valueToUpdate == "likelihood"){
-                //Update likelihood for a certain TA in multiple model
+                //Update likelihood for a certain TA in showRiskPerTA model
                 RisksService.addRiskTALikelihood(riskName, taKey, sliderValue);
             } else {
-                //Update consequence for a certain TA in multiple model
+                //Update consequence for a certain TA in showRiskPerTA model
                 RisksService.addRiskTAConsequence(riskName, taKey, sliderValue);
             }
         } else {

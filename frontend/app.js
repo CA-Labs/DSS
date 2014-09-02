@@ -115,6 +115,16 @@ $('body').on('mouseout', '.list-group > .dropzone', function(e){
     $(this).find('.remove-bsoia-in-toia-asset').hide();
 });
 
+// TEMP
+$('body').on('mouseover', '.list-group > .dropzone-wrapper', function () {
+    $(this).find('.remove-dragdrop').show();
+});
+$('body').on('mouseout', '.list-group > .dropzone-wrapper', function (e) {
+    $(this).find('.remove-dragdrop').hide();
+});
+
+
+
 //Show/hide x (close button) when hovering selected treatments
 $('body').on('mouseover', '.list-group > .selected-treatment', function(e){
     $(this).find('.remove-treatment').show();
