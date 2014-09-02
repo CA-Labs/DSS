@@ -16,6 +16,12 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     var risksTALikelihoodConsequence = risksTALikelihoodConsequenceFromStorage;                                                                 //Likelihood/consequences values for each TA and risk of the form
                                                                                                                                                 //riskname_taAssetName_likelihood/riskname_taAssetName_consequence
 
+    var risksLikelihoodConsequenceAcceptanceFromStorage = localStorageService.get('simpleRisksLikelihoodConsequenceAcceptance') || {};          //Likelihood/consequence acceptance values for each risk (as a whole) of the form
+    var risksLikelihoodConsequenceAcceptance = risksLikelihoodConsequenceAcceptanceFromStorage;                                                 //riskname_likelihood_acceptance/riskname_consequence_acceptance
+
+    var risksTALikelihoodConsequenceAcceptanceFromStorage = localStorageService.get('multipleRisksLikelihoodConsequenceAcceptance') || {};      //Likelihood/consequences acceptance values for each TA and risk of the form
+    var risksTALikelihoodConsequenceAcceptance = risksTALikelihoodConsequenceAcceptanceFromStorage;                                             //riskname_taAssetName_likelihood_acceptance/riskname_taAssetName_consequence_acceptance
+
     var loadingDataFromLocalStorage = false;                                                                                                    //Flag to control local storage restore state
 
     /**
@@ -70,24 +76,38 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         risksLikelihoodConsequence[riskName + '_likelihood'] = parseInt(likelihood);
     };
 
+    this.addRiskLikelihoodAcceptance = function(riskName, likelihood){
+        risksLikelihoodConsequenceAcceptance[riskName + '_likelihood_acceptance'] = parseInt(likelihood);
+    };
+
     /**
-     * Removes likelihood/consequence values for a given risk.
-     * This implies clearing both simple and multiple models.
+     * Removes likelihood/consequence values and acceptance values
+     * for a given risk. This implies clearing both simple and multiple
+     * models and acceptance models.
      * @param riskName The risk name.
      */
     this.removeRiskLikelihoodConsequence = function(riskName){
-        //clear simple/multiple model
+        //clear simple/multiple models
         var regex = new RegExp(riskName + '[\\w\\s]*', 'i');
         for(key in risksLikelihoodConsequence){
             if(regex.exec(key)){
-                //console.log('removing key ' + key + ' in simple model');
                 delete risksLikelihoodConsequence[key];
             }
-        }
+        };
         for(key in risksTALikelihoodConsequence){
             if(regex.exec(key)){
-                //console.log('removing key ' + key + ' in multiple model');
                 delete risksTALikelihoodConsequence[key];
+            }
+        };
+        //clear simple/multiple acceptance models
+        for(key in risksLikelihoodConsequenceAcceptance){
+            if(regex.exec(key)){
+                delete risksLikelihoodConsequenceAcceptance[key];
+            }
+        };
+        for(key in risksTALikelihoodConsequenceAcceptance){
+            if(regex.exec(key)){
+                delete risksTALikelihoodConsequenceAcceptance[key];
             }
         }
     };
@@ -102,6 +122,10 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         risksLikelihoodConsequence[riskName + '_consequence'] = parseInt(consequence);
     };
 
+    this.addRiskConsequenceAcceptance = function(riskName, consequence){
+        risksLikelihoodConsequenceAcceptance[riskName + '_consequence_acceptance'] = parseInt(consequence);
+    };
+
     /**
      * Adds a new likelihood value for a given tangible asset risk.
      * @param riskName The risk name.
@@ -111,6 +135,10 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     this.addRiskTALikelihood = function(riskName, taAssetName, likelihood){
         //console.log('adding risk likelihood for ' + riskName + '/' + taAssetName + ' in multiple model');
         risksTALikelihoodConsequence[riskName + '_' + taAssetName + '_likelihood'] = parseInt(likelihood);
+    };
+
+    this.addRiskTaLikelihoodAcceptance = function(riskName, taAssetName, likelihood){
+        risksTALikelihoodConsequenceAcceptance[riskName + '_' + taAssetName + '_likelihood_acceptance'] = parseInt(likelihood);
     };
 
     /**
@@ -124,19 +152,30 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         risksTALikelihoodConsequence[riskName + '_' + taAssetName + '_consequence'] = parseInt(consequence);
     };
 
+    this.addRiskTAConsequenceAcceptance = function(riskName, taAssetName, consequence){
+        risksTALikelihoodConsequenceAcceptance[riskName + '_' + taAssetName + '_consequence_acceptance'] = parseInt(consequence);
+    };
+
     /**
      * Removes both likelihood/consequence values for a given tangible asset risk.
      * @param taAssetName The tangible asset name.
      */
     this.removeRiskTALikelihoodConsequence = function(taAssetName){
-        //clear multiple model
+        // clear multiple model
         var regex = new RegExp('[\\w\\s]+_' + taAssetName + '_[\\w\\s]+', 'i');
         for(key in risksTALikelihoodConsequence){
             if(regex.exec(key)){
                 //console.log('removing key ' + key + ' in multiple model');
                 delete risksTALikelihoodConsequence[key];
             }
-        }
+        };
+        // clear multiple acceptance model
+        regex = new RegExp('[\\w\\s]+_' +  taAssetName + '_[\\w\\s]+_[\\w\\s]+', 'i');
+        for(key in risksTALikelihoodConsequenceAcceptance){
+            if(regex.exec(key)){
+                delete risksTALikelihoodConsequenceAcceptance[key];
+            }
+        };
     };
 
     /**
@@ -147,6 +186,10 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         return risksLikelihoodConsequence;
     };
 
+    this.getRisksLikelihoodConsequenceAcceptance = function(){
+        return risksLikelihoodConsequenceAcceptance;
+    }
+
     /**
      * Retrieves the multiple model risk values (likelihood and consequence).
      * @returns {{}}
@@ -154,6 +197,10 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     this.getRisksTALikelihoodConsequence = function(){
         return risksTALikelihoodConsequence;
     };
+
+    this.getRisksTALikelihoodConsequenceAcceptance = function(){
+        return risksTALikelihoodConsequenceAcceptance;
+    }
 
     /**
      * Sets the risks to that ones loaded from local storage.
@@ -172,6 +219,10 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         risksLikelihoodConsequence = simpleRisksLikelihoodConsequenceLoadedFromLocalStorage;
     };
 
+    this.setSimpleRisksLikelihoodConsequenceAcceptance = function(simpleRisksLikelihoodConsequenceAcceptanceLoadedFromLocalStorage){
+        risksLikelihoodConsequenceAcceptance = simpleRisksLikelihoodConsequenceAcceptanceLoadedFromLocalStorage;
+    };
+
     /**
      * Sets the multiple risk model to that one loaded from local storage.
      * @param multipleRisksLikelihoodConsequenceLoadedFromLocalStorage Local
@@ -179,6 +230,10 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      */
     this.setMultipleRisksLikelihoodConsequence = function(multipleRisksLikelihoodConsequenceLoadedFromLocalStorage){
         risksTALikelihoodConsequence = multipleRisksLikelihoodConsequenceLoadedFromLocalStorage;
+    };
+
+    this.setMultipleRisksLikelihoodConsequenceAcceptance = function(multipleRisksLikelihoodConsequenceAcceptanceLoadedFromLocalStorage){
+        risksTALikelihoodConsequenceAcceptance = multipleRisksLikelihoodConsequenceAcceptanceLoadedFromLocalStorage;
     };
 
     /**
@@ -198,25 +253,6 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     };
 
     /**
-     * Given a treatment name, returns the risk associated to it.
-     * @param treatmentName The treatment name to look up.
-     * @returns {string}
-     */
-    this.getRiskFromTreatment = function(treatmentName){
-        var riskName = '';
-        Object.keys(risksTreatmentMapping).forEach(function(risk){
-            var treatments = risksTreatmentsMapping[risk];
-            _.each(treatments, function(treatment){
-                if(treatment == treatmentName){
-                    riskName = risk;
-                    return;
-                }
-            });
-        });
-        return riskName;
-    };
-
-    /**
      * Retrieves a certain risk likelihood.
      * @param riskName The risk name to look up.
      * @param taAssetName The technical asset associated to the risk, if specified.
@@ -228,6 +264,16 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         } else {
             // Simple likelihood/consequence model
             return risksLikelihoodConsequence[riskName + '_likelihood'];
+        }
+    };
+
+    this.getRiskLikelihoodAcceptanceValue = function(riskName, taAssetName){
+        if(taAssetName){
+            // Multiple likelihood/consequence model
+            return risksTALikelihoodConsequenceAcceptance[riskName + '_' + taAssetName + '_likelihood_acceptance'];
+        } else {
+            // Simple likelihood/consequence model
+            return risksLikelihoodConsequenceAcceptance[riskName + '_likelihood_acceptance'];
         }
     };
 
@@ -246,13 +292,14 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         }
     };
 
-    /**
-     * TODO: A great function to set threshold acceptability related to a risk.
-     * @param riskName The risk to look up.
-     * @returns {number}
-     */
-    this.getAcceptableRiskThreshold = function(riskName) {
-        return 5;
+    this.getRiskConsequenceAcceptanceValue = function(riskName, taAssetName){
+        if(taAssetName){
+            // Multiple likelihood/consequence model
+            return risksTALikelihoodConsequenceAcceptance[riskName + '_' + taAssetName + '_consequence_acceptance'];
+        } else {
+            // Simple likelihood/consequence model
+            return risksLikelihoodConsequenceAcceptance[riskName + '_consequence_acceptance'];
+        }
     };
 
     /**
@@ -261,6 +308,7 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param taAssetName The TA asset associated to it, if specified.
      * @returns {number}
      */
+    /*
     this.getRiskValue = function(riskName, taAssetName) {
         if(taAssetName){
             return Math.ceil(this.getRiskLikelihoodValue(riskName, taAssetName)/10 * this.getRiskConsequenceValue(riskName, taAssetName));
@@ -268,5 +316,6 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
             return Math.ceil(this.getRiskLikelihoodValue(riskName)/10 * this.getRiskConsequenceValue(riskName));
         }
     };
+    */
 
 }]);
