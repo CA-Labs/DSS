@@ -184,6 +184,13 @@ dssApp.controller('risksController'
     };
 
     /**
+     * Upon load of Tangible assets, set the values of the risks to be automatically enabled
+     */
+    $rootScope.$on('loadedTA', function () {
+        $scope.multiple = true;
+    });
+
+    /**
      * Every time the set of TA assets changes, we should update the
      * likelihood/consequence models, since they are not modified automatically.
      */
