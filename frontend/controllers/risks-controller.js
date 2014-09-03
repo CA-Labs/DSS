@@ -39,12 +39,6 @@ dssApp.controller('risksController'
     $scope.multipleRisksLikelihoodConsequence = RisksService.getRisksTALikelihoodConsequence();                         //Likelihood/Consequence values for multiple risks model
     localStorageService.bind($scope, 'multipleRisksLikelihoodConsequence', $scope.multipleRisksLikelihoodConsequence);
 
-    $scope.simpleRisksLikelihoodConsequenceAcceptance = RisksService.getRisksLikelihoodConsequenceAcceptance();                             //Likelihood/Consequence values for simple risks model
-    localStorageService.bind($scope, 'simpleRisksLikelihoodConsequenceAcceptance', $scope.simpleRisksLikelihoodConsequenceAcceptance);
-
-    $scope.multipleRisksLikelihoodConsequenceAcceptance = RisksService.getRisksTALikelihoodConsequenceAcceptance();                         //Likelihood/Consequence values for multiple risks model
-    localStorageService.bind($scope, 'multipleRisksLikelihoodConsequenceAcceptance', $scope.multipleRisksLikelihoodConsequenceAcceptance);
-
     $scope.riskBoundModels = {};
 
     // Kind of a hack: this is necessary when loading simple risks model from local storage,
@@ -113,39 +107,21 @@ dssApp.controller('risksController'
     };
 
     //Auxiliar function to map scalar values to discrete ones (class names)
-    var numberToCategoryClass = function(n, type, acceptance){
+    var numberToCategoryClass = function(n, type){
         switch(type){
             case 'likelihood':
-                if(!acceptance){
-                    if(n < 2 ) return LIKELIHOOD_CATEGORIES.RARE.class;
-                    if(n == 2 || n == 3) return LIKELIHOOD_CATEGORIES.UNLIKELY.class;
-                    if(n == 4 || n == 5 || n == 6) return LIKELIHOOD_CATEGORIES.POSSIBLE.class;
-                    if(n == 7 || n == 8) return LIKELIHOOD_CATEGORIES.LIKELY.class;
-                    if(n > 8) return LIKELIHOOD_CATEGORIES.CERTAIN.class;
-                } else {
-                    // Switch colors for acceptance
-                    if(n < 2 ) return LIKELIHOOD_CATEGORIES.CERTAIN.class;
-                    if(n == 2 || n == 3) return LIKELIHOOD_CATEGORIES.LIKELY.class;
-                    if(n == 4 || n == 5 || n == 6) return LIKELIHOOD_CATEGORIES.POSSIBLE.class;
-                    if(n == 7 || n == 8) return LIKELIHOOD_CATEGORIES.UNLIKELY.class;
-                    if(n > 8) return LIKELIHOOD_CATEGORIES.RARE.class;
-                }
+                if(n < 2 ) return LIKELIHOOD_CATEGORIES.RARE.class;
+                if(n == 2 || n == 3) return LIKELIHOOD_CATEGORIES.UNLIKELY.class;
+                if(n == 4 || n == 5 || n == 6) return LIKELIHOOD_CATEGORIES.POSSIBLE.class;
+                if(n == 7 || n == 8) return LIKELIHOOD_CATEGORIES.LIKELY.class;
+                if(n > 8) return LIKELIHOOD_CATEGORIES.CERTAIN.class;
                 break;
             case 'consequence':
-                if(!acceptance){
-                    if(n < 2 ) return CONSEQUENCE_CATEGORIES.INSIGNIFICANT.class;
-                    if(n == 2 || n == 3) return CONSEQUENCE_CATEGORIES.MINOR.class;
-                    if(n == 4 || n == 5 || n == 6) return CONSEQUENCE_CATEGORIES.MODERATE.class;
-                    if(n == 7 || n == 8) return CONSEQUENCE_CATEGORIES.MAJOR.class;
-                    if(n > 8) return CONSEQUENCE_CATEGORIES.CATASTROPHIC.class;
-                } else {
-                    // Switch colors for acceptance
-                    if(n < 2 ) return CONSEQUENCE_CATEGORIES.CATASTROPHIC.class;
-                    if(n == 2 || n == 3) return CONSEQUENCE_CATEGORIES.MAJOR.class;
-                    if(n == 4 || n == 5 || n == 6) return CONSEQUENCE_CATEGORIES.MODERATE.class;
-                    if(n == 7 || n == 8) return CONSEQUENCE_CATEGORIES.MINOR.class;
-                    if(n > 8) return CONSEQUENCE_CATEGORIES.INSIGNIFICANT.class;
-                }
+                if(n < 2 ) return CONSEQUENCE_CATEGORIES.INSIGNIFICANT.class;
+                if(n == 2 || n == 3) return CONSEQUENCE_CATEGORIES.MINOR.class;
+                if(n == 4 || n == 5 || n == 6) return CONSEQUENCE_CATEGORIES.MODERATE.class;
+                if(n == 7 || n == 8) return CONSEQUENCE_CATEGORIES.MAJOR.class;
+                if(n > 8) return CONSEQUENCE_CATEGORIES.CATASTROPHIC.class;
                 break;
             default:
                 break;
@@ -324,10 +300,10 @@ dssApp.controller('risksController'
             if(!found){
                 switch(cloudType){
                     case 'IaaS':
-                        keysToRemove.push(oldAsset.cloudResource._serviceName);
+                        keysToRemove.push(oldAsset._id);
                         break;
                     case 'PaaS':
-                        keysToRemove.push(oldAsset.cloudPlatform._serviceName);
+                        keysToRemove.push(oldAsset._id);
                         break;
                     default:
                         break;
@@ -358,10 +334,10 @@ dssApp.controller('risksController'
             if(!found){
                 switch(cloudType){
                     case 'IaaS':
-                        keysToAdd.push(newTaAsset.cloudResource._serviceName);
+                        keysToAdd.push(newTaAsset._id);
                         break;
                     case 'PaaS':
-                        keysToAdd.push(newTaAsset.cloudPlatform._serviceName);
+                        keysToAdd.push(newTaAsset._id);
                         break;
                     default:
                         break;
@@ -402,12 +378,6 @@ dssApp.controller('risksController'
             });
             Object.keys($scope.multipleRisksLikelihoodConsequence).forEach(function(key){
                 $scope.riskBoundModels[key] = $scope.multipleRisksLikelihoodConsequence[key];
-            });
-            Object.keys($scope.simpleRisksLikelihoodConsequenceAcceptance).forEach(function(key){
-                $scope.riskBoundModels[key] = $scope.simpleRisksLikelihoodConsequenceAcceptance[key];
-            });
-            Object.keys($scope.multipleRisksLikelihoodConsequenceAcceptance).forEach(function(key){
-                $scope.riskBoundModels[key] = $scope.multipleRisksLikelihoodConsequenceAcceptance[key];
             });
             return;
         };
@@ -455,12 +425,12 @@ dssApp.controller('risksController'
             _.each($scope.taAssets, function(taAsset){
                 switch(taAsset.cloudType){
                     case 'IaaS':
-                        RisksService.addRiskTALikelihood(key.name, taAsset.cloudResource._serviceName, key.value);
-                        RisksService.addRiskTAConsequence(key.name, taAsset.cloudResource._serviceName, key.value);
+                        RisksService.addRiskTALikelihood(key.name, taAsset._id, key.value);
+                        RisksService.addRiskTAConsequence(key.name, taAsset._id, key.value);
                         break;
                     case 'PaaS':
-                        RisksService.addRiskTALikelihood(key.name, taAsset.cloudPlatform._serviceName, key.value);
-                        RisksService.addRiskTAConsequence(key.name, taAsset.cloudPlatform._serviceName, key.value);
+                        RisksService.addRiskTALikelihood(key.name, taAsset._id, key.value);
+                        RisksService.addRiskTAConsequence(key.name, taAsset._id, key.value);
                         break;
                     default:
                         break;
@@ -510,7 +480,15 @@ dssApp.controller('risksController'
 
         //Retrieve the unique hash key to know what must be updated in risks services, whether simple or multiple models
         var hashKey = element.slider.data('hash-key');
-        var hashAttributes = hashKey.split('_');
+        var hashAttributes = hashKey.split('/');
+
+        console.log('hash key', hashKey);
+        console.log('hash attributes', hashAttributes);
+
+        //Update category tag with current slider value
+        removeClasses(element.slider.children().first())
+            .addClass(numberToCategoryClass(sliderValue, sliderType))
+            .text(numberToCategoryName(sliderValue, sliderType));
 
         if(hashAttributes.length < 2){
             flash.error = 'Incorrect hash key for slider value!';
@@ -525,59 +503,24 @@ dssApp.controller('risksController'
             var taKey = hashAttributes[1];
             //Likelihood or consequence?
             var valueToUpdate = hashAttributes[2];
-            //Acceptance?
-            var acceptance = hashAttributes[3];
-
-            //Update category tag with current slider value
-            removeClasses(element.slider.children().first())
-                .addClass(numberToCategoryClass(sliderValue, sliderType, acceptance))
-                .text(numberToCategoryName(sliderValue, sliderType));
 
             if(valueToUpdate == "likelihood"){
-                if(acceptance){
-                    //Update likelihood acceptance value for a certain TA in multiple model
-                    RisksService.addRiskTALikelihoodAcceptance(riskName, taKey, sliderValue);
-                } else {
-                    //Update likelihood for a certain TA in multiple model
-                    RisksService.addRiskTALikelihood(riskName, taKey, sliderValue);
-                }
-
+                //Update likelihood for a certain TA in multiple model
+                RisksService.addRiskTALikelihood(riskName, taKey, sliderValue);
             } else {
-                if(acceptance){
-                    //Update consequence acceptance value for a certain TA in multiple model
-                    RisksService.addRiskTAConsequenceAcceptance(riskName, taKey, sliderValue);
-                } else {
-                    //Update consequence for a certain TA in multiple model
-                    RisksService.addRiskTAConsequence(riskName, taKey, sliderValue);
-                }
+                //Update consequence for a certain TA in multiple model
+                RisksService.addRiskTAConsequence(riskName, taKey, sliderValue);
             }
         } else {
             //Likelihood or consequence?
             var valueToUpdate = hashAttributes[1];
-            //Acceptance?
-            var acceptance = hashAttributes[2];
-
-            //Update category tag with current slider value
-            removeClasses(element.slider.children().first())
-                .addClass(numberToCategoryClass(sliderValue, sliderType, acceptance))
-                .text(numberToCategoryName(sliderValue, sliderType));
 
             if(valueToUpdate == "likelihood"){
-                if(acceptance){
-                    //Update likelihood acceptance value in simple model
-                    RisksService.addRiskLikelihoodAcceptance(riskName, sliderValue)
-                } else {
-                    //Update likelihood in simple model
-                    RisksService.addRiskLikelihood(riskName, sliderValue)
-                }
+                //Update likelihood in simple model
+                RisksService.addRiskLikelihood(riskName, sliderValue)
             } else {
-                if(acceptance){
-                    //Update consequence acceptance value in simple model
-                    RisksService.addRiskConsequenceAcceptance(riskName, sliderValue);
-                } else {
-                    //Update consequence in simple model
-                    RisksService.addRiskConsequence(riskName, sliderValue);
-                }
+                //Update consequence in simple model
+                RisksService.addRiskConsequence(riskName, sliderValue);
             }
         }
 
