@@ -114,21 +114,39 @@ dssApp.controller('risksController'
     };
 
     //Auxiliar function to map scalar values to discrete ones (class names)
-    var numberToCategoryClass = function(n, type){
+    var numberToCategoryClass = function(n, type, acceptance){
         switch(type){
             case 'likelihood':
-                if(n < 2 ) return LIKELIHOOD_CATEGORIES.RARE.class;
-                if(n == 2 || n == 3) return LIKELIHOOD_CATEGORIES.UNLIKELY.class;
-                if(n == 4 || n == 5 || n == 6) return LIKELIHOOD_CATEGORIES.POSSIBLE.class;
-                if(n == 7 || n == 8) return LIKELIHOOD_CATEGORIES.LIKELY.class;
-                if(n > 8) return LIKELIHOOD_CATEGORIES.CERTAIN.class;
+                if(!acceptance){
+                    if(n < 2 ) return LIKELIHOOD_CATEGORIES.RARE.class;
+                    if(n == 2 || n == 3) return LIKELIHOOD_CATEGORIES.UNLIKELY.class;
+                    if(n == 4 || n == 5 || n == 6) return LIKELIHOOD_CATEGORIES.POSSIBLE.class;
+                    if(n == 7 || n == 8) return LIKELIHOOD_CATEGORIES.LIKELY.class;
+                    if(n > 8) return LIKELIHOOD_CATEGORIES.CERTAIN.class;
+                } else {
+                    // Switch colors for acceptance
+                    if(n < 2 ) return LIKELIHOOD_CATEGORIES.CERTAIN.class;
+                    if(n == 2 || n == 3) return LIKELIHOOD_CATEGORIES.LIKELY.class;
+                    if(n == 4 || n == 5 || n == 6) return LIKELIHOOD_CATEGORIES.POSSIBLE.class;
+                    if(n == 7 || n == 8) return LIKELIHOOD_CATEGORIES.UNLIKELY.class;
+                    if(n > 8) return LIKELIHOOD_CATEGORIES.RARE.class;
+                }
                 break;
             case 'consequence':
-                if(n < 2 ) return CONSEQUENCE_CATEGORIES.INSIGNIFICANT.class;
-                if(n == 2 || n == 3) return CONSEQUENCE_CATEGORIES.MINOR.class;
-                if(n == 4 || n == 5 || n == 6) return CONSEQUENCE_CATEGORIES.MODERATE.class;
-                if(n == 7 || n == 8) return CONSEQUENCE_CATEGORIES.MAJOR.class;
-                if(n > 8) return CONSEQUENCE_CATEGORIES.CATASTROPHIC.class;
+                if(!acceptance){
+                    if(n < 2 ) return CONSEQUENCE_CATEGORIES.INSIGNIFICANT.class;
+                    if(n == 2 || n == 3) return CONSEQUENCE_CATEGORIES.MINOR.class;
+                    if(n == 4 || n == 5 || n == 6) return CONSEQUENCE_CATEGORIES.MODERATE.class;
+                    if(n == 7 || n == 8) return CONSEQUENCE_CATEGORIES.MAJOR.class;
+                    if(n > 8) return CONSEQUENCE_CATEGORIES.CATASTROPHIC.class;
+                } else {
+                    // Switch colors for acceptance
+                    if(n < 2 ) return CONSEQUENCE_CATEGORIES.CATASTROPHIC.class;
+                    if(n == 2 || n == 3) return CONSEQUENCE_CATEGORIES.MAJOR.class;
+                    if(n == 4 || n == 5 || n == 6) return CONSEQUENCE_CATEGORIES.MODERATE.class;
+                    if(n == 7 || n == 8) return CONSEQUENCE_CATEGORIES.MINOR.class;
+                    if(n > 8) return CONSEQUENCE_CATEGORIES.INSIGNIFICANT.class;
+                }
                 break;
             default:
                 break;
@@ -136,7 +154,7 @@ dssApp.controller('risksController'
     };
 
     //Auxiliar function to map scalar values to discrete ones (names)
-    var numberToCategoryName = function(n, type){
+    var numberToCategoryName = function(n, type, acceptance){
         switch(type){
             case 'likelihood':
                 if(n < 2 ) return LIKELIHOOD_CATEGORIES.RARE.name;
@@ -483,11 +501,6 @@ dssApp.controller('risksController'
         var sliderValue = element.value;
         var sliderType = element.type;
 
-        //Update category tag with current slider value
-        removeClasses(element.slider.children().first())
-            .addClass(numberToCategoryClass(sliderValue, sliderType))
-            .text(numberToCategoryName(sliderValue, sliderType));
-
         //Retrieve the unique hash key to know what must be updated in risks services, whether simple or multiple models
         var hashKey = element.slider.data('hash-key');
         var hashAttributes = hashKey.split('_');
@@ -506,6 +519,12 @@ dssApp.controller('risksController'
             var valueToUpdate = hashAttributes[2];
             //Acceptance?
             var acceptance = hashAttributes[3];
+
+            //Update category tag with current slider value
+            removeClasses(element.slider.children().first())
+                .addClass(numberToCategoryClass(sliderValue, sliderType, acceptance))
+                .text(numberToCategoryName(sliderValue, sliderType));
+
             if(valueToUpdate == "likelihood"){
                 if(acceptance){
                     //Update likelihood acceptance value for a certain TA in multiple model
@@ -528,8 +547,13 @@ dssApp.controller('risksController'
             //Likelihood or consequence?
             var valueToUpdate = hashAttributes[1];
             //Acceptance?
-            console.log('hash', hashAttributes);
             var acceptance = hashAttributes[2];
+
+            //Update category tag with current slider value
+            removeClasses(element.slider.children().first())
+                .addClass(numberToCategoryClass(sliderValue, sliderType, acceptance))
+                .text(numberToCategoryName(sliderValue, sliderType));
+
             if(valueToUpdate == "likelihood"){
                 if(acceptance){
                     //Update likelihood acceptance value in simple model
