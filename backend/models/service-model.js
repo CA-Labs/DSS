@@ -12,6 +12,7 @@ var Foxx = require('org/arangodb/foxx'),
             name: joi.string().required(),
             type: joi.string().required().default('service'),
             cloudType: joi.string().required().allow('PaaS', 'IaaS', 'SaaS'),
+            serviceType: joi.string().required().allow('Compute', 'Blob storage', 'File system', 'Frontend', 'Backend', 'Middleware', 'Relational database', 'NoSQL database'),
             provider: joi.object().optional(),
             metrics: joi.object().optional()
         }
