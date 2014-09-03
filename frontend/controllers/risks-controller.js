@@ -26,15 +26,25 @@ dssApp.controller('risksController'
 
     //Initialization
     $scope.potentialRisks = [];                                                                                         //List of current potential risks depending on BSOIA/TOIA assets selected by the user
+
     $scope.risksSelected = RisksService.getRisks();                                                                     //Risks selected by the user
     localStorageService.bind($scope, 'risksSelected', $scope.risksSelected);
     $scope.showRiskPerTA = false;                                                                                            //Switch button to allow evaluate risks for each TA
     localStorageService.bind($scope, 'showRiskPerTA', $scope.showRiskPerTA);
     $scope.taAssets = AssetsService.getTA();                                                                            //The selected TA assets
+
     $scope.simpleRisksLikelihoodConsequence = RisksService.getRisksLikelihoodConsequence();                             //Likelihood/Consequence values for simple risks model
     localStorageService.bind($scope, 'simpleRisksLikelihoodConsequence', $scope.simpleRisksLikelihoodConsequence);
-    $scope.showRiskPerTARisksLikelihoodConsequence = RisksService.getRisksTALikelihoodConsequence();                         //Likelihood/Consequence values for showRiskPerTA risks model
-    localStorageService.bind($scope, 'showRiskPerTARisksLikelihoodConsequence', $scope.showRiskPerTARisksLikelihoodConsequence);
+
+    $scope.multipleRisksLikelihoodConsequence = RisksService.getRisksTALikelihoodConsequence();                         //Likelihood/Consequence values for multiple risks model
+    localStorageService.bind($scope, 'multipleRisksLikelihoodConsequence', $scope.multipleRisksLikelihoodConsequence);
+
+    $scope.simpleRisksLikelihoodConsequenceAcceptance = RisksService.getRisksLikelihoodConsequenceAcceptance();                             //Likelihood/Consequence values for simple risks model
+    localStorageService.bind($scope, 'simpleRisksLikelihoodConsequenceAcceptance', $scope.simpleRisksLikelihoodConsequenceAcceptance);
+
+    $scope.multipleRisksLikelihoodConsequenceAcceptance = RisksService.getRisksTALikelihoodConsequenceAcceptance();                         //Likelihood/Consequence values for multiple risks model
+    localStorageService.bind($scope, 'multipleRisksLikelihoodConsequenceAcceptance', $scope.multipleRisksLikelihoodConsequenceAcceptance);
+
     $scope.riskBoundModels = {};
 
     // Kind of a hack: this is necessary when loading simple risks model from local storage,
@@ -46,61 +56,131 @@ dssApp.controller('risksController'
         $scope.simpleRisksLikelihoodConsequence = newSimpleRisksLikelihoodConsequence;
     }, true);
 
-    // Kind of a hack: this is necessary when loading showRiskPerTA risks model from local storage,
-    // since the reference seems to be lost when setting the new showRiskPerTA risks model in the service
+    // Kind of a hack: this is necessary when loading multiple risks model from local storage,
+    // since the reference seems to be lost when setting the new multiple risks model in the service
     // variable.
     $scope.$watch(function(){
         return RisksService.getRisksTALikelihoodConsequence();
     }, function(newMultipleRisksLikelihoodConsequence){
-        $scope.showRiskPerTARisksLikelihoodConsequence = newMultipleRisksLikelihoodConsequence;
+        $scope.multipleRisksLikelihoodConsequence = newMultipleRisksLikelihoodConsequence;
     }, true);
 
-    //List of available categories to categorize risks level
-    var CATEGORY = {
-        VERY_LOW: {
+    //List of available categories to categorize risks level for likelihood values
+    var LIKELIHOOD_CATEGORIES = {
+        RARE: {
             class: 'risk-very-low',
-            name: 'Very low'
+            name: 'Rare'
         },
-        LOW: {
+        UNLIKELY: {
             class: 'risk-low',
-            name: 'Low'
+            name: 'Unlikely'
         },
-        NORMAL: {
+        POSSIBLE: {
             class: 'risk-normal',
-            name: 'Normal'
+            name: 'Possible'
         },
-        HIGH: {
+        LIKELY: {
             class: 'risk-high',
-            name: 'High'
+            name: 'Likely'
         },
-        VERY_HIGH: {
+        CERTAIN: {
             class: 'risk-very-high',
-            name: 'Very high'
+            name: 'Certain'
+        }
+    };
+
+    var CONSEQUENCE_CATEGORIES = {
+        INSIGNIFICANT: {
+            class: 'risk-very-low',
+            name: 'Insignificant'
+        },
+        MINOR: {
+            class: 'risk-low',
+            name: 'Minor'
+        },
+        MODERATE: {
+            class: 'risk-normal',
+            name: 'Moderate'
+        },
+        MAJOR: {
+            class: 'risk-high',
+            name: 'Major'
+        },
+        CATASTROPHIC: {
+            class: 'risk-very-high',
+            name: 'Catastrophic'
         }
     };
 
     //Auxiliar function to map scalar values to discrete ones (class names)
-    var numberToCategoryClass = function(n){
-        if(n < 2 ) return CATEGORY.VERY_LOW.class;
-        if(n == 2 || n == 3) return CATEGORY.LOW.class;
-        if(n == 4 || n == 5 || n == 6) return CATEGORY.NORMAL.class;
-        if(n == 7 || n == 8) return CATEGORY.HIGH.class;
-        if(n > 8) return CATEGORY.VERY_HIGH.class;
+    var numberToCategoryClass = function(n, type, acceptance){
+        switch(type){
+            case 'likelihood':
+                if(!acceptance){
+                    if(n < 2 ) return LIKELIHOOD_CATEGORIES.RARE.class;
+                    if(n == 2 || n == 3) return LIKELIHOOD_CATEGORIES.UNLIKELY.class;
+                    if(n == 4 || n == 5 || n == 6) return LIKELIHOOD_CATEGORIES.POSSIBLE.class;
+                    if(n == 7 || n == 8) return LIKELIHOOD_CATEGORIES.LIKELY.class;
+                    if(n > 8) return LIKELIHOOD_CATEGORIES.CERTAIN.class;
+                } else {
+                    // Switch colors for acceptance
+                    if(n < 2 ) return LIKELIHOOD_CATEGORIES.CERTAIN.class;
+                    if(n == 2 || n == 3) return LIKELIHOOD_CATEGORIES.LIKELY.class;
+                    if(n == 4 || n == 5 || n == 6) return LIKELIHOOD_CATEGORIES.POSSIBLE.class;
+                    if(n == 7 || n == 8) return LIKELIHOOD_CATEGORIES.UNLIKELY.class;
+                    if(n > 8) return LIKELIHOOD_CATEGORIES.RARE.class;
+                }
+                break;
+            case 'consequence':
+                if(!acceptance){
+                    if(n < 2 ) return CONSEQUENCE_CATEGORIES.INSIGNIFICANT.class;
+                    if(n == 2 || n == 3) return CONSEQUENCE_CATEGORIES.MINOR.class;
+                    if(n == 4 || n == 5 || n == 6) return CONSEQUENCE_CATEGORIES.MODERATE.class;
+                    if(n == 7 || n == 8) return CONSEQUENCE_CATEGORIES.MAJOR.class;
+                    if(n > 8) return CONSEQUENCE_CATEGORIES.CATASTROPHIC.class;
+                } else {
+                    // Switch colors for acceptance
+                    if(n < 2 ) return CONSEQUENCE_CATEGORIES.CATASTROPHIC.class;
+                    if(n == 2 || n == 3) return CONSEQUENCE_CATEGORIES.MAJOR.class;
+                    if(n == 4 || n == 5 || n == 6) return CONSEQUENCE_CATEGORIES.MODERATE.class;
+                    if(n == 7 || n == 8) return CONSEQUENCE_CATEGORIES.MINOR.class;
+                    if(n > 8) return CONSEQUENCE_CATEGORIES.INSIGNIFICANT.class;
+                }
+                break;
+            default:
+                break;
+        }
     };
 
     //Auxiliar function to map scalar values to discrete ones (names)
-    var numberToCategoryName = function(n){
-        if(n < 2 ) return CATEGORY.VERY_LOW.name;
-        if(n == 2 || n == 3) return CATEGORY.LOW.name;
-        if(n == 4 || n == 5 || n == 6) return CATEGORY.NORMAL.name;
-        if(n == 7 || n == 8) return CATEGORY.HIGH.name;
-        if(n > 8) return CATEGORY.VERY_HIGH.name;
+    var numberToCategoryName = function(n, type){
+        switch(type){
+            case 'likelihood':
+                if(n < 2 ) return LIKELIHOOD_CATEGORIES.RARE.name;
+                if(n == 2 || n == 3) return LIKELIHOOD_CATEGORIES.UNLIKELY.name;
+                if(n == 4 || n == 5 || n == 6) return LIKELIHOOD_CATEGORIES.POSSIBLE.name;
+                if(n == 7 || n == 8) return LIKELIHOOD_CATEGORIES.LIKELY.name;
+                if(n > 8) return LIKELIHOOD_CATEGORIES.CERTAIN.name;
+                break;
+            case 'consequence':
+                if(n < 2 ) return CONSEQUENCE_CATEGORIES.INSIGNIFICANT.name;
+                if(n == 2 || n == 3) return CONSEQUENCE_CATEGORIES.MINOR.name;
+                if(n == 4 || n == 5 || n == 6) return CONSEQUENCE_CATEGORIES.MODERATE.name;
+                if(n == 7 || n == 8) return CONSEQUENCE_CATEGORIES.MAJOR.name;
+                if(n > 8) return CONSEQUENCE_CATEGORIES.CATASTROPHIC.name;
+                break;
+            default:
+                break;
+        }
     };
 
     //Auxiliar function to clear categories
     var removeClasses = function(domElement){
-        for(category in CATEGORY){
-            domElement.removeClass(CATEGORY[category].class);
+        for(category in LIKELIHOOD_CATEGORIES){
+            domElement.removeClass(LIKELIHOOD_CATEGORIES[category].class);
+        }
+        for(category in CONSEQUENCE_CATEGORIES){
+            domElement.removeClass(CONSEQUENCE_CATEGORIES[category].class);
         }
         return domElement;
     };
@@ -320,8 +400,14 @@ dssApp.controller('risksController'
             Object.keys($scope.simpleRisksLikelihoodConsequence).forEach(function(key){
                 $scope.riskBoundModels[key] = $scope.simpleRisksLikelihoodConsequence[key];
             });
-            Object.keys($scope.showRiskPerTARisksLikelihoodConsequence).forEach(function(key){
-                $scope.riskBoundModels[key] = $scope.showRiskPerTARisksLikelihoodConsequence[key];
+            Object.keys($scope.multipleRisksLikelihoodConsequence).forEach(function(key){
+                $scope.riskBoundModels[key] = $scope.multipleRisksLikelihoodConsequence[key];
+            });
+            Object.keys($scope.simpleRisksLikelihoodConsequenceAcceptance).forEach(function(key){
+                $scope.riskBoundModels[key] = $scope.simpleRisksLikelihoodConsequenceAcceptance[key];
+            });
+            Object.keys($scope.multipleRisksLikelihoodConsequenceAcceptance).forEach(function(key){
+                $scope.riskBoundModels[key] = $scope.multipleRisksLikelihoodConsequenceAcceptance[key];
             });
             return;
         };
@@ -414,19 +500,15 @@ dssApp.controller('risksController'
     $scope.$on('sliderValueChanged', function($event, element){
 
         // Ignore this event if we have no slider values available or if we are still loading data from local storage
-        if(_.isEmpty($scope.simpleRisksLikelihoodConsequence || _.isEmpty($scope.showRiskPerTARisksLikelihoodConsequence))){
+        if(_.isEmpty($scope.simpleRisksLikelihoodConsequence || _.isEmpty($scope.multipleRisksLikelihoodConsequence))){
             return;
         };
 
         //Current slider value
         var sliderValue = element.value;
+        var sliderType = element.type;
 
-        //Update category tag with current slider value
-        removeClasses(element.slider.children().first())
-            .addClass(numberToCategoryClass(sliderValue))
-            .text(numberToCategoryName(sliderValue));
-
-        //Retrieve the unique hash key to know what must be updated in risks services, whether simple or showRiskPerTA models
+        //Retrieve the unique hash key to know what must be updated in risks services, whether simple or multiple models
         var hashKey = element.slider.data('hash-key');
         var hashAttributes = hashKey.split('_');
 
@@ -443,22 +525,59 @@ dssApp.controller('risksController'
             var taKey = hashAttributes[1];
             //Likelihood or consequence?
             var valueToUpdate = hashAttributes[2];
+            //Acceptance?
+            var acceptance = hashAttributes[3];
+
+            //Update category tag with current slider value
+            removeClasses(element.slider.children().first())
+                .addClass(numberToCategoryClass(sliderValue, sliderType, acceptance))
+                .text(numberToCategoryName(sliderValue, sliderType));
+
             if(valueToUpdate == "likelihood"){
-                //Update likelihood for a certain TA in showRiskPerTA model
-                RisksService.addRiskTALikelihood(riskName, taKey, sliderValue);
+                if(acceptance){
+                    //Update likelihood acceptance value for a certain TA in multiple model
+                    RisksService.addRiskTALikelihoodAcceptance(riskName, taKey, sliderValue);
+                } else {
+                    //Update likelihood for a certain TA in multiple model
+                    RisksService.addRiskTALikelihood(riskName, taKey, sliderValue);
+                }
+
             } else {
-                //Update consequence for a certain TA in showRiskPerTA model
-                RisksService.addRiskTAConsequence(riskName, taKey, sliderValue);
+                if(acceptance){
+                    //Update consequence acceptance value for a certain TA in multiple model
+                    RisksService.addRiskTAConsequenceAcceptance(riskName, taKey, sliderValue);
+                } else {
+                    //Update consequence for a certain TA in multiple model
+                    RisksService.addRiskTAConsequence(riskName, taKey, sliderValue);
+                }
             }
         } else {
             //Likelihood or consequence?
             var valueToUpdate = hashAttributes[1];
+            //Acceptance?
+            var acceptance = hashAttributes[2];
+
+            //Update category tag with current slider value
+            removeClasses(element.slider.children().first())
+                .addClass(numberToCategoryClass(sliderValue, sliderType, acceptance))
+                .text(numberToCategoryName(sliderValue, sliderType));
+
             if(valueToUpdate == "likelihood"){
-                //Update likelihood in simple model
-                RisksService.addRiskLikelihood(riskName, sliderValue)
+                if(acceptance){
+                    //Update likelihood acceptance value in simple model
+                    RisksService.addRiskLikelihoodAcceptance(riskName, sliderValue)
+                } else {
+                    //Update likelihood in simple model
+                    RisksService.addRiskLikelihood(riskName, sliderValue)
+                }
             } else {
-                //Update consequence in simple model
-                RisksService.addRiskConsequence(riskName, sliderValue);
+                if(acceptance){
+                    //Update consequence acceptance value in simple model
+                    RisksService.addRiskConsequenceAcceptance(riskName, sliderValue);
+                } else {
+                    //Update consequence in simple model
+                    RisksService.addRiskConsequence(riskName, sliderValue);
+                }
             }
         }
 

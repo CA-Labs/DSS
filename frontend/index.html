@@ -213,7 +213,7 @@
                                         <br/>
                                         <div class="col-lg-6" style="margin-top: 10px;" >
                                             <p style="margin-bottom: 15px">Likelihood: </p>
-                                            <div on-risks-type="simple">
+                                            <div on-risks-type="simple" data-type="likelihood">
                                                 <div style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{risk.destination.name + '_likelihood'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '_likelihood']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
                                                     <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                                                 </div>
@@ -221,8 +221,24 @@
                                         </div>
                                         <div class="col-lg-6" style="margin-top: 10px">
                                             <p style="margin-bottom: 15px;">Consequence :</p>
-                                            <div on-risks-type="simple">
+                                            <div on-risks-type="simple" data-type="consequence">
                                                 <div style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{risk.destination.name + '_consequence'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '_consequence']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
+                                                    <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6" style="margin-top: 10px;" >
+                                            <p style="margin-bottom: 15px">Likelihood acceptance value: </p>
+                                            <div on-risks-type="simple" data-type="likelihood">
+                                                <div style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{risk.destination.name + '_likelihood_acceptance'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '_likelihood_acceptance']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
+                                                    <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-6" style="margin-top: 10px">
+                                            <p style="margin-bottom: 15px;">Consequence acceptance value:</p>
+                                            <div on-risks-type="simple" data-type="consequence">
+                                                <div style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{risk.destination.name + '_consequence_acceptance'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '_consequence_acceptance']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
                                                     <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                                                 </div>
                                             </div>
@@ -240,7 +256,7 @@
                                             <br/>
                                             <div class="col-lg-6" style="margin-top: 10px; display: block;">
                                                 <p style="margin-bottom: 15px">Likelihood: </p>
-                                                <div on-risks-type="showRiskPerTA" ng-switch="taAsset.cloudType">
+                                                <div on-risks-type="multiple" data-type="likelihood" ng-switch="taAsset.cloudType">
                                                     <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_likelihood'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_likelihood']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
                                                         <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                                                     </div>
@@ -251,11 +267,33 @@
                                             </div>
                                             <div class="col-lg-6" style="margin-top: 10px; display: block">
                                                 <p style="margin-bottom: 15px;">Consequence :</p>
-                                                <div on-risks-type="showRiskPerTA" ng-switch="taAsset.cloudType">
+                                                <div on-risks-type="multiple" data-type="consequence" ng-switch="taAsset.cloudType">
                                                     <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_consequence'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_consequence']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
                                                         <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                                                     </div>
                                                     <div ng-switch-when="PaaS" style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudPlatform._serviceName + '_consequence'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '_' + taAsset.cloudPlatform._serviceName + '_consequence']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
+                                                        <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6" style="margin-top: 10px; display: block;">
+                                                <p style="margin-bottom: 15px">Likelihood acceptance value: </p>
+                                                <div on-risks-type="multiple" data-type="likelihood" ng-switch="taAsset.cloudType">
+                                                    <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_likelihood_acceptance'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_likelihood_acceptance']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
+                                                        <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
+                                                    </div>
+                                                    <div ng-switch-when="PaaS" style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudPlatform._serviceName + '_likelihood_acceptance'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '_' + taAsset.cloudPlatform._serviceName + '_likelihood_acceptance']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
+                                                        <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="col-lg-6" style="margin-top: 10px; display: block;">
+                                                <p style="margin-bottom: 15px">Consequence acceptance value: </p>
+                                                <div on-risks-type="multiple" data-type="consequence" ng-switch="taAsset.cloudType">
+                                                    <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_consequence_acceptance'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_consequence_acceptance']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
+                                                        <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
+                                                    </div>
+                                                    <div ng-switch-when="PaaS" style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudPlatform._serviceName + '_consequence_acceptance'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '_' + taAsset.cloudPlatform._serviceName + '_consequence_acceptance']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
                                                         <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                                                     </div>
                                                 </div>
