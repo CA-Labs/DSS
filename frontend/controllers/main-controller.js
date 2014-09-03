@@ -109,6 +109,7 @@ dssApp.controller('mainController', [
                                 else if(resource.hasOwnProperty('cloudPlatform')){
                                     resource.cloudType = 'PaaS';
                                 }
+                                resource.criticityValue = 1;
                                 AssetsService.addTA(resource);
                             });
                             $scope.$emit('loadedTA');
