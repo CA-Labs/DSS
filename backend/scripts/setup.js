@@ -3,9 +3,9 @@
  * Its main function is collections/graph initialization.
  **/
 
-var console         = require('console')
-    arangodb        = require('org/arangodb');
-    db              = arangodb.db;
+var console         = require('console'),
+    arangodb        = require('org/arangodb'),
+    db              = arangodb.db,
     graphs          = require('org/arangodb/general-graph'),
     aqlfunctions    = require('org/arangodb/aql/functions');
 
@@ -263,34 +263,32 @@ aqlfunctions.register('dss::graph::updateGraph', function(){
 }, false);
 
 /**
- * Main services lookup graph function
+ * Main services lookup graph functions
  */
-aqlfunctions.register('dss::graph::lookupServices', function(cloudType, treatmentNamesList){
+
+aqlfunctions.register('dss::graph::lookupServicesByCloudAndServiceTypes', function(cloudType, serviceType){
     var db = require('internal').db;
     var console = require('console');
-    console.info('**************************************');
-    console.info('********** SERVICES SEARCH ***********');
-    console.info('**************************************');
+    console.info('******************************************************************');
+    console.info('********** SERVICES SEARCH (cloud type & service type) ***********');
+    console.info('******************************************************************');
     var query = 'for path in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 3, maxLength: 3}) ' +
         'let sourceType = path.source.type ' +
         'let destinationType = path.destination.type ' +
-        'let serviceType = path.vertices[1].cloudType ' +
-        'let treatmentName = path.destination.name ' +
-        'let value = path.edges[1].data.value ' +
-        'filter (sourceType == "provider") && (destinationType == "treatment") && (serviceType == @cloudType) && (treatmentName in @treatmentNamesList) ' +
+        'let cloudType = path.vertices[1].cloudType ' +
+        'let serviceType = path.vertices[1].serviceType ' +
+        'filter (sourceType == "provider") && (destinationType == "treatment") && (cloudType == @cloudType) && (serviceType == @serviceType) ' +
         'collect service = path.vertices[1],' +
         'provider = path.source,' +
         'providerName = path.source.name into providers ' +
         'return {provider: provider, service: service, characteristics: dss::utils::pathsToCharacteristicValues(providers[*].path)}';
-
     var stmt = db._createStatement({query: query});
     stmt.bind('cloudType', cloudType);
-    stmt.bind('treatmentNamesList', treatmentNamesList);
+    stmt.bind('serviceType', serviceType);
     var result = stmt.execute();
 
     return result.toArray();
-
-}, false);
+});
 
 /**
  * Used in the service graph query for grouping providers by services and characteristic values

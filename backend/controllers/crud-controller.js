@@ -875,7 +875,9 @@
         required: true
     });
 
-    // Used in tests for database clean-up
+    /** Used in tests for database clean-up.
+     *
+     */
     controller.delete('/nodes/all', function(req, res){
         // TODO: Verify request ip is localhost so that we get rid of hacking issues
         db._collection('metric').truncate();
@@ -889,6 +891,9 @@
         res.json({error: false});
     });
 
+    /** Used in tests for database clean-up.
+     *
+     */
     controller.delete('/edges/all', function(req, res){
         //TODO: Verify request ip is localhost so that we get rid of hacking issues
         db._collection('edges').truncate();
