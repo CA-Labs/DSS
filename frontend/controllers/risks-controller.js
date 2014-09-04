@@ -480,13 +480,11 @@ dssApp.controller('risksController'
         //Current slider value
         var sliderValue = element.value;
         var sliderType = element.type;
+        var sliderModel = element.model;
 
         //Retrieve the unique hash key to know what must be updated in risks services, whether simple or multiple models
         var hashKey = element.slider.data('hash-key');
         var hashAttributes = hashKey.split('/');
-
-        console.log('hash key', hashKey);
-        console.log('hash attributes', hashAttributes);
 
         //Update category tag with current slider value
         removeClasses(element.slider.children().first())
@@ -500,8 +498,7 @@ dssApp.controller('risksController'
 
         var riskName = hashAttributes[0];
 
-
-        if($scope.showRiskPerTA){
+        if(sliderModel == 'multiple'){
             //Look up what TA asset we are referring to
             var taKey = hashAttributes[1];
             //Likelihood or consequence?
@@ -514,7 +511,7 @@ dssApp.controller('risksController'
                 //Update consequence for a certain TA in multiple model
                 RisksService.addRiskTAConsequence(riskName, taKey, sliderValue);
             }
-        } else {
+        } else if(sliderModel == 'simple') {
             //Likelihood or consequence?
             var valueToUpdate = hashAttributes[1];
 
