@@ -190,6 +190,7 @@ dssApp.controller('mainController', [
             href: 'data:application/xml;charset=utf-8,' + decodeURI(x2js.json2xml_str($scope.xmlAsJsonObject)),
             target: '_blank'
         });
+        console.log(decodeURIComponent(x2js.json2xml_str($scope.xmlAsJsonObject)));
 
     };
 

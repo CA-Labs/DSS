@@ -102,11 +102,11 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
         console.log('xml', $scope.xmlTaAsObject.resourceModelExtension.resourceContainer, 'services', $scope.servicesSelected[taAsset._id].serviceSelected.service.name);
         _.each($scope.xmlTaAsObject.resourceModelExtension.resourceContainer, function (resourceContainer) {
             if (resourceContainer._id == taAsset._id) {
-                resourceContainer.provider = $scope.servicesSelected[taAsset._id].serviceSelected.provider.name;
+                resourceContainer._provider = $scope.servicesSelected[taAsset._id].serviceSelected.provider.name;
                 if (resourceContainer.cloudResource) {
-                    resourceContainer.cloudResource.serviceName = $scope.servicesSelected[taAsset._id].serviceSelected.service.name;
+                    resourceContainer.cloudResource._serviceName = $scope.servicesSelected[taAsset._id].serviceSelected.service.name;
                 } else if (resourceContainer.cloudPlatform) {
-                    resourceContainer.cloudPlatform.serviceName = $scope.servicesSelected[taAsset._id].serviceSelected.service.name;
+                    resourceContainer.cloudPlatform._serviceName = $scope.servicesSelected[taAsset._id].serviceSelected.service.name;
                 }
             }
         });
