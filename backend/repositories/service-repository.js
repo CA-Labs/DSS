@@ -36,7 +36,8 @@ var ServiceRepository = Foxx.Repository.extend({
                 var service = {
                     name: data.name,
                     type: data.type,
-                    cloudType: data.cloudType
+                    cloudType: data.cloudType,
+                    serviceType: data.serviceType
                 };
 
                 var provider = data.provider;
