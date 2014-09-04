@@ -18,6 +18,8 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
 
     var loadingDataFromLocalStorage = false;    //Flag to control local storage restore state
 
+    var xmlTaAssetsAsObject = {};               // Parsed XML of Modelio file represented as object
+
     /**
      * Adds an asset to the list of selected
      * BSOIA assets.
@@ -274,6 +276,24 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      */
     this.setTA = function(taLoadedFromLocalStorage) {
         ta = taLoadedFromLocalStorage;
+    };
+
+    /**
+     * Sets parsed XML of Resources Object, loaded when TA are loaded from modelio
+     * @param xmlObject
+     */
+    this.setXmlTaObject = function (xmlObject) {
+        if (typeof(xmlObject) == 'object') {
+            xmlTaAssetsAsObject = xmlObject;
+        }
+    };
+
+    /**
+     * Gets XML file as Object, this file is loaded from modelio
+     * @returns {Object} xmlTAAssetsAsObject - object which represents Modelio XML file as Object
+     */
+    this.getXmlTaObject = function () {
+        return xmlTaAssetsAsObject;
     };
 
     this.loadResourcesFromXML = function(file){

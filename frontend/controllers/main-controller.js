@@ -37,6 +37,10 @@ dssApp.controller('mainController', [
     var lastRequirementsLoaded = "";
     $scope.xmlAsJsonObject = {};
 
+    // Save loaded XML file name for later reuse on export
+    $scope.xmlTaAssetsFileName = "";
+    localStorageService.bind($scope, 'xmlTaAssetsFileName', $scope.xmlTaAssetsFileName);
+
     /**
      * Clear local storage and reload the window
      */
@@ -68,7 +72,6 @@ dssApp.controller('mainController', [
     $scope.loadLocalSessionContent = function ($fileContent) {
         console.log($fileContent);
         if (dssApp.isJSON($fileContent)) {
-            console.log('json');
             var fileContent = JSON.parse($fileContent);
             localStorageService.bsoiaAssetsSelected = fileContent.bsoiaAssetsSelected;
             localStorageService.toiaAssetsSelected = fileContent.toiaAssetsSelected;
@@ -92,6 +95,7 @@ dssApp.controller('mainController', [
     $scope.onDSSCloudResourceFileSelect = function($files){
 
         var file = $files[0];
+        $scope.xmlTaAssetsFileName = file.name;
         if(file !== null && typeof file !== 'undefined'){
             readFile(file).then(function(xmlString){
                 //Check if XML document is correct using the XSD schema validation service on server-side
@@ -137,6 +141,7 @@ dssApp.controller('mainController', [
 
     $scope.onSessionFileSelect = function($files){
         var file = $files[0];
+        $scope.xmlTaAssetsFileName = file;
         if(file !== null && typeof file !== 'undefined'){
             readFile(file).then(function(jsonString){
                 localStorageValues = JSON.parse(jsonString);
@@ -170,6 +175,20 @@ dssApp.controller('mainController', [
             deferred.resolve(fileReader.result);
         };
         return deferred.promise;
+    };
+
+    $scope.saveCloudSelection = function (event) {
+        var element = angular.element(event.target);
+
+        var localStorageContent = {};
+        // Set export file name
+        var fileName = ($scope.xmlTaAssetsFileName == '') ? 'DSS_CloudServicesSelection.xml' : 'export_' + $scope.xmlTaAssetsFileName;
+        element.attr({
+            download: fileName,
+            href: 'data:application/xml;charset=utf-8,' + encodeURI(JSON.stringify(localStorageContent)),
+            target: '_blank'
+        });
+
     };
 
 }]);
