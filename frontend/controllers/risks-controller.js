@@ -255,8 +255,6 @@ dssApp.controller('risksController'
     $scope.$watch(function(){
         return AssetsService.getTA();
     }, function(newTaAssets, oldTaAssets){
-        console.log('old', oldTaAssets);
-        console.log('new', newTaAssets);
         // If we have loaded ta assets from local storage, don't update risks models
         if(AssetsService.isLoadingLocalStorageData()){
             $scope.taAssets = newTaAssets;

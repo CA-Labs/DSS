@@ -12,7 +12,7 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     localStorageService.bind($scope, 'proposals', $scope.proposals);
     $scope.servicesSelected = {};
     localStorageService.bind($scope, 'servicesSelected', $scope.servicesSelected);
-
+    $scope.xmlTaAsObject = AssetsService.getXmlTaObject();              // gets the Object representation of the Modelio loaded XML
 
     $scope.$watch(function(){
         return TreatmentsService.getTreatments();
@@ -99,6 +99,17 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
             serviceSelected: proposal
         };
         $scope.servicesSelected[taAsset._id] = data;
+        console.log('xml', $scope.xmlTaAsObject.resourceModelExtension.resourceContainer, 'services', $scope.servicesSelected[taAsset._id].serviceSelected.service.name);
+        _.each($scope.xmlTaAsObject.resourceModelExtension.resourceContainer, function (resourceContainer) {
+            if (resourceContainer._id == taAsset._id) {
+                resourceContainer.provider = $scope.servicesSelected[taAsset._id].serviceSelected.provider.name;
+                if (resourceContainer.cloudResource) {
+                    resourceContainer.cloudResource.serviceName = $scope.servicesSelected[taAsset._id].serviceSelected.service.name;
+                } else if (resourceContainer.cloudPlatform) {
+                    resourceContainer.cloudPlatform.serviceName = $scope.servicesSelected[taAsset._id].serviceSelected.service.name;
+                }
+            }
+        });
     };
 
     /**

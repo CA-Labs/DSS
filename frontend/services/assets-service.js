@@ -18,7 +18,8 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
 
     var loadingDataFromLocalStorage = false;    //Flag to control local storage restore state
 
-    var xmlTaAssetsAsObject = {};               // Parsed XML of Modelio file represented as object
+    var xmlTaAssetsAsObjectFromStorage = localStorageService.get('xmlTaAssetsAsObject') || {};
+    var xmlTaAssetsAsObject = xmlTaAssetsAsObjectFromStorage;               // Parsed XML of Modelio file represented as object
 
     /**
      * Adds an asset to the list of selected

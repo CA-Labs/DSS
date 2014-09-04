@@ -35,7 +35,8 @@ dssApp.controller('mainController', [
     var x2js = new X2JS();
     //Last requirements loaded (string XML)
     var lastRequirementsLoaded = "";
-    $scope.xmlAsJsonObject = {};
+    $scope.xmlAsJsonObject = AssetsService.getXmlTaObject();
+    localStorageService.bind($scope, 'xmlAsJsonObject', $scope.xmlAsJsonObject);
 
     // Save loaded XML file name for later reuse on export
     $scope.xmlTaAssetsFileName = "";
@@ -105,6 +106,8 @@ dssApp.controller('mainController', [
                     } else {
                         if(data.correct){
                             $scope.xmlAsJsonObject = x2js.xml_str2json(xmlString);
+                            AssetsService.setXmlTaObject($scope.xmlAsJsonObject);
+
                             var resources = $scope.xmlAsJsonObject.resourceModelExtension.resourceContainer;
                             _.each(resources, function(resource){
                                 // IaaS
@@ -180,12 +183,11 @@ dssApp.controller('mainController', [
     $scope.saveCloudSelection = function (event) {
         var element = angular.element(event.target);
 
-        var localStorageContent = {};
         // Set export file name
         var fileName = ($scope.xmlTaAssetsFileName == '') ? 'DSS_CloudServicesSelection.xml' : 'export_' + $scope.xmlTaAssetsFileName;
         element.attr({
             download: fileName,
-            href: 'data:application/xml;charset=utf-8,' + encodeURI(JSON.stringify(localStorageContent)),
+            href: 'data:application/xml;charset=utf-8,' + decodeURI(x2js.json2xml_str($scope.xmlAsJsonObject)),
             target: '_blank'
         });
 
