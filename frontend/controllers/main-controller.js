@@ -35,6 +35,7 @@ dssApp.controller('mainController', [
     var x2js = new X2JS();
     //Last requirements loaded (string XML)
     var lastRequirementsLoaded = "";
+    $scope.xmlAsJsonObject = {};
 
     /**
      * Clear local storage and reload the window
@@ -99,7 +100,8 @@ dssApp.controller('mainController', [
                         flash.error = 'Some error occurred while trying to upload your requirements';
                     } else {
                         if(data.correct){
-                            var resources = x2js.xml_str2json(xmlString).resourceModelExtension.resourceContainer;
+                            $scope.xmlAsJsonObject = x2js.xml_str2json(xmlString);
+                            var resources = $scope.xmlAsJsonObject.resourceModelExtension.resourceContainer;
                             _.each(resources, function(resource){
                                 // IaaS
                                 if(resource.hasOwnProperty('cloudResource')){
@@ -109,6 +111,7 @@ dssApp.controller('mainController', [
                                 else if(resource.hasOwnProperty('cloudPlatform')){
                                     resource.cloudType = 'PaaS';
                                 }
+                                resource.criticityValue = 1;
                                 AssetsService.addTA(resource);
                             });
                             $scope.$emit('loadedTA');

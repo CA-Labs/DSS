@@ -199,7 +199,8 @@ dssApp.controller('risksController'
     $scope.$watch(function(){
         return AssetsService.getTA();
     }, function(newTaAssets, oldTaAssets){
-
+        console.log('old', oldTaAssets);
+        console.log('new', newTaAssets);
         // If we have loaded ta assets from local storage, don't update risks models
         if(AssetsService.isLoadingLocalStorageData()){
             $scope.taAssets = newTaAssets;
@@ -228,12 +229,14 @@ dssApp.controller('risksController'
             _.each(newTaAssets, function(newAsset){
                 switch(newAsset.cloudType){
                     case 'IaaS':
-                        if(newAsset.cloudResource._serviceName == oldAsset.cloudResource._serviceName){
+                        if(newAsset._id == oldAsset._id &&
+                            newAsset.cloudResource._serviceName == oldAsset.cloudResource._serviceName){
                             found = true;
                         }
                         break;
                     case 'PaaS':
-                        if(newAsset.cloudPlatform._serviceName == oldAsset.cloudPlatform._serviceName){
+                        if(newAsset._id == oldAsset._id &&
+                            newAsset.cloudPlatform._serviceName == oldAsset.cloudPlatform._serviceName){
                             found = true;
                         }
                         break;
@@ -262,12 +265,14 @@ dssApp.controller('risksController'
             _.each(oldTaAssets, function (oldTaAsset) {
                 switch(oldTaAsset.cloudType){
                     case 'IaaS':
-                        if(oldTaAsset.cloudResource._serviceName == newTaAsset.cloudResource._serviceName){
+                        if(oldTaAsset._id == newTaAsset._id &&
+                            oldTaAsset.cloudResource._serviceName == newTaAsset.cloudResource._serviceName){
                             found = true;
                         }
                         break;
                     case 'PaaS':
-                        if(oldTaAsset.cloudPlatform._serviceName == newTaAsset.cloudPlatform._serviceName){
+                        if(oldTaAsset._id == newTaAsset._id &&
+                            oldTaAsset.cloudPlatform._serviceName == newTaAsset.cloudPlatform._serviceName){
                             found = true;
                         }
                         break;
