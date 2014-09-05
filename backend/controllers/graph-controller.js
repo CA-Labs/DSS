@@ -187,7 +187,6 @@
         required: true
     });
 
-
     /**
      * Services lookup endpoint
      */

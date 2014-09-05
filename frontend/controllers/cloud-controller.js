@@ -14,12 +14,13 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     localStorageService.bind($scope, 'servicesSelected', $scope.servicesSelected);
     $scope.xmlTaAsObject = AssetsService.getXmlTaObject();              // gets the Object representation of the Modelio loaded XML
 
+    /*
     $scope.$watch(function(){
         return TreatmentsService.getTreatments();
     }, function(newTreatments, oldTreatments){
         $scope.treatments = newTreatments;
 
-        // Only query service proposals if we have at least one treatment and tangible asset
+        // Only query service proposals if we have at least one tangible asset
         if($scope.treatments.length > 0 && $scope.ta.length > 0){
             _.each($scope.ta, function(ta){
                 ArangoDBService.getProposals(ta.cloudType, $scope.treatments, function(error, data){
@@ -45,15 +46,17 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
             $scope.proposals = [];
         }
     }, true);
+    */
 
     $scope.$watch(function(){
         return AssetsService.getTA();
     }, function(newTA, oldTA){
         $scope.ta = newTA;
-        // Only query service proposals if we have at least one treatment and tangible asset
-        if($scope.ta.length > 0 && $scope.treatments.length > 0){
+        // Only query service proposals if we have at least one tangible asset
+        if($scope.ta.length > 0){
             _.each($scope.ta, function(ta){
-                ArangoDBService.getProposals(ta.cloudType, $scope.treatments, function(error, data){
+                var serviceType = ta.cloudType == 'IaaS' ? ta.cloudResource._serviceType : ta.cloudPlatform._serviceType;
+                ArangoDBService.getProposalsByCloudAndServiceTypes(ta.cloudType, serviceType, function(error, data){
                     if(error){
                         console.log(error);
                     } else {
