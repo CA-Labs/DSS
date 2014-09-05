@@ -35,6 +35,12 @@ dssApp.controller('mainController', [
     var x2js = new X2JS();
     //Last requirements loaded (string XML)
     var lastRequirementsLoaded = "";
+    $scope.xmlAsJsonObject = AssetsService.getXmlTaObject();
+    localStorageService.bind($scope, 'xmlAsJsonObject', $scope.xmlAsJsonObject);
+
+    // Save loaded XML file name for later reuse on export
+    $scope.xmlTaAssetsFileName = "";
+    localStorageService.bind($scope, 'xmlTaAssetsFileName', $scope.xmlTaAssetsFileName);
 
     /**
      * Clear local storage and reload the window
@@ -67,7 +73,6 @@ dssApp.controller('mainController', [
     $scope.loadLocalSessionContent = function ($fileContent) {
         console.log($fileContent);
         if (dssApp.isJSON($fileContent)) {
-            console.log('json');
             var fileContent = JSON.parse($fileContent);
             localStorageService.bsoiaAssetsSelected = fileContent.bsoiaAssetsSelected;
             localStorageService.toiaAssetsSelected = fileContent.toiaAssetsSelected;
@@ -91,6 +96,7 @@ dssApp.controller('mainController', [
     $scope.onDSSCloudResourceFileSelect = function($files){
 
         var file = $files[0];
+        $scope.xmlTaAssetsFileName = file.name;
         if(file !== null && typeof file !== 'undefined'){
             readFile(file).then(function(xmlString){
                 //Check if XML document is correct using the XSD schema validation service on server-side
@@ -99,7 +105,10 @@ dssApp.controller('mainController', [
                         flash.error = 'Some error occurred while trying to upload your requirements';
                     } else {
                         if(data.correct){
-                            var resources = x2js.xml_str2json(xmlString).resourceModelExtension.resourceContainer;
+                            $scope.xmlAsJsonObject = x2js.xml_str2json(xmlString);
+                            AssetsService.setXmlTaObject($scope.xmlAsJsonObject);
+
+                            var resources = $scope.xmlAsJsonObject.resourceModelExtension.resourceContainer;
                             _.each(resources, function(resource){
                                 // IaaS
                                 if(resource.hasOwnProperty('cloudResource')){
@@ -109,6 +118,7 @@ dssApp.controller('mainController', [
                                 else if(resource.hasOwnProperty('cloudPlatform')){
                                     resource.cloudType = 'PaaS';
                                 }
+                                resource.criticityValue = 1;
                                 AssetsService.addTA(resource);
                             });
                             $scope.$emit('loadedTA');
@@ -134,6 +144,7 @@ dssApp.controller('mainController', [
 
     $scope.onSessionFileSelect = function($files){
         var file = $files[0];
+        $scope.xmlTaAssetsFileName = file;
         if(file !== null && typeof file !== 'undefined'){
             readFile(file).then(function(jsonString){
                 localStorageValues = JSON.parse(jsonString);
@@ -167,6 +178,20 @@ dssApp.controller('mainController', [
             deferred.resolve(fileReader.result);
         };
         return deferred.promise;
+    };
+
+    $scope.saveCloudSelection = function (event) {
+        var element = angular.element(event.target);
+
+        // Set export file name
+        var fileName = ($scope.xmlTaAssetsFileName == '') ? 'DSS_CloudServicesSelection.xml' : 'export_' + $scope.xmlTaAssetsFileName;
+        element.attr({
+            download: fileName,
+            href: 'data:application/xml;charset=utf-8,' + decodeURI(x2js.json2xml_str($scope.xmlAsJsonObject)),
+            target: '_blank'
+        });
+        console.log(decodeURIComponent(x2js.json2xml_str($scope.xmlAsJsonObject)));
+
     };
 
 }]);

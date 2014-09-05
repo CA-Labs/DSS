@@ -255,7 +255,6 @@ dssApp.controller('risksController'
     $scope.$watch(function(){
         return AssetsService.getTA();
     }, function(newTaAssets, oldTaAssets){
-
         // If we have loaded ta assets from local storage, don't update risks models
         if(AssetsService.isLoadingLocalStorageData()){
             $scope.taAssets = newTaAssets;
@@ -284,12 +283,14 @@ dssApp.controller('risksController'
             _.each(newTaAssets, function(newAsset){
                 switch(newAsset.cloudType){
                     case 'IaaS':
-                        if(newAsset.cloudResource._serviceName == oldAsset.cloudResource._serviceName){
+                        if(newAsset._id == oldAsset._id &&
+                            newAsset.cloudResource._serviceName == oldAsset.cloudResource._serviceName){
                             found = true;
                         }
                         break;
                     case 'PaaS':
-                        if(newAsset.cloudPlatform._serviceName == oldAsset.cloudPlatform._serviceName){
+                        if(newAsset._id == oldAsset._id &&
+                            newAsset.cloudPlatform._serviceName == oldAsset.cloudPlatform._serviceName){
                             found = true;
                         }
                         break;
@@ -318,12 +319,14 @@ dssApp.controller('risksController'
             _.each(oldTaAssets, function (oldTaAsset) {
                 switch(oldTaAsset.cloudType){
                     case 'IaaS':
-                        if(oldTaAsset.cloudResource._serviceName == newTaAsset.cloudResource._serviceName){
+                        if(oldTaAsset._id == newTaAsset._id &&
+                            oldTaAsset.cloudResource._serviceName == newTaAsset.cloudResource._serviceName){
                             found = true;
                         }
                         break;
                     case 'PaaS':
-                        if(oldTaAsset.cloudPlatform._serviceName == newTaAsset.cloudPlatform._serviceName){
+                        if(oldTaAsset._id == newTaAsset._id &&
+                            oldTaAsset.cloudPlatform._serviceName == newTaAsset.cloudPlatform._serviceName){
                             found = true;
                         }
                         break;
@@ -477,13 +480,11 @@ dssApp.controller('risksController'
         //Current slider value
         var sliderValue = element.value;
         var sliderType = element.type;
+        var sliderModel = element.model;
 
         //Retrieve the unique hash key to know what must be updated in risks services, whether simple or multiple models
         var hashKey = element.slider.data('hash-key');
         var hashAttributes = hashKey.split('/');
-
-        console.log('hash key', hashKey);
-        console.log('hash attributes', hashAttributes);
 
         //Update category tag with current slider value
         removeClasses(element.slider.children().first())
@@ -497,8 +498,7 @@ dssApp.controller('risksController'
 
         var riskName = hashAttributes[0];
 
-
-        if($scope.showRiskPerTA){
+        if(sliderModel == 'multiple'){
             //Look up what TA asset we are referring to
             var taKey = hashAttributes[1];
             //Likelihood or consequence?
@@ -511,7 +511,7 @@ dssApp.controller('risksController'
                 //Update consequence for a certain TA in multiple model
                 RisksService.addRiskTAConsequence(riskName, taKey, sliderValue);
             }
-        } else {
+        } else if(sliderModel == 'simple') {
             //Likelihood or consequence?
             var valueToUpdate = hashAttributes[1];
 

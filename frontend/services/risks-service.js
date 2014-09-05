@@ -74,7 +74,7 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param likelihood The likelihood value of that risk.
      */
     this.addRiskLikelihood = function(riskName, likelihood){
-        //console.log('adding risk likelihood in ' + riskName);
+        //console.log('adding risk likelihood for ' + riskName + ' in simple model');
         risksLikelihoodConsequence[riskName + SEPARATOR + 'likelihood'] = parseInt(likelihood);
     };
 
@@ -116,7 +116,7 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param likelihood The likelihood value.
      */
     this.addRiskTALikelihood = function(riskName, taAssetId, likelihood){
-        //console.log('adding risk likelihood for ' + riskName + '/' + taAssetName + ' in multiple model');
+        //console.log('adding risk likelihood for ' + riskName + '/' + taAssetId + ' in multiple model');
         risksTALikelihoodConsequence[riskName + SEPARATOR + taAssetId + SEPARATOR + 'likelihood'] = parseInt(likelihood);
     };
 
@@ -127,7 +127,7 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param consequence The consequence value.
      */
     this.addRiskTAConsequence = function(riskName, taAssetId, consequence){
-        //console.log('adding risk consequence for ' + riskName + '/' + taAssetName + ' in multiple model');
+        //console.log('adding risk consequence for ' + riskName + '/' + taAssetId + ' in multiple model');
         risksTALikelihoodConsequence[riskName + SEPARATOR + taAssetId + SEPARATOR + 'consequence'] = parseInt(consequence);
     };
 
