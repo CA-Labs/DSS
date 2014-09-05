@@ -71,7 +71,7 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
                                 break;
                         }
                     }
-                    console.log($scope.proposals);
+                    //console.log($scope.proposals);
                 });
             });
         }
@@ -84,7 +84,7 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     $scope.getTAProposals = function(taAssetName){
         // console.log('getting proposals for TA ' + taAssetName);
         if($scope.proposals[taAssetName]){
-            console.log($scope.proposals[taAssetName]);
+            //console.log($scope.proposals[taAssetName]);
             return $scope.proposals[taAssetName];
         } else {
             return [];

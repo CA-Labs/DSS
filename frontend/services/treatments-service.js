@@ -12,6 +12,9 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
     var treatmentsValuesFromStorage = localStorageService.get('treatmentValues') || {};
     var treatmentsValues = treatmentsValuesFromStorage;         // Treatments values model used to store select/sliders/radio UI components values
 
+    var risksTreatmentsMappingFromStorage = localStorageService.get('risksTreatmentsMapping') || {};
+    var risksTreatmentsMapping = risksTreatmentsMappingFromStorage;
+
     var loadingTreatmentsFromLocalStorage = false;              // Flag to control local storage restore state
     var loadingTreatmentsValuesFromLocalStorage = false;        // IDEM
 
@@ -25,7 +28,7 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
         } else {
             //Check treatment doesn't already exist
             var exists = treatments.filter(function(t, treatmentIndex){
-                return treatment.destination.name == t.destination.name;
+                return treatment.name == t.name;
             }).length > 0;
             if(!exists){
                 // objectify options
@@ -43,7 +46,7 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
     this.removeTreatment = function(treatment){
         var index = -1;
         _.each(treatments, function(t, treatmentIndex){
-            if(treatment.destination.name == t.destination.name){
+            if(treatment.name == t.name){
                 index = treatmentIndex;
             }
         });
@@ -105,7 +108,15 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
 
     this.isLoadingTreatmentsValuesFromLocalStorage = function(){
         return loadingTreatmentsValuesFromLocalStorage;
-    }
+    };
+
+    this.setRisksTreatmentsMapping = function(risksTreatmentsMappingValues){
+        risksTreatmentsMapping = risksTreatmentsMappingValues;
+    };
+
+    this.getRisksTreatmentsMapping = function(){
+        return risksTreatmentsMapping;
+    };
 
     /**
      * check if TA exists in the treatment

@@ -34,7 +34,7 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'loc
      * related risks unacceptability.
      */
     $scope.$on('sliderValueChanged', function($event, element){
-        console.log('ta slider value changed, sending acceptability event');
+        //console.log('ta slider value changed, sending acceptability event');
         $rootScope.$broadcast('acceptabilityValueChanged');
     });
 

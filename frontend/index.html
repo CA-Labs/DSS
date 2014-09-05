@@ -276,7 +276,7 @@
                     <!--treatments slide-->
                     <div class="item treatments-slide" ng-controller="treatmentsController">
                         <div class="col-lg-4 form-group form-inline">
-                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.destination.name for potentialTreatment in potentialTreatments">
+                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.name for potentialTreatment in potentialTreatments">
                                 <option></option>
                             </select>
                             <button class="btn btn-success" ng-click="addTreatment(potentialTreatment)" style="width: 19% !important;">Add</button>
@@ -305,17 +305,25 @@
                                     <h4>Treatments Selected</h4>
                                 </div>
                                 <a class="list-group-item selected-treatment dropzone-wrapper" href="#" ng-repeat="treatmentSelected in treatmentsSelected">
-                                    <strong>{{ treatmentSelected.destination.name }}</strong>
+                                    <strong>{{ treatmentSelected.name }}</strong>
+                                    <p>
+                                        <i>Mitigating risks:</i>
+                                        <ul>
+                                            <li ng-repeat="risk in mitigatedRisks(treatmentSelected.name) | orderBy:'':true">
+                                                <i>{{risk}}</i>
+                                            </li>
+                                        </ul>
+                                    </p>
                                     <span class="glyphicon glyphicon-remove remove-treatment" ng-click="removeTreatment(treatmentSelected)">&nbsp;</span>
-                                    <div ng-switch="treatmentSelected.destination.representation">
+                                    <div ng-switch="treatmentSelected.representation">
                                         <div ng-switch-when="select">
-                                            <select ng-show="showTreatmentValues" label="treatmentValue" class="form-control" data-hash-key="treatmentSelected.destination.name" ng-model="treatmentValue" ng-options="value for (key,value) in treatmentSelected.destination.options | orderBy:'':true" ng-change="treatmentValueChanged(treatmentValue, treatmentSelected)"/>
+                                            <select ng-show="showTreatmentValues" label="treatmentValue" class="form-control" data-hash-key="treatmentSelected.name" ng-model="treatmentValue" ng-options="value for (key,value) in treatmentSelected.options | orderBy:'':true" ng-change="treatmentValueChanged(treatmentValue, treatmentSelected)"/>
                                                 <option value="" disabled selected>--- Select a value ---</option>
                                             </select>
                                             <br/>
-                                            <div ui-on-drop="taDropped($event, $data, treatmentSelected.destination)" class="dropzone-container">
-                                                <button ui-draggable="false" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.destination.taRelations">
-                                                    <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected.destination, taRelation)">&nbsp;</span></small>
+                                            <div ui-on-drop="taDropped($event, $data, treatmentSelected)" class="dropzone-container">
+                                                <button ui-draggable="false" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.taRelations">
+                                                    <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected, taRelation)">&nbsp;</span></small>
                                                     <b ng-switch="taRelation.cloudType">
                                                         <span ng-switch-when="IaaS">{{taRelation.cloudResource._serviceName}} ({{taRelation.cloudType}})</span>
                                                         <span ng-switch-when="PaaS">{{taRelation.cloudPlatform._serviceName}} ({{taRelation.cloudType}})</span>
@@ -332,10 +340,10 @@
                                                 <!--<input type="text" class="form-control" value="{{value}}" readonly="readonly" style="background-color: #18bc9c !important; cursor: default !important;">-->
                                             <!--</div>-->
                                             <!--<br/>-->
-                                            <div ng-init="addRadioValue(treatmentSelected.destination.name)"></div>
-                                            <div ui-on-drop="taDropped($event, $data, treatmentSelected.destination)" class="dropzone-container">
-                                                <button ui-draggable="false" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.destination.taRelations">
-                                                    <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected.destination, taRelation)">&nbsp;</span></small>
+                                            <div ng-init="addRadioValue(treatmentSelected.name)"></div>
+                                            <div ui-on-drop="taDropped($event, $data, treatmentSelected)" class="dropzone-container">
+                                                <button ui-draggable="false" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.taRelations">
+                                                    <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected, taRelation)">&nbsp;</span></small>
                                                     <b ng-switch="taRelation.cloudType">
                                                         <span ng-switch-when="IaaS">{{taRelation.cloudResource._serviceName}} ({{taRelation.cloudType}})</span>
                                                         <span ng-switch-when="PaaS">{{taRelation.cloudPlatform._serviceName}} ({{taRelation.cloudType}})</span>

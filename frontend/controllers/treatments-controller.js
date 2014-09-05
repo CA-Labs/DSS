@@ -24,41 +24,55 @@ dssApp.controller('treatmentsController'
         , $timeout
         , localStorageService){
 
-    $scope.taAssets = AssetsService.getTA();                                // The list of the TA assets
-    $scope.potentialTreatments = [];                                        // The list of potential treatments
-    $scope.treatmentsSelected = TreatmentsService.getTreatments();          // The list of selected treatments
+    $scope.taAssets = AssetsService.getTA();                                        // The list of the TA assets
+    $scope.potentialTreatments = [];                                                // The list of potential treatments
+    $scope.treatmentsSelected = TreatmentsService.getTreatments();                  // The list of selected treatments
     localStorageService.bind($scope, 'treatmentsSelected', $scope.treatmentsSelected);
-    $scope.treatmentValues = TreatmentsService.getTreatmentsValues();       // The treatments values model
+    $scope.treatmentValues = TreatmentsService.getTreatmentsValues();               // The treatments values model
+    localStorageService.bind($scope, 'treatmentValues', $scope.treatmentValues);
+    $scope.risksTreatmentsMapping = TreatmentsService.getRisksTreatmentsMapping();   // Risks/treatments mapping
     localStorageService.bind($scope, 'treatmentValues', $scope.treatmentValues);
 
     $scope.treatmentsBoundModels = {};
 
 
     /**
-     * Event received when the list of selected risks changes, so that
+     * Event received when the unaccepted risks change, so that
      * the list of potential treatments can be recomputed.
      */
     $scope.$on('risksSelectedChanged', function(){
-        // Only update if we have at least one risk selected
-        if(RisksService.getRisks().length > 0){
-            ArangoDBService.getPotentialTreatments(RisksService.getRisks(), function(error, data){
-                if(error){
-                    flash.error = 'Some error occurred when trying to compute potential treatments after selected risks changed';
-                } else {
-                    var seen = [];
-                    var aux = [];
-                    _.each(data._documents, function(treatment){
-                        //TODO: Move this logic to an Angular filter
-                        //Filter repeated treatments by hand since AngularJS filter "unique" does not seem to work properly
-                        if(seen.indexOf(treatment.destination.name) === -1){
-                            seen.push(treatment.destination.name);
+
+        // Retrieve all unaccepted risks
+        var unacceptableRisksPerTA = RisksService.getUnacceptableRisks();
+        var unacceptableRiskNames = [];
+        _.each(unacceptableRisksPerTA, function(value, key){
+            _.each(value, function(riskName){
+                if(unacceptableRiskNames.indexOf(riskName) == -1){
+                    unacceptableRiskNames.push(riskName);
+                }
+            });
+        });
+
+        ArangoDBService.getPotentialTreatments(unacceptableRiskNames, function(error, data){
+            if(error){
+                flash.error = 'Some error occurred when trying to compute potential treatments after unacceptable risks changed';
+            } else {
+                var aux = [];
+                _.each(data._documents, function(riskTreatments){
+                    var treatments = riskTreatments.treatments;
+                    _.each(treatments, function(treatment){
+                        if(_.filter(aux, function(e){
+                            return e.name == treatment.name;
+                        }).length == 0){
                             aux.push(treatment);
                         }
                     });
-                    $scope.potentialTreatments = aux;
-                }
-            });
-        }
+                });
+                $scope.potentialTreatments = aux;
+                $scope.risksTreatmentsMapping = data._documents.map(function(e){ return {risk: e.risk, treatments: e.treatments.map(function(i){ return i.name })}});
+            }
+        });
+
     });
 
     /**
@@ -81,12 +95,12 @@ dssApp.controller('treatmentsController'
         _.each(oldTreatments, function(oldTreatment){
             var found = false;
             _.each(newTreatments, function(newTreatment){
-                if(newTreatment.destination.name == oldTreatment.destination.name){
+                if(newTreatment.name == oldTreatment.name){
                     found = true;
                 };
             });
             if(!found){
-                keysToRemove.push(oldTreatment.destination.name);
+                keysToRemove.push(oldTreatment.name);
             }
         });
 
@@ -98,8 +112,8 @@ dssApp.controller('treatmentsController'
 
         // Objectify the options of the treatment
         _.each(newTreatments, function (newTreatment) {
-            if (typeof newTreatment.destination.options == "string") {
-                newTreatment.destination.options = $scope.$eval("{" + newTreatment.destination.options + "}");
+            if (typeof newTreatment.options == "string") {
+                newTreatment.options = $scope.$eval("{" + newTreatment.options + "}");
             }
         });
         $scope.treatmentsSelected = newTreatments;
@@ -149,6 +163,16 @@ dssApp.controller('treatmentsController'
         TreatmentsService.removeTreatment(treatment);
     };
 
+    $scope.mitigatedRisks = function(treatmentName){
+        var mitigated = [];
+        _.each($scope.risksTreatmentsMapping, function(riskTreatments){
+            if(riskTreatments.treatments.indexOf(treatmentName) !== -1){
+                mitigated.push(riskTreatments.risk);
+            }
+        });
+        return mitigated;
+    };
+
     $scope.taDropped = function (event, data, treatment) {
         if (TreatmentsService.taAssetExists(treatment, data)) {
             flash.warn = 'Tangible Asset [TA] already added';
@@ -162,7 +186,7 @@ dssApp.controller('treatmentsController'
     $scope.removeTaFromTreatment = function (treatment, ta) {
         TreatmentsService.removeTaFromTreatment(treatment, ta);
         localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
-    }
+    };
 
     $scope.showTreatmentValues = false;
     localStorageService.bind($scope, 'showTreatmentValues', $scope.showTreatmentValues);
@@ -173,14 +197,14 @@ dssApp.controller('treatmentsController'
 
     $scope.treatmentValueChanged = function (treatmentValueString, treatment) {
         var key = null;
-        for (optionValue in treatment.destination.options) {
-            if(treatment.destination.options[optionValue] == treatmentValueString){
+        for (optionValue in treatment.options) {
+            if(treatment.options[optionValue] == treatmentValueString){
                 key = optionValue;
                 break;
             }
         }
         var update = {
-            name: treatment.destination.name,
+            name: treatment.name,
             value: key
         };
         TreatmentsService.addTreatmentValue(update.name, update.value);
@@ -188,8 +212,8 @@ dssApp.controller('treatmentsController'
     var treatmentValueToDescription = function(treatmentName, treatmentValue){
         var description = '';
         _.each($scope.treatmentsSelected, function(treatment){
-            if(treatment.destination.name == treatmentName){
-                var treatmentOptions = $scope.$eval('{' + treatment.destination.options + '}');
+            if(treatment.name == treatmentName){
+                var treatmentOptions = $scope.$eval('{' + treatment.options + '}');
                 Object.keys(treatmentOptions).forEach(function(option){
                     if(option == treatmentValue){
                         description = treatmentOptions[option];

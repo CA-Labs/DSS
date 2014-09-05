@@ -171,17 +171,6 @@ dssApp.controller('risksController'
     };
 
     /**
-     * Listen for changes in selected risks, so that
-     * treatments can be recomputed.
-     */
-    $scope.$watch(function(){
-        return RisksService.getRisks();
-    }, function(newRisks){
-        $rootScope.$broadcast('risksSelectedChanged');
-        $scope.risksSelected = newRisks;
-    }, true);
-
-    /**
      * Event received when a BSOIA asset has been selected/removed
      * by the user. This allows to recompute the potential risks.
      */
@@ -559,6 +548,8 @@ dssApp.controller('risksController'
 
         }
 
+        $rootScope.$broadcast('risksSelectedChanged');
+
     });
 
     /**
@@ -566,7 +557,7 @@ dssApp.controller('risksController'
      * to recompute risks acceptability.
      */
     $scope.$on('acceptabilityValueChanged', function(){
-        console.log('I have to recompute things...');
+        //console.log('I have to recompute things...');
         if(_.isEmpty($scope.simpleRisksLikelihoodConsequence) || _.isEmpty($scope.multipleRisksLikelihoodConsequence)){
             return;
         }
@@ -579,19 +570,19 @@ dssApp.controller('risksController'
         });
         if($scope.showRiskPerTA){
             _.each(riskNames, function(riskName){
-                console.log('RISK NAME', riskName);
+                //console.log('RISK NAME', riskName);
                 _.each(taIds, function(taId){
-                    console.log('TA ID', taId);
+                    //console.log('TA ID', taId);
                     var riskLikelihoodConsequence = RisksService.getLikelihoodAndConsequenceValues(riskName, taId);
                     var isRiskUnacceptable = AssetsService.isRiskUnacceptable(riskLikelihoodConsequence.likelihood, riskLikelihoodConsequence.consequence, taId);
                     if(isRiskUnacceptable){
-                        console.log(riskName + ' (multiple) is unnaceptable');
+                        //console.log(riskName + ' (multiple) is unnaceptable');
                         RisksService.addUnacceptableRisk(taId, riskName);
                     } else {
-                        console.log(riskName + ' (multiple) is acceptable');
+                        //console.log(riskName + ' (multiple) is acceptable');
                         RisksService.removeUnacceptableRisk(taId, riskName);
                     }
-                    console.log('**************************');
+                    //console.log('**************************');
                 });
             })
         } else {
@@ -600,15 +591,17 @@ dssApp.controller('risksController'
                 _.each(taIds, function(taId){
                     var isRiskUnacceptable = AssetsService.isRiskUnacceptable(riskLikelihoodConsequence.likelihood, riskLikelihoodConsequence.consequence, taId);
                     if(isRiskUnacceptable){
-                        console.log(riskName + ' (simple) is unacceptable');
+                        //console.log(riskName + ' (simple) is unacceptable');
                         RisksService.addUnacceptableRisk(taId, riskName);
                     } else {
-                        console.log(riskName + ' (simple) is acceptable');
+                        //console.log(riskName + ' (simple) is acceptable');
                         RisksService.removeUnacceptableRisk(taId, riskName);
                     }
+                    //console.log('******************');
                 });
             })
         }
+        $rootScope.$broadcast('risksSelectedChanged');
     });
 
     $scope.isUnacceptable = function(riskName, taAssetId){

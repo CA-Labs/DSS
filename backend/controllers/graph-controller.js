@@ -60,13 +60,13 @@
      */
     controller.get('potentialTreatments', function(req, res){
 
-        //TODO: Return projections and not full paths?
-        var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
-            'let sourceType = (p.source.type)' +
-            'let destinationType = (p.destination.type)' +
-            'let sourceName = (lower(p.source.name))' +
-            'filter (sourceType == "risk") && (destinationType == "treatment") && (contains(lower(@risks), sourceName))' +
-            'return p';
+        var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1}) ' +
+                    'let sourceType = (p.source.type) ' +
+                    'let destinationType = (p.destination.type) ' +
+                    'let sourceName = (lower(p.source.name)) ' +
+                    'filter (sourceType == "risk") && (destinationType == "treatment") && (contains(lower(@risks), sourceName)) ' +
+                    'collect risk = p.source.name into risks ' +
+                    'return {risk: risk, treatments: risks[*].p.destination} ';
 
         var stmt = db._createStatement({query: query});
 
