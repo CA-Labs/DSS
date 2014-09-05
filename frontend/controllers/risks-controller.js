@@ -611,4 +611,12 @@ dssApp.controller('risksController'
         }
     });
 
+    $scope.isUnacceptable = function(riskName, taAssetId){
+        if(taAssetId){
+            return RisksService.isUnacceptable(riskName, taAssetId);
+        } else {
+            return RisksService.isUnacceptable(riskName);
+        }
+    }
+
 }]);

@@ -228,3 +228,9 @@ blockquote {
 
 .service-selected {
   background-color: #bada55; }
+
+.unacceptable-risk {
+  background-color: indianred; }
+
+.acceptable-risk {
+  background-color: palegreen; }

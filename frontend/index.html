@@ -212,7 +212,7 @@
                                     <label for="showTreatmentValues" class="pull-right">Specify Risk per Tengible Asset&nbsp;</label>
                                     <h4>Risks Selected</h4>
                                 </div>
-                                <div class="list-group-item selected-risk risk-container" href="#" ng-repeat="risk in risksSelected track by $index">
+                                <div class="list-group-item selected-risk risk-container" href="#" ng-repeat="risk in risksSelected track by $index" ng-class="isUnacceptable(risk.destination.name) ? 'unacceptable-risk' : 'acceptable-risk'">
                                     <span class="glyphicon glyphicon-remove remove-risk" ng-click="removeRisk(risk)">&nbsp;</span>
                                     <!-- Not showRiskPerTA selection -->
                                     <div style="margin-top: 10px" ng-show="!showRiskPerTA">
@@ -239,7 +239,7 @@
                                     <div style="margin-top: 10px" ng-show="showRiskPerTA">
                                         <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
                                         <br/>
-                                        <div ng-repeat="taAsset in taAssets" on-repeat-done="repeatDone" class="col-lg-12">
+                                        <div ng-repeat="taAsset in taAssets" on-repeat-done="repeatDone" class="col-lg-12" ng-class="isUnacceptable(risk.destination.name, taAsset._id) ? 'unacceptable-risk' : 'acceptable-risk'">
                                             <div ng-switch="taAsset.cloudType">
                                                 <span ng-switch-when="IaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudResource._serviceType }}"><strong>{{taAsset.cloudResource._serviceName}}</strong></span>
                                                 <span ng-switch-when="PaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudPlatform._serviceType }}"><strong>{{taAsset.cloudPlatform._serviceName}}</strong></span>

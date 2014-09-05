@@ -282,11 +282,25 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     };
 
     this.getTAUnacceptableRisks = function(taAssetId){
-        return unacceptableRisks[taAssetId] ? unacepptableRisks[taAssetId] : [];
+        return unacceptableRisks[taAssetId] ? unacceptableRisks[taAssetId] : [];
     };
 
     this.getUnacceptableRisks = function(){
         return unacceptableRisks;
+    };
+
+    this.isUnacceptable = function(riskName, taAssetId){
+        var unacceptable = false;
+        if(taAssetId){
+            return unacceptableRisks[taAssetId] ? unacceptableRisks[taAssetId].indexOf(riskName) !== -1 : false;
+        } else {
+            _.each(unacceptableRisks, function(value, key){
+                if(value.indexOf(riskName) !== -1){
+                    unacceptable = true;
+                }
+            });
+        }
+        return unacceptable;
     };
 
     this.getSeparator = function(){
