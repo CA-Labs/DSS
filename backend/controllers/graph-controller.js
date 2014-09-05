@@ -10,8 +10,8 @@
 
     // Service lookup query types
     var QUERY_TYPE = {
-        CLOUD_AND_SERVICE_TYPES: 1,
-        TREATMENTS: 2
+        CLOUD_AND_SERVICE_TYPES: "1",
+        TREATMENTS: "2"
     };
 
     /** Retrieves potential risks connected to TOIA or BSOIA assets.
@@ -215,7 +215,7 @@
 
     }).queryParam('queryType', {
         description: 'Type of query (by cloud and service types [1], using a treatments list [2])',
-        type: 'int',
+        type: 'string',
         required: true
     }).queryParam('cloudType', {
         description: 'Type of cloud (PaaS|IaaS|SaaS)',
