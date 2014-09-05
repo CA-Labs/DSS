@@ -22,6 +22,8 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     var risksTALikelihoodConsequenceAcceptanceFromStorage = localStorageService.get('multipleRisksLikelihoodConsequenceAcceptance') || {};      //Likelihood/consequences acceptance values for each TA and risk of the form
     var risksTALikelihoodConsequenceAcceptance = risksTALikelihoodConsequenceAcceptanceFromStorage;                                             //riskname_taAssetName_likelihood_acceptance/riskname_taAssetName_consequence_acceptance
 
+    var unacceptableRisks = {};                                                                                                                 //List of unacceptable risks per tangible asset
+
     var loadingDataFromLocalStorage = false;                                                                                                    //Flag to control local storage restore state
 
     var SEPARATOR = '/';
@@ -227,11 +229,68 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     this.getRiskConsequenceValue = function(riskName, taAssetId){
         if(taAssetId){
             // Multiple likelihood/consequence model
-            return risksTALikelihoodConsequence[riskName + '_' + taAssetId + '_consequence'];
+            return risksTALikelihoodConsequence[riskName + SEPARATOR + taAssetId + SEPARATOR + 'consequence'];
         } else {
             // Simple likelihood/consequence model
-            return risksLikelihoodConsequence[riskName + '_consequence'];
+            return risksLikelihoodConsequence[riskName + SEPARATOR + 'consequence'];
         }
+    };
+
+    /**
+     * Retrieves the likelihood/consequence values for a risk/taAsset.
+     */
+    this.getLikelihoodAndConsequenceValues = function(riskName, taAssetId){
+        if(taAssetId){
+            return {likelihood: risksTALikelihoodConsequence[riskName + SEPARATOR + taAssetId + SEPARATOR + 'likelihood'], consequence: risksTALikelihoodConsequence[riskName + SEPARATOR + taAssetId + SEPARATOR + 'consequence']};
+        } else {
+            return {likelihood: risksLikelihoodConsequence[riskName + SEPARATOR + 'likelihood'], consequence: risksLikelihoodConsequence[riskName + SEPARATOR + 'consequence']};
+        }
+    };
+
+    this.addUnacceptableRisk = function(taAssetId, riskName){
+        var aux = unacceptableRisks[taAssetId];
+        if(aux){
+            if(aux.filter(function(risk){
+                return risk == riskName
+            }).length > 0){
+                return;
+            } else {
+                unacceptableRisks[taAssetId].push(riskName);
+            }
+        } else {
+            unacceptableRisks[taAssetId] = [];
+            unacceptableRisks[taAssetId].push(riskName);
+        }
+    };
+
+    this.removeUnacceptableRisk = function(taAssetId, riskName){
+        if(unacceptableRisks[taAssetId]){
+            var index = -1;
+            _.each(unacceptableRisks, function(risk, i){
+                if(risk == riskName) {
+                    index = i;
+                }
+            });
+            if(index !== -1){
+                unacceptableRisks[taAssetId].splice(index, 1);
+            }
+        }
+    };
+
+    this.removeTAUnacceptableRisks = function(taAssetId){
+        delete unacceptableRisks[taAssetId];
+    };
+
+    this.getTAUnacceptableRisks = function(taAssetId){
+        return unacceptableRisks[taAssetId] ? unacepptableRisks[taAssetId] : [];
+    };
+
+    this.getUnacceptableRisks = function(){
+        return unacceptableRisks;
+    };
+
+    this.getSeparator = function(){
+        return SEPARATOR;
     };
 
 }]);

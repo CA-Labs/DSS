@@ -4,11 +4,12 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('taController', ['$scope', 'AssetsService', 'localStorageService', function($scope, AssetsService, localStorageService){
+dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'localStorageService', function($rootScope, $scope, AssetsService, localStorageService){
 
     //Initialization
-    $scope.taAssets = AssetsService.getTA();                        //The list of TA assets read from the cloud services descriptor xml file
-    localStorageService.bind($scope, 'taAssets', $scope.taAssets);  // Bind the taAssets to localStorage
+    $scope.taAssets = AssetsService.getTA();                            // The list of TA assets read from the cloud services descriptor xml file
+    localStorageService.bind($scope, 'taAssets', $scope.taAssets);      // Bind the taAssets to localStorage
+
     // Kind of a hack: this is necessary when loading BSOIA assets from local storage,
     // since the reference seems to be lost when setting the new BSOIA assets in the service
     // variable.
@@ -27,5 +28,14 @@ dssApp.controller('taController', ['$scope', 'AssetsService', 'localStorageServi
     $scope.removeTaAsset = function(taAsset){
         AssetsService.removeTA(taAsset);
     };
+
+    /**
+     * When a TA acceptability slider has moved, we have to recompute
+     * related risks unacceptability.
+     */
+    $scope.$on('sliderValueChanged', function($event, element){
+        console.log('ta slider value changed, sending acceptability event');
+        $rootScope.$broadcast('acceptabilityValueChanged');
+    });
 
 }]);

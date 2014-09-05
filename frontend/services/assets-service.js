@@ -333,4 +333,30 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         ta = [];
     };
 
+    /**
+     * Given the risk likelihood and consequence and a tangible asset id, checks
+     * whether that risk is unacceptable or not.
+     * @param riskLikelihood The risk likelihood.
+     * @param riskConsequence The risk consequence.
+     * @param taAssetId The TA asset id.
+     * @returns {boolean} True if the risk is unacceptable, false otherwise.
+     */
+    this.isRiskUnacceptable = function(riskLikelihood, riskConsequence, taAssetId){
+        console.log('riskLikelihood', riskLikelihood);
+        console.log('riskConsequence', riskConsequence);
+        console.log('taAssetId', taAssetId);
+        var matchingTaAssets = ta.filter(function(asset){
+            return asset._id == taAssetId;
+        });
+        if(matchingTaAssets){
+            var criticityValue = matchingTaAssets[0].criticityValue;
+            console.log('criticity value is ' + criticityValue);
+            console.log('risk L*C is ' + Math.ceil(Math.ceil(riskLikelihood/2) * Math.ceil(riskConsequence/2)));
+            return Math.ceil(Math.ceil(riskLikelihood/2) * Math.ceil(riskConsequence/2)) > criticityValue;
+        } else {
+            // Default behaviour
+            return true;
+        }
+    }
+
 }]);
