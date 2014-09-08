@@ -25,13 +25,16 @@ dssApp.controller('treatmentsController'
         , localStorageService){
 
     $scope.taAssets = AssetsService.getTA();                                        // The list of the TA assets
+
     $scope.potentialTreatments = [];                                                // The list of potential treatments
+
     $scope.treatmentsSelected = TreatmentsService.getTreatments();                  // The list of selected treatments
     localStorageService.bind($scope, 'treatmentsSelected', $scope.treatmentsSelected);
+
     $scope.treatmentValues = TreatmentsService.getTreatmentsValues();               // The treatments values model
     localStorageService.bind($scope, 'treatmentValues', $scope.treatmentValues);
-    $scope.risksTreatmentsMapping = TreatmentsService.getRisksTreatmentsMapping();   // Risks/treatments mapping
-    localStorageService.bind($scope, 'treatmentValues', $scope.treatmentValues);
+
+    $scope.risksTreatmentsMapping = TreatmentsService.getRisksTreatmentsMapping();
 
     $scope.treatmentsBoundModels = {};
 
@@ -69,7 +72,6 @@ dssApp.controller('treatmentsController'
                     });
                 });
                 $scope.potentialTreatments = aux;
-                $scope.risksTreatmentsMapping = data._documents.map(function(e){ return {risk: e.risk, treatments: e.treatments.map(function(i){ return i.name })}});
             }
         });
 
@@ -231,5 +233,24 @@ dssApp.controller('treatmentsController'
     $scope.addRadioValue = function (treatmentName) {
         TreatmentsService.addTreatmentValue(treatmentName, 1);
     };
+
+    // Initial data fetch
+    ArangoDBService.getRisksTreatmentsMapping(function(error, data){
+        if(error){
+            flash.error = 'Some error occurred while fetching risks/treatments mapping values';
+        } else {
+            var mapping = {};
+            _.each(data._documents, function(e){
+                mapping[e.risk] = e.treatments;
+            });
+            TreatmentsService.setRisksTreatmentsMapping(mapping);
+        }
+    });
+
+    $scope.$watch(function(){
+        return TreatmentsService.getRisksTreatmentsMapping();
+    }, function(newMapping, oldMapping){
+        $scope.risksTreatmentsMapping = newMapping;
+    });
 
 }]);

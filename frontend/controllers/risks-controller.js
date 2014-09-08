@@ -61,13 +61,6 @@ dssApp.controller('risksController'
         $scope.multipleRisksLikelihoodConsequence = newMultipleRisksLikelihoodConsequence;
     }, true);
 
-    $scope.$watch(function(){
-        return RisksService.getUnacceptableRisks();
-    }, function(newUnacceptable, oldUnacceptable){
-        console.log('old, new', oldUnacceptable, newUnacceptable);
-        $scope.unacceptableRisks = newUnacceptable;
-    }, true);
-
     //List of available categories to categorize risks level for likelihood values
     var LIKELIHOOD_CATEGORIES = {
         RARE: {

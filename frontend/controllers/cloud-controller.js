@@ -10,43 +10,11 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     $scope.ta = AssetsService.getTA();                                  // The selected TA assets loaded from the cloud descriptor xml file
     $scope.proposals = {};                                              // The cloud service proposals (by TA) offered by the graph engine
     localStorageService.bind($scope, 'proposals', $scope.proposals);
+    $scope.filteredProposals = {};
+    localStorageService.bind($scope, 'filteredProposals', $scope.filteredProposals);
     $scope.servicesSelected = {};
     localStorageService.bind($scope, 'servicesSelected', $scope.servicesSelected);
     $scope.xmlTaAsObject = AssetsService.getXmlTaObject();              // gets the Object representation of the Modelio loaded XML
-
-    /*
-    $scope.$watch(function(){
-        return TreatmentsService.getTreatments();
-    }, function(newTreatments, oldTreatments){
-        $scope.treatments = newTreatments;
-
-        // Only query service proposals if we have at least one tangible asset
-        if($scope.treatments.length > 0 && $scope.ta.length > 0){
-            _.each($scope.ta, function(ta){
-                ArangoDBService.getProposals(ta.cloudType, $scope.treatments, function(error, data){
-                    if(error){
-                        console.log(error);
-                    } else {
-                        console.log(data);
-                        switch(ta.cloudType){
-                            case 'IaaS':
-                                $scope.proposals[ta.cloudResource._serviceName] = data._documents;
-                                break;
-                            case 'PaaS':
-                                $scope.proposals[ta.cloudPlatform._serviceName] = data._documents;
-                                break;
-                            default:
-                                break;
-                        }
-                    }
-                    console.log($scope.proposals);
-                });
-            });
-        } else {
-            $scope.proposals = [];
-        }
-    }, true);
-    */
 
     $scope.$watch(function(){
         return AssetsService.getTA();
@@ -71,7 +39,6 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
                                 break;
                         }
                     }
-                    //console.log($scope.proposals);
                 });
             });
         }
@@ -82,13 +49,57 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     };
 
     $scope.getTAProposals = function(taAssetName){
-        // console.log('getting proposals for TA ' + taAssetName);
         if($scope.proposals[taAssetName]){
-            //console.log($scope.proposals[taAssetName]);
             return $scope.proposals[taAssetName];
         } else {
             return [];
         }
+    };
+
+    $scope.$on('risksSelectedChanged', function(){
+        $scope.filterProposalsByTreatments($scope.treatments);
+        console.log('new filtered', $scope.filteredProposals);
+    });
+
+    $scope.filterProposalsByTreatments = function(treatments){
+        $scope.filteredProposals = {};
+        var treatmentsFound = 0;
+        _.each($scope.ta, function(ta){
+            var taProposals = [];
+            var cloudType = ta.cloudType;
+            var taName = '';
+            switch(ta.cloudType){
+                case 'IaaS':
+                    taName = ta.cloudResource._serviceName;
+                    break;
+                case 'PaaS':
+                    taName = ta.cloudPlatform._serviceName;
+                    break;
+                default:
+                    break;
+            }
+            taProposals = $scope.proposals[taName];
+            if(taProposals){
+                _.each(taProposals, function(taProposal){
+                    treatmentsFound = 0;
+                    // Check if this proposal contains all treatments in its path
+                    var taProposalCharacteristicNames = taProposal.characteristics.map(function(e){ return e.name });
+                    _.each(treatments, function(treatment){
+                        if(_.contains(taProposalCharacteristicNames, treatment.name)){
+                            treatmentsFound++;
+                        }
+                    });
+                    if(treatmentsFound == treatments.length){
+                        if($scope.filteredProposals[taName]){
+                            $scope.filteredProposals[taName].push(taProposal);
+                        } else {
+                            $scope.filteredProposals[taName] = [];
+                            $scope.filteredProposals[taName].push(taProposal);
+                        }
+                    }
+                });
+            }
+        });
     };
 
     /**
