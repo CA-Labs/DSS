@@ -307,14 +307,14 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         return SEPARATOR;
     };
 
-//    this.getThresholdFromRisk = function(riskName, taAssetId){
-//        var lc = null;
-//        if(taAssetId){
-//            lc = this.getLikelihoodAndConsequenceValues(riskName, taAssetId);
-//        } else {
-//            lc = this.getLikelihoodAndConsequenceValues(riskName);
-//        }
-//        return Math.ceil(Math.ceil(lc.likelihood/2) * Math.ceil(lc.consequence/2));
-//    }
+    this.getThresholdFromRisk = function(riskName, taAssetId){
+        var lc = null;
+        if(taAssetId){
+            lc = this.getLikelihoodAndConsequenceValues(riskName, taAssetId);
+        } else {
+            lc = this.getLikelihoodAndConsequenceValues(riskName);
+        }
+        return Math.ceil(Math.ceil(lc.likelihood/2) * Math.ceil(lc.consequence/2));
+    }
 
 }]);
