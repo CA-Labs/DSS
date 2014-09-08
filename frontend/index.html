@@ -460,10 +460,10 @@
         <!--slider end-->
     </div>
     <!--end main container-->
-    <div class="row sticky-bottom">
+    <div class="row sticky-bottom" ng-controller="buttonsController">
         <div class="col-lg-12 text-right">
             <button class="btn btn-primary slide-prev" href="#dssSlides" data-slide="prev" disabled>Previous step</button>
-            <button class="btn btn-primary slide-next" href="#dssSlides" data-slide="next">Next step</button>
+            <button class="btn btn-primary slide-next" href="#dssSlides" data-slide="next" ng-click="next($event)">Next step</button>
             <button style="display: none" class="btn btn-primary slide-services" data-target="#dssSlides" data-slide-to="5">Search Cloud Services</button>
         </div>
     </div>

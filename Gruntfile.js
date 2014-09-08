@@ -23,6 +23,7 @@ module.exports = function (grunt) {
                         'frontend/controllers/crud-controller.js',
                         'frontend/controllers/main-controller.js',
                         'frontend/controllers/cloud-controller.js',
+                        'frontend/controllers/buttons-controller.js',
                         'frontend/services/assets-service.js',
                         'frontend/services/risks-service.js',
                         'frontend/services/arangodb-service.js',
