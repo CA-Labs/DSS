@@ -118,6 +118,16 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
         return risksTreatmentsMapping;
     };
 
+//    this.getRisksFromTreatment = function(treatmentName){
+//        var risksNames = [];
+//        _.each(risksTreatmentsMapping, function(value, key){
+//            if(_.contains(value, treatmentName) && !_.contains(risksNames, key)){
+//                risksNames.push(key);
+//            }
+//        });
+//        return risksNames;
+//    };
+
     /**
      * check if TA exists in the treatment
      * @param treatment

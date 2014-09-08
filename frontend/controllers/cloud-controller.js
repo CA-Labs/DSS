@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'localStorageService', function($scope, ArangoDBService, TreatmentsService, AssetsService, localStorageService){
+dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'RisksService', 'localStorageService', function($scope, ArangoDBService, TreatmentsService, AssetsService, RisksService,   localStorageService){
 
     $scope.treatments = TreatmentsService.getTreatments();              // The selected treatments
     $scope.ta = AssetsService.getTA();                                  // The selected TA assets loaded from the cloud descriptor xml file
@@ -58,6 +58,7 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
 
     $scope.$on('risksSelectedChanged', function(){
         $scope.filterProposalsByTreatments($scope.treatments);
+        $scope.filterProposalsByThresholds();
         console.log('new filtered', $scope.filteredProposals);
     });
 
@@ -101,6 +102,32 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
             }
         });
     };
+
+//    $scope.filterProposalsByThresholds = function(){
+//        var servicesScores = {};
+//        _.each($scope.treatments, function(treatment){
+//            var treatmentName = treatment.name;
+//            console.log('treatmentName', treatmentName);
+//            var treatmentRisks = TreatmentsService.getRisksFromTreatment(treatmentName);
+//            console.log('treatmentRisks', treatmentRisks);
+//            _.each(treatmentRisks, function(riskName){
+//                _.each(treatment.taRelations, function(ta){
+////                    var lc = RisksService.getThresholdFromRisk(riskName, ta._id);
+////                    console.log('lc', lc);
+//                    var criticityValue = ta.criticityValue;
+//                    console.log('criticityValue', criticityValue);
+//                    _.each($scope.filteredProposals, function(proposal){
+//                        var characteristics = proposal.characteristics;
+//                        _.each(characteristics, function(characteristic){
+//                            if(characteristic.name == treatmentName && characteristic.value > criticityValue){
+//                                // TODO:OK
+//                            }
+//                        });
+//                    })
+//                });
+//            });
+//        });
+//    };
 
     /**
      * Save selected services

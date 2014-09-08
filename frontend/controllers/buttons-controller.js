@@ -52,7 +52,7 @@ dssApp.controller('buttonsController', ['$scope', 'RisksService', 'AssetsService
                 });
                 if(error){
                     flash.error = errorMessage + '.';
-                    $event.stopPropagation();
+                    //$event.stopPropagation();
                 }
             }
         }

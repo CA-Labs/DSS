@@ -138,14 +138,6 @@ dssApp.controller('treatmentsController'
     }, true);
 
     /**
-     * Event received when a treatment value changes, so that treatment
-     * values model can be updated.
-     */
-//    $scope.$on('treatmentValueChanged', function($event, update){
-//        TreatmentsService.addTreatmentValue(update.name, update.value);
-//    });
-
-    /**
      * Adds a new treatment to the list of selected treatments,
      * by calling the Treatments service.
      * @param treatment The treatment to be added to the list of
@@ -167,9 +159,9 @@ dssApp.controller('treatmentsController'
 
     $scope.mitigatedRisks = function(treatmentName){
         var mitigated = [];
-        _.each($scope.risksTreatmentsMapping, function(riskTreatments){
-            if(riskTreatments.treatments.indexOf(treatmentName) !== -1){
-                mitigated.push(riskTreatments.risk);
+        _.each($scope.risksTreatmentsMapping, function(treatments, risk){
+            if(treatments.indexOf(treatmentName) !== -1){
+                mitigated.push(risk);
             }
         });
         return mitigated;
