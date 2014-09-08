@@ -359,4 +359,15 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         }
     }
 
+    this.getTACriticityValue = function(taAssetId){
+        var criticity = null;
+        var asset = ta.filter(function(asset){
+            return asset._id == taAssetId;
+        });
+        if(asset.length == 1){
+            criticity = asset[0].criticityValue;
+        }
+        return criticity;
+    };
+
 }]);

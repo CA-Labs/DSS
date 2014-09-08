@@ -104,29 +104,63 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     };
 
     $scope.filterProposalsByThresholds = function(){
-        var servicesScores = {};
+        var riskNames = [];
         _.each($scope.treatments, function(treatment){
             var treatmentName = treatment.name;
             console.log('treatmentName', treatmentName);
             var treatmentRisks = TreatmentsService.getRisksFromTreatment(treatmentName);
             console.log('treatmentRisks', treatmentRisks);
             _.each(treatmentRisks, function(riskName){
-                _.each(treatment.taRelations, function(ta){
-//                    var lc = RisksService.getThresholdFromRisk(riskName, ta._id);
-//                    console.log('lc', lc);
-                    var criticityValue = ta.criticityValue;
-                    console.log('criticityValue', criticityValue);
-                    _.each($scope.filteredProposals, function(proposal){
-                        var characteristics = proposal.characteristics;
-                        _.each(characteristics, function(characteristic){
-                            if(characteristic.name == treatmentName && characteristic.value > criticityValue){
-                                // TODO:OK
-                            }
+                riskNames.push(riskName);
+                _.each(treatment.taRelations, function(ta, index){
+                    console.log('taRelation' + index, ta)
+                    var criticityValue = AssetsService.getTACriticityValue(ta._id);
+                    console.log('criticity value', criticityValue);
+                    if(RisksService.isUnacceptable(riskName, ta._id)){
+                        console.log(riskName + '_' + ta._id + ' is unacceptable');
+                        // Risk is unacceptable, check if service has some characteristic with a value below the criticity value
+                        _.each($scope.filteredProposals, function(proposals, taAssetName){
+                            _.each(proposals, function(proposal, index){
+                                var characteristics = proposal.characteristics;
+                                _.each(characteristics, function(characteristic){
+                                    if(characteristic.name == treatmentName && characteristic.value < criticityValue){
+                                        // This characteristic is mitigating the risk
+                                        if($scope.filteredProposals[taAssetName][index].score){
+                                            $scope.filteredProposals[taAssetName][index].score++;
+                                        } else {
+                                            $scope.filteredProposals[taAssetName][index].score = 1;
+                                        }
+                                    }
+                                });
+                            });
                         });
-                    })
+                    } else {
+                        console.log(riskName + '_' + ta._id + ' is acceptable');
+                        _.each($scope.filteredProposals, function(proposals, taAssetName){
+                            _.each(proposals, function(proposal, index){
+                                if($scope.filteredProposals[taAssetName][index].score){
+                                    $scope.filteredProposals[taAssetName][index].score++;
+                                } else {
+                                    $scope.filteredProposals[taAssetName][index].score = 1;
+                                }
+                            });
+                        });
+                    }
                 });
             });
         });
+        // Normalization
+        _.each($scope.filteredProposals, function(proposals, taAssetName){
+            _.each(proposals, function(proposal, index){
+               if(_.isNumber(proposal.score)){
+                   $scope.filteredProposals[taAssetName][index] = $scope.filteredProposals[taAssetName][index].score / (riskNames.length * 1.0);
+               } else {
+                   $scope.filteredProposals[taAssetName][index] = 0.0;
+               }
+            });
+        });
+        console.log('non filtered', $scope.proposals);
+        console.log('filtered', $scope.filteredProposals);
     };
 
     /**
