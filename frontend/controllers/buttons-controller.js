@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('buttonsController', ['$scope', 'RisksService', 'AssetsService', 'flash', function($scope, RisksService, AssetsService, flash){
+dssApp.controller('buttonsController', ['$scope', 'RisksService', 'AssetsService', 'TreatmentsService', 'flash', function($scope, RisksService, AssetsService, TreatmentsService, flash){
 
     $scope.unacceptableRisks = RisksService.getUnacceptableRisks();
 
@@ -53,6 +53,19 @@ dssApp.controller('buttonsController', ['$scope', 'RisksService', 'AssetsService
                 if(error){
                     flash.error = errorMessage + '.';
                     //$event.stopPropagation();
+                }
+            }
+            else if(currentSlide.hasClass('treatments-slide')){
+                var treatmentsSelected = TreatmentsService.getTreatments();
+                var error = false;
+                _.each(treatmentsSelected, function(treatment){
+                    if(!treatment.taRelations || treatment.taRelations.length == 0){
+                        error = true;
+                    }
+                });
+                if(error){
+                    flash.error = 'You should associate at least one Tangible Asset for each treatment.';
+                    $event.stopPropagation();
                 }
             }
         }
