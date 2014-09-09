@@ -207,10 +207,10 @@
                         </div>
                         <div class="col-lg-8">
                             <div class="list-group">
-                                <div ng-show="risksSelected.length > 0">
+                                <div>
                                     <input name="risks-per-ta" bs-switch ng-model="showRiskPerTA" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleActivation()"/>
                                     <label for="showTreatmentValues" class="pull-right">Specify Risk per Tengible Asset&nbsp;</label>
-                                    <h4>Risks Selected</h4>
+                                    <h4 ng-show="risksSelected.length > 0">Risks Selected</h4>
                                 </div>
                                 <div class="list-group-item selected-risk risk-container" href="#" ng-repeat="risk in risksSelected track by $index" ng-class="isUnacceptable(risk.destination.name) ? 'unacceptable-risk' : 'acceptable-risk'">
                                     <span class="glyphicon glyphicon-remove remove-risk" ng-click="removeRisk(risk)">&nbsp;</span>

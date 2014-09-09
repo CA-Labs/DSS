@@ -6,6 +6,7 @@
 
 dssApp.controller('mainController', [
     '$scope'
+    , '$rootScope'
     , '$upload'
     , 'flash'
     , '$http'
@@ -17,6 +18,7 @@ dssApp.controller('mainController', [
     , 'ArangoDBService'
     , function(
         $scope
+        , $rootScope
         , $upload
         , flash
         , $http
@@ -121,7 +123,7 @@ dssApp.controller('mainController', [
                                 resource.criticityValue = 1;
                                 AssetsService.addTA(resource);
                             });
-                            $scope.$emit('loadedTA');
+                            $rootScope.$broadcast('loadedTA');
                         } else {
                             flash.error = 'Some error occurred while trying to upload your requirements';
                         }
