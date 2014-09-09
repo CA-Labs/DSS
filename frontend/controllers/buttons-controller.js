@@ -66,7 +66,10 @@ dssApp.controller('buttonsController', ['$scope', 'RisksService', 'AssetsService
                 if(error){
                     flash.error = 'You should associate at least one Tangible Asset for each treatment.';
                     $event.stopPropagation();
+                } else {
+                    $rootScope.$broadcast('acceptabilityValueChanged');
                 }
+
             }
         }
     };
