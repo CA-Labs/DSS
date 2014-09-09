@@ -370,4 +370,8 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         return criticity;
     };
 
+    this.getInverseCriticityValue = function(smiScore){
+        return Math.round(25 - smiScore * ((25 - 1)/10));
+    }
+
 }]);

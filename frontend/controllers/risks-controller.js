@@ -603,6 +603,6 @@ dssApp.controller('risksController'
         } else {
             return RisksService.isUnacceptable(riskName);
         }
-    }
+    };
 
 }]);

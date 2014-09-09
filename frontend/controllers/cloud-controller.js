@@ -130,8 +130,8 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
                                     console.log('Evaluating proposal ' + proposal.service.name);
                                     var characteristics = proposal.characteristics;
                                     _.each(characteristics, function(characteristic){
-                                        console.log('Current service characteristic is ' + characteristic.name + ' with value ' + characteristic.value);
-                                        if(characteristic.name == treatmentName && characteristic.value < criticityValue){
+                                        console.log('Current service characteristic is ' + characteristic.name + ' with value ' + AssetsService.getInverseCriticityValue(characteristic.value));
+                                        if(characteristic.name == treatmentName && AssetsService.getInverseCriticityValue(characteristic.value) < criticityValue){
                                             // This characteristic is mitigating the risk
                                             if($scope.filteredProposals[taAssetName][index].score){
                                                 console.log(characteristic.name + ' is mitigating risk ' + riskName);
@@ -152,11 +152,13 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
                         console.log(riskName + '_' + ta._id + ' is acceptable');
                         _.each($scope.filteredProposals, function(proposals, taAssetName){
                             _.each(proposals, function(proposal, index){
-                                console.log('Incrementing score in service ' + proposal.service.name + ' for risk ' + riskName);
-                                if($scope.filteredProposals[taAssetName][index].score){
-                                    $scope.filteredProposals[taAssetName][index].score++;
-                                } else {
-                                    $scope.filteredProposals[taAssetName][index].score = 1.0;
+                                if(proposal.service.cloudType == ta.cloudType){
+                                    console.log('Incrementing score in service ' + proposal.service.name + ' for risk ' + riskName);
+                                    if($scope.filteredProposals[taAssetName][index].score){
+                                        $scope.filteredProposals[taAssetName][index].score++;
+                                    } else {
+                                        $scope.filteredProposals[taAssetName][index].score = 1.0;
+                                    }
                                 }
                             });
                         });
