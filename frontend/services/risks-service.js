@@ -292,7 +292,7 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     this.isUnacceptable = function(riskName, taAssetId){
         var unacceptable = false;
         if(taAssetId){
-            return unacceptableRisks[taAssetId] ? unacceptableRisks[taAssetId].indexOf(riskName) !== -1 : true;
+            return unacceptableRisks[taAssetId] ? unacceptableRisks[taAssetId].indexOf(riskName) !== -1 : false;
         } else {
             _.each(unacceptableRisks, function(value, key){
                 if(value.indexOf(riskName) !== -1){
