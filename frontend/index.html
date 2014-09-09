@@ -439,7 +439,9 @@
                                                                 </div>
                                                                 <div class="service-proposal-description">
                                                                     <p>{{result.provider.description}}</p>
-                                                                    <div class="service-proposal-details">
+                                                                    <button class="btn btn-sm btn-default pull-right" ng-click="showHideDetails(result)">Characteristics</button>
+                                                                    <div class="service-proposal-details" ng-show="result.showDetails">
+                                                                        <h4>Service Characteristics Values</h4>
                                                                         <ul>
                                                                             <li ng-repeat="characteristic in result.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>
                                                                         </ul>
