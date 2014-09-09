@@ -387,7 +387,7 @@
                                         <div class="panel-body" ng-switch="taAsset.cloudType">
                                             <div ng-switch-when="IaaS">
                                                 <div class="panel-group">
-                                                    <div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudResource._serviceName) track by $index">
+                                                    <div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudResource._serviceName) | orderBy:'score':true track by $index">
                                                         <div class="panel heading" style="background-color: #d3d3d3">
                                                             <h4 class="panel-title">
                                                                 <a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">
@@ -410,11 +410,7 @@
                                                                 </div>
                                                                 <div class="service-proposal-info">
                                                                     <div class="service-proposal-score">
-                                                                        <!-- TODO: Compute score -->
-                                                                        <div ng-if="65.27 >= 50.0">
-                                                                            <span class="service-proposal-score">{{65.27}}</span>
-                                                                            <div class="service-proposal-score-positive"></div>
-                                                                        </div>
+                                                                        <span class="service-proposal-score">{{(result.score*100.0).toFixed(2) + '%'}}</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
@@ -424,7 +420,7 @@
                                             </div>
                                             <div ng-switch-when="PaaS">
                                                 <div class="panel-group">
-                                                    <div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudPlatform._serviceName) track by $index">
+                                                    <div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudPlatform._serviceName) | orderBy:'score':true track by $index">
                                                         <div class="panel heading" style="background-color: #d3d3d3">
                                                             <h4 class="panel-title">
                                                                 <a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">
@@ -447,10 +443,7 @@
                                                                 </div>
                                                                 <div class="service-proposal-info">
                                                                     <div class="service-proposal-score">
-                                                                        <div ng-if="45.76 < 50.0">
-                                                                            <span class="service-proposal-score">{{45.76}}</span>
-                                                                            <div class="service-proposal-score-negative"></div>
-                                                                        </div>
+                                                                        <span class="service-proposal-score">{{(result.score * 100.0).toFixed(2) + '%'}}</span>
                                                                     </div>
                                                                 </div>
                                                             </div>
