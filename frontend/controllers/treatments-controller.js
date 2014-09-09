@@ -158,13 +158,7 @@ dssApp.controller('treatmentsController'
     };
 
     $scope.mitigatedRisks = function(treatmentName){
-        var mitigated = [];
-        _.each($scope.risksTreatmentsMapping, function(treatments, risk){
-            if(treatments.indexOf(treatmentName) !== -1){
-                mitigated.push(risk);
-            }
-        });
-        return mitigated;
+        return TreatmentsService.getRisksFromTreatment(treatmentName);
     };
 
     $scope.taDropped = function (event, data, treatment) {

@@ -59,7 +59,6 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     $scope.$on('risksSelectedChanged', function(){
         $scope.filterProposalsByTreatments($scope.treatments);
         $scope.filterProposalsByThresholds();
-        console.log('new filtered', $scope.filteredProposals);
     });
 
     $scope.filterProposalsByTreatments = function(treatments){
@@ -104,16 +103,22 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     };
 
     $scope.filterProposalsByThresholds = function(){
+        // Reset scores
+        _.each($scope.filteredProposals, function(proposals, taAssetName){
+            _.each(proposals, function(proposal, index){
+                $scope.filteredProposals[taAssetName][index].score = 0.0;
+            });
+        });
         var riskNames = [];
         _.each($scope.treatments, function(treatment){
             var treatmentName = treatment.name;
-            console.log('treatmentName', treatmentName);
             var treatmentRisks = TreatmentsService.getRisksFromTreatment(treatmentName);
-            console.log('treatmentRisks', treatmentRisks);
             _.each(treatmentRisks, function(riskName){
+                console.log('current treatment', treatmentName);
+                console.log('current risk', riskName);
                 riskNames.push(riskName);
                 _.each(treatment.taRelations, function(ta, index){
-                    console.log('taRelation' + index, ta)
+                    console.log('taRelation' + index, ta);
                     var criticityValue = AssetsService.getTACriticityValue(ta._id);
                     console.log('criticity value', criticityValue);
                     if(RisksService.isUnacceptable(riskName, ta._id)){
@@ -121,27 +126,37 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
                         // Risk is unacceptable, check if service has some characteristic with a value below the criticity value
                         _.each($scope.filteredProposals, function(proposals, taAssetName){
                             _.each(proposals, function(proposal, index){
-                                var characteristics = proposal.characteristics;
-                                _.each(characteristics, function(characteristic){
-                                    if(characteristic.name == treatmentName && characteristic.value < criticityValue){
-                                        // This characteristic is mitigating the risk
-                                        if($scope.filteredProposals[taAssetName][index].score){
-                                            $scope.filteredProposals[taAssetName][index].score++;
-                                        } else {
-                                            $scope.filteredProposals[taAssetName][index].score = 1;
+                                if(proposal.service.cloudType == ta.cloudType){
+                                    console.log('Evaluating proposal ' + proposal.service.name);
+                                    var characteristics = proposal.characteristics;
+                                    _.each(characteristics, function(characteristic){
+                                        console.log('Current service characteristic is ' + characteristic.name + ' with value ' + characteristic.value);
+                                        if(characteristic.name == treatmentName && characteristic.value < criticityValue){
+                                            // This characteristic is mitigating the risk
+                                            if($scope.filteredProposals[taAssetName][index].score){
+                                                console.log(characteristic.name + ' is mitigating risk ' + riskName);
+                                                $scope.filteredProposals[taAssetName][index].score++;
+                                                console.log($scope.filteredProposals[taAssetName][index].score)
+                                            } else {
+                                                console.log(characteristic.name + ' is mitigating risk ' + riskName);
+                                                $scope.filteredProposals[taAssetName][index].score = 1.0;
+                                                console.log($scope.filteredProposals[taAssetName][index].score)
+                                            }
+                                            console.log('Incrementing score in service ' + proposal.service.name + ' for risk ' + riskName);
                                         }
-                                    }
-                                });
+                                    });
+                                }
                             });
                         });
                     } else {
                         console.log(riskName + '_' + ta._id + ' is acceptable');
                         _.each($scope.filteredProposals, function(proposals, taAssetName){
                             _.each(proposals, function(proposal, index){
+                                console.log('Incrementing score in service ' + proposal.service.name + ' for risk ' + riskName);
                                 if($scope.filteredProposals[taAssetName][index].score){
                                     $scope.filteredProposals[taAssetName][index].score++;
                                 } else {
-                                    $scope.filteredProposals[taAssetName][index].score = 1;
+                                    $scope.filteredProposals[taAssetName][index].score = 1.0;
                                 }
                             });
                         });
@@ -150,16 +165,17 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
             });
         });
         // Normalization
-        _.each($scope.filteredProposals, function(proposals, taAssetName){
-            _.each(proposals, function(proposal, index){
-               if(_.isNumber(proposal.score)){
-                   $scope.filteredProposals[taAssetName][index] = $scope.filteredProposals[taAssetName][index].score / (riskNames.length * 1.0);
-               } else {
-                   $scope.filteredProposals[taAssetName][index] = 0.0;
-               }
+        if(riskNames.length > 0){
+            _.each($scope.filteredProposals, function(proposals, taAssetName){
+                _.each(proposals, function(proposal, index){
+                    if(_.isNumber(proposal.score)){
+                        $scope.filteredProposals[taAssetName][index].score = $scope.filteredProposals[taAssetName][index].score / (riskNames.length * 1.0);
+                    } else {
+                        $scope.filteredProposals[taAssetName][index].score = 0.0;
+                    }
+                });
             });
-        });
-        console.log('non filtered', $scope.proposals);
+        }
         console.log('filtered', $scope.filteredProposals);
     };
 

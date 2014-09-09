@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(flash, localStorageService){
+dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksService', function(flash, localStorageService, RisksService){
 
     var treatmentsFromStorage = localStorageService.get('treatmentsSelected') || [];
     var treatments = treatmentsFromStorage;
@@ -119,10 +119,15 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', function(fl
     };
 
     this.getRisksFromTreatment = function(treatmentName){
+        var selectedRisks = RisksService.getRisks();
         var risksNames = [];
         _.each(risksTreatmentsMapping, function(value, key){
             if(_.contains(value, treatmentName) && !_.contains(risksNames, key)){
-                risksNames.push(key);
+                _.each(selectedRisks, function(selectedRisk){
+                    if(selectedRisk.destination.name == key){
+                        risksNames.push(key);
+                    }
+                });
             }
         });
         return risksNames;
