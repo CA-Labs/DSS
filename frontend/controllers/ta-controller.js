@@ -10,6 +10,13 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'loc
     $scope.taAssets = AssetsService.getTA();                            // The list of TA assets read from the cloud services descriptor xml file
     localStorageService.bind($scope, 'taAssets', $scope.taAssets);      // Bind the taAssets to localStorage
 
+    $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
+    localStorageService.bind($scope, 'isMulticloudDeployment', $scope.isMulticloudDeployment);
+
+//    $scope.changeDeploymentType = function (value) {
+//        AssetsService.setDeploymentType(value);
+//    };
+
     // Kind of a hack: this is necessary when loading BSOIA assets from local storage,
     // since the reference seems to be lost when setting the new BSOIA assets in the service
     // variable.

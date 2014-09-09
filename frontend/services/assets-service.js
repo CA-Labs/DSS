@@ -21,6 +21,9 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     var xmlTaAssetsAsObjectFromStorage = localStorageService.get('xmlTaAssetsAsObject') || {};
     var xmlTaAssetsAsObject = xmlTaAssetsAsObjectFromStorage;               // Parsed XML of Modelio file represented as object
 
+    var deploymentTypeFromStorage = localStorageService.get('isMulticloudDeployment') || true; // set the isMulticloudDeployment to be multicloudDeployment in default { options: isMulticloudDeployment = multicloudDeployment || multicloudReplication }
+    var isMulticloudDeployment = deploymentTypeFromStorage;
+
     /**
      * Adds an asset to the list of selected
      * BSOIA assets.
@@ -368,6 +371,25 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
             criticity = asset[0].criticityValue;
         }
         return criticity;
+    };
+
+    /**
+     * Get Deployment type
+     * @description: there are two options for the multicloud deployment,
+     * 0: application is of a type of multicloud replication - which means that each that we look for services matching the deployment from the same provider
+     * 1: cloud is of a type of multicloud deployment - which means that each of the TA needs a service on different cloud service
+     * @returns {number}
+     */
+    this.getDeploymentType = function () {
+        return isMulticloudDeployment;
+    };
+
+    /**
+     * sets the deployment type accordingly
+     * @param {string} type - string of deploymentType
+     */
+    this.setDeploymentType = function (value) {
+        isMulticloudDeployment = value;
     };
 
 }]);
