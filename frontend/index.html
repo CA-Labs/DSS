@@ -402,7 +402,7 @@
                                                                             <div class="well pull-right service-proposal-score">
                                                                                 <h6>Score</h6>
                                                                                 <hr/>
-                                                                                <h3>100</h3>
+                                                                                <h3>{{ result.score * 100 | number: 0 }}</h3>
                                                                             </div>
                                                                             <div class="service-proposal-logo">
                                                                                 <img ng-src="{{result.provider.logo_url}}"/>
@@ -437,7 +437,7 @@
                                                                             <div class="well pull-right service-proposal-score">
                                                                                 <h6>Score</h6>
                                                                                 <hr/>
-                                                                                <h3>100</h3>
+                                                                                <h3>{{ result.score * 100 | number: 0 }}</h3>
                                                                             </div>
                                                                             <div class="service-proposal-logo">
                                                                                 <img ng-src="{{result.provider.logo_url}}"/>
