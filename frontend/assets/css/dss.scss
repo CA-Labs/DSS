@@ -255,13 +255,14 @@ blockquote {
 .service-proposal-logo > img {
   width: 150px;
   height: auto;
-  margin-top: 50px;
+  margin-top: 30px;
+  margin-left: 30px;
 }
 
 .service-proposal-description {
   float: left;
-  margin-left: 30px !important;
-  max-width: 70%;
+  margin: 30px;
+  margin-top: -10px;
 }
 
 .service-proposal-info {
@@ -270,9 +271,22 @@ blockquote {
 }
 
 .service-proposal-score {
-  font-size: 1.5em;
-  font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
-  color: black;
+  margin: {
+    right: 30px;
+    top: 15px;
+  }
+  padding: 14px;
+  & h3, & h6 {
+    margin: 2px;
+    text-align: center;
+  }
+  & hr {
+    margin: {
+      top: 0;
+      bottom: 0;
+    }
+    border-color: #fff;
+  }
 }
 
 .service-proposal-score-positive {
@@ -294,7 +308,7 @@ blockquote {
 }
 
 .service-selected {
-  background-color: #bada55;
+  border: 3px solid #2980b9;
 }
 
 .unacceptable-risk {
@@ -304,4 +318,3 @@ blockquote {
 .acceptable-risk {
   background-color: palegreen;
 }
-

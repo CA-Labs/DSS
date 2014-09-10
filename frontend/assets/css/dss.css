@@ -205,21 +205,29 @@ blockquote {
 .service-proposal-logo > img {
   width: 150px;
   height: auto;
-  margin-top: 50px; }
+  margin-top: 30px;
+  margin-left: 30px; }
 
 .service-proposal-description {
   float: left;
-  margin-left: 30px !important;
-  max-width: 70%; }
+  margin: 30px;
+  margin-top: -10px; }
 
 .service-proposal-info {
   float: right;
   text-align: center; }
 
 .service-proposal-score {
-  font-size: 1.5em;
-  font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
-  color: black; }
+  margin-right: 30px;
+  margin-top: 15px;
+  padding: 14px; }
+  .service-proposal-score h3, .service-proposal-score h6 {
+    margin: 2px;
+    text-align: center; }
+  .service-proposal-score hr {
+    margin-top: 0;
+    margin-bottom: 0;
+    border-color: #fff; }
 
 .service-proposal-score-positive {
   width: 0;
@@ -238,7 +246,7 @@ blockquote {
   margin: 0 auto; }
 
 .service-selected {
-  background-color: #bada55; }
+  border: 3px solid #2980b9; }
 
 .unacceptable-risk {
   background-color: indianred; }
