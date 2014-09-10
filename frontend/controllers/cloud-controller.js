@@ -223,7 +223,8 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
      * Show hide details of the cloud service
      * @param {object} item - service item from the ng-repeat
      */
-    $scope.showHideDetails = function (item) {
+    $scope.showHideDetails = function (event, item) {
+        event.stopPropagation();
         item.showDetails = !item.showDetails;
     };
 
