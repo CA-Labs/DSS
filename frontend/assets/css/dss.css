@@ -186,6 +186,17 @@ blockquote {
   height: 150px;
   max-height: 450px !important; }
 
+.service-proposal-panel {
+  border: 3px solid #ecf0f1;
+  margin-bottom: 30px !important; }
+  .service-proposal-panel:hover {
+    box-shadow: 0px 0px 5px #7f8c8d; }
+
+.service-proposal-title {
+  margin: 10px; }
+  .service-proposal-title a {
+    text-decoration: none; }
+
 .service-proposal-logo {
   width: 150px;
   height: 150px;
