@@ -28,6 +28,7 @@ module.exports = function (grunt) {
                         'frontend/services/risks-service.js',
                         'frontend/services/arangodb-service.js',
                         'frontend/services/treatments-service.js',
+                        'frontend/services/cloud-service.js',
                         'frontend/common/filters.js',
                         'frontend/common/mainInterfaces.js',
                         'frontend/directives/*.js'

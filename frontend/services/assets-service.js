@@ -24,6 +24,9 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     var deploymentTypeFromStorage = localStorageService.get('isMulticloudDeployment') || true; // set the isMulticloudDeployment to be multicloudDeployment in default { options: isMulticloudDeployment = multicloudDeployment || multicloudReplication }
     var isMulticloudDeployment = deploymentTypeFromStorage;
 
+    var criticityBoundModelsFromStorage = localStorageService.get('criticityBoundModels') || {};
+    var criticityBoundModels = criticityBoundModelsFromStorage;
+
     /**
      * Adds an asset to the list of selected
      * BSOIA assets.
@@ -364,18 +367,15 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
 
     this.getTACriticityValue = function(taAssetId){
         var criticity = null;
-        var asset = ta.filter(function(asset){
-            return asset._id == taAssetId;
-        });
-        if(asset.length == 1){
-            criticity = asset[0].criticityValue;
+        if(criticityBoundModels[taAssetId]){
+            criticity = criticityBoundModels[taAssetId];
         }
         return criticity;
     };
 
     this.getInverseCriticityValue = function(smiScore){
         return Math.round(25 - smiScore * ((25 - 1)/10));
-    }
+    };
 
     /**
      * Get Deployment type
@@ -395,5 +395,13 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     this.setDeploymentType = function (value) {
         isMulticloudDeployment = value;
     };
+
+    this.getCriticityBoundModels = function(){
+        return criticityBoundModels;
+    };
+
+    this.setCriticityBoundModels = function(criticityBoundModelsLoadedFromLocalStorage){
+        criticityBoundModels = criticityBoundModelsLoadedFromLocalStorage;
+    }
 
 }]);

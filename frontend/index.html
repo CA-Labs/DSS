@@ -199,8 +199,8 @@
                 <p>
                 <div style="display: inline-block; margin-left: 10px; position: relative; top: -5px;">Importance:</div>
                 <div on-risks-type="criticity" data-type="criticity">
-                    <div style="width: 60%; margin-left: 25px; margin-right: 25px; display: inline-block;" slider data-model="criticity" ng-model="taAsset.criticityValue" start="25" end="1" step="2.4"></div>
-                    <span class="label label-default secondary radius right" style="position: relative; top: -5px;">{{ 10*(25-taAsset.criticityValue)/(25-1) | number:0 }}</span>
+                    <div style="width: 60%; margin-left: 25px; margin-right: 25px; display: inline-block;" slider data-model="criticity" ng-model="criticityBoundModels[taAsset._id]" start="25" end="1" step="2.4"></div>
+                    <span class="label label-default secondary radius right" style="position: relative; top: -5px;">{{ 10*(25-criticityBoundModels[taAsset._id])/(25-1) | number:0 }}</span>
                 </div>
                 </p>
             </a>

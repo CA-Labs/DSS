@@ -155,6 +155,8 @@ dssApp.controller('mainController', [
                 RisksService.loadingLocalStorageData(true);
                 TreatmentsService.loadingTreatmentsFromLocalStorage(true);
                 TreatmentsService.loadingTreatmentsValuesFromLocalStorage(true);
+                CloudService.loadingProposalsFromLocalStorage(true);
+                CloudService.loadingFilteredProposalsFromLocalStorage(true);
                 AssetsService.setBSOIA(localStorageValues.bsoiaAssetsSelected);
                 AssetsService.setTOIA(localStorageValues.toiaAssetsSelected);
                 RisksService.setSimpleRisksLikelihoodConsequence(localStorageValues.simpleRisksLikelihoodConsequence);
@@ -164,7 +166,10 @@ dssApp.controller('mainController', [
                 RisksService.setRisks(localStorageValues.risksSelected);
                 TreatmentsService.setTreatmentValues(localStorageValues.treatmentValues);
                 TreatmentsService.setTreatments(localStorageValues.treatmentsSelected);
+                AssetsService.setCriticityBoundModels(localStorageValues.criticityBoundModels);
                 AssetsService.setTA(localStorageValues.taAssets);
+                CloudService.setProposals(localStorageValues.proposals);
+                CloudService.setFilteredProposals(localStorageValues.filteredProposals);
             });
         } else {
             flash.error = 'Some error occured while trying to upload DSS session file';

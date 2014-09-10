@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'localStorageService', function($rootScope, $scope, AssetsService, localStorageService){
+dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'CloudService', 'localStorageService', function($rootScope, $scope, AssetsService, CloudService, localStorageService){
 
     //Initialization
     $scope.taAssets = AssetsService.getTA();                            // The list of TA assets read from the cloud services descriptor xml file
@@ -13,17 +13,17 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'loc
     $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
     localStorageService.bind($scope, 'isMulticloudDeployment', $scope.isMulticloudDeployment);
 
-//    $scope.changeDeploymentType = function (value) {
-//        AssetsService.setDeploymentType(value);
-//    };
+    $scope.criticityBoundModels = AssetsService.getCriticityBoundModels();
+    localStorageService.bind($scope, 'criticityBoundModels', $scope.criticityBoundModels);
 
-    // Kind of a hack: this is necessary when loading BSOIA assets from local storage,
-    // since the reference seems to be lost when setting the new BSOIA assets in the service
+    // Kind of a hack: this is necessary when loading TA assets from local storage,
+    // since the reference seems to be lost when setting the new TA assets in the service
     // variable.
     $scope.$watch(function(){
         return AssetsService.getTA();
     }, function(newTA){
         $scope.taAssets = newTA;
+        console.log('ola ke ase');
     }, true);
 
 
@@ -41,7 +41,8 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'loc
      * related risks unacceptability.
      */
     $scope.$on('sliderValueChanged', function($event, element){
-        //console.log('ta slider value changed, sending acceptability event');
+        console.log(element);
+        console.log($scope.criticityBoundModels);
         $rootScope.$broadcast('acceptabilityValueChanged');
     });
 
