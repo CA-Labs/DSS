@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('buttonsController', ['$scope', 'RisksService', 'AssetsService', 'TreatmentsService', 'flash', function($scope, RisksService, AssetsService, TreatmentsService, flash){
+dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 'AssetsService', 'TreatmentsService', 'flash', function($scope, $rootScope, RisksService, AssetsService, TreatmentsService, flash){
 
     $scope.unacceptableRisks = RisksService.getUnacceptableRisks();
 
