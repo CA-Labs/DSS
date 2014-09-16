@@ -64,7 +64,7 @@ dssApp.controller('risksController'
     $scope.$watch(function(){
         return RisksService.getUnacceptableRisks();
     }, function(newVal, oldVal){
-        console.log('New unacceptable risks', newVal);
+        // console.log('New unacceptable risks', newVal);
         $scope.unacceptableRisks = newVal;
     }, true);
 

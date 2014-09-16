@@ -203,7 +203,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
             });
         }
 
-        console.log(filteredProposals);
+        // console.log(filteredProposals);
 
     };
 
