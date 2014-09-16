@@ -15,6 +15,9 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
     var risksTreatmentsMappingFromStorage = localStorageService.get('risksTreatmentsMapping') || {};
     var risksTreatmentsMapping = risksTreatmentsMappingFromStorage;
 
+    var showTreatmentsValuesFromStorage = localStorageService.get('showTreatmentsValues') || false;
+    var showTreatmentsValues = showTreatmentsValuesFromStorage;
+
     var loadingTreatmentsFromLocalStorage = false;              // Flag to control local storage restore state
     var loadingTreatmentsValuesFromLocalStorage = false;        // IDEM
 
@@ -131,6 +134,14 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
             }
         });
         return risksNames;
+    };
+
+    this.showTreatmentsValues = function(showTreatments){
+        showTreatmentsValues = showTreatments;
+    };
+
+    this.getShowTreatmentsValues = function(){
+        return showTreatmentsValues;
     };
 
     /**

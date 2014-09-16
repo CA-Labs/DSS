@@ -289,10 +289,17 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         return unacceptableRisks;
     };
 
+    this.clearUnacceptableRisks = function(){
+        _.each(unacceptableRisks, function(values, key){
+            unacceptableRisks[key] = [];
+        });
+    };
+
     this.isUnacceptable = function(riskName, taAssetId){
         var unacceptable = false;
         if(taAssetId){
-            return unacceptableRisks[taAssetId] ? unacceptableRisks[taAssetId].indexOf(riskName) !== -1 : false;
+            unacceptable = unacceptableRisks[taAssetId] !== undefined ? unacceptableRisks[taAssetId].indexOf(riskName) !== -1 : true;
+            return unacceptable;
         } else {
             _.each(unacceptableRisks, function(value, key){
                 if(value.indexOf(riskName) !== -1){
@@ -306,15 +313,5 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     this.getSeparator = function(){
         return SEPARATOR;
     };
-
-    this.getThresholdFromRisk = function(riskName, taAssetId){
-        var lc = null;
-        if(taAssetId){
-            lc = this.getLikelihoodAndConsequenceValues(riskName, taAssetId);
-        } else {
-            lc = this.getLikelihoodAndConsequenceValues(riskName);
-        }
-        return Math.ceil(Math.ceil(lc.likelihood/2) * Math.ceil(lc.consequence/2));
-    }
 
 }]);

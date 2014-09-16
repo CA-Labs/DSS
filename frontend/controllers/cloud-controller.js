@@ -28,9 +28,9 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
                 var serviceType = ta.cloudType == 'IaaS' ? ta.cloudResource._serviceType : ta.cloudPlatform._serviceType;
                 ArangoDBService.getProposalsByCloudAndServiceTypes(ta.cloudType, serviceType, function(error, data){
                     if(error){
-                        console.log(error);
+                        // console.log(error);
                     } else {
-                        console.log(data._documents);
+                        // console.log(data._documents);
                         CloudService.setTAProposals(ta, data._documents);
                     }
                 });

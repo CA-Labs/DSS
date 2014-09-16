@@ -38,6 +38,8 @@ dssApp.controller('treatmentsController'
 
     $scope.treatmentsBoundModels = {};
 
+    $scope.showTreatmentValues = TreatmentsService.getShowTreatmentsValues();
+    localStorageService.bind($scope, 'showTreatmentValues', $scope.showTreatmentValues);
 
     /**
      * Event received when the unaccepted risks change, so that
@@ -87,7 +89,7 @@ dssApp.controller('treatmentsController'
 
         // If we are loaading treatments from local storage, don't update treatments models
         if(TreatmentsService.isLoadingTreatmentsFromLocalStorage()){
-            TreatmentsService.loadingTreatmentsFromLocalStorage(false);
+                TreatmentsService.loadingTreatmentsFromLocalStorage(false);
             $scope.treatmentsSelected = newTreatments;
             return;
         }
@@ -166,18 +168,15 @@ dssApp.controller('treatmentsController'
             flash.warn = 'Tangible Asset [TA] already added';
         } else {
             TreatmentsService.addTAToTreatment(treatment, data);
-            localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
+            //localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
         }
 
     };
 
     $scope.removeTaFromTreatment = function (treatment, ta) {
         TreatmentsService.removeTaFromTreatment(treatment, ta);
-        localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
+        //localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
     };
-
-    $scope.showTreatmentValues = false;
-    localStorageService.bind($scope, 'showTreatmentValues', $scope.showTreatmentValues);
 
     $scope.toggleTreatmentValues = function () {
         $scope.showTreatmentValues = !$scope.showTreatmentValues;

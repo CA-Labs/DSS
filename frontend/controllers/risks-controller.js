@@ -61,6 +61,13 @@ dssApp.controller('risksController'
         $scope.multipleRisksLikelihoodConsequence = newMultipleRisksLikelihoodConsequence;
     }, true);
 
+    $scope.$watch(function(){
+        return RisksService.getUnacceptableRisks();
+    }, function(newVal, oldVal){
+        // console.log('New unacceptable risks', newVal);
+        $scope.unacceptableRisks = newVal;
+    }, true);
+
     //List of available categories to categorize risks level for likelihood values
     var LIKELIHOOD_CATEGORIES = {
         RARE: {
@@ -229,6 +236,10 @@ dssApp.controller('risksController'
                 $scope.showRiskPerTA = true;
             }
         }
+        // Recompute criticity values and update coloring
+        RisksService.clearUnacceptableRisks();
+        $rootScope.$broadcast('acceptabilityValueChanged');
+
     };
 
     /**
@@ -373,6 +384,7 @@ dssApp.controller('risksController'
             Object.keys($scope.multipleRisksLikelihoodConsequence).forEach(function(key){
                 $scope.riskBoundModels[key] = $scope.multipleRisksLikelihoodConsequence[key];
             });
+            $rootScope.$broadcast('acceptabilityValueChanged');
             return;
         };
 
@@ -433,6 +445,7 @@ dssApp.controller('risksController'
         });
 
         $scope.risksSelected = newRisks;
+        $rootScope.$broadcast('acceptabilityValueChanged');
 
     }, true);
 
@@ -531,10 +544,10 @@ dssApp.controller('risksController'
             _.each($scope.taAssets, function(ta){
                var isRiskUnacceptable = AssetsService.isRiskUnacceptable(riskLikelihoodConsequence.likelihood, riskLikelihoodConsequence.consequence, ta._id);
                 if(isRiskUnacceptable){
-                    console.log(riskName + ' (simple) is unacceptable');
+                    // console.log(riskName + ' (simple) is unacceptable');
                     RisksService.addUnacceptableRisk(ta._id, riskName);
                 } else {
-                    console.log(riskName + ' (simple) is acceptable');
+                    // console.log(riskName + ' (simple) is acceptable');
                     RisksService.removeUnacceptableRisk(ta._id, riskName);
                 }
             });
@@ -550,10 +563,7 @@ dssApp.controller('risksController'
      * to recompute risks acceptability.
      */
     $scope.$on('acceptabilityValueChanged', function(){
-        //console.log('I have to recompute things...');
-        if(_.isEmpty($scope.simpleRisksLikelihoodConsequence) || _.isEmpty($scope.multipleRisksLikelihoodConsequence)){
-            return;
-        }
+
         var SEPARATOR = RisksService.getSeparator();
         var taIds = $scope.taAssets.map(function(ta){
             return ta._id;
@@ -596,13 +606,5 @@ dssApp.controller('risksController'
         }
         $rootScope.$broadcast('risksSelectedChanged');
     });
-
-    $scope.isUnacceptable = function(riskName, taAssetId){
-        if(taAssetId){
-            return RisksService.isUnacceptable(riskName, taAssetId);
-        } else {
-            return RisksService.isUnacceptable(riskName);
-        }
-    };
 
 }]);
