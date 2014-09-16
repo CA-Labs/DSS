@@ -23,7 +23,6 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'Clo
         return AssetsService.getTA();
     }, function(newTA){
         $scope.taAssets = newTA;
-        console.log('ola ke ase');
     }, true);
 
 
@@ -41,8 +40,6 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'Clo
      * related risks unacceptability.
      */
     $scope.$on('sliderValueChanged', function($event, element){
-        console.log(element);
-        console.log($scope.criticityBoundModels);
         $rootScope.$broadcast('acceptabilityValueChanged');
     });
 

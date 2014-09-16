@@ -507,10 +507,10 @@ dssApp.controller('risksController'
             var riskLikelihoodConsequence = RisksService.getLikelihoodAndConsequenceValues(riskName, taKey);
             var isRiskUnacceptable = AssetsService.isRiskUnacceptable(riskLikelihoodConsequence.likelihood, riskLikelihoodConsequence.consequence, taKey);
             if(isRiskUnacceptable){
-                // console.log(riskName + ' (multiple) is unnaceptable');
+                console.log(riskName + ' (multiple) is unnaceptable');
                 RisksService.addUnacceptableRisk(taKey, riskName);
             } else {
-                // console.log(riskName + ' (multiple) is acceptable');
+                console.log(riskName + ' (multiple) is acceptable');
                 RisksService.removeUnacceptableRisk(taKey, riskName);
             }
 

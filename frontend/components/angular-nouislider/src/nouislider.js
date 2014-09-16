@@ -77,7 +77,7 @@ angular.module('nouislider', []).directive('slider', function () {
                     });
                     slider.on(callback, function () {
                         parsedValue = parseFloat(slider.val());
-                        console.log('parsed value', parsedValue);
+                        // console.log('parsed value', parsedValue);
 
                         //Propagate event upwards
                         var type = attrs.hashKey ? attrs.hashKey.indexOf('likelihood') !== -1 ? 'likelihood' : 'consequence' : '';
