@@ -229,6 +229,10 @@ dssApp.controller('risksController'
                 $scope.showRiskPerTA = true;
             }
         }
+        // Recompute criticity values and update coloring
+        RisksService.clearUnacceptableRisks();
+        $rootScope.$broadcast('acceptabilityValueChanged');
+
     };
 
     /**

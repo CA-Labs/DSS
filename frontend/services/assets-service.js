@@ -357,7 +357,7 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
             // Default behaviour
             return true;
         }
-    }
+    };
 
     this.getTACriticityValue = function(taAssetId){
         var criticity = null;

@@ -289,8 +289,14 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         return unacceptableRisks;
     };
 
+    this.clearUnacceptableRisks = function(){
+        _.each(unacceptableRisks, function(values, key){
+            unacceptableRisks[key] = [];
+        });
+    };
+
     this.isUnacceptable = function(riskName, taAssetId){
-        var unacceptable = true;
+        var unacceptable = false;
         if(taAssetId){
             unacceptable = unacceptableRisks[taAssetId] !== undefined ? unacceptableRisks[taAssetId].indexOf(riskName) !== -1 : true;
             return unacceptable;
