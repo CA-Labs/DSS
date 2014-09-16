@@ -178,8 +178,12 @@ dssApp.controller('treatmentsController'
         //localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
     };
 
-    $scope.toggleTreatmentValues = function () {
-        $scope.showTreatmentValues = !$scope.showTreatmentValues;
+    $scope.toggleTreatmentValues = function (treatmentName) {
+        if(TreatmentsService.showTreatmentValue(treatmentName)){
+            TreatmentsService.setShowTreatmentValue(treatmentName, true);
+        } else {
+            TreatmentsService.setShowTreatmentValue(treatmentName, false);
+        }
     };
 
     $scope.treatmentValueChanged = function (treatmentValueString, treatment) {
