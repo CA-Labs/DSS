@@ -157,7 +157,8 @@ describe('Edges CRUD API', function(){
         {
             "name": "Flexiant",
             "type": "service",
-            "cloudType": "IaaS"
+            "cloudType": "IaaS",
+            "serviceType": "Compute"
         }
     ];
 
@@ -334,6 +335,7 @@ describe('Edges CRUD API', function(){
                     name: 'Service A',
                     type: 'service',
                     cloudType: 'PaaS',
+                    serviceType: 'NoSQL database',
                     provider: provider,
                     metrics: metricesObject
                 };
@@ -418,6 +420,7 @@ describe('Edges CRUD API', function(){
                     name: 'Service A',
                     type: 'service',
                     cloudType: 'PaaS',
+                    serviceType: 'NoSQL database',
                     provider: data[0].attributes,
                     metrics: metricesObject
                 };
@@ -516,6 +519,7 @@ describe('Edges CRUD API', function(){
                     name: 'Service A',
                     type: 'service',
                     cloudType: 'PaaS',
+                    serviceType: 'NoSQL database',
                     provider: provider,
                     metrics: metricesObject
                 };

@@ -18,6 +18,15 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
 
     var loadingDataFromLocalStorage = false;    //Flag to control local storage restore state
 
+    var xmlTaAssetsAsObjectFromStorage = localStorageService.get('xmlTaAssetsAsObject') || {};
+    var xmlTaAssetsAsObject = xmlTaAssetsAsObjectFromStorage;               // Parsed XML of Modelio file represented as object
+
+    var deploymentTypeFromStorage = localStorageService.get('isMulticloudDeployment') || true; // set the isMulticloudDeployment to be multicloudDeployment in default { options: isMulticloudDeployment = multicloudDeployment || multicloudReplication }
+    var isMulticloudDeployment = deploymentTypeFromStorage;
+
+    var criticityBoundModelsFromStorage = localStorageService.get('criticityBoundModels') || {};
+    var criticityBoundModels = criticityBoundModelsFromStorage;
+
     /**
      * Adds an asset to the list of selected
      * BSOIA assets.
@@ -276,6 +285,24 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         ta = taLoadedFromLocalStorage;
     };
 
+    /**
+     * Sets parsed XML of Resources Object, loaded when TA are loaded from modelio
+     * @param xmlObject
+     */
+    this.setXmlTaObject = function (xmlObject) {
+        if (typeof(xmlObject) == 'object') {
+            xmlTaAssetsAsObject = xmlObject;
+        }
+    };
+
+    /**
+     * Gets XML file as Object, this file is loaded from modelio
+     * @returns {Object} xmlTAAssetsAsObject - object which represents Modelio XML file as Object
+     */
+    this.getXmlTaObject = function () {
+        return xmlTaAssetsAsObject;
+    };
+
     this.loadResourcesFromXML = function(file){
         var fileReader = new FileReader();
         var deferred = $q.defer();
@@ -311,5 +338,70 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         toia = [];
         ta = [];
     };
+
+    /**
+     * Given the risk likelihood and consequence and a tangible asset id, checks
+     * whether that risk is unacceptable or not.
+     * @param riskLikelihood The risk likelihood.
+     * @param riskConsequence The risk consequence.
+     * @param taAssetId The TA asset id.
+     * @returns {boolean} True if the risk is unacceptable, false otherwise.
+     */
+    this.isRiskUnacceptable = function(riskLikelihood, riskConsequence, taAssetId){
+        //console.log('riskLikelihood', riskLikelihood);
+        //console.log('riskConsequence', riskConsequence);
+        //console.log('taAssetId', taAssetId);
+        var matchingTaAssets = ta.filter(function(asset){
+            return asset._id == taAssetId;
+        });
+        if(matchingTaAssets){
+            var criticityValue = matchingTaAssets[0].criticityValue;
+            //console.log('criticity value is ' + criticityValue);
+            //console.log('risk L*C is ' + Math.ceil(Math.ceil(riskLikelihood/2) * Math.ceil(riskConsequence/2)));
+            return Math.ceil(Math.ceil(riskLikelihood/2) * Math.ceil(riskConsequence/2)) >= criticityValue;
+        } else {
+            // Default behaviour
+            return true;
+        }
+    }
+
+    this.getTACriticityValue = function(taAssetId){
+        var criticity = null;
+        if(criticityBoundModels[taAssetId]){
+            criticity = criticityBoundModels[taAssetId];
+        }
+        return criticity;
+    };
+
+    this.getInverseCriticityValue = function(smiScore){
+        return Math.round(25 - smiScore * ((25 - 1)/10));
+    };
+
+    /**
+     * Get Deployment type
+     * @description: there are two options for the multicloud deployment,
+     * 0: application is of a type of multicloud replication - which means that each that we look for services matching the deployment from the same provider
+     * 1: cloud is of a type of multicloud deployment - which means that each of the TA needs a service on different cloud service
+     * @returns {number}
+     */
+    this.getDeploymentType = function () {
+        return isMulticloudDeployment;
+    };
+
+    /**
+     * sets the deployment type accordingly
+     * @param {string} type - string of deploymentType
+     */
+    this.setDeploymentType = function (value) {
+        isMulticloudDeployment = value;
+    };
+
+    this.getCriticityBoundModels = function(){
+        return criticityBoundModels;
+    };
+
+    this.setCriticityBoundModels = function(criticityBoundModelsLoadedFromLocalStorage){
+        criticityBoundModels = criticityBoundModelsLoadedFromLocalStorage;
+    }
 
 }]);

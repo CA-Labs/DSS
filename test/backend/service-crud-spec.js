@@ -88,7 +88,8 @@ describe('Services CRUD API', function(){
         {
             "name": "Flexiant",
             "type": "service",
-            "cloudType": "IaaS"
+            "cloudType": "IaaS",
+            "serviceType": "Compute"
         }
     ];
 

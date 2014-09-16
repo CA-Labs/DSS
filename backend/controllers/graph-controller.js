@@ -8,6 +8,12 @@
         db              = arango.db,
         console         = require("console");
 
+    // Service lookup query types
+    var QUERY_TYPE = {
+        CLOUD_AND_SERVICE_TYPES: "1",
+        TREATMENTS: "2"
+    };
+
     /** Retrieves potential risks connected to TOIA or BSOIA assets.
      *
      */
@@ -54,13 +60,13 @@
      */
     controller.get('potentialTreatments', function(req, res){
 
-        //TODO: Return projections and not full paths?
-        var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
-            'let sourceType = (p.source.type)' +
-            'let destinationType = (p.destination.type)' +
-            'let sourceName = (lower(p.source.name))' +
-            'filter (sourceType == "risk") && (destinationType == "treatment") && (contains(lower(@risks), sourceName))' +
-            'return p';
+        var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1}) ' +
+                    'let sourceType = (p.source.type) ' +
+                    'let destinationType = (p.destination.type) ' +
+                    'let sourceName = (lower(p.source.name)) ' +
+                    'filter (sourceType == "risk") && (destinationType == "treatment") && (contains(lower(@risks), sourceName)) ' +
+                    'collect risk = p.source.name into risks ' +
+                    'return {risk: risk, treatments: risks[*].p.destination} ';
 
         var stmt = db._createStatement({query: query});
 
@@ -184,36 +190,46 @@
     /**
      * Services lookup endpoint
      */
-    controller.get('lookupServices', function(req, res){
-        var cloudType = req.params('cloudType');
-        var treatmentsList = req.params('treatments').split(',');
+    controller.get('lookupServices', function(req, res) {
 
-        if(cloudType && treatmentsList){
-            if(treatmentsList.length == 0){
-                res.json({error: true, reason: 'Treatments names list can\'t be empty'});
-            } else {
-                var query = 'for result in dss::graph::lookupServices(@cloudType, @treatmentsList) return result';
+        var queryType = req.params('queryType');
+        var result = [];
+
+        switch (queryType) {
+            case QUERY_TYPE.CLOUD_AND_SERVICE_TYPES:
+                var cloudType = req.params('cloudType');
+                var serviceType = req.params('serviceType');
+                var query = 'for result in dss::graph::lookupServicesByCloudAndServiceTypes(@cloudType, @serviceType) return result';
                 var stmt = db._createStatement({query: query});
                 stmt.bind('cloudType', cloudType);
-                stmt.bind('treatmentsList', treatmentsList);
-                var result = stmt.execute();
-                res.json(result);
-            }
-        } else {
-            if(!cloudType){
-                res.json({error: true, reason: 'Invalid cloud type (must be a value between ["Paas", "IaaS", "SaaS"'});
-            } else if(!treatmentsList){
-                res.json({error: true, reason: 'Provided treatments list is not valid'});
-            }
-        }
+                stmt.bind('serviceType', serviceType);
+                result = stmt.execute();
+                break;
+            case QUERY_TYPE.TREATMENTS:
+                break;
+            default:
+                break;
+        };
+
+        res.json(result);
+
+    }).queryParam('queryType', {
+        description: 'Type of query (by cloud and service types [1], using a treatments list [2])',
+        type: 'string',
+        required: true
     }).queryParam('cloudType', {
         description: 'Type of cloud (PaaS|IaaS|SaaS)',
         type: 'string',
-        required: true
+        required: false
+    }).queryParam('serviceType', {
+        description: 'Type of service (Compute|File system|Blob storage|Middleware|Relational database|NoSQL database|Frontend|Backend)',
+        type: 'string',
+        required: false
     }).queryParam('treatments', {
         description: 'A comma-separated list of treatments names values',
         type: 'string',
-        required: true
+        required: false
     });
+
 
 })();

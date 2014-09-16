@@ -40,7 +40,8 @@ angular.module('nouislider', []).directive('slider', function () {
                         toParsed = parseFloat(to);
 
                         //Propagate event upwards
-                        scope.$emit('sliderValueChanged', {slider: slider, value: slider.val(), init: false});
+                        var type = attrs.hashKey ? attrs.hashKey.indexOf('likelihood') !== -1 ? 'likelihood' : 'consequence' : '';
+                        scope.$emit('sliderValueChanged', {slider: slider, value: slider.val(), init: false, type: type, model: attrs.model});
 
                         return scope.$apply(function () {
                             scope.ngFrom = fromParsed;
@@ -76,9 +77,11 @@ angular.module('nouislider', []).directive('slider', function () {
                     });
                     slider.on(callback, function () {
                         parsedValue = parseFloat(slider.val());
+                        console.log('parsed value', parsedValue);
 
                         //Propagate event upwards
-                        scope.$emit('sliderValueChanged', {slider: slider, value: slider.val(), init: false});
+                        var type = attrs.hashKey ? attrs.hashKey.indexOf('likelihood') !== -1 ? 'likelihood' : 'consequence' : '';
+                        scope.$emit('sliderValueChanged', {slider: slider, value: slider.val(), init: false, type: type, model: attrs.model});
 
                         return scope.$apply(function () {
                             return scope.ngModel = parsedValue;

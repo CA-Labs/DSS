@@ -26,15 +26,21 @@ dssApp.controller('risksController'
 
     //Initialization
     $scope.potentialRisks = [];                                                                                         //List of current potential risks depending on BSOIA/TOIA assets selected by the user
+
     $scope.risksSelected = RisksService.getRisks();                                                                     //Risks selected by the user
     localStorageService.bind($scope, 'risksSelected', $scope.risksSelected);
-    $scope.showRiskPerTA = false;                                                                                            //Switch button to allow evaluate risks for each TA
+    $scope.showRiskPerTA = false;                                                                                       //Switch button to allow evaluate risks for each TA
     localStorageService.bind($scope, 'showRiskPerTA', $scope.showRiskPerTA);
     $scope.taAssets = AssetsService.getTA();                                                                            //The selected TA assets
+
     $scope.simpleRisksLikelihoodConsequence = RisksService.getRisksLikelihoodConsequence();                             //Likelihood/Consequence values for simple risks model
     localStorageService.bind($scope, 'simpleRisksLikelihoodConsequence', $scope.simpleRisksLikelihoodConsequence);
-    $scope.showRiskPerTARisksLikelihoodConsequence = RisksService.getRisksTALikelihoodConsequence();                         //Likelihood/Consequence values for showRiskPerTA risks model
-    localStorageService.bind($scope, 'showRiskPerTARisksLikelihoodConsequence', $scope.showRiskPerTARisksLikelihoodConsequence);
+
+    $scope.multipleRisksLikelihoodConsequence = RisksService.getRisksTALikelihoodConsequence();                         //Likelihood/Consequence values for multiple risks model
+    localStorageService.bind($scope, 'multipleRisksLikelihoodConsequence', $scope.multipleRisksLikelihoodConsequence);
+
+    $scope.unacceptableRisks = RisksService.getUnacceptableRisks();
+
     $scope.riskBoundModels = {};
 
     // Kind of a hack: this is necessary when loading simple risks model from local storage,
@@ -46,75 +52,116 @@ dssApp.controller('risksController'
         $scope.simpleRisksLikelihoodConsequence = newSimpleRisksLikelihoodConsequence;
     }, true);
 
-    // Kind of a hack: this is necessary when loading showRiskPerTA risks model from local storage,
-    // since the reference seems to be lost when setting the new showRiskPerTA risks model in the service
+    // Kind of a hack: this is necessary when loading multiple risks model from local storage,
+    // since the reference seems to be lost when setting the new multiple risks model in the service
     // variable.
     $scope.$watch(function(){
         return RisksService.getRisksTALikelihoodConsequence();
     }, function(newMultipleRisksLikelihoodConsequence){
-        $scope.showRiskPerTARisksLikelihoodConsequence = newMultipleRisksLikelihoodConsequence;
+        $scope.multipleRisksLikelihoodConsequence = newMultipleRisksLikelihoodConsequence;
     }, true);
 
-    //List of available categories to categorize risks level
-    var CATEGORY = {
-        VERY_LOW: {
+    //List of available categories to categorize risks level for likelihood values
+    var LIKELIHOOD_CATEGORIES = {
+        RARE: {
             class: 'risk-very-low',
-            name: 'Very low'
+            name: 'Rare'
         },
-        LOW: {
+        UNLIKELY: {
             class: 'risk-low',
-            name: 'Low'
+            name: 'Unlikely'
         },
-        NORMAL: {
+        POSSIBLE: {
             class: 'risk-normal',
-            name: 'Normal'
+            name: 'Possible'
         },
-        HIGH: {
+        LIKELY: {
             class: 'risk-high',
-            name: 'High'
+            name: 'Likely'
         },
-        VERY_HIGH: {
+        CERTAIN: {
             class: 'risk-very-high',
-            name: 'Very high'
+            name: 'Certain'
+        }
+    };
+
+    var CONSEQUENCE_CATEGORIES = {
+        INSIGNIFICANT: {
+            class: 'risk-very-low',
+            name: 'Insignificant'
+        },
+        MINOR: {
+            class: 'risk-low',
+            name: 'Minor'
+        },
+        MODERATE: {
+            class: 'risk-normal',
+            name: 'Moderate'
+        },
+        MAJOR: {
+            class: 'risk-high',
+            name: 'Major'
+        },
+        CATASTROPHIC: {
+            class: 'risk-very-high',
+            name: 'Catastrophic'
         }
     };
 
     //Auxiliar function to map scalar values to discrete ones (class names)
-    var numberToCategoryClass = function(n){
-        if(n < 2 ) return CATEGORY.VERY_LOW.class;
-        if(n == 2 || n == 3) return CATEGORY.LOW.class;
-        if(n == 4 || n == 5 || n == 6) return CATEGORY.NORMAL.class;
-        if(n == 7 || n == 8) return CATEGORY.HIGH.class;
-        if(n > 8) return CATEGORY.VERY_HIGH.class;
+    var numberToCategoryClass = function(n, type){
+        switch(type){
+            case 'likelihood':
+                if(n < 2 ) return LIKELIHOOD_CATEGORIES.RARE.class;
+                if(n == 2 || n == 3) return LIKELIHOOD_CATEGORIES.UNLIKELY.class;
+                if(n == 4 || n == 5 || n == 6) return LIKELIHOOD_CATEGORIES.POSSIBLE.class;
+                if(n == 7 || n == 8) return LIKELIHOOD_CATEGORIES.LIKELY.class;
+                if(n > 8) return LIKELIHOOD_CATEGORIES.CERTAIN.class;
+                break;
+            case 'consequence':
+                if(n < 2 ) return CONSEQUENCE_CATEGORIES.INSIGNIFICANT.class;
+                if(n == 2 || n == 3) return CONSEQUENCE_CATEGORIES.MINOR.class;
+                if(n == 4 || n == 5 || n == 6) return CONSEQUENCE_CATEGORIES.MODERATE.class;
+                if(n == 7 || n == 8) return CONSEQUENCE_CATEGORIES.MAJOR.class;
+                if(n > 8) return CONSEQUENCE_CATEGORIES.CATASTROPHIC.class;
+                break;
+            default:
+                break;
+        }
     };
 
     //Auxiliar function to map scalar values to discrete ones (names)
-    var numberToCategoryName = function(n){
-        if(n < 2 ) return CATEGORY.VERY_LOW.name;
-        if(n == 2 || n == 3) return CATEGORY.LOW.name;
-        if(n == 4 || n == 5 || n == 6) return CATEGORY.NORMAL.name;
-        if(n == 7 || n == 8) return CATEGORY.HIGH.name;
-        if(n > 8) return CATEGORY.VERY_HIGH.name;
+    var numberToCategoryName = function(n, type){
+        switch(type){
+            case 'likelihood':
+                if(n < 2 ) return LIKELIHOOD_CATEGORIES.RARE.name;
+                if(n == 2 || n == 3) return LIKELIHOOD_CATEGORIES.UNLIKELY.name;
+                if(n == 4 || n == 5 || n == 6) return LIKELIHOOD_CATEGORIES.POSSIBLE.name;
+                if(n == 7 || n == 8) return LIKELIHOOD_CATEGORIES.LIKELY.name;
+                if(n > 8) return LIKELIHOOD_CATEGORIES.CERTAIN.name;
+                break;
+            case 'consequence':
+                if(n < 2 ) return CONSEQUENCE_CATEGORIES.INSIGNIFICANT.name;
+                if(n == 2 || n == 3) return CONSEQUENCE_CATEGORIES.MINOR.name;
+                if(n == 4 || n == 5 || n == 6) return CONSEQUENCE_CATEGORIES.MODERATE.name;
+                if(n == 7 || n == 8) return CONSEQUENCE_CATEGORIES.MAJOR.name;
+                if(n > 8) return CONSEQUENCE_CATEGORIES.CATASTROPHIC.name;
+                break;
+            default:
+                break;
+        }
     };
 
     //Auxiliar function to clear categories
     var removeClasses = function(domElement){
-        for(category in CATEGORY){
-            domElement.removeClass(CATEGORY[category].class);
+        for(category in LIKELIHOOD_CATEGORIES){
+            domElement.removeClass(LIKELIHOOD_CATEGORIES[category].class);
+        }
+        for(category in CONSEQUENCE_CATEGORIES){
+            domElement.removeClass(CONSEQUENCE_CATEGORIES[category].class);
         }
         return domElement;
     };
-
-    /**
-     * Listen for changes in selected risks, so that
-     * treatments can be recomputed.
-     */
-    $scope.$watch(function(){
-        return RisksService.getRisks();
-    }, function(newRisks){
-        $rootScope.$broadcast('risksSelectedChanged');
-        $scope.risksSelected = newRisks;
-    }, true);
 
     /**
      * Event received when a BSOIA asset has been selected/removed
@@ -188,7 +235,7 @@ dssApp.controller('risksController'
      * Upon load of Tangible assets,
      * set the values of the risks to be automatically enabled
      */
-    $rootScope.$on('loadedTA', function () {
+    $scope.$on('loadedTA', function () {
         $scope.showRiskPerTA = true;
     });
 
@@ -199,8 +246,6 @@ dssApp.controller('risksController'
     $scope.$watch(function(){
         return AssetsService.getTA();
     }, function(newTaAssets, oldTaAssets){
-        console.log('old', oldTaAssets);
-        console.log('new', newTaAssets);
         // If we have loaded ta assets from local storage, don't update risks models
         if(AssetsService.isLoadingLocalStorageData()){
             $scope.taAssets = newTaAssets;
@@ -247,10 +292,10 @@ dssApp.controller('risksController'
             if(!found){
                 switch(cloudType){
                     case 'IaaS':
-                        keysToRemove.push(oldAsset.cloudResource._serviceName);
+                        keysToRemove.push(oldAsset._id);
                         break;
                     case 'PaaS':
-                        keysToRemove.push(oldAsset.cloudPlatform._serviceName);
+                        keysToRemove.push(oldAsset._id);
                         break;
                     default:
                         break;
@@ -283,10 +328,10 @@ dssApp.controller('risksController'
             if(!found){
                 switch(cloudType){
                     case 'IaaS':
-                        keysToAdd.push(newTaAsset.cloudResource._serviceName);
+                        keysToAdd.push(newTaAsset._id);
                         break;
                     case 'PaaS':
-                        keysToAdd.push(newTaAsset.cloudPlatform._serviceName);
+                        keysToAdd.push(newTaAsset._id);
                         break;
                     default:
                         break;
@@ -325,8 +370,8 @@ dssApp.controller('risksController'
             Object.keys($scope.simpleRisksLikelihoodConsequence).forEach(function(key){
                 $scope.riskBoundModels[key] = $scope.simpleRisksLikelihoodConsequence[key];
             });
-            Object.keys($scope.showRiskPerTARisksLikelihoodConsequence).forEach(function(key){
-                $scope.riskBoundModels[key] = $scope.showRiskPerTARisksLikelihoodConsequence[key];
+            Object.keys($scope.multipleRisksLikelihoodConsequence).forEach(function(key){
+                $scope.riskBoundModels[key] = $scope.multipleRisksLikelihoodConsequence[key];
             });
             return;
         };
@@ -374,12 +419,12 @@ dssApp.controller('risksController'
             _.each($scope.taAssets, function(taAsset){
                 switch(taAsset.cloudType){
                     case 'IaaS':
-                        RisksService.addRiskTALikelihood(key.name, taAsset.cloudResource._serviceName, key.value);
-                        RisksService.addRiskTAConsequence(key.name, taAsset.cloudResource._serviceName, key.value);
+                        RisksService.addRiskTALikelihood(key.name, taAsset._id, key.value);
+                        RisksService.addRiskTAConsequence(key.name, taAsset._id, key.value);
                         break;
                     case 'PaaS':
-                        RisksService.addRiskTALikelihood(key.name, taAsset.cloudPlatform._serviceName, key.value);
-                        RisksService.addRiskTAConsequence(key.name, taAsset.cloudPlatform._serviceName, key.value);
+                        RisksService.addRiskTALikelihood(key.name, taAsset._id, key.value);
+                        RisksService.addRiskTAConsequence(key.name, taAsset._id, key.value);
                         break;
                     default:
                         break;
@@ -419,21 +464,23 @@ dssApp.controller('risksController'
     $scope.$on('sliderValueChanged', function($event, element){
 
         // Ignore this event if we have no slider values available or if we are still loading data from local storage
-        if(_.isEmpty($scope.simpleRisksLikelihoodConsequence || _.isEmpty($scope.showRiskPerTARisksLikelihoodConsequence))){
+        if(_.isEmpty($scope.simpleRisksLikelihoodConsequence || _.isEmpty($scope.multipleRisksLikelihoodConsequence))){
             return;
         };
 
         //Current slider value
         var sliderValue = element.value;
+        var sliderType = element.type;
+        var sliderModel = element.model;
+
+        //Retrieve the unique hash key to know what must be updated in risks services, whether simple or multiple models
+        var hashKey = element.slider.data('hash-key');
+        var hashAttributes = hashKey.split('/');
 
         //Update category tag with current slider value
         removeClasses(element.slider.children().first())
-            .addClass(numberToCategoryClass(sliderValue))
-            .text(numberToCategoryName(sliderValue));
-
-        //Retrieve the unique hash key to know what must be updated in risks services, whether simple or showRiskPerTA models
-        var hashKey = element.slider.data('hash-key');
-        var hashAttributes = hashKey.split('_');
+            .addClass(numberToCategoryClass(sliderValue, sliderType))
+            .text(numberToCategoryName(sliderValue, sliderType));
 
         if(hashAttributes.length < 2){
             flash.error = 'Incorrect hash key for slider value!';
@@ -442,22 +489,35 @@ dssApp.controller('risksController'
 
         var riskName = hashAttributes[0];
 
-
-        if($scope.showRiskPerTA){
+        if(sliderModel == 'multiple'){
             //Look up what TA asset we are referring to
             var taKey = hashAttributes[1];
             //Likelihood or consequence?
             var valueToUpdate = hashAttributes[2];
+
             if(valueToUpdate == "likelihood"){
-                //Update likelihood for a certain TA in showRiskPerTA model
+                //Update likelihood for a certain TA in multiple model
                 RisksService.addRiskTALikelihood(riskName, taKey, sliderValue);
             } else {
-                //Update consequence for a certain TA in showRiskPerTA model
+                //Update consequence for a certain TA in multiple model
                 RisksService.addRiskTAConsequence(riskName, taKey, sliderValue);
             }
-        } else {
+
+            // Check risk unacceptability
+            var riskLikelihoodConsequence = RisksService.getLikelihoodAndConsequenceValues(riskName, taKey);
+            var isRiskUnacceptable = AssetsService.isRiskUnacceptable(riskLikelihoodConsequence.likelihood, riskLikelihoodConsequence.consequence, taKey);
+            if(isRiskUnacceptable){
+                // console.log(riskName + ' (multiple) is unnaceptable');
+                RisksService.addUnacceptableRisk(taKey, riskName);
+            } else {
+                // console.log(riskName + ' (multiple) is acceptable');
+                RisksService.removeUnacceptableRisk(taKey, riskName);
+            }
+
+        } else if(sliderModel == 'simple') {
             //Likelihood or consequence?
             var valueToUpdate = hashAttributes[1];
+
             if(valueToUpdate == "likelihood"){
                 //Update likelihood in simple model
                 RisksService.addRiskLikelihood(riskName, sliderValue)
@@ -465,8 +525,84 @@ dssApp.controller('risksController'
                 //Update consequence in simple model
                 RisksService.addRiskConsequence(riskName, sliderValue);
             }
+
+            // Check risk acceptability
+            var riskLikelihoodConsequence = RisksService.getLikelihoodAndConsequenceValues(riskName);
+            _.each($scope.taAssets, function(ta){
+               var isRiskUnacceptable = AssetsService.isRiskUnacceptable(riskLikelihoodConsequence.likelihood, riskLikelihoodConsequence.consequence, ta._id);
+                if(isRiskUnacceptable){
+                    console.log(riskName + ' (simple) is unacceptable');
+                    RisksService.addUnacceptableRisk(ta._id, riskName);
+                } else {
+                    console.log(riskName + ' (simple) is acceptable');
+                    RisksService.removeUnacceptableRisk(ta._id, riskName);
+                }
+            });
+
         }
 
+        $rootScope.$broadcast('risksSelectedChanged');
+
     });
+
+    /**
+     * Event received when some TA acceptability value changed, we have
+     * to recompute risks acceptability.
+     */
+    $scope.$on('acceptabilityValueChanged', function(){
+        //console.log('I have to recompute things...');
+        if(_.isEmpty($scope.simpleRisksLikelihoodConsequence) || _.isEmpty($scope.multipleRisksLikelihoodConsequence)){
+            return;
+        }
+        var SEPARATOR = RisksService.getSeparator();
+        var taIds = $scope.taAssets.map(function(ta){
+            return ta._id;
+        });
+        var riskNames = $scope.risksSelected.map(function(risk){
+            return risk.destination.name;
+        });
+        if($scope.showRiskPerTA){
+            _.each(riskNames, function(riskName){
+                //console.log('RISK NAME', riskName);
+                _.each(taIds, function(taId){
+                    //console.log('TA ID', taId);
+                    var riskLikelihoodConsequence = RisksService.getLikelihoodAndConsequenceValues(riskName, taId);
+                    var isRiskUnacceptable = AssetsService.isRiskUnacceptable(riskLikelihoodConsequence.likelihood, riskLikelihoodConsequence.consequence, taId);
+                    if(isRiskUnacceptable){
+                        //console.log(riskName + ' (multiple) is unnaceptable');
+                        RisksService.addUnacceptableRisk(taId, riskName);
+                    } else {
+                        //console.log(riskName + ' (multiple) is acceptable');
+                        RisksService.removeUnacceptableRisk(taId, riskName);
+                    }
+                    //console.log('**************************');
+                });
+            })
+        } else {
+            _.each(riskNames, function(riskName){
+                var riskLikelihoodConsequence = RisksService.getLikelihoodAndConsequenceValues(riskName);
+                _.each(taIds, function(taId){
+                    var isRiskUnacceptable = AssetsService.isRiskUnacceptable(riskLikelihoodConsequence.likelihood, riskLikelihoodConsequence.consequence, taId);
+                    if(isRiskUnacceptable){
+                        //console.log(riskName + ' (simple) is unacceptable');
+                        RisksService.addUnacceptableRisk(taId, riskName);
+                    } else {
+                        //console.log(riskName + ' (simple) is acceptable');
+                        RisksService.removeUnacceptableRisk(taId, riskName);
+                    }
+                    //console.log('******************');
+                });
+            })
+        }
+        $rootScope.$broadcast('risksSelectedChanged');
+    });
+
+    $scope.isUnacceptable = function(riskName, taAssetId){
+        if(taAssetId){
+            return RisksService.isUnacceptable(riskName, taAssetId);
+        } else {
+            return RisksService.isUnacceptable(riskName);
+        }
+    };
 
 }]);

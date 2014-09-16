@@ -230,6 +230,22 @@ blockquote {
   max-height: 450px !important;
 }
 
+.service-proposal-panel {
+  border: 3px solid #ecf0f1;
+  margin-bottom: 30px !important;
+  &:hover {
+    box-shadow: 0px 0px 5px #7f8c8d;
+  }
+}
+
+.service-proposal-title {
+  margin: 10px;
+  & a {
+    text-decoration: none;
+  }
+}
+
+
 .service-proposal-logo {
   width: 150px;
   height: 150px;
@@ -239,13 +255,14 @@ blockquote {
 .service-proposal-logo > img {
   width: 150px;
   height: auto;
-  margin-top: 50px;
+  margin-top: 30px;
+  margin-left: 30px;
 }
 
 .service-proposal-description {
   float: left;
-  margin-left: 30px !important;
-  max-width: 75%;
+  margin: 30px;
+  margin-top: -10px;
 }
 
 .service-proposal-info {
@@ -254,9 +271,22 @@ blockquote {
 }
 
 .service-proposal-score {
-  font-size: 2em;
-  font-family: "Helvetica Neue Light", "HelveticaNeue-Light", "Helvetica Neue", Calibri, Helvetica, Arial;
-  color: black;
+  margin: {
+    right: 30px;
+    top: 15px;
+  }
+  padding: 14px;
+  & h3, & h6 {
+    margin: 2px;
+    text-align: center;
+  }
+  & hr {
+    margin: {
+      top: 0;
+      bottom: 0;
+    }
+    border-color: #fff;
+  }
 }
 
 .service-proposal-score-positive {
@@ -278,6 +308,13 @@ blockquote {
 }
 
 .service-selected {
-  background-color: #bada55;
+  border: 3px solid #2980b9;
 }
 
+.unacceptable-risk {
+  background-color: indianred;
+}
+
+.acceptable-risk {
+  background-color: palegreen;
+}

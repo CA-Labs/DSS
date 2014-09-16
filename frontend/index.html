@@ -14,465 +14,568 @@
 </head>
 <body>
 <div class="container-fluid margin-10">
-    <div class="row">
-        <div class="col-lg-4 logo"></div>
-        <div class="col-lg-8 logo-text">
-            <h3>Decision Support System</h3>
+<div class="row">
+    <div class="col-lg-4 logo"></div>
+    <div class="col-lg-8 logo-text">
+        <h3>Decision Support System</h3>
+    </div>
+</div>
+<!--navbar-->
+<div class="row">
+    <div class="navbar navbar-inverse" ng-controller="mainController">
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <form id="cloud-descriptor-file-selector">
+                    <input id="load-requirements" ng-file-select="onDSSCloudResourceFileSelect($files)" type="file" class="hidden"/>
+                </form>
+                <a href="#" ng-click="showFileUploadDialog('#load-requirements')"><span class="glyphicon glyphicon-import"></span> Load Requirements </a>
+            </li>
+            <li>
+                <a href="#" ng-click="saveCloudSelection($event)"><span class="glyphicon glyphicon-export"></span> Export Results</a>
+            </li>
+            <li>
+                <form class="navbar-form">
+                    <input type="text" class="form-control col-lg-4" placeholder="Search Cloud Service" />
+                </form>
+            </li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Options <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#" ng-click="saveSessionFile($event)"><span class="glyphicon glyphicon-export"></span> Export Session</a></li>
+                    <li>
+                        <form id="import-session-file-selector">
+                            <input id="load-session" ng-file-select="onSessionFileSelect($files)" type="file" class="hidden"/>
+                        </form>
+                        <a href="#" ng-click="showFileUploadDialog('#load-session')"><span class="glyphicon glyphicon-import"></span> Import Session</a>
+                    </li>
+                    <li class="divider"></li>
+                    <li><a href="#" ng-click="clearSelection()"><span class="glyphicon glyphicon-trash"></span> Clean Selection</a></li>
+                </ul>
+            </li>
+            <li>
+                &nbsp;&nbsp;
+                &nbsp;&nbsp;
+            </li>
+        </ul>
+    </div>
+</div>
+<!--end navbar-->
+<!-- main container-->
+<div class="row mainContainer">
+<div class="row topMenu">
+    <div class="col-lg-2 bsoia-slide" data-target="#dssSlides" data-slide-to="0">
+        <blockquote>
+            <p class="active">1. Business-oriented intangible assets </p>
+        </blockquote>
+    </div>
+    <div class="col-lg-2 toia-slide" data-target="#dssSlides" data-slide-to="1">
+        <blockquote>
+            <p>2. Technical-oriented intangible assets </p>
+        </blockquote>
+    </div>
+    <div class="col-lg-2 ta-slide" data-target="#dssSlides" data-slide-to="2">
+        <blockquote>
+            <p>3. Tangible assets </p>
+        </blockquote>
+    </div>
+    <div class="col-lg-2 risks-slide" data-target="#dssSlides" data-slide-to="3">
+        <blockquote>
+            <p>3. Risks</p>
+        </blockquote>
+    </div>
+    <div class="col-lg-2 treatments-slide" data-target="#dssSlides" data-slide-to="4">
+        <blockquote>
+            <p>4. Treatments</p>
+        </blockquote>
+    </div>
+    <div class="col-lg-2 services-slide" data-target="#dssSlides" data-slide-to="5">
+        <blockquote>
+            <p>5. Cloud Services</p>
+        </blockquote>
+    </div>
+</div>
+<!-- Error flash -->
+<div class="fade alert-danger col-lg-12 alert-flash" flash-alert="error" active-class="in alert">
+    <strong class="alert-heading">Oops!</strong>
+    <span class="alert-message">{{flash.message}}</span>
+</div>
+<!-- Warning flash -->
+<div class="fade alert-warn col-lg-12 alert-flash" flash-alert="warn" active-class="in alert">
+    <strong class="alert-heading">Oops!</strong>
+    <span class="alert-message">{{flash.message}}</span>
+</div>
+<!--slider-->
+<div class="row">
+<div id="dssSlides" class="carousel slide">
+<!-- Carousel items -->
+<div class="carousel-inner">
+<!-- bsoia assets slide -->
+<div class="active item bsoia-slide" ng-controller="bsoiaController">
+    <div class="col-lg-4 form-group form-inline">
+        <select label="assets" class="form-control form assets-select item-select" ng-model="bsoiaAsset" ng-options="a.name for a in bsoiaAssets">
+            <option></option>
+        </select>
+        <button class="btn btn-success" ng-click="addBsoiaAsset(bsoiaAsset)" style="width: 19% !important;">Add</button>
+    </div>
+    <div class="col-lg-8" ng-if="bsoiaAssetsSelected.length > 0">
+        <h4>Assets Selected</h4>
+        <div class="list-group">
+            <a class="list-group-item selected-asset" href="#" ng-repeat="bsoiaAssetSelected in bsoiaAssetsSelected">
+                <strong>{{ bsoiaAssetSelected.name }}</strong>
+                <span class="glyphicon glyphicon-remove remove-asset" ng-click="removeBsoiaAsset(bsoiaAssetSelected)">&nbsp;</span>
+                <p style="margin-top: 10px;">{{ bsoiaAssetSelected.description }}</p>
+            </a>
         </div>
     </div>
-    <!--navbar-->
-    <div class="row">
-        <div class="navbar navbar-inverse" ng-controller="mainController">
-            <ul class="nav navbar-nav navbar-right">
-                <li>
-                    <form id="cloud-descriptor-file-selector">
-                        <input id="load-requirements" ng-file-select="onDSSCloudResourceFileSelect($files)" type="file" class="hidden"/>
-                    </form>
-                    <a href="#" ng-click="showFileUploadDialog('#load-requirements')"><span class="glyphicon glyphicon-import"></span> Load Requirements </a>
-                </li>
-                <li>
-                    <a href="#"><span class="glyphicon glyphicon-export"></span> Export Results</a>
-                </li>
-                <li>
-                    <form class="navbar-form">
-                        <input type="text" class="form-control col-lg-4" placeholder="Search Cloud Service" />
-                    </form>
-                </li>
-                <li class="dropdown">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown">Options <b class="caret"></b></a>
-                    <ul class="dropdown-menu">
-                        <li><a href="#" ng-click="saveSessionFile($event)"><span class="glyphicon glyphicon-export"></span> Export Session</a></li>
-                        <li>
-                            <form id="import-session-file-selector">
-                                <input id="load-session" ng-file-select="onSessionFileSelect($files)" type="file" class="hidden"/>
-                            </form>
-                            <a href="#" ng-click="showFileUploadDialog('#load-session')"><span class="glyphicon glyphicon-import"></span> Import Session</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li><a href="#" ng-click="clearSelection()"><span class="glyphicon glyphicon-trash"></span> Clean Selection</a></li>
-                    </ul>
-                </li>
-                <li>
-                    &nbsp;&nbsp;
-                    &nbsp;&nbsp;
-                </li>
-            </ul>
+</div>
+<!-- toia assets slide -->
+<div class="item toia-slide" ng-controller="toiaController">
+    <div class="col-lg-4 form-group form-inline">
+        <select label="assets" class="form-control form assets-select item-select" ng-model="toiaAsset" ng-options="a.name for a in toiaAssets">
+            <option></option>
+        </select>
+        <button class="btn btn-success" ng-click="addToiaAsset(toiaAsset)" style="width: 19% !important;">Add</button>
+        <!-- bsoia tags -->
+        <div ng-if="bsoiaAssetsSelected.length > 0" style="margin-top: 45px;">
+            <p>You have previously selected the following BSOIA:</p>
+        </div>
+        <div ng-if="bsoiaAssetsSelected.length == 0" style="margin-top: 45px;">
+            <div class="alert alert-danger" role="alert">
+                No BSOIA selected.
+            </div>
+        </div>
+        <div id="selected-bsoia" class="col-lg-4">
+            <button ui-draggable="true" drag="bsoiaAssetSelected" class="btn btn-sm bsoia-tag" ng-class="isBsoiaEverUsed(bsoiaAssetSelected) ? 'btn-info' : 'btn-warning'" ng-repeat="bsoiaAssetSelected in bsoiaAssetsSelected">
+                {{bsoiaAssetSelected.name}}
+            </button>
         </div>
     </div>
-    <!--end navbar-->
-    <!-- main container-->
-    <div class="row mainContainer">
-        <div class="row topMenu">
-            <div class="col-lg-2 bsoia-slide" data-target="#dssSlides" data-slide-to="0">
-                <blockquote>
-                    <p class="active">1. Business-oriented intangible assets </p>
-                </blockquote>
+    <div class="col-lg-8">
+        <div class="list-group">
+            <div  ng-if="toiaAssetsSelected.length > 0">
+                <h4>Assets Selected</h4>
             </div>
-            <div class="col-lg-2 toia-slide" data-target="#dssSlides" data-slide-to="1">
-                <blockquote>
-                    <p>2. Technical-oriented intangible assets </p>
-                </blockquote>
+            <!-- dropzones per toia asset selected -->
+            <a class="list-group-item selected-asset dropzone" href="#" ng-repeat="toiaAssetSelected in toiaAssetsSelected track by $index">
+                <strong>{{ toiaAssetSelected.asset.name }}</strong>
+                <span class="glyphicon glyphicon-remove remove-asset" ng-click="removeToiaAsset(toiaAssetSelected)">&nbsp;</span>
+                <p style="margin-top: 10px; margin-bottom: 20px;"> {{ toiaAssetSelected.asset.description }}</p>
+                <div ui-on-drop="bsoiaDropped($event, $data, toiaAssetSelected)" class="dropzone-container">
+                    <button ui-draggable="true" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="bsoiaRelation in toiaAssetSelected.bsoiaRelations">
+                        <small><span class="glyphicon glyphicon-remove remove-bsoia-in-toia-asset" ng-click="removeBsoiaFromToiaAsset(bsoiaRelation, toiaAssetSelected)">&nbsp;</span></small>
+                        {{bsoiaRelation.name}}
+                    </button>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+<!-- ta assets -->
+<div class="item ta-slide" ng-controller="taController">
+    <div class="col-lg-12">
+        <div class="pull-right">
+            <div style="display: inline-block; position: relative; top: -7px;">
+                <label style="margin-top: -5px;">Multicloud Deployment</label>
             </div>
-            <div class="col-lg-2 ta-slide" data-target="#dssSlides" data-slide-to="2">
-                <blockquote>
-                    <p>3. Tangible assets </p>
-                </blockquote>
+            <div style="display: inline-block;">
+                <input name="isMulticloudDeployment" bs-switch ng-model="isMulticloudDeployment" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="&laquo;" switch-off-text="&raquo;" switch-on-color="info" switch-off-color="info"/>
             </div>
-            <div class="col-lg-2 risks-slide" data-target="#dssSlides" data-slide-to="3">
-                <blockquote>
-                    <p>3. Risks</p>
-                </blockquote>
-            </div>
-            <div class="col-lg-2 treatments-slide" data-target="#dssSlides" data-slide-to="4">
-                <blockquote>
-                    <p>4. Treatments</p>
-                </blockquote>
-            </div>
-            <div class="col-lg-2 services-slide" data-target="#dssSlides" data-slide-to="5">
-                <blockquote>
-                    <p>5. Cloud Services</p>
-                </blockquote>
+            <div style="display: inline-block; position: relative; top: 3px;">
+                <label class="pull-right">Multicloud Replication</label>
             </div>
         </div>
-        <!-- Error flash -->
-        <div class="fade alert-danger col-lg-12 alert-flash" flash-alert="error" active-class="in alert">
-            <strong class="alert-heading">Oops!</strong>
-            <span class="alert-message">{{flash.message}}</span>
+        <div class="list-group" style="margin-top: 40px;">
+            <div ng-if="taAssets.length == 0" style="margin-top: 45px;">
+                <div class="alert alert-danger" role="alert">
+                    <strong>Oops!</strong>&nbsp;No cloud resources have been loaded yet.
+                </div>
+            </div>
+            <a class="list-group-item selected-asset" href="#" ng-repeat="taAsset in taAssets" ng-switch="taAsset.cloudType">
+                <strong ng-switch-when="IaaS">{{ taAsset.cloudResource._serviceName }} (IaaS)</strong>
+                <strong ng-switch-when="PaaS">{{ taAsset.cloudPlatform._serviceName }} (PaaS)</strong>
+                <span class="glyphicon glyphicon-remove remove-asset" ng-click="removeTaAsset(taAsset)">&nbsp;</span>
+                <p ng-switch-when="IaaS" style="margin-top: 10px;">{{ taAsset.cloudResource._serviceType }}</p>
+                <p ng-switch-when="PaaS" style="margin-top: 10px;">{{ taAsset.cloudPlatform._serviceType }}</p>
+                <p>
+                <div style="display: inline-block; margin-left: 10px; position: relative; top: -5px;">Importance:</div>
+                <div on-risks-type="criticity" data-type="criticity">
+                    <div style="width: 60%; margin-left: 25px; margin-right: 25px; display: inline-block;" slider data-model="criticity" ng-model="criticityBoundModels[taAsset._id]" start="25" end="1" step="2.4"></div>
+                    <span class="label label-default secondary radius right" style="position: relative; top: -5px;">{{ 10*(25-criticityBoundModels[taAsset._id])/(25-1) | number:0 }}</span>
+                </div>
+                </p>
+            </a>
         </div>
-        <!-- Warning flash -->
-        <div class="fade alert-warn col-lg-12 alert-flash" flash-alert="warn" active-class="in alert">
-            <strong class="alert-heading">Oops!</strong>
-            <span class="alert-message">{{flash.message}}</span>
-        </div>
-        <!--slider-->
-        <div class="row">
-            <div id="dssSlides" class="carousel slide">
-                <!-- Carousel items -->
-                <div class="carousel-inner">
-                    <!-- bsoia assets slide -->
-                    <div class="active item bsoia-slide" ng-controller="bsoiaController">
-                        <div class="col-lg-4 form-group form-inline">
-                            <select label="assets" class="form-control form assets-select item-select" ng-model="bsoiaAsset" ng-options="a.name for a in bsoiaAssets">
-                                <option></option>
-                            </select>
-                            <button class="btn btn-success" ng-click="addBsoiaAsset(bsoiaAsset)" style="width: 19% !important;">Add</button>
-                        </div>
-                        <div class="col-lg-8" ng-if="bsoiaAssetsSelected.length > 0">
-                            <h4>Assets Selected</h4>
-                            <div class="list-group">
-                                <a class="list-group-item selected-asset" href="#" ng-repeat="bsoiaAssetSelected in bsoiaAssetsSelected">
-                                    <strong>{{ bsoiaAssetSelected.name }}</strong>
-                                    <span class="glyphicon glyphicon-remove remove-asset" ng-click="removeBsoiaAsset(bsoiaAssetSelected)">&nbsp;</span>
-                                    <p style="margin-top: 10px;">{{ bsoiaAssetSelected.description }}</p>
-                                </a>
+    </div>
+</div>
+<!--risks slide -->
+<div class="item risks-slide" ng-controller="risksController">
+    <div class="col-lg-4 form-group form-inline">
+        <!-- TODO: Apply unique filter in potential risks -->
+        <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.destination.name for r in potentialRisks">
+            <option></option>
+        </select>
+        <button class="btn btn-success" ng-click="addRisk(risk)" style="width: 19% !important;">Add</button>
+    </div>
+    <div class="col-lg-8">
+        <div class="list-group">
+            <div>
+                <input name="risks-per-ta" bs-switch ng-model="showRiskPerTA" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleActivation()"/>
+                <label for="showTreatmentValues" class="pull-right">Specify Risk per Tengible Asset&nbsp;</label>
+                <h4 ng-show="risksSelected.length > 0">Risks Selected</h4>
+            </div>
+            <div class="list-group-item selected-risk risk-container" href="#" ng-repeat="risk in risksSelected track by $index" ng-class="isUnacceptable(risk.destination.name) ? 'unacceptable-risk' : 'acceptable-risk'">
+                <span class="glyphicon glyphicon-remove remove-risk" ng-click="removeRisk(risk)">&nbsp;</span>
+                <!-- Not showRiskPerTA selection -->
+                <div style="margin-top: 10px" ng-show="!showRiskPerTA">
+                    <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
+                    <br/>
+                    <div class="col-lg-6" style="margin-top: 10px;" >
+                        <p style="margin-bottom: 15px">Likelihood: </p>
+                        <div on-risks-type="simple" data-type="likelihood">
+                            <div style="width: 80%; margin-bottom: 15px;" slider data-model="simple" data-hash-key="{{risk.destination.name + '/likelihood'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '/likelihood']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
+                                <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                             </div>
                         </div>
                     </div>
-                    <!-- toia assets slide -->
-                    <div class="item toia-slide" ng-controller="toiaController">
-                        <div class="col-lg-4 form-group form-inline">
-                            <select label="assets" class="form-control form assets-select item-select" ng-model="toiaAsset" ng-options="a.name for a in toiaAssets">
-                                <option></option>
-                            </select>
-                            <button class="btn btn-success" ng-click="addToiaAsset(toiaAsset)" style="width: 19% !important;">Add</button>
-                            <!-- bsoia tags -->
-                            <div ng-if="bsoiaAssetsSelected.length > 0" style="margin-top: 45px;">
-                                <p>You have previously selected the following BSOIA:</p>
-                            </div>
-                            <div ng-if="bsoiaAssetsSelected.length == 0" style="margin-top: 45px;">
-                                <div class="alert alert-danger" role="alert">
-                                    No BSOIA selected.
-                                </div>
-                            </div>
-                            <div id="selected-bsoia" class="col-lg-4">
-                                <button ui-draggable="true" drag="bsoiaAssetSelected" class="btn btn-sm bsoia-tag" ng-class="isBsoiaEverUsed(bsoiaAssetSelected) ? 'btn-info' : 'btn-warning'" ng-repeat="bsoiaAssetSelected in bsoiaAssetsSelected">
-                                    {{bsoiaAssetSelected.name}}
-                                </button>
-                            </div>
-                        </div>
-                        <div class="col-lg-8">
-                            <div class="list-group">
-                                <div  ng-if="toiaAssetsSelected.length > 0">
-                                    <h4>Assets Selected</h4>
-                                </div>
-                                <!-- dropzones per toia asset selected -->
-                                <a class="list-group-item selected-asset dropzone" href="#" ng-repeat="toiaAssetSelected in toiaAssetsSelected track by $index">
-                                    <strong>{{ toiaAssetSelected.asset.name }}</strong>
-                                    <span class="glyphicon glyphicon-remove remove-asset" ng-click="removeToiaAsset(toiaAssetSelected)">&nbsp;</span>
-                                    <p style="margin-top: 10px; margin-bottom: 20px;"> {{ toiaAssetSelected.asset.description }}</p>
-                                    <div ui-on-drop="bsoiaDropped($event, $data, toiaAssetSelected)" class="dropzone-container">
-                                        <button ui-draggable="true" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="bsoiaRelation in toiaAssetSelected.bsoiaRelations">
-                                            <small><span class="glyphicon glyphicon-remove remove-bsoia-in-toia-asset" ng-click="removeBsoiaFromToiaAsset(bsoiaRelation, toiaAssetSelected)">&nbsp;</span></small>
-                                            {{bsoiaRelation.name}}
-                                        </button>
-                                    </div>
-                                </a>
+                    <div class="col-lg-6" style="margin-top: 10px">
+                        <p style="margin-bottom: 15px;">Consequence :</p>
+                        <div on-risks-type="simple" data-type="consequence">
+                            <div style="width: 80%; margin-bottom: 15px;" slider data-model="simple" data-hash-key="{{risk.destination.name + '/consequence'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '/consequence']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
+                                <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                             </div>
                         </div>
                     </div>
-                    <!-- ta assets -->
-                    <div class="item ta-slide" ng-controller="taController">
-                        <div class="col-lg-12">
-                            <div class="list-group">
-                                <div ng-if="taAssets.length == 0" style="margin-top: 45px;">
-                                    <div class="alert alert-danger" role="alert">
-                                        <strong>Oops!</strong>&nbsp;No cloud resources have been loaded yet.
-                                    </div>
+                </div>
+                <!-- Multiple selection -->
+                <div style="margin-top: 10px" ng-show="showRiskPerTA">
+                    <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
+                    <br/>
+                    <div ng-repeat="taAsset in taAssets" on-repeat-done="repeatDone" class="col-lg-12" ng-class="isUnacceptable(risk.destination.name, taAsset._id) ? 'unacceptable-risk' : 'acceptable-risk'">
+                        <div ng-switch="taAsset.cloudType">
+                            <span ng-switch-when="IaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudResource._serviceType }}"><strong>{{taAsset.cloudResource._serviceName}}</strong></span>
+                            <span ng-switch-when="PaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudPlatform._serviceType }}"><strong>{{taAsset.cloudPlatform._serviceName}}</strong></span>
+                        </div>
+                        <br/>
+                        <div class="col-lg-6" style="margin-top: 10px; display: block;">
+                            <p style="margin-bottom: 15px">Likelihood: </p>
+                            <div on-risks-type="multiple" data-type="likelihood" ng-switch="taAsset.cloudType">
+                                <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-model="multiple" data-hash-key="{{$parent.risk.destination.name + '/' + taAsset._id + '/likelihood'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '/' + taAsset._id + '/likelihood']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
+                                    <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                                 </div>
-                                <a class="list-group-item selected-asset" href="#" ng-repeat="taAsset in taAssets" ng-switch="taAsset.cloudType">
-                                    <strong ng-switch-when="IaaS">{{ taAsset.cloudResource._serviceName }} (IaaS)</strong>
-                                    <strong ng-switch-when="PaaS">{{ taAsset.cloudPlatform._serviceName }} (PaaS)</strong>
-                                    <span class="glyphicon glyphicon-remove remove-asset" ng-click="removeTaAsset(taAsset)">&nbsp;</span>
-                                    <p ng-switch-when="IaaS" style="margin-top: 10px;">{{ taAsset.cloudResource._serviceType }}</p>
-                                    <p ng-switch-when="PaaS" style="margin-top: 10px;">{{ taAsset.cloudPlatform._serviceType }}</p>
-                                    <p>
-                                        <div style="display: inline-block; margin-left: 10px; position: relative; top: -5px;">Importance:</div>
-                                        <div style="width: 60%; margin-left: 25px; margin-right: 25px; display: inline-block;" slider ng-model="taAsset.criticityValue" start="25" end="1" step="2.4"></div>
-                                        <span class="label label-default secondary radius right" style="position: relative; top: -5px;">{{ 10*(25-taAsset.criticityValue)/(25-1) | number:0 }}</span>
-                                    </p>
-                                </a>
+                                <div ng-switch-when="PaaS" style="width: 80%; margin-bottom: 15px;" slider data-model="multiple" data-hash-key="{{$parent.risk.destination.name + '/' + taAsset._id + '/likelihood'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '/' + taAsset._id + '/likelihood']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
+                                    <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <!--risks slide -->
-                    <div class="item risks-slide" ng-controller="risksController">
-                        <div class="col-lg-4 form-group form-inline">
-                            <!-- TODO: Apply unique filter in potential risks -->
-                            <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.destination.name for r in potentialRisks">
-                                <option></option>
-                            </select>
-                            <button class="btn btn-success" ng-click="addRisk(risk)" style="width: 19% !important;">Add</button>
-                        </div>
-                        <div class="col-lg-8">
-                            <div class="list-group">
-                                <div ng-show="risksSelected.length > 0">
-                                    <input name="risks-per-ta" bs-switch ng-model="showRiskPerTA" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleActivation()"/>
-                                    <label for="showTreatmentValues" class="pull-right">Specify Risk per Tengible Asset&nbsp;</label>
-                                    <h4>Risks Selected</h4>
+                        <div class="col-lg-6" style="margin-top: 10px; display: block">
+                            <p style="margin-bottom: 15px;">Consequence :</p>
+                            <div on-risks-type="multiple" data-type="consequence" ng-switch="taAsset.cloudType">
+                                <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-model="multiple" data-hash-key="{{$parent.risk.destination.name + '/' + taAsset._id + '/consequence'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '/' + taAsset._id + '/consequence']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
+                                    <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                                 </div>
-                                <div class="list-group-item selected-risk risk-container" href="#" ng-repeat="risk in risksSelected track by $index">
-                                    <span class="glyphicon glyphicon-remove remove-risk" ng-click="removeRisk(risk)">&nbsp;</span>
-                                    <!-- Not showRiskPerTA selection -->
-                                    <div style="margin-top: 10px" ng-show="!showRiskPerTA">
-                                        <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
-                                        <br/>
-                                        <div class="col-lg-6" style="margin-top: 10px;" >
-                                            <p style="margin-bottom: 15px">Likelihood: </p>
-                                            <div on-risks-type="simple">
-                                                <div style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{risk.destination.name + '_likelihood'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '_likelihood']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
-                                                    <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="col-lg-6" style="margin-top: 10px">
-                                            <p style="margin-bottom: 15px;">Consequence :</p>
-                                            <div on-risks-type="simple">
-                                                <div style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{risk.destination.name + '_consequence'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '_consequence']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
-                                                    <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!-- Multiple selection -->
-                                    <div style="margin-top: 10px" ng-show="showRiskPerTA">
-                                        <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
-                                        <br/>
-                                        <div ng-repeat="taAsset in taAssets" on-repeat-done="repeatDone" class="col-lg-12">
-                                            <div ng-switch="taAsset.cloudType">
-                                                <span ng-switch-when="IaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudResource._serviceType }}"><strong>{{taAsset.cloudResource._serviceName}}</strong></span>
-                                                <span ng-switch-when="PaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudPlatform._serviceType }}"><strong>{{taAsset.cloudPlatform._serviceName}}</strong></span>
-                                            </div>
-                                            <br/>
-                                            <div class="col-lg-6" style="margin-top: 10px; display: block;">
-                                                <p style="margin-bottom: 15px">Likelihood: </p>
-                                                <div on-risks-type="showRiskPerTA" ng-switch="taAsset.cloudType">
-                                                    <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_likelihood'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_likelihood']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
-                                                        <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
-                                                    </div>
-                                                    <div ng-switch-when="PaaS" style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudPlatform._serviceName + '_likelihood'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '_' + taAsset.cloudPlatform._serviceName + '_likelihood']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
-                                                        <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="col-lg-6" style="margin-top: 10px; display: block">
-                                                <p style="margin-bottom: 15px;">Consequence :</p>
-                                                <div on-risks-type="showRiskPerTA" ng-switch="taAsset.cloudType">
-                                                    <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_consequence'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '_' + taAsset.cloudResource._serviceName + '_consequence']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
-                                                        <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
-                                                    </div>
-                                                    <div ng-switch-when="PaaS" style="width: 80%; margin-bottom: 15px;" slider data-hash-key="{{$parent.risk.destination.name + '_' + taAsset.cloudPlatform._serviceName + '_consequence'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '_' + taAsset.cloudPlatform._serviceName + '_consequence']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
-                                                        <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <!--
-                                    <div ng-switch="risk.destination.representation">
-                                        <div ng-switch-when="input">
-                                            <req-input riskname="{{ risk.destination.name }}" definition="{{ risk.destination.description }}"></req-input>
-                                        </div>
-                                        <div ng-switch-when="radio">
-                                            <req-radio itemname="{{ risk.destination.name }}" definition="{{ risk.destination.description }}"></req-radio>
-                                        </div>
-                                        <div ng-switch-when="select">
-                                            <req-select itemname="{{ risk.destination.name }}" definition="{{ risk.destination.description }}" ></req-select>
-                                        </div>
-                                        <div ng-switch-when="slider">
-                                            <req-slider itemname="{{ risk.destination.name }}" definition="{{ risk.destination.description }}"></req-slider>
-                                        </div>
-                                    </div>
-                                    -->
+                                <div ng-switch-when="PaaS" style="width: 80%; margin-bottom: 15px;" slider data-model="multiple" data-hash-key="{{$parent.risk.destination.name + '/' + taAsset._id + '/consequence'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '/' + taAsset._id + '/consequence']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
+                                    <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    <!--treatments slide-->
-                    <div class="item treatments-slide" ng-controller="treatmentsController">
-                        <div class="col-lg-4 form-group form-inline">
-                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.destination.name for potentialTreatment in potentialTreatments">
-                                <option></option>
-                            </select>
-                            <button class="btn btn-success" ng-click="addTreatment(potentialTreatment)" style="width: 19% !important;">Add</button>
-                            <div ng-if="taAssets.length > 0" style="margin-top: 45px;">
-                                <p>Tangible Assets</p>
-                            </div>
-                            <div ng-if="taAssets.length == 0" style="margin-top: 45px;">
-                                <div class="alert alert-danger" role="alert">
-                                    No tangible assets added.
-                                </div>
-                            </div>
-                            <div id="selected-ta" class="col-lg-4">
-                                <button ui-draggable="true" drag="taAsset" class="btn btn-sm bsoia-tag" ng-class="isTaEverUsed(taAsset) ? 'btn-info' : 'btn-warning'" ng-repeat="taAsset in taAssets">
-                                    <div ng-switch="taAsset.cloudType">
-                                        <div ng-switch-when="IaaS">{{taAsset.cloudResource._serviceName}} ({{taAsset.cloudType}})</div>
-                                        <div ng-switch-when="PaaS">{{taAsset.cloudPlatform._serviceName}} ({{taAsset.cloudType}})</div>
-                                    </div>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="col-lg-8">
-                            <div class="list-group">
-                                <div  ng-if="treatmentsSelected.length > 0">
-                                    <input name="showTreatmentValues" bs-switch ng-model="showTreatmentValues" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleTreatmentValues()"/>
-                                    <label for="showTreatmentValues" class="pull-right">Specify Treatment Values&nbsp;</label>
-                                    <h4>Treatments Selected</h4>
-                                </div>
-                                <a class="list-group-item selected-treatment dropzone-wrapper" href="#" ng-repeat="treatmentSelected in treatmentsSelected">
-                                    <strong>{{ treatmentSelected.destination.name }}</strong>
-                                    <span class="glyphicon glyphicon-remove remove-treatment" ng-click="removeTreatment(treatmentSelected)">&nbsp;</span>
-                                    <div ng-switch="treatmentSelected.destination.representation">
-                                        <div ng-switch-when="select">
-                                            <select ng-show="showTreatmentValues" label="treatmentValue" class="form-control" data-hash-key="treatmentSelected.destination.name" ng-model="treatmentValue" ng-options="value for (key,value) in treatmentSelected.destination.options | orderBy:'':true" ng-change="treatmentValueChanged(treatmentValue, treatmentSelected)"/>
-                                                <option value="" disabled selected>--- Select a value ---</option>
-                                            </select>
-                                            <br/>
-                                            <div ui-on-drop="taDropped($event, $data, treatmentSelected.destination)" class="dropzone-container">
-                                                <button ui-draggable="false" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.destination.taRelations">
-                                                    <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected.destination, taRelation)">&nbsp;</span></small>
-                                                    <b ng-switch="taRelation.cloudType">
-                                                        <span ng-switch-when="IaaS">{{taRelation.cloudResource._serviceName}} ({{taRelation.cloudType}})</span>
-                                                        <span ng-switch-when="PaaS">{{taRelation.cloudPlatform._serviceName}} ({{taRelation.cloudType}})</span>
-                                                    </b>
-                                                </button>
-                                            </div>
-                                            <!--<treat-select item="treatmentSelected"></treat-select>-->
-                                        </div>
-                                        <div ng-switch-when="radio">
-                                            <!--<div style="margin-top: 20px; width: 300px; text-align: right;" class="input-group" ng-repeat="(key,value) in treatmentSelected.destination.options">-->
-                                                <!--<span class="input-group-addon">-->
-                                                    <!--<input type="radio" name="{{value}}" value="{{key}}" ng-model="$parent.aux" ng-change="change(value)">-->
-                                                <!--</span>-->
-                                                <!--<input type="text" class="form-control" value="{{value}}" readonly="readonly" style="background-color: #18bc9c !important; cursor: default !important;">-->
-                                            <!--</div>-->
-                                            <!--<br/>-->
-                                            <div ng-init="addRadioValue(treatmentSelected.destination.name)"></div>
-                                            <div ui-on-drop="taDropped($event, $data, treatmentSelected.destination)" class="dropzone-container">
-                                                <button ui-draggable="false" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.destination.taRelations">
-                                                    <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected.destination, taRelation)">&nbsp;</span></small>
-                                                    <b ng-switch="taRelation.cloudType">
-                                                        <span ng-switch-when="IaaS">{{taRelation.cloudResource._serviceName}} ({{taRelation.cloudType}})</span>
-                                                        <span ng-switch-when="PaaS">{{taRelation.cloudPlatform._serviceName}} ({{taRelation.cloudType}})</span>
-                                                    </b>
-                                                </button>
-                                            </div>
-                                            <!--<treat-radio item="treatmentSelected"></treat-radio>-->
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                    <!--services slide-->
-                    <div class="item services-slide" ng-controller="cloudController">
-                        <div class="col-lg-12">
-                            <!-- TA-level accordion -->
-                            <div class="panel-group" id="ta-accordion">
-                                <div class="panel panel-default" ng-repeat="taAsset in ta track by $index">
-                                    <div class="panel heading" style="background-color: #e8fdf9 !important;">
-                                        <h4 class="panel-title">
-                                            <a data-toggle="collapse" data-target="{{'#collapse' + $index}}" ng-href="{{'#collapse' + $index}}" ng-switch="taAsset.cloudType">
-                                                <strong ng-switch-when="IaaS">{{taAsset.cloudResource._serviceName}} ({{taAsset.cloudType}})</strong>
-                                                <strong ng-switch-when="PaaS">{{taAsset.cloudPlatform._serviceName}} ({{taAsset.cloudType}})</strong>
-                                            </a>
-                                        </h4>
-                                    </div>
-                                    <div ng-attr-id="{{'collapse' + $index}}" class="panel-collapse collapse in">
-                                        {{taAsset.cloudType}}
-                                        <div class="panel-body" ng-switch="taAsset.cloudType">
-                                            <div ng-switch-when="IaaS">
-                                                <div class="panel-group">
-                                                    <div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudResource._serviceName) track by $index">
-                                                        <div class="panel heading" style="background-color: #d3d3d3">
-                                                            <h4 class="panel-title">
-                                                                <a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">
-                                                                    <strong>{{result.service.name}}</strong>
-                                                                </a>
-                                                            </h4>
-                                                        </div>
-                                                        <div ng-attr-id="{{'s' + result.service._key}}" class="panel-collapse collapse in">
-                                                            <div class="service-proposal">
-                                                                <div class="service-proposal-logo">
-                                                                    <img ng-src="{{result.provider.logo_url}}"/>
-                                                                </div>
-                                                                <div class="service-proposal-description">
-                                                                    <p>{{result.provider.description}}</p>
-                                                                    <div class="service-proposal-details">
-                                                                        <ul>
-                                                                            <li ng-repeat="characteristic in result.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="service-proposal-info">
-                                                                    <div class="service-proposal-score">
-                                                                        <!-- TODO: Compute score -->
-                                                                        <div ng-if="65.27 >= 50.0">
-                                                                            <span class="service-proposal-score">{{65.27}}</span>
-                                                                            <div class="service-proposal-score-positive"></div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div ng-switch-when="PaaS">
-                                                <div class="panel-group">
-                                                    <div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudPlatform._serviceName) track by $index">
-                                                        <div class="panel heading" style="background-color: #d3d3d3">
-                                                            <h4 class="panel-title">
-                                                                <a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">
-                                                                    <strong>{{result.service.name}}</strong>
-                                                                </a>
-                                                            </h4>
-                                                        </div>
-                                                        <div ng-attr-id="{{'s' + result.service._key}}" class="panel-collapse collapse in">
-                                                            <div class="service-proposal">
-                                                                <div class="service-proposal-logo">
-                                                                    <img ng-src="{{result.provider.logo_url}}"/>
-                                                                </div>
-                                                                <div class="service-proposal-description">
-                                                                    <p>{{result.provider.description}}</p>
-                                                                    <div class="service-proposal-details">
-                                                                        <ul>
-                                                                            <li ng-repeat="characteristic in result.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>
-                                                                        </ul>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="service-proposal-info">
-                                                                    <div class="service-proposal-score">
-                                                                        <div ng-if="45.76 < 50.0">
-                                                                            <span class="service-proposal-score">{{45.76}}</span>
-                                                                            <div class="service-proposal-score-negative"></div>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <!--slides end-->
                 </div>
             </div>
         </div>
-        <!--slider end-->
     </div>
-    <!--end main container-->
-    <div class="row sticky-bottom">
-        <div class="col-lg-12 text-right">
-            <button class="btn btn-primary slide-prev" href="#dssSlides" data-slide="prev" disabled>Previous step</button>
-            <button class="btn btn-primary slide-next" href="#dssSlides" data-slide="next">Next step</button>
-            <button style="display: none" class="btn btn-primary slide-services" data-target="#dssSlides" data-slide-to="5">Search Cloud Services</button>
+</div>
+<!--treatments slide-->
+<div class="item treatments-slide" ng-controller="treatmentsController">
+    <div class="col-lg-4 form-group form-inline">
+        <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.name for potentialTreatment in potentialTreatments">
+            <option></option>
+        </select>
+        <button class="btn btn-success" ng-click="addTreatment(potentialTreatment)" style="width: 19% !important;">Add</button>
+        <div ng-if="taAssets.length > 0" style="margin-top: 45px;">
+            <p>Tangible Assets</p>
+        </div>
+        <div ng-if="taAssets.length == 0" style="margin-top: 45px;">
+            <div class="alert alert-danger" role="alert">
+                No tangible assets added.
+            </div>
+        </div>
+        <div id="selected-ta" class="col-lg-4">
+            <button ui-draggable="true" drag="taAsset" class="btn btn-sm bsoia-tag" ng-class="isTaEverUsed(taAsset) ? 'btn-info' : 'btn-warning'" ng-repeat="taAsset in taAssets">
+                <div ng-switch="taAsset.cloudType">
+                    <div ng-switch-when="IaaS">{{taAsset.cloudResource._serviceName}} ({{taAsset.cloudType}})</div>
+                    <div ng-switch-when="PaaS">{{taAsset.cloudPlatform._serviceName}} ({{taAsset.cloudType}})</div>
+                </div>
+            </button>
         </div>
     </div>
+    <div class="col-lg-8">
+        <div class="list-group">
+            <div  ng-if="treatmentsSelected.length > 0">
+                <input name="showTreatmentValues" bs-switch ng-model="showTreatmentValues" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleTreatmentValues()"/>
+                <label for="showTreatmentValues" class="pull-right">Specify Treatment Values&nbsp;</label>
+                <h4>Treatments Selected</h4>
+            </div>
+            <a class="list-group-item selected-treatment dropzone-wrapper" href="#" ng-repeat="treatmentSelected in treatmentsSelected">
+                <strong>{{ treatmentSelected.name }}</strong>
+                <p>
+                    <i>Mitigating risks:</i>
+                <ul>
+                    <li ng-repeat="risk in mitigatedRisks(treatmentSelected.name) | orderBy:'':true">
+                        <i>{{risk}}</i>
+                    </li>
+                </ul>
+                </p>
+                <span class="glyphicon glyphicon-remove remove-treatment" ng-click="removeTreatment(treatmentSelected)">&nbsp;</span>
+                <div ng-switch="treatmentSelected.representation">
+                    <div ng-switch-when="select">
+                        <select ng-show="showTreatmentValues" label="treatmentValue" class="form-control" data-hash-key="treatmentSelected.name" ng-model="treatmentValue" ng-options="value for (key,value) in treatmentSelected.options | orderBy:'':true" ng-change="treatmentValueChanged(treatmentValue, treatmentSelected)"/>
+                        <option value="" disabled selected>--- Select a value ---</option>
+                        </select>
+                        <br/>
+                        <div ui-on-drop="taDropped($event, $data, treatmentSelected)" class="dropzone-container">
+                            <button ui-draggable="false" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.taRelations">
+                                <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected, taRelation)">&nbsp;</span></small>
+                                <b ng-switch="taRelation.cloudType">
+                                    <span ng-switch-when="IaaS">{{taRelation.cloudResource._serviceName}} ({{taRelation.cloudType}})</span>
+                                    <span ng-switch-when="PaaS">{{taRelation.cloudPlatform._serviceName}} ({{taRelation.cloudType}})</span>
+                                </b>
+                            </button>
+                        </div>
+                        <!--<treat-select item="treatmentSelected"></treat-select>-->
+                    </div>
+                    <div ng-switch-when="radio">
+                        <!--<div style="margin-top: 20px; width: 300px; text-align: right;" class="input-group" ng-repeat="(key,value) in treatmentSelected.destination.options">-->
+                        <!--<span class="input-group-addon">-->
+                        <!--<input type="radio" name="{{value}}" value="{{key}}" ng-model="$parent.aux" ng-change="change(value)">-->
+                        <!--</span>-->
+                        <!--<input type="text" class="form-control" value="{{value}}" readonly="readonly" style="background-color: #18bc9c !important; cursor: default !important;">-->
+                        <!--</div>-->
+                        <!--<br/>-->
+                        <div ng-init="addRadioValue(treatmentSelected.name)"></div>
+                        <div ui-on-drop="taDropped($event, $data, treatmentSelected)" class="dropzone-container">
+                            <button ui-draggable="false" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.taRelations">
+                                <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected, taRelation)">&nbsp;</span></small>
+                                <b ng-switch="taRelation.cloudType">
+                                    <span ng-switch-when="IaaS">{{taRelation.cloudResource._serviceName}} ({{taRelation.cloudType}})</span>
+                                    <span ng-switch-when="PaaS">{{taRelation.cloudPlatform._serviceName}} ({{taRelation.cloudType}})</span>
+                                </b>
+                            </button>
+                        </div>
+                        <!--<treat-radio item="treatmentSelected"></treat-radio>-->
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+<!--services slide-->
+<div class="item services-slide" ng-controller="cloudController">
+    <div class="col-lg-12">
+        <!--results table-->
+        <table class="table" style="table-layout: fixed;">
+            <tr>
+                <td ng-repeat="taAsset in ta track by $index">
+                    <div class="panel panel-default">
+                        <div class="panel-body">
+                            <div ng-switch="taAsset.cloudType">
+                                <h3 ng-switch-when="IaaS">{{ taAsset.cloudResource._serviceType }} ({{ taAsset.cloudType }})</h3>
+                                <h3 ng-switch-when="PaaS">{{ taAsset.cloudPlatform._serviceType }} ({{ taAsset.cloudType }})</h3>
+                                <h5 ng-switch-when="IaaS" class="pull-right">Results found: <span class="badge">{{ getTAProposals(taAsset.cloudResource._serviceName).length }}</span></h5>
+                                <h5 ng-switch-when="PaaS" class="pull-right">Results found: <span class="badge">{{ getTAProposals(taAsset.cloudPlatform._serviceName).length }}</span></h5>
+                            </div>
+                            <hr style="margin-top: 55px;"/>
+                            <!--result accordion-->
+                            <div ng-attr-id="{{'collapse' + $index}}" class="panel-collapse collapse in">
+                                <div class="panel-body" ng-switch="taAsset.cloudType">
+                                    <div ng-switch-when="IaaS">
+                                        <div class="panel-group">
+                                            <div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudResource._serviceName) | orderBy:'score':true track by $index">
+                                                <div class="panel heading">
+                                                    <h4 class="panel-title service-proposal-title">
+                                                        <a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">
+                                                            Service: <strong>{{ result.service.name }}</strong> (Provider: <strong>{{result.provider.name}}</strong>)
+                                                        </a>
+                                                    </h4>
+                                                </div>
+                                                <div ng-attr-id="{{'s' + result.service._key}}" class="panel-collapse collapse in">
+                                                    <div class="service-proposal">
+                                                        <div class="well pull-right service-proposal-score">
+                                                            <h6>Score</h6>
+                                                            <hr/>
+                                                            <h3>{{ result.score * 100 | number: 0 }}</h3>
+                                                        </div>
+                                                        <div class="service-proposal-logo">
+                                                            <img ng-src="{{result.provider.logo_url}}"/>
+                                                        </div>
+                                                        <div class="service-proposal-description">
+                                                            <p>{{result.provider.description}}</p>
+                                                            <button class="btn btn-sm btn-default pull-right" ng-click="showHideDetails($event, result)">Characteristics</button>
+                                                            <div class="service-proposal-details" ng-show="result.showDetails">
+                                                                <h4>Service Characteristics Values</h4>
+                                                                <ul>
+                                                                    <li ng-repeat="characteristic in result.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div ng-switch-when="PaaS">
+                                        <div class="panel-group">
+                                            <div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudPlatform._serviceName) | orderBy: 'score':true track by $index">
+                                                <div class="panel heading">
+                                                    <h4 class="panel-title service-proposal-title">
+                                                        <a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">
+                                                            Service: <strong>{{ result.service.name }}</strong> (Provider: <strong>{{result.provider.name}}</strong>)
+                                                        </a>
+                                                    </h4>
+                                                </div>
+                                                <div ng-attr-id="{{'s' + result.service._key}}" class="panel-collapse collapse in">
+                                                    <div class="service-proposal">
+                                                        <div class="well pull-right service-proposal-score">
+                                                            <h6>Score</h6>
+                                                            <hr/>
+                                                            <h3>{{ result.score * 100 | number: 0 }}</h3>
+                                                        </div>
+                                                        <div class="service-proposal-logo">
+                                                            <img ng-src="{{result.provider.logo_url}}"/>
+                                                        </div>
+                                                        <div class="service-proposal-description">
+                                                            <p>{{result.provider.description}}</p>
+                                                            <button class="btn btn-sm btn-default pull-right" ng-click="showHideDetails($event, result)">Characteristics</button>
+                                                            <div class="service-proposal-details" ng-show="result.showDetails">
+                                                                <h4>Service Characteristics Values</h4>
+                                                                <ul>
+                                                                    <li ng-repeat="characteristic in result.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>
+                                                                </ul>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/results accordion-->
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <!--/results table-->
+        <!-- TA-level accordion -->
+        <!--<div class="panel-group" id="ta-accordion">-->
+        <!--<div class="panel panel-default" ng-repeat="taAsset in ta track by $index">-->
+        <!--&lt;!&ndash;<div class="panel heading" style="background-color: #e8fdf9 !important;">&ndash;&gt;-->
+        <!--<h4 class="panel-title">-->
+        <!--<a data-toggle="collapse" data-target="{{'#collapse' + $index}}" ng-href="{{'#collapse' + $index}}" ng-switch="taAsset.cloudType">-->
+        <!--<strong ng-switch-when="IaaS">{{taAsset.cloudResource._serviceName}} ({{taAsset.cloudType}})</strong>-->
+        <!--<strong ng-switch-when="PaaS">{{taAsset.cloudPlatform._serviceName}} ({{taAsset.cloudType}})</strong>-->
+        <!--</a>-->
+        <!--</h4>-->
+        <!--&lt;!&ndash;</div>&ndash;&gt;-->
+        <!--<div ng-attr-id="{{'collapse' + $index}}" class="panel-collapse collapse in">-->
+        <!--<div class="panel-body" ng-switch="taAsset.cloudType">-->
+        <!--<div ng-switch-when="IaaS">-->
+        <!--<div class="panel-group">-->
+        <!--<div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudResource._serviceName) track by $index">-->
+        <!--<div class="panel heading" style="background-color: #d3d3d3">-->
+        <!--<h4 class="panel-title">-->
+        <!--<a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">-->
+        <!--<strong>{{result.service.name}}</strong>-->
+        <!--</a>-->
+        <!--</h4>-->
+        <!--</div>-->
+        <!--<div ng-attr-id="{{'s' + result.service._key}}" class="panel-collapse collapse in">-->
+        <!--<div class="service-proposal">-->
+        <!--<div class="service-proposal-logo">-->
+        <!--<img ng-src="{{result.provider.logo_url}}"/>-->
+        <!--</div>-->
+        <!--<div class="service-proposal-description">-->
+        <!--<p>{{result.provider.description}}</p>-->
+        <!--<button class="btn btn-sm btn-default pull-right" ng-click="showHideDetails($event, result)">Characteristics</button>-->
+        <!--<div class="service-proposal-details" ng-show="result.showDetails">-->
+        <!--<h4>Service Characteristics Values</h4>-->
+        <!--<ul>-->
+        <!--<li ng-repeat="characteristic in result.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>-->
+        <!--</ul>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="service-proposal-info">-->
+        <!--<div class="service-proposal-score">-->
+        <!--&lt;!&ndash; TODO: Compute score &ndash;&gt;-->
+        <!--<div ng-if="65.27 >= 50.0">-->
+        <!--<span class="service-proposal-score">{{65.27}}</span>-->
+        <!--<div class="service-proposal-score-positive"></div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div ng-switch-when="PaaS">-->
+        <!--<div class="panel-group">-->
+        <!--<div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudPlatform._serviceName) track by $index">-->
+        <!--<div class="panel heading" style="background-color: #d3d3d3">-->
+        <!--<h4 class="panel-title">-->
+        <!--<a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">-->
+        <!--<strong>{{result.service.name}}</strong>-->
+        <!--</a>-->
+        <!--</h4>-->
+        <!--</div>-->
+        <!--<div ng-attr-id="{{'s' + result.service._key}}" class="panel-collapse collapse in">-->
+        <!--<div class="service-proposal">-->
+        <!--<div class="service-proposal-logo">-->
+        <!--<img ng-src="{{result.provider.logo_url}}"/>-->
+        <!--</div>-->
+        <!--<div class="service-proposal-description">-->
+        <!--<p>{{result.provider.description}}</p>-->
+        <!--<button class="btn btn-sm btn-default pull-right" ng-click="showHideDetails($event, result)">Characteristics</button>-->
+        <!--<div class="service-proposal-details" ng-show="result.showDetails">-->
+        <!--<h4>Service Characteristics Values</h4>-->
+        <!--<ul>-->
+        <!--<li ng-repeat="characteristic in result.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>-->
+        <!--</ul>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--<div class="service-proposal-info">-->
+        <!--<div class="service-proposal-score">-->
+        <!--<div ng-if="45.76 < 50.0">-->
+        <!--<span class="service-proposal-score">{{45.76}}</span>-->
+        <!--<div class="service-proposal-score-negative"></div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+        <!--</div>-->
+    </div>
+</div>
+<!--slides end-->
+</div>
+</div>
+</div>
+<!--slider end-->
+</div>
+<!--end main container-->
+<div class="row sticky-bottom" ng-controller="buttonsController">
+    <div class="col-lg-12 text-right">
+        <button class="btn btn-primary slide-prev" href="#dssSlides" data-slide="prev" disabled>Previous step</button>
+        <button class="btn btn-primary slide-next" href="#dssSlides" data-slide="next" ng-click="next($event)">Next step</button>
+        <button style="display: none" class="btn btn-primary slide-services" data-target="#dssSlides" data-slide-to="5">Search Cloud Services</button>
+    </div>
+</div>
 </div>
 
 <!-- Don't change scripts order, it is important to keep it so it is -->

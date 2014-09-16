@@ -18,6 +18,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
     //TODO: Fix an stable arangoDB server base URL
     //var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/api/';
     this.ARANGODB_BASE_URL = 'http://dss.jarandaf.com:8529/_db/dss/dss/';
+    //this.ARANGODB_BASE_URL = 'http://localhost:8529/_db/dss/dss/';
     this.XSD_SERVICE_BASE_URL = 'http://dss.jarandaf.com:3999/';
 
     //Closures
@@ -71,9 +72,9 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
             _.each(selectedRisks, function(risk){
                 if(firstRisk){
                     firstRisk = false;
-                    url += 'risks=' + risk.destination.name;
+                    url += 'risks=' + risk;
                 } else {
-                    url += ',' + risk.destination.name
+                    url += ',' + risk
                 }
             });
             return url;
@@ -81,19 +82,8 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
         getRisksTreatmentsMapping: function(){
             return self.ARANGODB_BASE_URL + 'graph/risksTreatmentsMapping';
         },
-        getProposals: function(cloudType, treatments){
-            var firstTreatment = true;
-            var url = self.ARANGODB_BASE_URL + 'graph/lookupServices?';
-            _.each(treatments, function(treatment){
-                if(firstTreatment){
-                    firstTreatment = false;
-                    url += 'treatments=' + treatment.destination.name;
-                } else {
-                    url += ',' + treatment.destination.name;
-                }
-            });
-            url += '&cloudType=' + cloudType;
-            return url;
+        getProposalsByCloudAndServiceTypes: function(cloudType, serviceType){
+            return self.ARANGODB_BASE_URL + 'graph/lookupServices?queryType=1&cloudType=' + cloudType + '&serviceType=' + serviceType;
         },
         validateDocument: function(){
             return self.XSD_SERVICE_BASE_URL + 'validateDSSXML';
@@ -223,13 +213,13 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
     };
 
     /**
-     * Get a list of cloud service possibilities given a list of treatments.
+     * Get a list of cloud service possibilities given a cloud and service types.
      * @param {string} cloudType The cloud type we are interested in (IaaS,PaaS,SaaS).
-     * @param {string} treatments A comma-separated list of treatment names.
+     * @param {string} serviceType The service type we are interested in.
      * @returns Service proposal array matching requested criteria.
      */
-    this.getProposals = function(cloudType, treatments, callback){
-        $http.get(self.FOXX_API.getProposals(cloudType, treatments))
+    this.getProposalsByCloudAndServiceTypes = function(cloudType, serviceType, callback){
+        $http.get(self.FOXX_API.getProposalsByCloudAndServiceTypes(cloudType, serviceType))
             .success(function(data, status, headers, config){
                 callback(null, data);
             })
