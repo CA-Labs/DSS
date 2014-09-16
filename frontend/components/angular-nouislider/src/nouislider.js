@@ -67,8 +67,10 @@ angular.module('nouislider', []).directive('slider', function () {
                     });
                 } else {
                     parsedValue = null;
+                    // console.log('ngModel in slider: ', scope.ngModel);
+                    // console.log('start/end', scope.start, scope.end);
                     slider.noUiSlider({
-                        start: [scope.ngModel || scope.start],
+                        start: [scope.start || scope.ngModel],
                         step: parseFloat(scope.step || 1),
                         range: {
                             min: [parseFloat(scope.start)],
@@ -76,8 +78,9 @@ angular.module('nouislider', []).directive('slider', function () {
                         }
                     });
                     slider.on(callback, function () {
+
                         parsedValue = parseFloat(slider.val());
-                        // console.log('parsed value', parsedValue);
+                        // console.log('slider parsed value', parsedValue);
 
                         //Propagate event upwards
                         var type = attrs.hashKey ? attrs.hashKey.indexOf('likelihood') !== -1 ? 'likelihood' : 'consequence' : '';
