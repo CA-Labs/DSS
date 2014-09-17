@@ -228,6 +228,9 @@ blockquote {
   width: 100%;
   height: 150px;
   max-height: 450px !important;
+  & p:first-of-type {
+    margin-top: 15px;
+  }
 }
 
 .service-proposal-panel {
@@ -236,12 +239,19 @@ blockquote {
   &:hover {
     box-shadow: 0px 0px 5px #7f8c8d;
   }
+  li.list-group-item {
+    &:hover {
+      box-shadow: -5px 0 5px -5px #333, 5px 0 5px -5px #333;
+
+    }
+  }
 }
 
 .service-proposal-title {
-  margin: 10px;
-  & a {
-    text-decoration: none;
+  background: #fff !important;
+  padding: 0 40px;
+  & h3 {
+    font-size: 20px;
   }
 }
 
@@ -253,10 +263,10 @@ blockquote {
 }
 
 .service-proposal-logo > img {
-  width: 150px;
-  height: auto;
+  dislay: block;
+  width: 100%;
   margin-top: 30px;
-  margin-left: 30px;
+  margin-left: 20px;
 }
 
 .service-proposal-description {
@@ -286,6 +296,17 @@ blockquote {
       bottom: 0;
     }
     border-color: #fff;
+  }
+}
+
+.service-proposal-score-overall {
+  & h6 {
+    font-size: 13px;
+    font-size: 0.7vw;
+  }
+  margin: {
+    left: auto;
+    right: auto;
   }
 }
 

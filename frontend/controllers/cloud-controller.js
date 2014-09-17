@@ -14,6 +14,8 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     $scope.filteredProposals = CloudService.getFilteredProposals();
     localStorageService.bind($scope, 'filteredProposals', $scope.filteredProposals);
 
+    $scope.deploymentsProposals = CloudService.getDeploymentsProposals();
+
     $scope.servicesSelected = {};
 
     $scope.deploymentsProposals = [];
