@@ -17,6 +17,7 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     $scope.deploymentsProposals = CloudService.getDeploymentsProposals();
 
     $scope.servicesSelected = {};
+    localStorageService.bind($scope, 'servicesSelected', $scope.filteredProposals);
 
     $scope.deploymentsProposals = [];
 
@@ -76,22 +77,21 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
      * @param {object} proposal - service object selected by the user
      * @param {object} taAsset - ta asset object to which the proposal is assigned to
      */
-    $scope.selectService = function (proposal, taAsset) {
-        var data = {
-            ta: taAsset,
-            serviceSelected: proposal
-        };
-        $scope.servicesSelected[taAsset._id] = data;
-        _.each($scope.xmlTaAsObject.resourceModelExtension.resourceContainer, function (resourceContainer) {
-            if (resourceContainer._id == taAsset._id) {
-                resourceContainer._provider = $scope.servicesSelected[taAsset._id].serviceSelected.provider.name;
-                if (resourceContainer.cloudResource) {
-                    resourceContainer.cloudResource._serviceName = $scope.servicesSelected[taAsset._id].serviceSelected.service.name;
-                } else if (resourceContainer.cloudPlatform) {
-                    resourceContainer.cloudPlatform._serviceName = $scope.servicesSelected[taAsset._id].serviceSelected.service.name;
-                }
-            }
-        });
+    $scope.selectService = function (proposal) {
+        $scope.servicesSelected = proposal;
+
+        // update xmlTAAsObject
+        // TODO: finish that
+        //_.each($scope.xmlTaAsObject.resourceModelExtension.resourceContainer, function (resourceContainer) {
+        //    if (resourceContainer._id == taAsset._id) {
+        //        resourceContainer._provider = $scope.servicesSelected[taAsset._id].serviceSelected.provider.name;
+        //        if (resourceContainer.cloudResource) {
+        //            resourceContainer.cloudResource._serviceName = $scope.servicesSelected[taAsset._id].serviceSelected.service.name;
+        //        } else if (resourceContainer.cloudPlatform) {
+        //            resourceContainer.cloudPlatform._serviceName = $scope.servicesSelected[taAsset._id].serviceSelected.service.name;
+        //        }
+        //    }
+        //});
     };
 
     /**

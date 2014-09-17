@@ -367,7 +367,7 @@
         <!--per deployment results-->
             <ul class="list-group">
                 <li class="list-group-item" ng-repeat="result in deploymentsProposals | orderBy:'overallScore':true track by $index">
-                    <div class="row">
+                    <div class="row" ng-click="selectService(result)">
                         <div class="col-lg-1">
                             <div class="well service-proposal-score service-proposal-score-overall">
                                 <h6>Deployment<br/>Score</h6>
