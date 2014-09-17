@@ -72,20 +72,6 @@ dssApp.controller('mainController', [
         $('#uploadSessionFile').trigger('click');
     };
 
-    $scope.loadLocalSessionContent = function ($fileContent) {
-        console.log($fileContent);
-        if (dssApp.isJSON($fileContent)) {
-            var fileContent = JSON.parse($fileContent);
-            localStorageService.bsoiaAssetsSelected = fileContent.bsoiaAssetsSelected;
-            localStorageService.toiaAssetsSelected = fileContent.toiaAssetsSelected;
-            localStorageService.taAssets = fileContent.taAssets;
-            localStorageService.risksSelected = fileContent.risksSelected;
-            localStorageService.treatmentsSelected = fileContent.treatmentsSelected;
-            //localStorageService.services = fileContent.services;
-            //window.location.reload();
-        }
-    };
-
     //Force file upload dialog showing on input fields of type file
     $scope.showFileUploadDialog = function(inputId){
         $(inputId).trigger('click');
@@ -120,7 +106,6 @@ dssApp.controller('mainController', [
                                 else if(resource.hasOwnProperty('cloudPlatform')){
                                     resource.cloudType = 'PaaS';
                                 }
-                                resource.criticityValue = 1;
                                 AssetsService.addTA(resource);
                             });
                             $rootScope.$broadcast('loadedTA');
@@ -146,10 +131,10 @@ dssApp.controller('mainController', [
 
     $scope.onSessionFileSelect = function($files){
         var file = $files[0];
-        $scope.xmlTaAssetsFileName = file;
+        $scope.xmlTaAssetsFileName = file.name;
         if(file !== null && typeof file !== 'undefined'){
             readFile(file).then(function(jsonString){
-                localStorageValues = JSON.parse(jsonString);
+                var localStorageValues = JSON.parse(jsonString);
                 // Don't touch this, order matters!
                 AssetsService.loadingLocalStorageData(true);
                 RisksService.loadingLocalStorageData(true);
@@ -176,7 +161,7 @@ dssApp.controller('mainController', [
     var readFile = function(file){
         var fileReader = new FileReader();
         var deferred = $q.defer();
-        var string = fileReader.readAsText(file);
+        fileReader.readAsText(file);
         fileReader.onload = function(){
             deferred.resolve(fileReader.result);
         };

@@ -168,14 +168,14 @@ dssApp.controller('treatmentsController'
             flash.warn = 'Tangible Asset [TA] already added';
         } else {
             TreatmentsService.addTAToTreatment(treatment, data);
-            //localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
+            localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
         }
 
     };
 
     $scope.removeTaFromTreatment = function (treatment, ta) {
         TreatmentsService.removeTaFromTreatment(treatment, ta);
-        //localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
+        localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
     };
 
     $scope.toggleTreatmentValues = function (treatmentName) {

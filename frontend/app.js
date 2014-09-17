@@ -60,9 +60,10 @@ var dssApp = angular.module('dssApp', [
     'angularFileUpload',
     'frapontillo.bootstrap-switch',
     'nouislider'
-]).config(['cfpLoadingBarProvider', 'localStorageServiceProvider', function(cfpLoadingBarProvider, localStorageServiceProvider) {
+]).config(['cfpLoadingBarProvider', 'localStorageServiceProvider', '$rootScopeProvider', function(cfpLoadingBarProvider, localStorageServiceProvider, $rootScopeProvider) {
     cfpLoadingBarProvider.includeSpinner = false;
     localStorageServiceProvider.setPrefix('DSS');
+    //$rootScopeProvider.digestTtl(100);
 }]);
 
 // Initialize UI if local storage data is available
@@ -79,6 +80,7 @@ dssApp.run(['AssetsService', 'RisksService', 'TreatmentsService', 'localStorageS
     RisksService.setRisks(localStorageService.get('risksSelected') ? localStorageService.get('risksSelected') : []);
     TreatmentsService.setTreatmentValues(localStorageService.get('treatmentValues') ? localStorageService.get('treatmentValues') : {});
     TreatmentsService.setTreatments(localStorageService.get('treatmentsSelected') ? localStorageService.get('treatmentsSelected') : []);
+    AssetsService.setCriticityBoundModels(localStorageService.get('criticityBoundModels') ? localStorageService.get('criticityBoundModels') : {});
     AssetsService.setTA(localStorageService.get('taAssets') ? localStorageService.get('taAssets') : []);
 }]);
 

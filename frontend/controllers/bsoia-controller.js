@@ -18,6 +18,7 @@ dssApp.controller('bsoiaController', ['$scope', '$rootScope', 'localStorageServi
         return AssetsService.getBSOIA();
     }, function(newBSOIA){
         $scope.bsoiaAssetsSelected = newBSOIA;
+        $rootScope.$broadcast('bsoiaChanged');
     }, true);
 
     /**
@@ -39,17 +40,6 @@ dssApp.controller('bsoiaController', ['$scope', '$rootScope', 'localStorageServi
     $scope.removeBsoiaAsset = function(bsoiaAsset){
         AssetsService.removeBSOIA(bsoiaAsset);
     };
-
-    /**
-     * Listen for changes in selected BSOIA
-     * assets, so that potential risks can be
-     * recomputed.
-     */
-    $scope.$watch(function(){
-        return AssetsService.getBSOIA();
-    }, function(newVal, oldVal){
-        $rootScope.$broadcast('bsoiaChanged');
-    }, true);
 
     //Initial fetch of BSOIA assets
     ArangoDBService.getBSOIA(function(error, data){
