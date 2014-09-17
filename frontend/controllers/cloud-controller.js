@@ -16,6 +16,8 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
 
     $scope.servicesSelected = {};
 
+    $scope.deploymentsProposals = [];
+
     $scope.xmlTaAsObject = AssetsService.getXmlTaObject();              // gets the Object representation of the Modelio loaded XML
 
     $scope.$watch(function(){
@@ -56,6 +58,7 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     $scope.$on('risksSelectedChanged', function(){
         CloudService.filterProposalsByTreatments();
         CloudService.filterProposalsByThresholds();
+        $scope.deploymentsProposals = CloudService.getDeploymentsProposals();
     });
 
     $scope.filterProposalsByTreatments = function(){

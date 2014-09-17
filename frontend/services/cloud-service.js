@@ -19,6 +19,8 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
     var loadingProposals = false;
     var loadingFilteredProposals = true;
 
+    var deploymentProposals = [];
+
     this.getProposals = function(){
         return proposals;
     };
@@ -91,6 +93,45 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
             return filteredProposals[taAssetName];
         } else {
             return [];
+        }
+    };
+
+    function getTA (taList, taName) {
+        var returnTA = {};
+        _.each(taList, function (ta) {
+            switch (ta.cloudType) {
+                case 'IaaS':
+                    if (ta.cloudResource._serviceName === taName) {
+                        returnTA = ta;
+                    }
+                    break;
+                case 'PaaS':
+                    if (ta.cloudPlatform._serviceName === taName) {
+                        retrunTA = ta;
+                    }
+                    break;
+            }
+        });
+
+       return returnTA;
+    };
+
+
+    this.getDeploymentsProposals = function () {
+        var argsArray = [];
+        if (filteredProposals) {
+            _.each(filteredProposals, function (proposal, taAssetName) {
+                for (var i = 0; i < proposal.length; i++) {
+                    proposal[i].ta = getTA(taAssets, taAssetName);
+                }
+                argsArray.push(proposal);
+            });
+
+            //deploymentProposals = this.cartesian.apply(null, argsArray);
+            deploymentProposals = [];
+
+
+            return deploymentProposals;
         }
     };
 
