@@ -41,15 +41,15 @@
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">Options <b class="caret"></b></a>
                 <ul class="dropdown-menu">
-                    <li><a href="#" ng-click="saveSessionFile($event)"><span class="glyphicon glyphicon-export"></span> Export Session</a></li>
+                    <li><a href="#" ng-click="saveSessionFile($event)"><span class="glyphicon glyphicon-export"></span>&nbsp;Export Session</a></li>
                     <li>
                         <form id="import-session-file-selector">
                             <input id="load-session" ng-file-select="onSessionFileSelect($files)" type="file" class="hidden"/>
                         </form>
-                        <a href="#" ng-click="showFileUploadDialog('#load-session')"><span class="glyphicon glyphicon-import"></span> Import Session</a>
+                        <a href="#" ng-click="showFileUploadDialog('#load-session')"><span class="glyphicon glyphicon-import"></span>&nbsp;Import Session</a>
                     </li>
                     <li class="divider"></li>
-                    <li><a href="#" ng-click="clearSelection()"><span class="glyphicon glyphicon-trash"></span> Clean Selection</a></li>
+                    <li><a href="#" ng-click="clearSelection()"><span class="glyphicon glyphicon-trash"></span>&nbsp;Clean Selection</a></li>
                 </ul>
             </li>
             <li>
@@ -317,6 +317,7 @@
                 <input name="showTreatmentValues" bs-switch ng-model="showTreatmentValues[treatmentSelected.name]" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleTreatmentValues(treatmentSelected.name)"/>
                 <label class="pull-right">Specify treatment value&nbsp;</label>
                 <strong>{{ treatmentSelected.name }}</strong>
+                <!--
                 <p>
                     <i>Mitigating risks:</i>
                 <ul>
@@ -324,6 +325,7 @@
                         <i>{{risk}}</i>
                     </li>
                 </ul>
+                -->
                 </p>
                 <span class="glyphicon glyphicon-remove remove-treatment" ng-click="removeTreatment(treatmentSelected)">&nbsp;</span>
                 <div ng-switch="treatmentSelected.representation">
@@ -450,107 +452,12 @@
                                     </div>
                                 </div>
                             </div>
-                            <!--/results accordion-->
+                            <!-- results accordion -->
                         </div>
                     </div>
                 </td>
             </tr>
         </table>
-        <!--/results table-->
-        <!-- TA-level accordion -->
-        <!--<div class="panel-group" id="ta-accordion">-->
-        <!--<div class="panel panel-default" ng-repeat="taAsset in ta track by $index">-->
-        <!--&lt;!&ndash;<div class="panel heading" style="background-color: #e8fdf9 !important;">&ndash;&gt;-->
-        <!--<h4 class="panel-title">-->
-        <!--<a data-toggle="collapse" data-target="{{'#collapse' + $index}}" ng-href="{{'#collapse' + $index}}" ng-switch="taAsset.cloudType">-->
-        <!--<strong ng-switch-when="IaaS">{{taAsset.cloudResource._serviceName}} ({{taAsset.cloudType}})</strong>-->
-        <!--<strong ng-switch-when="PaaS">{{taAsset.cloudPlatform._serviceName}} ({{taAsset.cloudType}})</strong>-->
-        <!--</a>-->
-        <!--</h4>-->
-        <!--&lt;!&ndash;</div>&ndash;&gt;-->
-        <!--<div ng-attr-id="{{'collapse' + $index}}" class="panel-collapse collapse in">-->
-        <!--<div class="panel-body" ng-switch="taAsset.cloudType">-->
-        <!--<div ng-switch-when="IaaS">-->
-        <!--<div class="panel-group">-->
-        <!--<div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudResource._serviceName) track by $index">-->
-        <!--<div class="panel heading" style="background-color: #d3d3d3">-->
-        <!--<h4 class="panel-title">-->
-        <!--<a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">-->
-        <!--<strong>{{result.service.name}}</strong>-->
-        <!--</a>-->
-        <!--</h4>-->
-        <!--</div>-->
-        <!--<div ng-attr-id="{{'s' + result.service._key}}" class="panel-collapse collapse in">-->
-        <!--<div class="service-proposal">-->
-        <!--<div class="service-proposal-logo">-->
-        <!--<img ng-src="{{result.provider.logo_url}}"/>-->
-        <!--</div>-->
-        <!--<div class="service-proposal-description">-->
-        <!--<p>{{result.provider.description}}</p>-->
-        <!--<button class="btn btn-sm btn-default pull-right" ng-click="showHideDetails($event, result)">Characteristics</button>-->
-        <!--<div class="service-proposal-details" ng-show="result.showDetails">-->
-        <!--<h4>Service Characteristics Values</h4>-->
-        <!--<ul>-->
-        <!--<li ng-repeat="characteristic in result.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>-->
-        <!--</ul>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--<div class="service-proposal-info">-->
-        <!--<div class="service-proposal-score">-->
-        <!--&lt;!&ndash; TODO: Compute score &ndash;&gt;-->
-        <!--<div ng-if="65.27 >= 50.0">-->
-        <!--<span class="service-proposal-score">{{65.27}}</span>-->
-        <!--<div class="service-proposal-score-positive"></div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--<div ng-switch-when="PaaS">-->
-        <!--<div class="panel-group">-->
-        <!--<div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudPlatform._serviceName) track by $index">-->
-        <!--<div class="panel heading" style="background-color: #d3d3d3">-->
-        <!--<h4 class="panel-title">-->
-        <!--<a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">-->
-        <!--<strong>{{result.service.name}}</strong>-->
-        <!--</a>-->
-        <!--</h4>-->
-        <!--</div>-->
-        <!--<div ng-attr-id="{{'s' + result.service._key}}" class="panel-collapse collapse in">-->
-        <!--<div class="service-proposal">-->
-        <!--<div class="service-proposal-logo">-->
-        <!--<img ng-src="{{result.provider.logo_url}}"/>-->
-        <!--</div>-->
-        <!--<div class="service-proposal-description">-->
-        <!--<p>{{result.provider.description}}</p>-->
-        <!--<button class="btn btn-sm btn-default pull-right" ng-click="showHideDetails($event, result)">Characteristics</button>-->
-        <!--<div class="service-proposal-details" ng-show="result.showDetails">-->
-        <!--<h4>Service Characteristics Values</h4>-->
-        <!--<ul>-->
-        <!--<li ng-repeat="characteristic in result.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>-->
-        <!--</ul>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--<div class="service-proposal-info">-->
-        <!--<div class="service-proposal-score">-->
-        <!--<div ng-if="45.76 < 50.0">-->
-        <!--<span class="service-proposal-score">{{45.76}}</span>-->
-        <!--<div class="service-proposal-score-negative"></div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
-        <!--</div>-->
     </div>
 </div>
 <!--slides end-->
