@@ -15,7 +15,7 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
     var risksTreatmentsMappingFromStorage = localStorageService.get('risksTreatmentsMapping') || {};
     var risksTreatmentsMapping = risksTreatmentsMappingFromStorage;
 
-    var showTreatmentsValuesFromStorage = localStorageService.get('showTreatmentsValues') || false;
+    var showTreatmentsValuesFromStorage = localStorageService.get('showTreatmentsValues') || {};
     var showTreatmentsValues = showTreatmentsValuesFromStorage;
 
     var loadingTreatmentsFromLocalStorage = false;              // Flag to control local storage restore state
@@ -89,6 +89,10 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
         return treatmentsValues;
     };
 
+    this.getTreatmentValue = function(treatmentName){
+        return treatmentsValues[treatmentName];
+    };
+
     this.setTreatments = function(treatmentsLoadedFromLocalStorage){
         treatments = treatmentsLoadedFromLocalStorage;
     };
@@ -136,12 +140,24 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
         return risksNames;
     };
 
-    this.showTreatmentsValues = function(showTreatments){
-        showTreatmentsValues = showTreatments;
+    this.showTreatmentValue = function(treatmentName){
+        return showTreatmentsValues[treatmentName] !== undefined && showTreatmentsValues[treatmentName] === true;
+    };
+
+    this.setShowTreatmentValue = function(treatmentName, showTreatment){
+        if(showTreatment){
+            showTreatmentsValues[treatmentName] = true;
+        } else {
+            delete showTreatmentsValues[treatmentName];
+        }
     };
 
     this.getShowTreatmentsValues = function(){
         return showTreatmentsValues;
+    };
+
+    this.setShowTreatmentsValues = function(showTreatmentsValuesFromLocalStorage){
+        showTreatmentsValues = showTreatmentsValuesFromLocalStorage;
     };
 
     /**

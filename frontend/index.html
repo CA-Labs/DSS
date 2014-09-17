@@ -220,7 +220,7 @@
         <div class="list-group">
             <div>
                 <input name="risks-per-ta" bs-switch ng-model="showRiskPerTA" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleActivation()"/>
-                <label for="showTreatmentValues" class="pull-right">Specify Risk per Tengible Asset&nbsp;</label>
+                <label class="pull-right">Specify risk per tangible asset&nbsp;</label>
                 <h4 ng-show="risksSelected.length > 0">Risks Selected</h4>
             </div>
             <div class="list-group-item selected-risk risk-container" href="#" ng-repeat="risk in risksSelected track by $index">
@@ -311,11 +311,11 @@
     <div class="col-lg-8">
         <div class="list-group">
             <div  ng-if="treatmentsSelected.length > 0">
-                <input name="showTreatmentValues" bs-switch ng-model="showTreatmentValues" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleTreatmentValues()"/>
-                <label for="showTreatmentValues" class="pull-right">Specify Treatment Values&nbsp;</label>
                 <h4>Treatments Selected</h4>
             </div>
             <a class="list-group-item selected-treatment dropzone-wrapper" href="#" ng-repeat="treatmentSelected in treatmentsSelected">
+                <input name="showTreatmentValues" bs-switch ng-model="showTreatmentValues[treatmentSelected.name]" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleTreatmentValues(treatmentSelected.name)"/>
+                <label class="pull-right">Specify treatment value&nbsp;</label>
                 <strong>{{ treatmentSelected.name }}</strong>
                 <p>
                     <i>Mitigating risks:</i>
@@ -328,7 +328,7 @@
                 <span class="glyphicon glyphicon-remove remove-treatment" ng-click="removeTreatment(treatmentSelected)">&nbsp;</span>
                 <div ng-switch="treatmentSelected.representation">
                     <div ng-switch-when="select">
-                        <select ng-show="showTreatmentValues" label="treatmentValue" class="form-control" data-hash-key="treatmentSelected.name" ng-model="treatmentValue" ng-options="value for (key,value) in treatmentSelected.options | orderBy:'':true" ng-change="treatmentValueChanged(treatmentValue, treatmentSelected)"/>
+                        <select ng-show="showTreatmentValues[treatmentSelected.name]" label="treatmentValue" class="form-control" data-hash-key="treatmentSelected.name" ng-model="treatmentValue" ng-options="value for (key,value) in treatmentSelected.options | orderBy:'':true" ng-change="treatmentValueChanged(treatmentValue, treatmentSelected)"/>
                         <option value="" disabled selected>--- Select a value ---</option>
                         </select>
                         <br/>
@@ -341,16 +341,8 @@
                                 </b>
                             </button>
                         </div>
-                        <!--<treat-select item="treatmentSelected"></treat-select>-->
                     </div>
                     <div ng-switch-when="radio">
-                        <!--<div style="margin-top: 20px; width: 300px; text-align: right;" class="input-group" ng-repeat="(key,value) in treatmentSelected.destination.options">-->
-                        <!--<span class="input-group-addon">-->
-                        <!--<input type="radio" name="{{value}}" value="{{key}}" ng-model="$parent.aux" ng-change="change(value)">-->
-                        <!--</span>-->
-                        <!--<input type="text" class="form-control" value="{{value}}" readonly="readonly" style="background-color: #18bc9c !important; cursor: default !important;">-->
-                        <!--</div>-->
-                        <!--<br/>-->
                         <div ng-init="addRadioValue(treatmentSelected.name)"></div>
                         <div ui-on-drop="taDropped($event, $data, treatmentSelected)" class="dropzone-container">
                             <button ui-draggable="false" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.taRelations">
@@ -361,7 +353,6 @@
                                 </b>
                             </button>
                         </div>
-                        <!--<treat-radio item="treatmentSelected"></treat-radio>-->
                     </div>
                 </div>
             </a>
