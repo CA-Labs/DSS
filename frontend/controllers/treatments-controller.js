@@ -27,6 +27,7 @@ dssApp.controller('treatmentsController'
     $scope.taAssets = AssetsService.getTA();                                        // The list of the TA assets
 
     $scope.potentialTreatments = [];                                                // The list of potential treatments
+    $scope.potentialTreatmentsGrouped = [];
 
     $scope.treatmentsSelected = TreatmentsService.getTreatments();                  // The list of selected treatments
     localStorageService.bind($scope, 'treatmentsSelected', $scope.treatmentsSelected);
@@ -74,6 +75,13 @@ dssApp.controller('treatmentsController'
                     });
                 });
                 $scope.potentialTreatments = aux;
+                $scope.potentialTreatmentsGrouped = [];
+                _.each($scope.potentialTreatments, function(potentialTreatment){
+                    var mitigatedRisks = $scope.mitigatedRisks(potentialTreatment.name);
+                    _.each(mitigatedRisks, function(mitigatedRisk){
+                        $scope.potentialTreatmentsGrouped.push({treatment: potentialTreatment, group: mitigatedRisk});
+                    });
+                });
             }
         });
 
@@ -213,7 +221,7 @@ dssApp.controller('treatmentsController'
             }
         });
         return description;
-    }
+    };
 
     /**
      * Function used when the treatment is added to the treatmentSelected list to pass the value to the treatment as acepted.
