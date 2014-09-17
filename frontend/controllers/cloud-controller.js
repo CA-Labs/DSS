@@ -80,7 +80,6 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
             serviceSelected: proposal
         };
         $scope.servicesSelected[taAsset._id] = data;
-        console.log('xml', $scope.xmlTaAsObject.resourceModelExtension.resourceContainer, 'services', $scope.servicesSelected[taAsset._id].serviceSelected.service.name);
         _.each($scope.xmlTaAsObject.resourceModelExtension.resourceContainer, function (resourceContainer) {
             if (resourceContainer._id == taAsset._id) {
                 resourceContainer._provider = $scope.servicesSelected[taAsset._id].serviceSelected.provider.name;

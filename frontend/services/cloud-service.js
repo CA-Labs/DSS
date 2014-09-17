@@ -101,36 +101,55 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
         _.each(taList, function (ta) {
             switch (ta.cloudType) {
                 case 'IaaS':
-                    if (ta.cloudResource._serviceName === taName) {
+                    if (ta.cloudResource._serviceName == taName) {
                         returnTA = ta;
                     }
                     break;
                 case 'PaaS':
-                    if (ta.cloudPlatform._serviceName === taName) {
-                        retrunTA = ta;
+                    if (ta.cloudPlatform._serviceName == taName) {
+                        returnTA = ta;
                     }
                     break;
             }
         });
 
        return returnTA;
-    };
+    }
 
 
     this.getDeploymentsProposals = function () {
         var argsArray = [];
-        if (filteredProposals) {
+        if (!_.isEmpty(filteredProposals)) {
             _.each(filteredProposals, function (proposal, taAssetName) {
+
+                // attach ta to proposal
                 for (var i = 0; i < proposal.length; i++) {
                     proposal[i].ta = getTA(taAssets, taAssetName);
                 }
+
                 argsArray.push(proposal);
             });
 
-            //deploymentProposals = this.cartesian.apply(null, argsArray);
-            deploymentProposals = [];
+            // find deployments combinations
+            deploymentProposals = this.cartesian.apply(null, argsArray);
 
+            // calculate overall score
+            _.each(deploymentProposals, function(proposal, index) {
+                var sum = 0;
+                // get criticity value of the ta
+                _.each(proposal, function (service) {
 
+                    var criticityValue = 10*(25 - AssetsService.getTACriticityValue(service.ta._id))/(25-1);
+
+                    // get score of each service in the deployment and calcualte score
+                    service.criticityBasedScore = service.score * criticityValue;
+
+                    sum += service.criticityBasedScore;
+                });
+
+                // calulate overallScore
+                deploymentProposals[index].overallScore = (sum / proposal.length);
+            });
             return deploymentProposals;
         }
     };
