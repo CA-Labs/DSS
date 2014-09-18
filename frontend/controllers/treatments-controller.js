@@ -149,12 +149,20 @@ dssApp.controller('treatmentsController'
 
     /**
      * Adds a new treatment to the list of selected treatments,
-     * by calling the Treatments service.
+     * by calling the Treatments service. It also associates the
+     * corresponding TA asset to that treatment.
      * @param treatment The treatment to be added to the list of
      * selected treatments.
+     * @ta The TA asset to associate with the treatment.
      */
-    $scope.addTreatment = function(treatment){
+    $scope.addTreatment = function(treatment, ta){
         TreatmentsService.addTreatment(treatment);
+        // For some reason, updating service data takes a while
+        $timeout(function(){
+            TreatmentsService.addTAToTreatment(treatment, ta);
+            localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
+        }, 100);
+
     };
 
     /**

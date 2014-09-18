@@ -40,7 +40,7 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
                 // objectify options
                 treatments.push(treatment);
             } else {
-                flash.warn = 'This treatment has been already added';
+                // flash.warn = 'This treatment has been already added';
             }
         }
     };
@@ -199,8 +199,25 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
      * @param ta
      */
     this.addTAToTreatment = function (treatment, ta) {
-        if (_.isUndefined(treatment.taRelations)) treatment.taRelations = [];
-        treatment.taRelations.push(ta);
+        var index = -1;
+        _.each(treatments, function(t, i){
+            if(t.name == treatment.name){
+                index = i;
+            }
+        });
+        if(index >= 0){
+            if(treatments[index].taRelations){
+                var found = treatments[index].taRelations.filter(function(taRelation){
+                    return taRelation._id == ta._id;
+                }).length > 0;
+                if(!found){
+                    treatments[index].taRelations.push(ta);
+                }
+            } else {
+                treatments[index].taRelations = [];
+                treatments[index].taRelations.push(ta);
+            }
+        }
     };
 
     /**
