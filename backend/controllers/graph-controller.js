@@ -106,7 +106,7 @@
     });
 
     /**
-     * Retrieves treatments connections to services with a certain cloud and service types.
+     * Retrieves treatments connections to services.
      */
     controller.get('treatmentsConnectionsPerCloudAndServiceTypes', function(req, res){
 
