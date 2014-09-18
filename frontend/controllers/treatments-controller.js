@@ -244,6 +244,28 @@ dssApp.controller('treatmentsController'
         }
     });
 
+    _.each($scope.taAssets, function(taAsset){
+        var cloudType = taAsset.cloudType;
+        var serviceType = '';
+        switch(cloudType){
+            case 'IaaS':
+                serviceType = taAsset.cloudResource._serviceType;
+                break;
+            case 'PaaS':
+                serviceType = taAsset.cloudPlatform._serviceType;
+                break;
+            default:
+                break;
+        }
+        ArangoDBService.getTreatmentsConnectionsPerCloudAndServiceTypes(cloudType, serviceType, function(error, data){
+            if(error){
+                flash.error = 'Some error occurred while fetching treatments connections to services with certain cloud and service types';
+            } else {
+                console.log(cloudType + '/' + serviceType, data);
+            }
+        });
+    });
+
     $scope.$watch(function(){
         return TreatmentsService.getRisksTreatmentsMapping();
     }, function(newMapping, oldMapping){

@@ -105,6 +105,9 @@
         res.json(result);
     });
 
+    /**
+     * Retrieves treatments connections to services with a certain cloud and service types.
+     */
     controller.get('treatmentsConnectionsPerCloudAndServiceTypes', function(req, res){
 
         var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 2, maxLength: 2}) ' +
