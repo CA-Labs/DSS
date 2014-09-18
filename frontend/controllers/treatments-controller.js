@@ -261,7 +261,13 @@ dssApp.controller('treatmentsController'
             if(error){
                 flash.error = 'Some error occurred while fetching treatments connections to services with certain cloud and service types';
             } else {
-                console.log(cloudType + '/' + serviceType, data);
+                var connections = [];
+                _.each(data._documents, function(treatments){
+                    if(connections.indexOf(treatments.treatments) == -1){
+                        connections.push(treatments.treatments);
+                    }
+                });
+                TreatmentsService.setTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType, connections);
             }
         });
     });

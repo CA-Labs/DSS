@@ -128,8 +128,8 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
         return risksTreatmentsMapping;
     };
 
-    this.setTreatmentsConnectedToCloudAndServiceTypes = function(treatmentsConnections){
-        treatmentsConnectedToCloudAndServiceTypes = treatmentsConnections;
+    this.setTreatmentsConnectedToCloudAndServiceTypes = function(cloudType, serviceType, treatmentsConnections){
+        treatmentsConnectedToCloudAndServiceTypes[cloudType + '/' + serviceType] = treatmentsConnections;
     };
 
     this.getTreatmentsConnectedToCloudAndServiceTypes = function(cloudType, serviceType){

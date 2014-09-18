@@ -298,37 +298,21 @@
                     </h4>
                 </div>
                 <div id="{{ 'collapse' + $index }}" class="panel-collapse collapse">
-                    <div class="panel-body">
-                        <select class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentitalTreatment.treatment.name group by potentialTreatment.group for potentialTreatment in potentailTreatmentsGrouped">
-                            <option></option>
-                        </select>
-                        <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment)" style="width:19% !important;">Add</button>
+                    <div class="panel-body" ng-switch="taAsset.cloudType">
+                        <div ng-switch-when="IaaS">
+                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.treatment.name group by potentialTreatment.group for potentialTreatment in potentialTreatmentsGrouped | byCloudAndServiceTypes:taAsset.cloudType:taAsset.cloudResource._serviceType">
+                            </select>
+                            <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment)" style="width:19% !important;">Add</button>
+                        </div>
+                        <div ng-switch-when="PaaS">
+                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.treatment.name group by potentialTreatment.group for potentialTreatment in potentialTreatmentsGrouped | byCloudAndServiceTypes:taAsset.cloudType:taAsset.cloudPlatform._serviceType">
+                            </select>
+                            <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment)" style="width:19% !important;">Add</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!--
-        <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.treatment.name group by potentialTreatment.group for potentialTreatment in potentialTreatmentsGrouped">
-            <option></option>
-        </select>
-        <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment)" style="width: 19% !important;">Add</button>
-        <div ng-if="taAssets.length > 0" style="margin-top: 45px;">
-            <p>Tangible Assets</p>
-        </div>
-        <div ng-if="taAssets.length == 0" style="margin-top: 45px;">
-            <div class="alert alert-danger" role="alert">
-                No tangible assets added.
-            </div>
-        </div>
-        <div id="selected-ta" class="col-lg-4">
-            <button ui-draggable="true" drag="taAsset" class="btn btn-sm bsoia-tag" ng-class="isTaEverUsed(taAsset) ? 'btn-info' : 'btn-warning'" ng-repeat="taAsset in taAssets">
-                <div ng-switch="taAsset.cloudType">
-                    <div ng-switch-when="IaaS">{{taAsset.cloudResource._serviceName}} ({{taAsset.cloudType}})</div>
-                    <div ng-switch-when="PaaS">{{taAsset.cloudPlatform._serviceName}} ({{taAsset.cloudType}})</div>
-                </div>
-            </button>
-        </div>
-        -->
     </div>
     <div class="col-lg-8">
         <div class="list-group">
