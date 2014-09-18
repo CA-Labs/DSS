@@ -178,7 +178,7 @@
                 <label style="margin-top: -5px;">Multicloud Deployment</label>
             </div>
             <div style="display: inline-block;">
-                <input name="isMulticloudDeployment" bs-switch ng-model="isMulticloudDeployment" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="&laquo;" switch-off-text="&raquo;" switch-on-color="info" switch-off-color="info"/>
+                <input name="isMulticloudDeployment" bs-switch ng-model="isMulticloudDeployment" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="&laquo;" switch-off-text="&raquo;" switch-on-color="info" switch-off-color="info" ng-change="setDeploymentType()"/>
             </div>
             <div style="display: inline-block; position: relative; top: 3px;">
                 <label class="pull-right">Multicloud Replication</label>
@@ -366,7 +366,7 @@
     <div class="col-lg-12">
         <!--per deployment results-->
             <ul class="list-group">
-                <li class="list-group-item" ng-repeat="result in deploymentsProposals | orderBy:'overallScore':true track by $index">
+                <li class="list-group-item service-proposal-panel" ng-class="{ 'service-selected': isSelected(result) }" ng-repeat="result in deploymentsProposals | orderBy:'overallScore':true track by $index | filter: { multicloudReplication: isMulticloudDeployment  }">
                     <div class="row" ng-click="selectService(result)">
                         <div class="col-lg-1">
                             <div class="well service-proposal-score service-proposal-score-overall">
@@ -402,7 +402,7 @@
                                                             <div class="well service-proposal-score">
                                                                 <h6>Score</h6>
                                                                 <hr/>
-                                                                <h3>{{ service.criticityBasedScore * 10 | number: 0 }}</h3>
+                                                                <h3>{{ service.score * 100 | number: 0 }}</h3>
                                                             </div>
                                                         </div>
                                                     </div>

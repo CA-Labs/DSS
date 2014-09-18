@@ -189,12 +189,11 @@ blockquote {
     margin-top: 15px; }
 
 .service-proposal-panel {
-  border: 3px solid #ecf0f1;
-  margin-bottom: 30px !important; }
+  margin-bottom: 5px;
+  border: 2px solid #ecf0f1; }
   .service-proposal-panel:hover {
-    box-shadow: 0px 0px 5px #7f8c8d; }
-  .service-proposal-panel li.list-group-item:hover {
-    box-shadow: -5px 0 5px -5px #333, 5px 0 5px -5px #333; }
+    border-color: #dce4ec;
+    box-shadow: -5px 0 5px -5px #666, 5px 0 5px -5px #666; }
 
 .service-proposal-title {
   background: #fff !important;
@@ -258,7 +257,7 @@ blockquote {
   margin: 0 auto; }
 
 .service-selected {
-  border: 3px solid #2980b9; }
+  border: 2px solid #3498db; }
 
 .unacceptable-risk {
   background-color: indianred; }

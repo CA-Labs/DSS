@@ -386,8 +386,8 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * sets the deployment type accordingly
      * @param {string} type - string of deploymentType
      */
-    this.setDeploymentType = function (value) {
-        isMulticloudDeployment = value;
+    this.setDeploymentType = function () {
+        isMulticloudDeployment = !isMulticloudDeployment;
     };
 
     this.getCriticityBoundModels = function(){

@@ -19,6 +19,7 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     $scope.servicesSelected = {};
     localStorageService.bind($scope, 'servicesSelected', $scope.filteredProposals);
 
+    $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
     $scope.deploymentsProposals = [];
 
     $scope.xmlTaAsObject = AssetsService.getXmlTaObject();              // gets the Object representation of the Modelio loaded XML
@@ -81,17 +82,19 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
         $scope.servicesSelected = proposal;
 
         // update xmlTAAsObject
-        // TODO: finish that
-        //_.each($scope.xmlTaAsObject.resourceModelExtension.resourceContainer, function (resourceContainer) {
-        //    if (resourceContainer._id == taAsset._id) {
-        //        resourceContainer._provider = $scope.servicesSelected[taAsset._id].serviceSelected.provider.name;
-        //        if (resourceContainer.cloudResource) {
-        //            resourceContainer.cloudResource._serviceName = $scope.servicesSelected[taAsset._id].serviceSelected.service.name;
-        //        } else if (resourceContainer.cloudPlatform) {
-        //            resourceContainer.cloudPlatform._serviceName = $scope.servicesSelected[taAsset._id].serviceSelected.service.name;
-        //        }
-        //    }
-        //});
+        _.each($scope.xmlTaAsObject.resourceModelExtension.resourceContainer, function (resourceContainer) {
+            _.each(proposal, function (proposalItem) {
+                if (resourceContainer._id == proposalItem.ta._id) {
+                    resourceContainer._provider = proposalItem.provider.name;
+                        if (_.has(resourceContainer, 'cloudResource')) {
+                            resourceContainer.cloudResource._serviceName = proposal.service.name;
+                        }
+                        if (_.has(resourceContainer, 'cloudPlatform')) {
+                            resourceContainer.cloudPlatform._serviceName = proposal.service.name;
+                        }
+                }
+            });
+        });
     };
 
     /**
@@ -100,11 +103,13 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
      * @param serviceId
      * @returns {boolean}
      */
-    $scope.isSelected = function (taAssetId, serviceId) {
+    $scope.isSelected = function (listItem) {
         var bool = false;
-        if (_.has($scope.servicesSelected, taAssetId) && $scope.servicesSelected[taAssetId].serviceSelected.service._id == serviceId) {
-            bool = true;
-        }
+        _.each(listItem, function (item) {
+            _.each($scope.servicesSelected, function (selected) {
+                bool = item.service._id == selected.service.id;
+            });
+        });
         return bool;
     };
 
