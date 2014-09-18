@@ -287,6 +287,27 @@
 <!--treatments slide-->
 <div class="item treatments-slide" ng-controller="treatmentsController">
     <div class="col-lg-4 form-group form-inline">
+        <div class="panel-group" id="treatments-accordion">
+            <div class="panel panel-default" ng-repeat="taAsset in taAssets track by $index">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#treatments-accordion" ng-href="{{'#collapse' + $index}}" ng-switch="taAsset.cloudType">
+                            <p ng-switch-when="IaaS"> {{ taAsset.cloudResource._serviceName + ' (IaaS)' }} </p>
+                            <p ng-switch-when="PaaS"> {{ taAsset.cloudPlatform._serviceName + ' (PaaS)' }} </p>
+                        </a>
+                    </h4>
+                </div>
+                <div id="{{ 'collapse' + $index }}" class="panel-collapse collapse">
+                    <div class="panel-body">
+                        <select class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentitalTreatment.treatment.name group by potentialTreatment.group for potentialTreatment in potentailTreatmentsGrouped">
+                            <option></option>
+                        </select>
+                        <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment)" style="width:19% !important;">Add</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--
         <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.treatment.name group by potentialTreatment.group for potentialTreatment in potentialTreatmentsGrouped">
             <option></option>
         </select>
@@ -307,6 +328,7 @@
                 </div>
             </button>
         </div>
+        -->
     </div>
     <div class="col-lg-8">
         <div class="list-group">
