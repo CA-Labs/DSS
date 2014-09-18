@@ -91,7 +91,6 @@
      * Retrieves risks-treatments mapping
      */
     controller.get('risksTreatmentsMapping', function(req, res){
-        //TODO: Return projections and not full paths?
         var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1}) ' +
             'let sourceType = (p.source.type) ' +
             'let destinationType = (p.destination.type) ' +
@@ -104,6 +103,46 @@
 
         var result = stmt.execute();
         res.json(result);
+    });
+
+    controller.get('treatmentsConnectionsPerCloudAndServiceTypes', function(req, res){
+
+        var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 2, maxLength: 2}) ' +
+                    'let sourceType = (p.source.type) ' +
+                    'let destinationType = (p.destination.type) ' +
+                    'filter (sourceType == "service") && (destinationType == "treatment") && (p.source.cloudType == @cloudType) && (p.source.serviceType == @serviceType) ' +
+                    'collect cloud = (p.source.cloudType), ' +
+                    'service = (p.source.serviceType), ' +
+                    'treatments = (p.destination.name) into paths ' +
+                    'return {cloud: cloud, service: service, treatments: treatments, numServices: length(paths)}';
+
+        var stmt = db._createStatement({query: query});
+
+        var cloudType = '';
+        var serviceType = '';
+
+        if(req.params('cloudType') !== null && typeof req.params('cloudType') !== 'undefined'){
+            cloudType = req.params('cloudType');
+        }
+
+        if(req.params('serviceType') !== null && typeof req.params('serviceType') !== 'undefined'){
+            serviceType = req.params('serviceType');
+        }
+
+        stmt.bind('cloudType', cloudType);
+        stmt.bind('serviceType', serviceType);
+
+        var result = stmt.execute();
+        res.json(result);
+
+    }).queryParam('cloudType', {
+        description: 'A valid service cloud type (IaaS|PaaS|SaaS)',
+        type: 'string',
+        required: true
+    }).queryParam('serviceType', {
+        description: 'A valid service type (Compute|File system|Blob storage|Middleware|Relational database|NoSQL database|Frontend|Backend)',
+        type: 'string',
+        required: true
     });
 
     /**

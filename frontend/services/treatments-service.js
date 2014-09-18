@@ -15,6 +15,9 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
     var risksTreatmentsMappingFromStorage = localStorageService.get('risksTreatmentsMapping') || {};
     var risksTreatmentsMapping = risksTreatmentsMappingFromStorage;
 
+    var treatmentsConnectedToCloudAndServiceTypesFromStorage = localStorageService.get('treatmentsConnectedToCloudAndServiceTypesFromStorage') || {};
+    var treatmentsConnectedToCloudAndServiceTypes = treatmentsConnectedToCloudAndServiceTypesFromStorage;
+
     var showTreatmentsValuesFromStorage = localStorageService.get('showTreatmentsValues') || {};
     var showTreatmentsValues = showTreatmentsValuesFromStorage;
 
@@ -123,6 +126,19 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
 
     this.getRisksTreatmentsMapping = function(){
         return risksTreatmentsMapping;
+    };
+
+    this.setTreatmentsConnectedToCloudAndServiceTypes = function(treatmentsConnections){
+        treatmentsConnectedToCloudAndServiceTypes = treatmentsConnections;
+    };
+
+    this.getTreatmentsConnectedToCloudAndServiceTypes = function(cloudType, serviceType){
+        var treatmentsConnections = treatmentsConnectedToCloudAndServiceTypes[cloudType + '/' + serviceType];
+        if(treatmentsConnections){
+            return treatmentsConnections;
+        } else {
+            return [];
+        }
     };
 
     this.getRisksFromTreatment = function(treatmentName){
