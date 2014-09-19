@@ -21,7 +21,7 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     var xmlTaAssetsAsObjectFromStorage = localStorageService.get('xmlTaAssetsAsObject') || {};
     var xmlTaAssetsAsObject = xmlTaAssetsAsObjectFromStorage;               // Parsed XML of Modelio file represented as object
 
-    var deploymentTypeFromStorage = localStorageService.get('isMulticloudDeployment') || true; // set the isMulticloudDeployment to be multicloudDeployment in default { options: isMulticloudDeployment = multicloudDeployment || multicloudReplication }
+    var deploymentTypeFromStorage = Boolean(localStorageService.get('isMulticloudDeployment')) || true; // set the isMulticloudDeployment to be multicloudDeployment in default { options: isMulticloudDeployment = multicloudDeployment || multicloudReplication }
     var isMulticloudDeployment = deploymentTypeFromStorage;
 
     var criticityBoundModelsFromStorage = localStorageService.get('criticityBoundModels') || {};

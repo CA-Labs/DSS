@@ -32,6 +32,7 @@ dssApp.filter('replaceDashWithDot', function() {
 dssApp.filter('multicloudReplication', function () {
     return function (input, isMulticloudDeployment) {
         var newInput = [];
+        console.log('filter called');
         if (isMulticloudDeployment) {
             return input;
         }

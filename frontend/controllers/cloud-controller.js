@@ -22,12 +22,39 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
     $scope.deploymentsProposals = [];
 
-    //$scope.$watch(function () {
-    //    return AssetsService.getDeploymentType();
-    //}, function (newVal, oldVal) {
-    //    console.log(newVal);
-    //    console.log(oldVal);
-    //});
+    $scope.$watch(function () {
+        return AssetsService.getDeploymentType();
+    }, function (newVal) {
+        $scope.isMulticloudDeployment = newVal;
+        console.log($scope.isMulticloudDeployment);
+    });
+
+    $scope.getDeploymentProposals = function () {
+        var deploymentsProposals = [];
+        if ($scope.isMulticloudDeployment) {
+            return $scope.deploymentsProposals;
+        }
+
+        _.each($scope.deploymentsProposals, function (deployment) {
+            var numberOfTaAssets = deployment.length - 1;
+
+            // fall back for case when there is only 1 TA
+            if (numberOfTaAssets == 0) {
+                return $scope.deploymentsProposals;
+            }
+
+            var haveTheSameProvider = 0;
+            for (var i = 0; i < numberOfTaAssets; i++) {
+                if (deployment[i].provider._id == deployment[i+1].provider._id) {
+                    haveTheSameProvider++;
+                }
+            }
+
+            if (haveTheSameProvider == numberOfTaAssets) deploymentsProposals.push(deployment);
+        });
+
+        return deploymentsProposals;
+    };
 
     $scope.xmlTaAsObject = AssetsService.getXmlTaObject();              // gets the Object representation of the Modelio loaded XML
 
@@ -91,8 +118,6 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
         // update xmlTAAsObject
         _.each($scope.xmlTaAsObject.resourceModelExtension.resourceContainer, function (resourceContainer) {
             _.each(proposal, function (proposalItem) {
-                console.log('resourceContainer', resourceContainer);
-                console.log('proposalItem', proposalItem);
                 if (resourceContainer._id == proposalItem.ta._id) {
                     resourceContainer._provider = proposalItem.provider.name;
                         if (_.has(resourceContainer, 'cloudResource')) {
