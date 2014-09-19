@@ -91,13 +91,15 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
         // update xmlTAAsObject
         _.each($scope.xmlTaAsObject.resourceModelExtension.resourceContainer, function (resourceContainer) {
             _.each(proposal, function (proposalItem) {
+                console.log('resourceContainer', resourceContainer);
+                console.log('proposalItem', proposalItem);
                 if (resourceContainer._id == proposalItem.ta._id) {
                     resourceContainer._provider = proposalItem.provider.name;
                         if (_.has(resourceContainer, 'cloudResource')) {
-                            resourceContainer.cloudResource._serviceName = proposal.service.name;
+                            resourceContainer.cloudResource._serviceName = proposalItem.service.name;
                         }
                         if (_.has(resourceContainer, 'cloudPlatform')) {
-                            resourceContainer.cloudPlatform._serviceName = proposal.service.name;
+                            resourceContainer.cloudPlatform._serviceName = proposalItem.service.name;
                         }
                 }
             });
