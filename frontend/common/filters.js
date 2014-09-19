@@ -88,9 +88,13 @@ dssApp.filter('unique', function() {
 
 dssApp.filter('byCloudAndServiceTypes', ['TreatmentsService', function(TreatmentsService){
     return function(items, cloudType, serviceType){
-        return items.filter(function(item){
-            return TreatmentsService.getTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType).indexOf(item.treatment.name) !== -1;
+        var newArray = [];
+        _.each(items, function (item) {
+            if (_.contains(TreatmentsService.getTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType), item.treatment.name)) {
+                newArray.push(item);
+            }
         });
+        return newArray;
     }
 }]);
 
