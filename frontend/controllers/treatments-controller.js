@@ -309,7 +309,6 @@ dssApp.controller('treatmentsController'
                             connections.push(treatments.treatments);
                         }
                     });
-                    console.log('connections', connections);
                     TreatmentsService.setTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType, connections);
                 }
             });
@@ -320,15 +319,10 @@ dssApp.controller('treatmentsController'
         var newArray = [];
         console.log($scope.potentialTreatmentsGrouped);
         _.each($scope.potentialTreatmentsGrouped, function (item) {
-            console.log('function', TreatmentsService.getTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType));
-            console.log('contains', (_.contains(TreatmentsService.getTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType), item.treatment.name)));
-            console.log('cloudType', cloudType, 'serviceType', serviceType);
             if (_.contains(TreatmentsService.getTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType), item.treatment.name)) {
                 newArray.push(item);
             }
         });
-        console.log('new results', newArray);
-
         return newArray;
     };
 
@@ -338,5 +332,11 @@ dssApp.controller('treatmentsController'
     }, function(newMapping, oldMapping){
         $scope.risksTreatmentsMapping = newMapping;
     });
+
+//            $scope.$watch($scope.potentialTreatment, function() {
+//                $timeout(function() {
+//                    element.multiselectfilter("updateCache");
+//                });
+//            });
 
 }]);

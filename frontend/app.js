@@ -3,7 +3,7 @@
 // bootstrap definitions and UI interactions
 $('#dssSlides').carousel('pause' ,{
     wrap: false,
-    interval: false,
+    interval: false
 }).on('slid.bs.carousel', function () {
 
     var topMenu = $('.topMenu');

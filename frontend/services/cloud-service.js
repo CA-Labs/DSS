@@ -215,7 +215,6 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
                 console.log('current treatment', treatmentName);
                 console.log('current risk', riskName);
-                riskNames.push(riskName);
 
                 _.each(treatment.taRelations, function(ta, index){
 
@@ -224,6 +223,8 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                     console.log('criticity value', criticityValue);
 
                     if(RisksService.isUnacceptable(riskName, ta._id)){
+
+                        riskNames.push(riskName);
 
                         console.log(riskName + '_' + ta._id + ' is unacceptable');
                         // Risk is unacceptable, check if service has some characteristic with a value below the criticity value

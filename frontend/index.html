@@ -302,13 +302,15 @@
                         <div ng-switch-when="IaaS">
                             <select label="treatments" class="form-control form assets-select item-select"
                                     ng-model="potentialTreatment" ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudType, taAsset.cloudResource._serviceType)">
+                                <option value="">-- Select treatment --</option>
                             </select>
                             <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment, taAsset)" style="width:19% !important;">Add</button>
                         </div>
                         <div ng-switch-when="PaaS">
                             <!--| byCloudAndServiceTypes:taAsset.cloudType:taAsset.cloudPlatform._serviceType"-->
-                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potenticalTreatment"
+                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment"
                                     ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudType, taAsset.cloudPlatform._serviceType)">
+                                <option value="">-- Select treatment --</option>
                             </select>
                             <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment, taAsset)" style="width:19% !important;">Add</button>
                         </div>
@@ -382,7 +384,7 @@
                         <div class="col-lg-11">
                             <table class="table" style="table-layout: fixed;">
                                 <tr>
-                                    <td ng-repeat="service in result">
+                                    <td ng-repeat="service in result track by $index">
                                         <div class="panel panel-default">
                                             <div class="panel-heading service-proposal-title">
                                                 <div ng-switch="service.ta.cloudType">
@@ -412,7 +414,7 @@
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-lg-12">
-                                                            <button class="btn btn-sm btn-default pull-right" style="margin-right: 30px;" ng-click="showHideDetails($event, service.service)">Characteristics</button>
+                                                            <button class="btn btn-sm btn-default pull-right" style="margin-right: 30px;" ng-click="showHideDetails($event, service.service, $index)">Characteristics</button>
                                                         </div>
                                                     </div>
                                                     <div class="service-proposal-description">
