@@ -136,6 +136,14 @@ $('body').on('mouseout', '.list-group > .selected-treatment', function(e){
     $(this).find('.remove-treatment').hide();
 });
 
+$('body').on('mouseover', '.remove-ta-treatment', function(e){
+    $(this).find('.remove-dragdrop').show();
+});
+
+$('body').on('mouseout', '.remove-ta-treatment', function(e){
+    $(this).find('.remove-dragdrop').hide();
+});
+
 //Select2
 $(function(){
     $('select[label="assets"]').select2({

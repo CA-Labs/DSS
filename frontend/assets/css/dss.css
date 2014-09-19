@@ -264,3 +264,12 @@ blockquote {
 
 .acceptable-risk {
   background-color: palegreen; }
+
+.specify-treatment-value {
+  margin-right: 20px; }
+
+.btn-margin {
+  margin-right: 7px;
+  margin-top: 7px;
+  position: relative;
+  top: -3px; }

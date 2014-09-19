@@ -300,12 +300,12 @@
                 <div id="{{ 'collapse' + $index }}" class="panel-collapse collapse">
                     <div class="panel-body" ng-switch="taAsset.cloudType">
                         <div ng-switch-when="IaaS">
-                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.treatment.name group by potentialTreatment.group for potentialTreatment in potentialTreatmentsGrouped | byCloudAndServiceTypes:taAsset.cloudType:taAsset.cloudResource._serviceType">
+                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.treatment.name group by potentialTreatment.group for potentialTreatment in potentialTreatmentsGrouped | byCloudAndServiceTypes:taAsset.cloudType:taAsset.cloudResource._serviceType">
                             </select>
                             <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment, taAsset)" style="width:19% !important;">Add</button>
                         </div>
                         <div ng-switch-when="PaaS">
-                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.treatment.name group by potentialTreatment.group for potentialTreatment in potentialTreatmentsGrouped | byCloudAndServiceTypes:taAsset.cloudType:taAsset.cloudPlatform._serviceType">
+                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.treatment.name group by potentialTreatment.group for potentialTreatment in potentialTreatmentsGrouped | byCloudAndServiceTypes:taAsset.cloudType:taAsset.cloudPlatform._serviceType">
                             </select>
                             <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment, taAsset)" style="width:19% !important;">Add</button>
                         </div>
@@ -319,28 +319,42 @@
             <div  ng-if="treatmentsSelected.length > 0">
                 <h4>Treatments Selected</h4>
             </div>
-            <a class="list-group-item selected-treatment dropzone-wrapper" href="#" ng-repeat="treatmentSelected in treatmentsSelected">
-                <input name="showTreatmentValues" bs-switch ng-model="showTreatmentValues[treatmentSelected.name]" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleTreatmentValues(treatmentSelected.name)"/>
+            <a class="list-group-item selected-treatment" href="#" ng-repeat="treatmentSelected in treatmentsSelected">
+                <span class="glyphicon glyphicon-remove remove-treatment" ng-click="removeTreatment(treatmentSelected)">&nbsp;</span>
+                <input name="showTreatmentValues" bs-switch ng-model="showTreatmentValues[treatmentSelected.name]" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleTreatmentValues(treatmentSelected.name)">
                 <label class="pull-right">Specify treatment value&nbsp;</label>
                 <strong>{{ treatmentSelected.name }}</strong>
-                <p>
-                    <i>Associated tangible assets:</i>
-                <ul>
-                    <li ng-repeat="taRelation in treatmentSelected.taRelations" ng-switch="taRelation.cloudType">
-                        <i ng-switch-when="IaaS">{{taRelation.cloudResource._serviceName + ' (IaaS)'}}</i>
-                        <i ng-switch-when="PaaS">{{taRelation.cloudPlatform._serviceName + ' (PaaS)'}}</i>
-                    </li>
-                </ul>
-                </p>
-                <span class="glyphicon glyphicon-remove remove-treatment" ng-click="removeTreatment(treatmentSelected)">&nbsp;</span>
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12">
+                        Associated risks:
+                        <div ng-repeat="risk in mitigatedRisks(treatmentSelected.name) | orderBy:'':true" style="display: inline-block;">
+                        <button class="btn btn-sm btn-margin">{{ risk }}</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12">
+                        Associated tangible assets:
+                        <div ng-repeat="taRelation in treatmentSelected.taRelations" ng-switch="taRelation.cloudType" class="remove-ta-treatment" style="display: inline-block;">
+                            <button ng-switch-when="IaaS" class="btn btn-sm btn-info btn-margin">
+                                {{ taRelation.cloudResource._serviceName }} (IaaS)
+                                <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected, taRelation)">&nbsp;</span></small></button>
+                            <button ng-switch-when="PaaS" class="btn btn-sm btn-info btn-margin">
+                                {{ taRelation.cloudPlatform._serviceName }} (PaaS)
+                                <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected, taRelation)">&nbsp;</span></small></button>
+                        </div>
+                    </div>
+                </div>
                 <div ng-switch="treatmentSelected.representation">
                     <div ng-switch-when="select">
+                        <br>
                         <select ng-show="showTreatmentValues[treatmentSelected.name]" label="treatmentValue" class="form-control" data-hash-key="treatmentSelected.name" ng-model="treatmentValue" ng-options="value for (key,value) in treatmentSelected.options | orderBy:'':true" ng-change="treatmentValueChanged(treatmentValue, treatmentSelected)"/>
                         <option value="" disabled selected>--- Select a value ---</option>
                         </select>
                         <br/>
                     </div>
                     <div ng-switch-when="radio">
+                        <br>
                         <div ng-init="addRadioValue(treatmentSelected.name)"></div>
                     </div>
                 </div>
