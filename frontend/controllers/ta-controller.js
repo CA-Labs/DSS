@@ -17,6 +17,10 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'Clo
     $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
     localStorageService.bind($scope, 'isMulticloudDeployment', $scope.isMulticloudDeployment);
 
+    $scope.setDeploymentType = function () {
+        AssetsService.setDeploymentType();
+    };
+
     // Kind of a hack: this is necessary when loading TA assets from local storage,
     // since the reference seems to be lost when setting the new TA assets in the service
     // variable.

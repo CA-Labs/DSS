@@ -17,10 +17,17 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     $scope.deploymentsProposals = CloudService.getDeploymentsProposals();
 
     $scope.servicesSelected = {};
-    localStorageService.bind($scope, 'servicesSelected', $scope.filteredProposals);
+    localStorageService.bind($scope, 'servicesSelected', $scope.servicesSelected);
 
     $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
     $scope.deploymentsProposals = [];
+
+    //$scope.$watch(function () {
+    //    return AssetsService.getDeploymentType();
+    //}, function (newVal, oldVal) {
+    //    console.log(newVal);
+    //    console.log(oldVal);
+    //});
 
     $scope.xmlTaAsObject = AssetsService.getXmlTaObject();              // gets the Object representation of the Modelio loaded XML
 
@@ -104,13 +111,15 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
      * @returns {boolean}
      */
     $scope.isSelected = function (listItem) {
-        var bool = false;
+        var bool = 0;
         _.each(listItem, function (item) {
             _.each($scope.servicesSelected, function (selected) {
-                bool = item.service._id == selected.service.id;
+                if (item.service._id == selected.service._id) {
+                    bool++;
+                }
             });
         });
-        return bool;
+        return (bool == $scope.servicesSelected.length);
     };
 
     /**
