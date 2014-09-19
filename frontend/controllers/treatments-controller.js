@@ -27,6 +27,7 @@ dssApp.controller('treatmentsController'
     $scope.taAssets = AssetsService.getTA();                                        // The list of the TA assets
 
     $scope.potentialTreatments = [];                                                // The list of potential treatments
+    $scope.potentialTreatmentsGrouped = [];
 
     $scope.treatmentsSelected = TreatmentsService.getTreatments();                  // The list of selected treatments
     localStorageService.bind($scope, 'treatmentsSelected', $scope.treatmentsSelected);
@@ -74,6 +75,13 @@ dssApp.controller('treatmentsController'
                     });
                 });
                 $scope.potentialTreatments = aux;
+                $scope.potentialTreatmentsGrouped = [];
+                _.each($scope.potentialTreatments, function(potentialTreatment){
+                    var mitigatedRisks = $scope.mitigatedRisks(potentialTreatment.name);
+                    _.each(mitigatedRisks, function(mitigatedRisk){
+                        $scope.potentialTreatmentsGrouped.push({treatment: potentialTreatment, group: mitigatedRisk});
+                    });
+                });
             }
         });
 
@@ -141,12 +149,20 @@ dssApp.controller('treatmentsController'
 
     /**
      * Adds a new treatment to the list of selected treatments,
-     * by calling the Treatments service.
+     * by calling the Treatments service. It also associates the
+     * corresponding TA asset to that treatment.
      * @param treatment The treatment to be added to the list of
      * selected treatments.
+     * @ta The TA asset to associate with the treatment.
      */
-    $scope.addTreatment = function(treatment){
+    $scope.addTreatment = function(treatment, ta){
         TreatmentsService.addTreatment(treatment);
+        // For some reason, updating service data takes a while
+        $timeout(function(){
+            TreatmentsService.addTAToTreatment(treatment, ta);
+            localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
+        }, 100);
+
     };
 
     /**
@@ -213,7 +229,7 @@ dssApp.controller('treatmentsController'
             }
         });
         return description;
-    }
+    };
 
     /**
      * Function used when the treatment is added to the treatmentSelected list to pass the value to the treatment as acepted.
@@ -234,6 +250,34 @@ dssApp.controller('treatmentsController'
             });
             TreatmentsService.setRisksTreatmentsMapping(mapping);
         }
+    });
+
+    _.each($scope.taAssets, function(taAsset){
+        var cloudType = taAsset.cloudType;
+        var serviceType = '';
+        switch(cloudType){
+            case 'IaaS':
+                serviceType = taAsset.cloudResource._serviceType;
+                break;
+            case 'PaaS':
+                serviceType = taAsset.cloudPlatform._serviceType;
+                break;
+            default:
+                break;
+        }
+        ArangoDBService.getTreatmentsConnectionsPerCloudAndServiceTypes(cloudType, serviceType, function(error, data){
+            if(error){
+                flash.error = 'Some error occurred while fetching treatments connections to services with certain cloud and service types';
+            } else {
+                var connections = [];
+                _.each(data._documents, function(treatments){
+                    if(connections.indexOf(treatments.treatments) == -1){
+                        connections.push(treatments.treatments);
+                    }
+                });
+                TreatmentsService.setTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType, connections);
+            }
+        });
     });
 
     $scope.$watch(function(){

@@ -137,14 +137,26 @@ $('body').on('mouseout', '.list-group > .selected-treatment', function(e){
 });
 
 //Select2
-$('select[label="assets"]').select2({
-    placeholder: 'Select an asset'
+$(function(){
+    $('select[label="assets"]').select2({
+        placeholder: 'Select an asset'
+    });
+
+    $('select[label="risks"]').select2({
+        placeholder: 'Select a risk'
+    });
+
+    // Don't know why, but with optgroups, angular generates an extra option with incorrect value "?"
+    var selects = $('select[label="treatments"]');
+    _.each(selects, function(select){
+        // Remove first extra option value
+        $(select).children().first().remove();
+        // Prepend a valid option value with no content
+        $(select).prepend('<option></option>');
+        // Generate select2
+        $(select).select2({
+            placeholder: 'Select a treatment'
+        });
+    });
 });
 
-$('select[label="risks"]').select2({
-    placeholder: 'Select a risk'
-});
-
-$('select[label="treatments"]').select2({
-    placeholder: 'Select a treatment'
-});

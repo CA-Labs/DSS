@@ -220,7 +220,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                 _.each(treatment.taRelations, function(ta, index){
 
                     console.log('taRelation' + index, ta);
-                    var criticityValue = TreatmentsService.showTreatmentValue(treatmentName) ? TreatmentsService.getTreatmentValue(treatmentName) : AssetsService.getTACriticityValue(ta._id);
+                    var criticityValue = TreatmentsService.showTreatmentValue(treatmentName) ? AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatmentName)) : AssetsService.getTACriticityValue(ta._id);
                     console.log('criticity value', criticityValue);
 
                     if(RisksService.isUnacceptable(riskName, ta._id)){
