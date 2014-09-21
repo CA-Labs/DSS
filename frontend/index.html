@@ -378,7 +378,7 @@
                             <div class="well service-proposal-score service-proposal-score-overall">
                                 <h6>Deployment<br/>Score</h6>
                                 <hr/>
-                                <h3>{{ result.overallScore * 10 | number: 0 }}</h3>
+                                <h3>{{ result.overallScore * 10.0 | number: 2 }}</h3>
                             </div>
                         </div>
                         <div class="col-lg-11">
@@ -408,7 +408,7 @@
                                                             <div class="well service-proposal-score">
                                                                 <h6>Score</h6>
                                                                 <hr/>
-                                                                <h3>{{ service.score * 100 | number: 0 }}</h3>
+                                                                <h3>{{ (service.score / service.total) * 10.0 | number: 2 }}</h3>
                                                             </div>
                                                         </div>
                                                     </div>

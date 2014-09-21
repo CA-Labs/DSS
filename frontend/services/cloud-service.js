@@ -121,12 +121,10 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
         var argsArray = [];
         if (!_.isEmpty(filteredProposals)) {
             _.each(filteredProposals, function (proposal, taAssetName) {
-
                 // attach ta to proposal
                 for (var i = 0; i < proposal.length; i++) {
                     proposal[i].ta = getTA(taAssets, taAssetName);
                 }
-
                 argsArray.push(proposal);
             });
 
@@ -135,20 +133,15 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
             // calculate overall score
             _.each(deploymentProposals, function(proposal, index) {
-                var sum = 0;
-                // get criticity value of the ta
+                var numerator = 0.0;
+                var denominator = 0.0;
                 _.each(proposal, function (service) {
-
-                    var criticityValue = 10*(25 - AssetsService.getTACriticityValue(service.ta._id))/(25-1);
-
-                    // get score of each service in the deployment and calcualte score
-                    service.criticityBasedScore = service.score * criticityValue;
-
-                    sum += service.criticityBasedScore;
+                    numerator += service.score;
+                    denominator += service.total;
                 });
 
                 // calulate overallScore
-                deploymentProposals[index].overallScore = (sum / proposal.length);
+                deploymentProposals[index].overallScore = numerator/denominator;
             });
             return deploymentProposals;
         }
@@ -227,15 +220,20 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                         riskNames.push(riskName);
 
                         console.log(riskName + '_' + ta._id + ' is unacceptable');
+
                         // Risk is unacceptable, check if service has some characteristic with a value below the criticity value
                         _.each(filteredProposals, function(proposals, taAssetName){
                             _.each(proposals, function(proposal, index){
+
                                 if(proposal.service.cloudType == ta.cloudType){
+
                                     console.log('Evaluating proposal ' + proposal.service.name);
                                     var characteristics = proposal.characteristics;
+
                                     _.each(characteristics, function(characteristic){
                                         console.log('Current service characteristic is ' + characteristic.name + ' with value ' + AssetsService.getInverseCriticityValue(characteristic.value));
                                         if(characteristic.name == treatmentName && AssetsService.getInverseCriticityValue(characteristic.value) < criticityValue){
+
                                             // This characteristic is mitigating the risk
                                             if(filteredProposals[taAssetName][index].score){
                                                 console.log(characteristic.name + ' is mitigating risk ' + riskName);
@@ -247,9 +245,12 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                                                 console.log(filteredProposals[taAssetName][index].score)
                                             }
                                             console.log('Incrementing score in service ' + proposal.service.name + ' for risk ' + riskName);
+
                                         }
                                     });
+
                                 }
+
                             });
                         });
                     } else {
@@ -276,9 +277,10 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
             _.each(filteredProposals, function(proposals, taAssetName){
                 _.each(proposals, function(proposal, index){
                     if(_.isNumber(proposal.score)){
-                        filteredProposals[taAssetName][index].score = filteredProposals[taAssetName][index].score / (riskNames.length * 1.0);
+                        filteredProposals[taAssetName][index].total = riskNames.length;
                     } else {
                         filteredProposals[taAssetName][index].score = 0.0;
+                        filteredProposals[taAssetName][index].total = riskNames.length;
                     }
                 });
             });
