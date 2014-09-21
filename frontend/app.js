@@ -39,14 +39,13 @@ $('#dssSlides').carousel('pause' ,{
     } else if (slideClass.hasClass('treatments-slide')) {
         topMenu.find('.treatments-slide blockquote p').addClass('active');
         stickyBottom.find('.slide-prev').prop('disabled', false);
-        stickyBottom.find('.slide-next').prop('disabled', false);
-        stickyBottom.find('.slide-next').css('display', 'inline');
-        cloudServicesButton.css('display', 'none');
+        stickyBottom.find('.slide-next').css('display', 'none');
+        cloudServicesButton.css('display', 'inline');
     } else {
         topMenu.find('.services-slide blockquote p').addClass('active');
         stickyBottom.find('.slide-prev').prop('disabled', false);
         stickyBottom.find('.slide-next').css('display', 'none');
-        cloudServicesButton.css('display', 'inline  ');
+        cloudServicesButton.css('display', 'none');
     }
 
 });
