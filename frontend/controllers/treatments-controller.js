@@ -276,7 +276,7 @@ dssApp.controller('treatmentsController'
                         connections.push(treatments.treatments);
                     }
                 });
-                console.log('connections', connections);
+                // console.log('connections', connections);
                 TreatmentsService.setTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType, connections);
             }
         });
@@ -317,7 +317,7 @@ dssApp.controller('treatmentsController'
 
     $scope.potentialTreatmentsGroupedAndFiltered = function (cloudType, serviceType) {
         var newArray = [];
-        console.log($scope.potentialTreatmentsGrouped);
+        // console.log($scope.potentialTreatmentsGrouped);
         _.each($scope.potentialTreatmentsGrouped, function (item) {
             if (_.contains(TreatmentsService.getTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType), item.treatment.name)) {
                 newArray.push(item);

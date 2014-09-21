@@ -51,8 +51,8 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
                     i++;
                 });
                 if(error){
-                    flash.error = errorMessage + '.';
-                    //$event.stopPropagation();
+                    // flash.error = errorMessage + '.';
+                    // $event.stopPropagation();
                 }
             }
             else if(currentSlide.hasClass('treatments-slide')){

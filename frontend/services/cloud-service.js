@@ -206,20 +206,20 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
             _.each(treatmentRisks, function(riskName){
 
-                console.log('current treatment', treatmentName);
-                console.log('current risk', riskName);
+                // console.log('current treatment', treatmentName);
+                // console.log('current risk', riskName);
 
                 _.each(treatment.taRelations, function(ta, index){
 
-                    console.log('taRelation' + index, ta);
+                    // console.log('taRelation' + index, ta);
                     var criticityValue = TreatmentsService.showTreatmentValue(treatmentName) ? AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatmentName)) : AssetsService.getTACriticityValue(ta._id);
-                    console.log('criticity value', criticityValue);
+                    // console.log('criticity value', criticityValue);
 
                     if(RisksService.isUnacceptable(riskName, ta._id)){
 
                         riskNames.push(riskName);
 
-                        console.log(riskName + '_' + ta._id + ' is unacceptable');
+                        // console.log(riskName + '_' + ta._id + ' is unacceptable');
 
                         // Risk is unacceptable, check if service has some characteristic with a value below the criticity value
                         _.each(filteredProposals, function(proposals, taAssetName){
@@ -227,24 +227,24 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
                                 if(proposal.service.cloudType == ta.cloudType){
 
-                                    console.log('Evaluating proposal ' + proposal.service.name);
+                                    // console.log('Evaluating proposal ' + proposal.service.name);
                                     var characteristics = proposal.characteristics;
 
                                     _.each(characteristics, function(characteristic){
-                                        console.log('Current service characteristic is ' + characteristic.name + ' with value ' + AssetsService.getInverseCriticityValue(characteristic.value));
+                                        // console.log('Current service characteristic is ' + characteristic.name + ' with value ' + AssetsService.getInverseCriticityValue(characteristic.value));
                                         if(characteristic.name == treatmentName && AssetsService.getInverseCriticityValue(characteristic.value) < criticityValue){
 
                                             // This characteristic is mitigating the risk
                                             if(filteredProposals[taAssetName][index].score){
-                                                console.log(characteristic.name + ' is mitigating risk ' + riskName);
+                                                // console.log(characteristic.name + ' is mitigating risk ' + riskName);
                                                 filteredProposals[taAssetName][index].score++;
-                                                console.log(filteredProposals[taAssetName][index].score)
+                                                // console.log(filteredProposals[taAssetName][index].score)
                                             } else {
-                                                console.log(characteristic.name + ' is mitigating risk ' + riskName);
+                                                // console.log(characteristic.name + ' is mitigating risk ' + riskName);
                                                 filteredProposals[taAssetName][index].score = 1.0;
-                                                console.log(filteredProposals[taAssetName][index].score)
+                                                // console.log(filteredProposals[taAssetName][index].score)
                                             }
-                                            console.log('Incrementing score in service ' + proposal.service.name + ' for risk ' + riskName);
+                                            // console.log('Incrementing score in service ' + proposal.service.name + ' for risk ' + riskName);
 
                                         }
                                     });
@@ -254,11 +254,11 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                             });
                         });
                     } else {
-                        console.log(riskName + '_' + ta._id + ' is acceptable');
+                        // console.log(riskName + '_' + ta._id + ' is acceptable');
                         _.each(filteredProposals, function(proposals, taAssetName){
                             _.each(proposals, function(proposal, index){
                                 if(proposal.service.cloudType == ta.cloudType){
-                                    console.log('Incrementing score in service ' + proposal.service.name + ' for risk ' + riskName);
+                                    // console.log('Incrementing score in service ' + proposal.service.name + ' for risk ' + riskName);
                                     if(filteredProposals[taAssetName][index].score){
                                         filteredProposals[taAssetName][index].score++;
                                     } else {

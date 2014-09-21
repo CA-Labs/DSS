@@ -26,7 +26,7 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
         return AssetsService.getDeploymentType();
     }, function (newVal) {
         $scope.isMulticloudDeployment = newVal;
-        console.log($scope.isMulticloudDeployment);
+        // console.log($scope.isMulticloudDeployment);
     });
 
     $scope.getDeploymentProposals = function () {

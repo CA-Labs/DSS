@@ -350,8 +350,8 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     this.isRiskUnacceptable = function(riskLikelihood, riskConsequence, taAssetId){
         if(criticityBoundModels[taAssetId]){
             var criticityValue = criticityBoundModels[taAssetId];
-            console.log('criticity value is ' + criticityValue);
-            console.log('risk L*C is ' + Math.ceil(Math.ceil(riskLikelihood/2) * Math.ceil(riskConsequence/2)));
+            // console.log('criticity value is ' + criticityValue);
+            // console.log('risk L*C is ' + Math.ceil(Math.ceil(riskLikelihood/2) * Math.ceil(riskConsequence/2)));
             return Math.ceil(Math.ceil(riskLikelihood/2) * Math.ceil(riskConsequence/2)) >= criticityValue;
         } else {
             // Default behaviour
