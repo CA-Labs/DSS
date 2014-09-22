@@ -197,7 +197,7 @@
                 <p ng-switch-when="IaaS" style="margin-top: 10px;">{{ taAsset.cloudResource._serviceType }}</p>
                 <p ng-switch-when="PaaS" style="margin-top: 10px;">{{ taAsset.cloudPlatform._serviceType }}</p>
                 <p>
-                    <div style="display: inline-block; margin-left: 10px; position: relative; top: -5px;">Importance:</div>
+                    <div style="display: inline-block; margin-left: 10px; position: relative; top: -5px;">Risk Susceptibility: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-content="Acceptable Composite Risk Index" popup-right></i></div>
                     <div on-risks-type="criticity" data-type="criticity">
                         <div style="width: 60%; margin-left: 25px; margin-right: 25px; display: inline-block;" slider data-model="criticity" ng-model="criticityBoundModels[taAsset._id]" start="1" end="25" step="2.4"></div>
                         <span class="label label-default secondary radius right" style="position: relative; top: -5px;">{{ 10*(25-criticityBoundModels[taAsset._id])/(25-1) | number:0 }}</span>
@@ -230,7 +230,7 @@
                     <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
                     <br/>
                     <div class="col-lg-6" style="margin-top: 10px;" >
-                        <p style="margin-bottom: 15px">Likelihood: </p>
+                        <p style="margin-bottom: 15px" class="popover-enabled">Likelihood: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Probability/frequency of risk to occur" popup-right></i></p>
                         <div on-risks-type="simple" data-type="likelihood">
                             <div style="width: 80%; margin-bottom: 15px;" slider data-model="simple" data-hash-key="{{risk.destination.name + '/likelihood'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '/likelihood']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
                                 <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
@@ -238,7 +238,7 @@
                         </div>
                     </div>
                     <div class="col-lg-6" style="margin-top: 10px">
-                        <p style="margin-bottom: 15px;">Consequence :</p>
+                        <p style="margin-bottom: 15px;">Consequence: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Impact of risk on asset" popup-right></i></p>
                         <div on-risks-type="simple" data-type="consequence">
                             <div style="width: 80%; margin-bottom: 15px;" slider data-model="simple" data-hash-key="{{risk.destination.name + '/consequence'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '/consequence']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
                                 <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
@@ -257,7 +257,7 @@
                         </div>
                         <br/>
                         <div class="col-lg-6" style="margin-top: 10px; display: block;">
-                            <p style="margin-bottom: 15px">Likelihood: </p>
+                            <p style="margin-bottom: 15px">Likelihood: <i class="glyphicon glyphicon-info-sign"  data-toggle="popover" data-placement="top" data-content="Probability/frequency of risk to occur" popup-right></i> </p>
                             <div on-risks-type="multiple" data-type="likelihood" ng-switch="taAsset.cloudType">
                                 <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-model="multiple" data-hash-key="{{$parent.risk.destination.name + '/' + taAsset._id + '/likelihood'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '/' + taAsset._id + '/likelihood']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
                                     <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
@@ -268,7 +268,7 @@
                             </div>
                         </div>
                         <div class="col-lg-6" style="margin-top: 10px; display: block">
-                            <p style="margin-bottom: 15px;">Consequence :</p>
+                            <p style="margin-bottom: 15px;">Consequence: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Impact of risk on asset" popup-right></i></p>
                             <div on-risks-type="multiple" data-type="consequence" ng-switch="taAsset.cloudType">
                                 <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-model="multiple" data-hash-key="{{$parent.risk.destination.name + '/' + taAsset._id + '/consequence'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '/' + taAsset._id + '/consequence']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
                                     <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
@@ -414,7 +414,7 @@
                                                     </div>
                                                     <div class="row">
                                                         <div class="col-lg-12">
-                                                            <button class="btn btn-sm btn-default pull-right" style="margin-right: 30px;" ng-click="showHideDetails($event, service.service, $index)">Characteristics</button>
+                                                            <button class="btn btn-sm btn-default pull-right" style="margin-right: 30px;" ng-click="showHideDetails($event, service.service, $index)">Details</button>
                                                         </div>
                                                     </div>
                                                     <div class="service-proposal-description">

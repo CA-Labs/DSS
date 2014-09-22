@@ -235,8 +235,8 @@ blockquote {
 
 .service-proposal-panel {
   &:hover {
-    border-color: #dce4ec;
-    box-shadow: -5px 0 5px -5px #666, 5px 0 5px -5px #666;
+    border-color: rgba(44, 62, 80, 0.6);
+//    box-shadow: -5px 0 5px -5px #666, 5px 0 5px -5px #666;
   }
   margin-bottom: 5px;
   border: 2px solid #ecf0f1;
@@ -277,7 +277,7 @@ blockquote {
 
 .service-proposal-score {
   margin: {
-    right: 30px;
+//    right: 30px;
     top: 15px;
   }
   padding: 14px;
@@ -324,7 +324,7 @@ blockquote {
 }
 
 .service-selected {
-  border: 2px solid #3498db;
+  border: 2px solid rgb(44, 62, 80);
 }
 
 .unacceptable-risk {
