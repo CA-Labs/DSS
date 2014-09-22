@@ -192,8 +192,7 @@ blockquote {
   margin-bottom: 5px;
   border: 2px solid #ecf0f1; }
   .service-proposal-panel:hover {
-    border-color: #dce4ec;
-    box-shadow: -5px 0 5px -5px #666, 5px 0 5px -5px #666; }
+    border-color: rgba(44, 62, 80, 0.6); }
 
 .service-proposal-title {
   background: #fff !important;
@@ -222,7 +221,6 @@ blockquote {
   text-align: center; }
 
 .service-proposal-score {
-  margin-right: 30px;
   margin-top: 15px;
   padding: 14px; }
   .service-proposal-score h3, .service-proposal-score h6 {
@@ -257,7 +255,7 @@ blockquote {
   margin: 0 auto; }
 
 .service-selected {
-  border: 2px solid #3498db; }
+  border: 2px solid #2c3e50; }
 
 .unacceptable-risk {
   background-color: indianred; }
