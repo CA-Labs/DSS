@@ -207,8 +207,6 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
         });
         if(index >= 0){
             if(treatments[index].taRelations){
-                console.log(index);
-                console.log(treatments);
                 var found = treatments[index].taRelations.filter(function(taRelation){
                     return taRelation._id == ta._id;
                 }).length > 0;
