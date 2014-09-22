@@ -300,17 +300,17 @@
                 <div id="{{ 'collapse' + $index }}" class="panel-collapse collapse">
                     <div class="panel-body" ng-switch="taAsset.cloudType">
                         <div ng-switch-when="IaaS">
-                            <select label="treatments" class="form-control form assets-select item-select"
-                                    ng-model="potentialTreatment" ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudType, taAsset.cloudResource._serviceType)">
-                                <option value="">-- Select treatment --</option>
+                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment"
+                                    ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudType, taAsset.cloudResource._serviceType)" select2>
+                                <option></option>
                             </select>
                             <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment, taAsset)" style="width:19% !important;">Add</button>
                         </div>
                         <div ng-switch-when="PaaS">
                             <!--| byCloudAndServiceTypes:taAsset.cloudType:taAsset.cloudPlatform._serviceType"-->
                             <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment"
-                                    ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudType, taAsset.cloudPlatform._serviceType)">
-                                <option value="">-- Select treatment --</option>
+                                    ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudType, taAsset.cloudPlatform._serviceType)" select2>
+                                <option></option>
                             </select>
                             <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment, taAsset)" style="width:19% !important;">Add</button>
                         </div>
