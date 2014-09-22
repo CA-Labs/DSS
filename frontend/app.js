@@ -74,6 +74,7 @@ dssApp.run(['AssetsService', 'RisksService', 'TreatmentsService', 'localStorageS
     TreatmentsService.loadingTreatmentsValuesFromLocalStorage(true);
     AssetsService.setBSOIA(localStorageService.get('bsoiaAssetsSelected') ? localStorageService.get('bsoiaAssetsSelected') : []);
     AssetsService.setTOIA(localStorageService.get('toiaAssetsSelected') ? localStorageService.get('toiaAssetsSelected') : []);
+    RisksService.setRiskBoundModels(localStorageService.get('riskBoundModels') ? localStorageService.get('riskBoundModels') : {});
     RisksService.setSimpleRisksLikelihoodConsequence(localStorageService.get('simpleRisksLikelihoodConsequence') ? localStorageService.get('simpleRisksLikelihoodConsequence') : {});
     RisksService.setMultipleRisksLikelihoodConsequence(localStorageService.get('multipleRisksLikelihoodConsequence') ? localStorageService.get('multipleRisksLikelihoodConsequence') : {});
     RisksService.setRisks(localStorageService.get('risksSelected') ? localStorageService.get('risksSelected') : []);

@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'RisksService', 'CloudService', 'localStorageService', function($scope, ArangoDBService, TreatmentsService, AssetsService, RisksService, CloudService, localStorageService){
+dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'RisksService', 'CloudService', 'localStorageService', function($scope, $rootScope, $timeout, ArangoDBService, TreatmentsService, AssetsService, RisksService, CloudService, localStorageService){
 
     $scope.ta = AssetsService.getTA();                                  // The selected TA assets loaded from the cloud descriptor xml file
 
@@ -26,8 +26,25 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
         return AssetsService.getDeploymentType();
     }, function (newVal) {
         $scope.isMulticloudDeployment = newVal;
-        // console.log($scope.isMulticloudDeployment);
     });
+
+    $scope.$watch(function(){
+        return CloudService.getProposals();
+    }, function(newVal, oldVal){
+        $scope.proposals = newVal;
+    }, true);
+
+    $scope.$watch(function(){
+        return CloudService.getFilteredProposals();
+    }, function(newVal, oldVal){
+        $scope.filteredProposals = newVal;
+    }, true);
+
+    $scope.$watch(function(){
+        return CloudService.getDeploymentsProposals();
+    }, function(newVal, oldVal){
+        $scope.deploymentsProposals = newVal;
+    }, true);
 
     $scope.getDeploymentProposals = function () {
         var deploymentsProposals = [];
@@ -72,6 +89,10 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
                     } else {
                         // console.log(data._documents);
                         CloudService.setTAProposals(ta, data._documents);
+                        $timeout(function(){
+                            CloudService.filterProposalsByTreatments();
+                            CloudService.filterProposalsByThresholds();
+                        }, 100);
                     }
                 });
             });
@@ -81,7 +102,6 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     $scope.$watch(function(){
         return CloudService.getFilteredProposals();
     }, function(newProposals){
-        console.log(newProposals);
         $scope.filteredProposals = newProposals;
     }, true);
 

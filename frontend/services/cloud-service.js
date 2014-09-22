@@ -6,10 +6,6 @@
 
 dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsService', 'localStorageService', function(AssetsService, RisksService, TreatmentsService, localStorageService){
 
-    var taAssets = AssetsService.getTA();
-
-    var treatments = TreatmentsService.getTreatments();
-
     var proposalsFromLocalStorage = localStorageService.get('proposals') || {};
     var proposals = proposalsFromLocalStorage;
 
@@ -118,6 +114,9 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
 
     this.getDeploymentsProposals = function () {
+
+        var taAssets = AssetsService.getTA();
+
         var argsArray = [];
         if (!_.isEmpty(filteredProposals)) {
             _.each(filteredProposals, function (proposal, taAssetName) {
@@ -148,6 +147,10 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
     };
 
     this.filterProposalsByTreatments = function(){
+
+        var taAssets = AssetsService.getTA();
+        var treatments = TreatmentsService.getTreatments();
+
         filteredProposals = {};
         var treatmentsFound = 0;
         _.each(taAssets, function(ta){
@@ -189,6 +192,8 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
     };
 
     this.filterProposalsByThresholds = function(){
+
+        var treatments = TreatmentsService.getTreatments();
 
         // Reset scores
         _.each(filteredProposals, function(proposals, taAssetName){
