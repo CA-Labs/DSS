@@ -34,3 +34,16 @@ dssApp.directive('popupRight', ['$timeout', function($timeout){
         }
     };
 }]);
+
+dssApp.directive('popupDown', ['$timeout', function($timeout){
+    return {
+        restrict: 'A',
+        scope: false,
+        link: function(scope, element, attrs){
+            element.popover({
+                trigger: 'hover',
+                placement: 'bottom'
+            });
+        }
+    };
+}]);
