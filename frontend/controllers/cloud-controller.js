@@ -73,7 +73,11 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
         return deploymentsProposals;
     };
 
-    $scope.xmlTaAsObject = AssetsService.getXmlTaObject();              // gets the Object representation of the Modelio loaded XML
+    $scope.$watch(function(){
+        return AssetsService.getXmlTaObject();
+    }, function(newVal, oldVal){
+        $scope.xmlTaAsObject = newVal;          // gets the Object representation of the Modelio loaded XML
+    }, true);
 
     $scope.$watch(function(){
         return AssetsService.getTA();
