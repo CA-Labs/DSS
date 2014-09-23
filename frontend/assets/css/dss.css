@@ -237,6 +237,8 @@ blockquote {
   .service-proposal-score-overall h6 {
     font-size: 13px;
     font-size: 0.7vw; }
+  .service-proposal-score-overall h3 {
+    font-size: 1.5vw; }
 
 .service-proposal-score-positive {
   width: 0;
