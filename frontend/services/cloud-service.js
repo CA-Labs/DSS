@@ -204,6 +204,25 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
         var riskNames = [];
 
+        // No treatments selected, all unacceptable risks are then unmitigated risks
+        if(treatments.length == 0){
+            var unmitigatedRisks = [];
+            var unacceptableRisksPerTA = RisksService.getUnacceptableRisks();
+            _.each(unacceptableRisksPerTA, function(risks, ta){
+                _.each(risks, function(risk){
+                    if(unmitigatedRisks.indexOf(risk) == -1){
+                        unmitigatedRisks.push(risk);
+                    }
+                });
+            });
+            _.each(filteredProposals, function(proposals, taAssetName){
+                _.each(proposals, function(proposal, index){
+                    filteredProposals[taAssetName][index].unmitigatedRisks = unmitigatedRisks;
+                });
+            });
+            return;
+        }
+
         _.each(treatments, function(treatment){
 
             var treatmentName = treatment.name;
