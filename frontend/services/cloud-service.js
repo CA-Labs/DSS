@@ -140,7 +140,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                 });
 
                 // calulate overallScore
-                deploymentProposals[index].overallScore = numerator/denominator;
+                deploymentProposals[index].overallScore = (numerator/denominator) || 0.0;
             });
             return deploymentProposals;
         }
@@ -278,18 +278,16 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
         });
 
         // Normalization
-        if(riskNames.length > 0){
-            _.each(filteredProposals, function(proposals, taAssetName){
-                _.each(proposals, function(proposal, index){
-                    if(_.isNumber(proposal.score)){
-                        filteredProposals[taAssetName][index].total = riskNames.length;
-                    } else {
-                        filteredProposals[taAssetName][index].score = 0.0;
-                        filteredProposals[taAssetName][index].total = riskNames.length;
-                    }
-                });
+        _.each(filteredProposals, function(proposals, taAssetName){
+            _.each(proposals, function(proposal, index){
+                if(_.isNumber(proposal.score)){
+                    filteredProposals[taAssetName][index].total = riskNames.length;
+                } else {
+                    filteredProposals[taAssetName][index].score = 0.0;
+                    filteredProposals[taAssetName][index].total = riskNames.length;
+                }
             });
-        }
+        });
 
         // console.log(filteredProposals);
 

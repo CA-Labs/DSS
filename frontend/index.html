@@ -408,7 +408,7 @@
                                                             <div class="well service-proposal-score">
                                                                 <h6>Score</h6>
                                                                 <hr/>
-                                                                <h3>{{ (service.score / service.total) * 10.0 | number: 2 }}</h3>
+                                                                <h3>{{ ((service.score / service.total) || 0.0) * 10.0 | number: 2 }}</h3>
                                                             </div>
                                                         </div>
                                                     </div>
