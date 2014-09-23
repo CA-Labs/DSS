@@ -422,6 +422,14 @@
                                                             <h4>Description</h4>
                                                             <p>{{service.provider.description}}</p>
                                                             <hr/>
+                                                            <h4>Provider Information</h4>
+                                                            <ul>
+                                                                <li>Year founded: {{ service.provider.year_founding || "-" }}</li>
+                                                                <li>Number of Employees: {{ service.provider.number_of_employees || "-" }}</li>
+                                                                <li>Headquarters: {{ service.provider.headquarters || "-" }}</li>
+                                                                <li>Website: {{ service.provider.website || "-" }}</li>
+                                                            </ul>
+                                                            <hr/>
                                                             <h4>Service Characteristics Values</h4>
                                                             <ul>
                                                                 <li ng-repeat="characteristic in service.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>
