@@ -427,7 +427,7 @@
                                                                 <li>Year founded: {{ service.provider.year_founding || "-" }}</li>
                                                                 <li>Number of Employees: {{ service.provider.number_of_employees || "-" }}</li>
                                                                 <li>Headquarters: {{ service.provider.headquarters || "-" }}</li>
-                                                                <li>Website: {{ service.provider.website || "-" }}</li>
+                                                                <li>Website: <a href="{{ service.provider.website }}">{{ service.provider.website || "-" }}</a></li>
                                                             </ul>
                                                             <hr/>
                                                             <h4>Service Characteristics Values</h4>
