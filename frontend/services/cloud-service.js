@@ -234,12 +234,14 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
                                     // console.log('Evaluating proposal ' + proposal.service.name);
                                     var characteristics = proposal.characteristics;
+                                    var riskMitigated = false;
 
                                     _.each(characteristics, function(characteristic){
                                         // console.log('Current service characteristic is ' + characteristic.name + ' with value ' + AssetsService.getInverseCriticityValue(characteristic.value));
                                         if(characteristic.name == treatmentName && AssetsService.getInverseCriticityValue(characteristic.value) < criticityValue){
 
                                             // This characteristic is mitigating the risk
+                                            riskMitigated = true;
                                             if(filteredProposals[taAssetName][index].score){
                                                 // console.log(characteristic.name + ' is mitigating risk ' + riskName);
                                                 filteredProposals[taAssetName][index].score++;
@@ -253,6 +255,20 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
                                         }
                                     });
+
+                                    if(!riskMitigated){
+                                        // Store what risks are unmitigated for that service
+                                        if(filteredProposals[taAssetName][index].unmitigatedRisks){
+                                            if(filteredProposals[taAssetName][index].unmitigatedRisks.indexOf(riskName) == -1){
+                                                filteredProposals[taAssetName][index].unmitigatedRisks.push(riskName);
+                                            }
+                                        } else {
+                                            filteredProposals[taAssetName][index].unmitigatedRisks = [];
+                                            if(filteredProposals[taAssetName][index].unmitigatedRisks.indexOf(riskName) == -1){
+                                                filteredProposals[taAssetName][index].unmitigatedRisks.push(riskName);
+                                            }
+                                        }
+                                    }
 
                                 }
 

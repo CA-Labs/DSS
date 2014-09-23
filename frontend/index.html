@@ -434,6 +434,11 @@
                                                             <ul>
                                                                 <li ng-repeat="characteristic in service.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>
                                                             </ul>
+                                                            <hr/>
+                                                            <h4 ng-show="service.unmitigatedRisks">Unmitigated Risks</h4>
+                                                            <ul>
+                                                                <li ng-repeat="unmitigatedRisk in service.unmitigatedRisks | orderBy: ''">{{unmitigatedRisk}}</li>
+                                                            </ul>
                                                         </div>
                                                     </div>
                                                 </div>

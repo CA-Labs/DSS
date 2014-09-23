@@ -14,13 +14,12 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
     $scope.filteredProposals = CloudService.getFilteredProposals();
     localStorageService.bind($scope, 'filteredProposals', $scope.filteredProposals);
 
-    $scope.deploymentsProposals = CloudService.getDeploymentsProposals();
+    $scope.deploymentsProposals = [];
 
     $scope.servicesSelected = {};
     localStorageService.bind($scope, 'servicesSelected', $scope.servicesSelected);
 
     $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
-    $scope.deploymentsProposals = [];
 
     $scope.$watch(function () {
         return AssetsService.getDeploymentType();
