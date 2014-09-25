@@ -8,19 +8,14 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
 
     var risks = [];
 
-    var risksLikelihoodConsequenceFromStorage = localStorageService.get('simpleRisksLikelihoodConsequence') || {};
-    var risksLikelihoodConsequence = risksLikelihoodConsequenceFromStorage;                                                                     //Likelihood/consequences values for each risk (as a whole) of the form
-                                                                                                                                                //riskname_likelihood/riskname_consequence
+    var risksLikelihoodConsequenceFromStorage = localStorageService.get('simpleRisksLikelihoodConsequence') || {};                              //Likelihood/consequences values for each risk (as a whole) of the form
+    var risksLikelihoodConsequence = risksLikelihoodConsequenceFromStorage;                                                                     //riskname_likelihood/riskname_consequence
 
-    var risksTALikelihoodConsequenceFromStorage = localStorageService.get('multipleRisksLikelihoodConsequence') || {};
-    var risksTALikelihoodConsequence = risksTALikelihoodConsequenceFromStorage;                                                                 //Likelihood/consequences values for each TA and risk of the form
-                                                                                                                                                //riskname_taAssetName_likelihood/riskname_taAssetName_consequence
+    var risksTALikelihoodConsequenceFromStorage = localStorageService.get('multipleRisksLikelihoodConsequence') || {};                          //Likelihood/consequences values for each TA and risk of the form
+    var risksTALikelihoodConsequence = risksTALikelihoodConsequenceFromStorage;                                                                 //riskname_taAssetName_likelihood/riskname_taAssetName_consequence
 
-    var risksLikelihoodConsequenceAcceptanceFromStorage = localStorageService.get('simpleRisksLikelihoodConsequenceAcceptance') || {};          //Likelihood/consequence acceptance values for each risk (as a whole) of the form
-    var risksLikelihoodConsequenceAcceptance = risksLikelihoodConsequenceAcceptanceFromStorage;                                                 //riskname_likelihood_acceptance/riskname_consequence_acceptance
-
-    var risksTALikelihoodConsequenceAcceptanceFromStorage = localStorageService.get('multipleRisksLikelihoodConsequenceAcceptance') || {};      //Likelihood/consequences acceptance values for each TA and risk of the form
-    var risksTALikelihoodConsequenceAcceptance = risksTALikelihoodConsequenceAcceptanceFromStorage;                                             //riskname_taAssetName_likelihood_acceptance/riskname_taAssetName_consequence_acceptance
+    var riskBoundModelsFromStorage = localStorageService.get('riskBoundModels') || {};                                                          //Risk bound models
+    var riskBoundModels = riskBoundModelsFromStorage;
 
     var unacceptableRisks = {};                                                                                                                 //List of unacceptable risks per tangible asset
 
@@ -293,6 +288,14 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         _.each(unacceptableRisks, function(values, key){
             unacceptableRisks[key] = [];
         });
+    };
+
+    this.getRiskBoundModels = function(){
+        return riskBoundModels;
+    };
+
+    this.setRiskBoundModels = function(riskBoundModelsFromStorage){
+        riskBoundModels = riskBoundModelsFromStorage;
     };
 
     this.isUnacceptable = function(riskName, taAssetId){

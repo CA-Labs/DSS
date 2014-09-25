@@ -39,14 +39,13 @@ $('#dssSlides').carousel('pause' ,{
     } else if (slideClass.hasClass('treatments-slide')) {
         topMenu.find('.treatments-slide blockquote p').addClass('active');
         stickyBottom.find('.slide-prev').prop('disabled', false);
-        stickyBottom.find('.slide-next').prop('disabled', false);
-        stickyBottom.find('.slide-next').css('display', 'inline');
-        cloudServicesButton.css('display', 'none');
+        stickyBottom.find('.slide-next').css('display', 'none');
+        cloudServicesButton.css('display', 'inline');
     } else {
         topMenu.find('.services-slide blockquote p').addClass('active');
         stickyBottom.find('.slide-prev').prop('disabled', false);
         stickyBottom.find('.slide-next').css('display', 'none');
-        cloudServicesButton.css('display', 'inline  ');
+        cloudServicesButton.css('display', 'none');
     }
 
 });
@@ -75,6 +74,7 @@ dssApp.run(['AssetsService', 'RisksService', 'TreatmentsService', 'localStorageS
     TreatmentsService.loadingTreatmentsValuesFromLocalStorage(true);
     AssetsService.setBSOIA(localStorageService.get('bsoiaAssetsSelected') ? localStorageService.get('bsoiaAssetsSelected') : []);
     AssetsService.setTOIA(localStorageService.get('toiaAssetsSelected') ? localStorageService.get('toiaAssetsSelected') : []);
+    RisksService.setRiskBoundModels(localStorageService.get('riskBoundModels') ? localStorageService.get('riskBoundModels') : {});
     RisksService.setSimpleRisksLikelihoodConsequence(localStorageService.get('simpleRisksLikelihoodConsequence') ? localStorageService.get('simpleRisksLikelihoodConsequence') : {});
     RisksService.setMultipleRisksLikelihoodConsequence(localStorageService.get('multipleRisksLikelihoodConsequence') ? localStorageService.get('multipleRisksLikelihoodConsequence') : {});
     RisksService.setRisks(localStorageService.get('risksSelected') ? localStorageService.get('risksSelected') : []);
@@ -136,15 +136,35 @@ $('body').on('mouseout', '.list-group > .selected-treatment', function(e){
     $(this).find('.remove-treatment').hide();
 });
 
+$('body').on('mouseover', '.remove-ta-treatment', function(e){
+    $(this).find('.remove-dragdrop').show();
+});
+
+$('body').on('mouseout', '.remove-ta-treatment', function(e){
+    $(this).find('.remove-dragdrop').hide();
+});
+
 //Select2
-$('select[label="assets"]').select2({
-    placeholder: 'Select an asset'
+$(function(){
+    $('select[label="assets"]').select2({
+        placeholder: 'Select an asset'
+    });
+
+    $('select[label="risks"]').select2({
+        placeholder: 'Select a risk'
+    });
+
+    // Don't know why, but with optgroups, angular generates an extra option with incorrect value "?"
+    var selects = $('select[label="treatments"]');
+    _.each(selects, function(select){
+        // Remove first extra option value
+        $(select).children().first().remove();
+        // Prepend a valid option value with no content
+        $(select).prepend('<option></option>');
+        // Generate select2
+        $(select).select2({
+            placeholder: 'Select a treatment'
+        });
+    });
 });
 
-$('select[label="risks"]').select2({
-    placeholder: 'Select a risk'
-});
-
-$('select[label="treatments"]').select2({
-    placeholder: 'Select a treatment'
-});

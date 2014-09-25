@@ -15,6 +15,9 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
     var risksTreatmentsMappingFromStorage = localStorageService.get('risksTreatmentsMapping') || {};
     var risksTreatmentsMapping = risksTreatmentsMappingFromStorage;
 
+    var treatmentsConnectedToCloudAndServiceTypesFromStorage = localStorageService.get('treatmentsConnectedToCloudAndServiceTypesFromStorage') || {};
+    var treatmentsConnectedToCloudAndServiceTypes = treatmentsConnectedToCloudAndServiceTypesFromStorage;
+
     var showTreatmentsValuesFromStorage = localStorageService.get('showTreatmentsValues') || {};
     var showTreatmentsValues = showTreatmentsValuesFromStorage;
 
@@ -37,7 +40,7 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
                 // objectify options
                 treatments.push(treatment);
             } else {
-                flash.warn = 'This treatment has been already added';
+                // flash.warn = 'This treatment has been already added';
             }
         }
     };
@@ -125,6 +128,19 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
         return risksTreatmentsMapping;
     };
 
+    this.setTreatmentsConnectedToCloudAndServiceTypes = function(cloudType, serviceType, treatmentsConnections){
+        treatmentsConnectedToCloudAndServiceTypes[cloudType + '/' + serviceType] = treatmentsConnections;
+    };
+
+    this.getTreatmentsConnectedToCloudAndServiceTypes = function(cloudType, serviceType){
+        var treatmentsConnections = treatmentsConnectedToCloudAndServiceTypes[cloudType + '/' + serviceType];
+        if(treatmentsConnections){
+            return treatmentsConnections;
+        } else {
+            return [];
+        }
+    };
+
     this.getRisksFromTreatment = function(treatmentName){
         var selectedRisks = RisksService.getRisks();
         var risksNames = [];
@@ -183,8 +199,25 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
      * @param ta
      */
     this.addTAToTreatment = function (treatment, ta) {
-        if (_.isUndefined(treatment.taRelations)) treatment.taRelations = [];
-        treatment.taRelations.push(ta);
+        var index = -1;
+        _.each(treatments, function(t, i){
+            if(t.name == treatment.name){
+                index = i;
+            }
+        });
+        if(index >= 0){
+            if(treatments[index].taRelations){
+                var found = treatments[index].taRelations.filter(function(taRelation){
+                    return taRelation._id == ta._id;
+                }).length > 0;
+                if(!found){
+                    treatments[index].taRelations.push(ta);
+                }
+            } else {
+                treatments[index].taRelations = [];
+                treatments[index].taRelations.push(ta);
+            }
+        }
     };
 
     /**

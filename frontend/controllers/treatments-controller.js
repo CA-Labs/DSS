@@ -149,12 +149,21 @@ dssApp.controller('treatmentsController'
 
     /**
      * Adds a new treatment to the list of selected treatments,
-     * by calling the Treatments service.
+     * by calling the Treatments service. It also associates the
+     * corresponding TA asset to that treatment.
      * @param treatment The treatment to be added to the list of
      * selected treatments.
+     * @ta The TA asset to associate with the treatment.
      */
-    $scope.addTreatment = function(treatment){
-        TreatmentsService.addTreatment(treatment);
+    $scope.addTreatment = function(treatment, ta){
+        var treatmentCopy = _.extend({}, treatment);
+        TreatmentsService.addTreatment(treatmentCopy);
+        // For some reason, updating service data takes a while
+        $timeout(function(){
+            TreatmentsService.addTAToTreatment(treatmentCopy, ta);
+            localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
+        }, 100);
+
     };
 
     /**
@@ -244,10 +253,90 @@ dssApp.controller('treatmentsController'
         }
     });
 
+    _.each($scope.taAssets, function(taAsset){
+        var cloudType = taAsset.cloudType;
+        var serviceType = '';
+        switch(cloudType){
+            case 'IaaS':
+                serviceType = taAsset.cloudResource._serviceType;
+                break;
+            case 'PaaS':
+                serviceType = taAsset.cloudPlatform._serviceType;
+                break;
+            default:
+                break;
+        }
+        ArangoDBService.getTreatmentsConnectionsPerCloudAndServiceTypes(cloudType, serviceType, function(error, data){
+            if(error){
+                flash.error = 'Some error occurred while fetching treatments connections to services with certain cloud and service types';
+            } else {
+                var connections = [];
+                _.each(data._documents, function(treatments){
+                    if(connections.indexOf(treatments.treatments) == -1){
+                        connections.push(treatments.treatments);
+                    }
+                });
+                // console.log('connections', connections);
+                TreatmentsService.setTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType, connections);
+            }
+        });
+    });
+
+    $scope.$watch(function () {
+        return AssetsService.getTA();
+    }, function (newValue) {
+        $scope.taAssets = newValue;
+        _.each($scope.taAssets, function(taAsset){
+            var cloudType = taAsset.cloudType;
+            var serviceType = '';
+            switch(cloudType){
+                case 'IaaS':
+                    serviceType = taAsset.cloudResource._serviceType;
+                    break;
+                case 'PaaS':
+                    serviceType = taAsset.cloudPlatform._serviceType;
+                    break;
+                default:
+                    break;
+            }
+            ArangoDBService.getTreatmentsConnectionsPerCloudAndServiceTypes(cloudType, serviceType, function(error, data){
+                if(error){
+                    flash.error = 'Some error occurred while fetching treatments connections to services with certain cloud and service types';
+                } else {
+                    var connections = [];
+                    _.each(data._documents, function(treatments){
+                        if(connections.indexOf(treatments.treatments) == -1){
+                            connections.push(treatments.treatments);
+                        }
+                    });
+                    TreatmentsService.setTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType, connections);
+                }
+            });
+        });
+    }, true);
+
+    $scope.potentialTreatmentsGroupedAndFiltered = function (cloudType, serviceType) {
+        var newArray = [];
+        // console.log($scope.potentialTreatmentsGrouped);
+        _.each($scope.potentialTreatmentsGrouped, function (item) {
+            if (_.contains(TreatmentsService.getTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType), item.treatment.name)) {
+                newArray.push(item);
+            }
+        });
+        return newArray;
+    };
+
+
     $scope.$watch(function(){
         return TreatmentsService.getRisksTreatmentsMapping();
     }, function(newMapping, oldMapping){
         $scope.risksTreatmentsMapping = newMapping;
     });
+
+//            $scope.$watch($scope.potentialTreatment, function() {
+//                $timeout(function() {
+//                    element.multiselectfilter("updateCache");
+//                });
+//            });
 
 }]);

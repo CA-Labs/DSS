@@ -27,10 +27,15 @@ dssApp.controller('risksController'
     //Initialization
     $scope.potentialRisks = [];                                                                                         //List of current potential risks depending on BSOIA/TOIA assets selected by the user
 
+    $scope.riskBoundModels = RisksService.getRiskBoundModels();                                                         //Risk bound models
+    localStorageService.bind($scope, 'riskBoundModels', $scope.riskBoundModels);
+
     $scope.risksSelected = RisksService.getRisks();                                                                     //Risks selected by the user
     localStorageService.bind($scope, 'risksSelected', $scope.risksSelected);
+
     $scope.showRiskPerTA = false;                                                                                       //Switch button to allow evaluate risks for each TA
     localStorageService.bind($scope, 'showRiskPerTA', $scope.showRiskPerTA);
+
     $scope.taAssets = AssetsService.getTA();                                                                            //The selected TA assets
 
     $scope.simpleRisksLikelihoodConsequence = RisksService.getRisksLikelihoodConsequence();                             //Likelihood/Consequence values for simple risks model
@@ -40,8 +45,6 @@ dssApp.controller('risksController'
     localStorageService.bind($scope, 'multipleRisksLikelihoodConsequence', $scope.multipleRisksLikelihoodConsequence);
 
     $scope.unacceptableRisks = RisksService.getUnacceptableRisks();
-
-    $scope.riskBoundModels = {};
 
     // Kind of a hack: this is necessary when loading simple risks model from local storage,
     // since the reference seems to be lost when setting the new simple risks model in the service
@@ -64,8 +67,19 @@ dssApp.controller('risksController'
     $scope.$watch(function(){
         return RisksService.getUnacceptableRisks();
     }, function(newVal, oldVal){
-        // console.log('New unacceptable risks', newVal);
         $scope.unacceptableRisks = newVal;
+    }, true);
+
+    $scope.$watch(function(){
+        return RisksService.getRiskBoundModels();
+    }, function(newVal, oldVal){
+        $scope.riskBoundModels = newVal;
+    }, true);
+
+    $scope.$watch(function(){
+        return RisksService.getRisks();
+    }, function(newVal, oldVal){
+        $scope.risksSelected = newVal;
     }, true);
 
     //List of available categories to categorize risks level for likelihood values
