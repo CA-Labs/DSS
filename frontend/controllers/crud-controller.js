@@ -5,22 +5,6 @@
  * @created: 24/07/14
  */
 
-//Show/hide x (close button) when hovering selected bsoia tags in drop zones
-$('body').on('mouseover', '.form-group > .dropzone-container', function(e){
-    $(this).find('.remove-bsoia-in-toia-asset').show();
-});
-
-$('body').on('mouseout', '.form-group > .dropzone-container', function(e){
-    $(this).find('.remove-bsoia-in-toia-asset').hide();
-});
-
-
-//var dssApp = angular.module('dssApp', [
-//    'angular-flash.service',
-//    'angular-flash.flash-alert-directive',
-//    'ngDragDrop'
-//]);
-
 dssApp.controller('crudController', ['$scope', 'ArangoDBService', function ($scope, ArangoDBService) {
 
     $scope.modifyExisting = false;

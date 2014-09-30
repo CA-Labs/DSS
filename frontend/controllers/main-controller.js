@@ -30,6 +30,10 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
         window.location.reload();
     };
 
+    /**
+     * Saves the current user session (local storage values) on a file.
+     * @param event
+     */
     $scope.saveSessionFile = function (event) {
         var element = angular.element(event.target);
 
@@ -145,6 +149,10 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
         return deferred.promise;
     };
 
+    /**
+     * Saves the user services selection on a file.
+     * @param event
+     */
     $scope.saveCloudSelection = function (event) {
         var element = angular.element(event.target);
 

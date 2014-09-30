@@ -237,6 +237,12 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         }
     };
 
+    /**
+     * Adds a new unacceptable risk to the list of unacceptable risks
+     * for a given TA asset.
+     * @param taAssetId The id of the TA asset.
+     * @param riskName The unnaceptable risk name to be added.
+     */
     this.addUnacceptableRisk = function(taAssetId, riskName){
         var aux = unacceptableRisks[taAssetId];
         if(aux){
@@ -253,6 +259,12 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         }
     };
 
+    /**
+     * Removes an unacceptable risk form the list of unacceptable risks
+     * for a given TA asset.
+     * @param taAssetId The if of the TA asset.
+     * @param riskName The unacceptable risk name to be removed.
+     */
     this.removeUnacceptableRisk = function(taAssetId, riskName){
         if(unacceptableRisks[taAssetId]){
             var index = -1;
@@ -267,32 +279,65 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         }
     };
 
+    /**
+     * Removes all unacceptable risks for a given TA asset.
+     * @param taAssetId The id of the TA asset.
+     */
     this.removeTAUnacceptableRisks = function(taAssetId){
         delete unacceptableRisks[taAssetId];
     };
 
+    /**
+     * Returns the list of unacceptable risks for a given TA asset.
+     * @param taAssetId The id of the TA asset.
+     * @returns {*}
+     */
     this.getTAUnacceptableRisks = function(taAssetId){
         return unacceptableRisks[taAssetId] ? unacceptableRisks[taAssetId] : [];
     };
 
+    /**
+     * Returns all unacceptable risks (by TA asset id).
+     * @returns {{}}
+     */
     this.getUnacceptableRisks = function(){
         return unacceptableRisks;
     };
 
+    /**
+     * Removes all unacceptable risks.
+     */
     this.clearUnacceptableRisks = function(){
         _.each(unacceptableRisks, function(values, key){
             unacceptableRisks[key] = [];
         });
     };
 
+    /**
+     * Returns the risk sliders bound model.
+     * @returns {*|{}}
+     */
     this.getRiskBoundModels = function(){
         return riskBoundModels;
     };
 
+    /**
+     * Sets the risk sliders model loading it from
+     * local storage.
+     * @param riskBoundModelsFromStorage The risk sliders model
+     * to be loaded from local storage.
+     */
     this.setRiskBoundModels = function(riskBoundModelsFromStorage){
         angular.copy(riskBoundModelsFromStorage, riskBoundModels);
     };
 
+    /**
+     * Returns true if a given risk is unacceptable for a certain TA
+     * asset, false otherwise.
+     * @param riskName The risk name.
+     * @param taAssetId The id of the TA asset.
+     * @returns {boolean}
+     */
     this.isUnacceptable = function(riskName, taAssetId){
         var unacceptable = false;
         if(taAssetId){

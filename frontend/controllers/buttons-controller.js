@@ -6,10 +6,17 @@
 
 dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 'AssetsService', 'TreatmentsService', 'flash', function($scope, $rootScope, RisksService, AssetsService, TreatmentsService, flash){
 
-    $scope.unacceptableRisks = RisksService.getUnacceptableRisks();
+    $scope.unacceptableRisks = RisksService.getUnacceptableRisks();     // The list of unacceptable risks per TA asset
 
-    $scope.ta = AssetsService.getTA();
+    $scope.ta = AssetsService.getTA();                                  // The list of TA assets
 
+    /**
+     * Called whenever the next button is clicked. Handles
+     * what buttons should be displayed and triggers app
+     * events accordingly (e.g.: when Search button is clicked,
+     * filter cloud service proposals).
+     * @param $event
+     */
     $scope.next = function($event){
         if(_.size($scope.unacceptableRisks) > 0){
             var currentSlide = $('#dssSlides').find('.active');

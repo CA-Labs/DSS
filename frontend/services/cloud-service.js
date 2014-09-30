@@ -17,25 +17,46 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
     var deploymentProposals = [];
 
+    /**
+     * Returns the list of initial proposals.
+     * @returns {*|{}}
+     */
     this.getProposals = function(){
         return proposals;
     };
 
+    /**
+     * Sets the list of initial proposals loaded
+     * from local storage.
+     * @param proposalsLoadedFromLocalStorage The
+     * initial proposals to be loaded.
+     */
     this.setProposals = function(proposalsLoadedFromLocalStorage){
         angular.copy(proposalsLoadedFromLocalStorage, proposals);
         loadingProposals = false;
     };
 
+    /**
+     * Sets a flag indicating whether the initial list of proposals is
+     * being loaded or not.
+     * @param loadingProposalsFromLocalStorage A boolean indicating the
+     * proposals list loading state.
+     */
     this.loadingProposals = function(loadingProposalsFromLocalStorage){
         loadingProposals = loadingProposalsFromLocalStorage;
     };
 
+    /**
+     * Returns true if the list of proposals is still being loaded,
+     * false otherwise.
+     * @returns {boolean}
+     */
     this.isLoadingProposals = function(){
         return loadingProposals;
     };
 
     /**
-     * returns array of all possible permutations of the arguments
+     * Returns array of all possible permutations of the arguments.
      * @returns {Array}
      */
     this.cartesian = function () {
@@ -54,6 +75,11 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
         return r;
     };
 
+    /**
+     * Sets a list of proposals for a given tangible asset.
+     * @param ta The TA asset.
+     * @param data The list of proposals for TA asset.
+     */
     this.setTAProposals = function(ta, data){
         switch(ta.cloudType){
             case 'IaaS':
@@ -67,23 +93,49 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
         }
     };
 
+    /**
+     * Returns the list of filtered proposals.
+     * @returns {*|{}}
+     */
     this.getFilteredProposals = function(){
         return filteredProposals;
     };
 
+    /**
+     * Sets the list of filtered proposals loading them
+     * from local storage.
+     * @param filteredProposalsLoadedFromLocalStorage The
+     * list of filtered proposals to be loaded.
+     */
     this.setFilteredProposals = function(filteredProposalsLoadedFromLocalStorage){
         angular.copy(filteredProposalsLoadedFromLocalStorage, filteredProposals);
         loadingFilteredProposals = false;
     };
 
+    /**
+     * Sets a flag indicating whether the list of filtered proposals
+     * has been loaded or not.
+     * @param loadingFilteredProposalsFromLocalStorage A boolean indicating
+     * filtered proposals list loading state.
+     */
     this.loadingFilteredProposals = function(loadingFilteredProposalsFromLocalStorage){
         loadingFilteredProposals = loadingFilteredProposalsFromLocalStorage;
     };
 
+    /**
+     * Returns true if the list of filtered proposals is still being loaded,
+     * false otherwise.
+     * @returns {boolean}
+     */
     this.isLoadingFilteredProposals = function(){
         return loadingFilteredProposals;
     };
 
+    /**
+     * Returns the list of proposals for a TA asset.
+     * @param taAssetName The name of the TA asset.
+     * @returns {*}
+     */
     this.getTAProposals = function(taAssetName){
         if(filteredProposals[taAssetName]){
             return filteredProposals[taAssetName];
@@ -92,6 +144,13 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
         }
     };
 
+    /**
+     * Given a TA assets list and a TA name, returns
+     * the corresponding TA asset.
+     * @param taList A list of TA ssets.
+     * @param taName The name of the TA asset.
+     * @returns {{}}
+     */
     function getTA (taList, taName) {
         var returnTA = {};
         _.each(taList, function (ta) {
@@ -113,6 +172,10 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
     }
 
 
+    /**
+     * Returns the final list of deployment proposals.
+     * @returns {Array}
+     */
     this.getDeploymentsProposals = function () {
 
         var taAssets = AssetsService.getTA();
@@ -146,6 +209,11 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
         }
     };
 
+    /**
+     * Filters a list of proposals by treatments (i.e. for each
+     * treatment, exists a path between the proposal and the
+     * treatment).
+     */
     this.filterProposalsByTreatments = function(){
 
         var taAssets = AssetsService.getTA();
@@ -191,6 +259,10 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
         });
     };
 
+    /**
+     * Filters a list of proposals by threshold values (TA assets
+     * criticity values).
+     */
     this.filterProposalsByThresholds = function(){
 
         var treatments = TreatmentsService.getTreatments();

@@ -116,6 +116,9 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
 
     }, true);
 
+    /**
+     * Used when loading the treatments values model from local storage.
+     */
     $scope.$watch(function () {
         return TreatmentsService.getTreatmentsValues();
     }, function (newValue) {
@@ -160,25 +163,29 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
         TreatmentsService.removeTreatment(treatment);
     };
 
+    /**
+     * Given a treatment, returns the list of risks connected to it.
+     * @param treatmentName The treatment name.
+     * @returns {*}
+     */
     $scope.mitigatedRisks = function (treatmentName) {
         return TreatmentsService.getRisksFromTreatment(treatmentName);
     };
 
-    $scope.taDropped = function (event, data, treatment) {
-        if (TreatmentsService.taAssetExists(treatment, data)) {
-            flash.warn = 'Tangible Asset [TA] already added';
-        } else {
-            TreatmentsService.addTAToTreatment(treatment, data);
-            localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
-        }
-
-    };
-
+    /**
+     * Removes a TA asset associated to a certain treatment.
+     * @param treatment The treatment.
+     * @param ta The TA asset to be removed.
+     */
     $scope.removeTaFromTreatment = function (treatment, ta) {
         TreatmentsService.removeTaFromTreatment(treatment, ta);
         localStorageService.set('treatmentsSelected', $scope.treatmentsSelected);
     };
 
+    /**
+     * To show or not to show the treatment options values.
+     * @param treatmentName The treatment name.
+     */
     $scope.toggleTreatmentValues = function (treatmentName) {
         if (TreatmentsService.showTreatmentValue(treatmentName)) {
             TreatmentsService.setShowTreatmentValue(treatmentName, true);
@@ -187,6 +194,12 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
         }
     };
 
+    /**
+     * Triggered whenever some treatment option value is selected (updates the treatments
+     * values accordingly by calling the Treatments service).
+     * @param treatmentValueString The treatment option value selected.
+     * @param treatment The treatment.
+     */
     $scope.treatmentValueChanged = function (treatmentValueString, treatment) {
         var key = null;
         for (optionValue in treatment.options) {
@@ -201,6 +214,8 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
         };
         TreatmentsService.addTreatmentValue(update.name, update.value);
     };
+
+    // Auxiliar function that maps a numeric treatment value to a treatment description
     var treatmentValueToDescription = function (treatmentName, treatmentValue) {
         var description = '';
         _.each($scope.treatmentsSelected, function (treatment) {
@@ -217,7 +232,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
     };
 
     /**
-     * Function used when the treatment is added to the treatmentSelected list to pass the value to the treatment as acepted.
+     * Function used when the treatment is added to the treatmentSelected list to pass the value to the treatment as accepted.
      * @param treatmentName
      */
     $scope.addRadioValue = function (treatmentName) {

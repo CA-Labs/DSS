@@ -144,6 +144,14 @@ $('body').on('mouseout', '.remove-ta-treatment', function(e){
     $(this).find('.remove-dragdrop').hide();
 });
 
+$('body').on('mouseover', '.form-group > .dropzone-container', function(e){
+    $(this).find('.remove-bsoia-in-toia-asset').show();
+});
+
+$('body').on('mouseout', '.form-group > .dropzone-container', function(e){
+    $(this).find('.remove-bsoia-in-toia-asset').hide();
+});
+
 //Select2
 $(function(){
     $('select[label="assets"]').select2({

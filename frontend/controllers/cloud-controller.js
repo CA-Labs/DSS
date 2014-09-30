@@ -21,6 +21,10 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
 
     $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
 
+    /**
+     * Generates the final list of deployment proposals offered to the user.
+     * @returns {Array}
+     */
     $scope.getDeploymentProposals = function () {
         var deploymentsProposals = [];
         if ($scope.isMulticloudDeployment) {
@@ -48,6 +52,9 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
         return deploymentsProposals;
     };
 
+    /**
+     * Builds up an initial list of proposals whenever the list of TA assets changes.
+     */
     $scope.$watch(function(){
         return AssetsService.getTA();
     }, function(newTA, oldTA){
@@ -72,24 +79,46 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
         }
     }, true);
 
+    /**
+     * Returns the cloud type for a given TA asset.
+     * @param taAsset
+     * @returns {ServiceModel.schema.cloudType|*|service.cloudType|dataToSend.cloudType|services.cloudType|Document.serviceForm.cloudType}
+     */
     $scope.getCloudTypeFromTA = function(taAsset){
         return taAssset.cloudType;
     };
 
+    /**
+     * Given a TA asset, returns the list of proposals for it.
+     * @param taAssetName The name of the TA asset.
+     * @returns {*}
+     */
     $scope.getTAProposals = function(taAssetName){
         return CloudService.getTAProposals(taAssetName);
     };
 
+    /**
+     * Event triggered whenever some risk slider is moved. In that case,
+     * the list of proposals must be filtered again, since the list of
+     * unacceptable risks may have changed, and hence, the proposals
+     * score might have changed as well.
+     */
     $scope.$on('risksSelectedChanged', function(){
         CloudService.filterProposalsByTreatments();
         CloudService.filterProposalsByThresholds();
         $scope.deploymentsProposals = CloudService.getDeploymentsProposals();
     });
 
+    /**
+     * Filters proposals by treatments, calling the cloud service.
+     */
     $scope.filterProposalsByTreatments = function(){
         CloudService.filterProposalsByTreatments();
     };
 
+    /**
+     * Filteres proposals by thresholds, calling the cloud service.
+     */
     $scope.filterProposalsByThresholds = function(){
         CloudService.filterProposalsByThresholds();
     };
@@ -137,8 +166,8 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
     };
 
     /**
-     * Show hide details of the cloud service
-     * @param {object} item - service item from the ng-repeat
+     * Shows hidden details of the cloud service.
+     * @param {object} item - service item from the ng-repeat.
      */
     $scope.showHideDetails = function (event, item, index) {
         event.stopPropagation();
