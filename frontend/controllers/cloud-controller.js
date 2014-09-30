@@ -21,30 +21,6 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
 
     $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
 
-    $scope.$watch(function () {
-        return AssetsService.getDeploymentType();
-    }, function (newVal) {
-        $scope.isMulticloudDeployment = newVal;
-    });
-
-    $scope.$watch(function(){
-        return CloudService.getProposals();
-    }, function(newVal, oldVal){
-        $scope.proposals = newVal;
-    }, true);
-
-    $scope.$watch(function(){
-        return CloudService.getFilteredProposals();
-    }, function(newVal, oldVal){
-        $scope.filteredProposals = newVal;
-    }, true);
-
-    $scope.$watch(function(){
-        return CloudService.getDeploymentsProposals();
-    }, function(newVal, oldVal){
-        $scope.deploymentsProposals = newVal;
-    }, true);
-
     $scope.getDeploymentProposals = function () {
         var deploymentsProposals = [];
         if ($scope.isMulticloudDeployment) {
@@ -73,12 +49,6 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
     };
 
     $scope.$watch(function(){
-        return AssetsService.getXmlTaObject();
-    }, function(newVal, oldVal){
-        $scope.xmlTaAsObject = newVal;          // gets the Object representation of the Modelio loaded XML
-    }, true);
-
-    $scope.$watch(function(){
         return AssetsService.getTA();
     }, function(newTA, oldTA){
         $scope.ta = newTA;
@@ -100,12 +70,6 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
                 });
             });
         }
-    }, true);
-
-    $scope.$watch(function(){
-        return CloudService.getFilteredProposals();
-    }, function(newProposals){
-        $scope.filteredProposals = newProposals;
     }, true);
 
     $scope.getCloudTypeFromTA = function(taAsset){

@@ -4,30 +4,8 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('mainController', [
-    '$scope'
-    , '$rootScope'
-    , '$upload'
-    , 'flash'
-    , '$http'
-    , '$q'
-    , 'localStorageService'
-    , 'AssetsService'
-    , 'RisksService'
-    , 'TreatmentsService'
-    , 'ArangoDBService'
-    , function(
-        $scope
-        , $rootScope
-        , $upload
-        , flash
-        , $http
-        , $q
-        , localStorageService
-        , AssetsService
-        , RisksService
-        , TreatmentsService
-        , ArangoDBService){
+dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash', '$http', '$q', 'localStorageService', 'AssetsService', 'RisksService', 'TreatmentsService', 'ArangoDBService'
+    , function($scope, $rootScope, $upload, flash, $http, $q, localStorageService, AssetsService, RisksService, TreatmentsService, ArangoDBService){
 
     //Initialization
 

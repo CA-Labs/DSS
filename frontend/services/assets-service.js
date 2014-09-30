@@ -79,7 +79,7 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * be set.
      */
     this.setBSOIA = function(bsoiaLoadedFromLocalStorage){
-        bsoia = bsoiaLoadedFromLocalStorage;
+        angular.copy(bsoiaLoadedFromLocalStorage, bsoia);
     };
 
     /**
@@ -134,7 +134,7 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * be set.
      */
     this.setTOIA = function(toiaLoadedFromLocalStorage){
-        toia = toiaLoadedFromLocalStorage;
+        angular.copy(toiaLoadedFromLocalStorage, toia);
     };
 
     /**
@@ -184,7 +184,6 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         });
         if(toiaIndex < 0){
             flash.error = toiaAssetName + ' does not exist';
-            return;
         } else {
             var bsoiaIndex = -1;
             _.each(toia[toiaIndex].bsoiaRelations, function(relation, j){
@@ -194,6 +193,30 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
             });
             if(bsoiaIndex >= 0){
                 toia[toiaIndex].bsoiaRelations.splice(bsoiaIndex, 1);
+            }
+        }
+    };
+
+    this.addBSOIAtoTOIA = function(bsoia, toiaAssetName){
+        var toiaIndex = -1;
+        _.each(toia, function(asset, i){
+            if(asset.asset.name == toiaAssetName){
+                toiaIndex = i;
+            }
+        });
+        if(toiaIndex < 0){
+            flash.error = toiaAssetName + ' does not exist';
+        } else {
+            var bsoiaIndex = -1;
+            _.each(toia[toiaIndex].bsoiaRelations, function(relation, j){
+                if(relation.name == bsoia.name){
+                    bsoiaIndex = j;
+                }
+            });
+            if(bsoiaIndex < 0){
+                toia[toiaIndex].bsoiaRelations.push(bsoia);
+            } else {
+                flash.error = 'BSOIA ' + bsoia.name + ' already exists in TOIA ' + toiaAssetName;
             }
         }
     };
@@ -282,7 +305,7 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * be set.
      */
     this.setTA = function(taLoadedFromLocalStorage) {
-        ta = taLoadedFromLocalStorage;
+        angular.copy(taLoadedFromLocalStorage, ta);
     };
 
     /**
@@ -291,7 +314,7 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      */
     this.setXmlTaObject = function (xmlObject) {
         if (typeof(xmlObject) == 'object') {
-            xmlTaAssetsAsObject = xmlObject;
+            angular.copy(xmlObject, xmlTaAssetsAsObject);
         }
     };
 
@@ -334,9 +357,9 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * Removes all assets (BSOIA/TOIA/TA).
      */
     this.removeAll = function(){
-        bsoia = [];
-        toia = [];
-        ta = [];
+        angular.copy([], bsoia);
+        angular.copy([], toia);
+        angular.copy([], ta);
     };
 
     /**
@@ -395,7 +418,7 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     };
 
     this.setCriticityBoundModels = function(criticityBoundModelsLoadedFromLocalStorage){
-        criticityBoundModels = criticityBoundModelsLoadedFromLocalStorage;
+        angular.copy(criticityBoundModelsLoadedFromLocalStorage, criticityBoundModels);
     }
 
 }]);

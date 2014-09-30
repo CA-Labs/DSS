@@ -71,7 +71,6 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param likelihood The likelihood value of that risk.
      */
     this.addRiskLikelihood = function(riskName, likelihood){
-        //console.log('adding risk likelihood for ' + riskName + ' in simple model');
         risksLikelihoodConsequence[riskName + SEPARATOR + 'likelihood'] = parseInt(likelihood);
     };
 
@@ -102,7 +101,6 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param consequence The consequence value of that risk.
      */
     this.addRiskConsequence = function(riskName, consequence){
-        //console.log('adding risk consequence for ' + riskName + ' in simple model');
         risksLikelihoodConsequence[riskName + SEPARATOR + 'consequence'] = parseInt(consequence);
     };
 
@@ -113,7 +111,6 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param likelihood The likelihood value.
      */
     this.addRiskTALikelihood = function(riskName, taAssetId, likelihood){
-        //console.log('adding risk likelihood for ' + riskName + '/' + taAssetId + ' in multiple model');
         risksTALikelihoodConsequence[riskName + SEPARATOR + taAssetId + SEPARATOR + 'likelihood'] = parseInt(likelihood);
     };
 
@@ -124,7 +121,6 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param consequence The consequence value.
      */
     this.addRiskTAConsequence = function(riskName, taAssetId, consequence){
-        //console.log('adding risk consequence for ' + riskName + '/' + taAssetId + ' in multiple model');
         risksTALikelihoodConsequence[riskName + SEPARATOR + taAssetId + SEPARATOR + 'consequence'] = parseInt(consequence);
     };
 
@@ -136,8 +132,7 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         // clear multiple model
         var regex = new RegExp('[\\w\\s]+' + SEPARATOR + taAssetId + SEPARATOR + '[\\w\\s]+', 'i');
         for(key in risksTALikelihoodConsequence){
-            if(regex.exec(key)){
-                //console.log('removing key ' + key + ' in multiple model');
+            if(regex.exec(key)){;
                 delete risksTALikelihoodConsequence[key];
             }
         };
@@ -164,7 +159,7 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param risksLoadedFromLocalStorage Local storage risks.
      */
     this.setRisks = function(risksLoadedFromLocalStorage){
-        risks = risksLoadedFromLocalStorage;
+        angular.copy(risksLoadedFromLocalStorage, risks);
     };
 
     /**
@@ -173,7 +168,7 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * storage simple risk model.
      */
     this.setSimpleRisksLikelihoodConsequence = function(simpleRisksLikelihoodConsequenceLoadedFromLocalStorage){
-        risksLikelihoodConsequence = simpleRisksLikelihoodConsequenceLoadedFromLocalStorage;
+        angular.copy(simpleRisksLikelihoodConsequenceLoadedFromLocalStorage, risksLikelihoodConsequence);
     };
 
     /**
@@ -182,7 +177,7 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * storage multiple risk model.
      */
     this.setMultipleRisksLikelihoodConsequence = function(multipleRisksLikelihoodConsequenceLoadedFromLocalStorage){
-        risksTALikelihoodConsequence = multipleRisksLikelihoodConsequenceLoadedFromLocalStorage;
+        angular.copy(multipleRisksLikelihoodConsequenceLoadedFromLocalStorage, risksTALikelihoodConsequence);
     };
 
     /**
@@ -295,7 +290,7 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     };
 
     this.setRiskBoundModels = function(riskBoundModelsFromStorage){
-        riskBoundModels = riskBoundModelsFromStorage;
+        angular.copy(riskBoundModelsFromStorage, riskBoundModels);
     };
 
     this.isUnacceptable = function(riskName, taAssetId){

@@ -22,7 +22,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
     };
 
     this.setProposals = function(proposalsLoadedFromLocalStorage){
-        proposals = proposalsLoadedFromLocalStorage;
+        angular.copy(proposalsLoadedFromLocalStorage, proposals);
         loadingProposals = false;
     };
 
@@ -72,7 +72,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
     };
 
     this.setFilteredProposals = function(filteredProposalsLoadedFromLocalStorage){
-        filteredProposals = filteredProposalsLoadedFromLocalStorage;
+        angular.copy(filteredProposalsLoadedFromLocalStorage, filteredProposals);
         loadingFilteredProposals = false;
     };
 

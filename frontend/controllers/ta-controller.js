@@ -21,21 +21,6 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'Clo
         AssetsService.setDeploymentType();
     };
 
-    // Kind of a hack: this is necessary when loading TA assets from local storage,
-    // since the reference seems to be lost when setting the new TA assets in the service
-    // variable.
-    $scope.$watch(function(){
-        return AssetsService.getTA();
-    }, function(newTA){
-        $scope.taAssets = newTA;
-    }, true);
-
-    $scope.$watch(function(){
-        return AssetsService.getCriticityBoundModels();
-    }, function(newVal, oldVal){
-        $scope.criticityBoundModels = newVal;
-    }, true);
-
     /**
      * Removes a TA asset from the list of assets selected
      * by the user, by calling the Assets service.

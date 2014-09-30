@@ -97,11 +97,11 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
     };
 
     this.setTreatments = function(treatmentsLoadedFromLocalStorage){
-        treatments = treatmentsLoadedFromLocalStorage;
+        angular.copy(treatmentsLoadedFromLocalStorage, treatments);
     };
 
     this.setTreatmentValues = function(treatmentValuesLoadedFromLocalStorage){
-        treatmentsValues = treatmentValuesLoadedFromLocalStorage;
+        angular.copy(treatmentValuesLoadedFromLocalStorage, treatmentsValues);
     };
 
     this.loadingTreatmentsFromLocalStorage = function(loading){
@@ -121,7 +121,7 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
     };
 
     this.setRisksTreatmentsMapping = function(risksTreatmentsMappingValues){
-        risksTreatmentsMapping = risksTreatmentsMappingValues;
+        angular.copy(risksTreatmentsMappingValues, risksTreatmentsMapping);
     };
 
     this.getRisksTreatmentsMapping = function(){
@@ -231,7 +231,6 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
         var taPos = _.indexOf(treatment.taRelations, ta);
         if (taPos > -1) {
             treatment.taRelations.splice(taPos, 1);
-            return;
         }
     };
 
