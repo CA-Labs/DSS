@@ -159,7 +159,9 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param risksLoadedFromLocalStorage Local storage risks.
      */
     this.setRisks = function(risksLoadedFromLocalStorage){
-        angular.copy(risksLoadedFromLocalStorage, risks);
+        if(!angular.equals(risks, risksLoadedFromLocalStorage)){
+            angular.copy(risksLoadedFromLocalStorage, risks);
+        }
     };
 
     /**
@@ -168,7 +170,9 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * storage simple risk model.
      */
     this.setSimpleRisksLikelihoodConsequence = function(simpleRisksLikelihoodConsequenceLoadedFromLocalStorage){
-        angular.copy(simpleRisksLikelihoodConsequenceLoadedFromLocalStorage, risksLikelihoodConsequence);
+        if(!angular.equals(risksLikelihoodConsequence, simpleRisksLikelihoodConsequenceLoadedFromLocalStorage)){
+            angular.copy(simpleRisksLikelihoodConsequenceLoadedFromLocalStorage, risksLikelihoodConsequence);
+        }
     };
 
     /**
@@ -177,7 +181,9 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * storage multiple risk model.
      */
     this.setMultipleRisksLikelihoodConsequence = function(multipleRisksLikelihoodConsequenceLoadedFromLocalStorage){
-        angular.copy(multipleRisksLikelihoodConsequenceLoadedFromLocalStorage, risksTALikelihoodConsequence);
+        if(!angular.equals(risksTALikelihoodConsequence, multipleRisksLikelihoodConsequenceLoadedFromLocalStorage)){
+            angular.copy(multipleRisksLikelihoodConsequenceLoadedFromLocalStorage, risksTALikelihoodConsequence);
+        }
     };
 
     /**
@@ -341,7 +347,9 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * to be loaded from local storage.
      */
     this.setRiskBoundModels = function(riskBoundModelsFromStorage){
-        angular.copy(riskBoundModelsFromStorage, riskBoundModels);
+        if(!angular.equals(riskBoundModels, riskBoundModelsFromStorage)){
+            angular.copy(riskBoundModelsFromStorage, riskBoundModels);
+        }
     };
 
     /**

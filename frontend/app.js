@@ -66,7 +66,7 @@ var dssApp = angular.module('dssApp', [
 }]);
 
 // Initialize UI if local storage data is available
-dssApp.run(['AssetsService', 'RisksService', 'TreatmentsService', 'localStorageService', function(AssetsService, RisksService, TreatmentsService, localStorageService){
+dssApp.run(['$rootScope', '$timeout', 'AssetsService', 'RisksService', 'TreatmentsService', 'localStorageService', function($rootScope, $timeout, AssetsService, RisksService, TreatmentsService, localStorageService){
     // Don't touch this, order matters!
     AssetsService.loadingLocalStorageData(true);
     RisksService.loadingLocalStorageData(true);
@@ -78,10 +78,18 @@ dssApp.run(['AssetsService', 'RisksService', 'TreatmentsService', 'localStorageS
     RisksService.setSimpleRisksLikelihoodConsequence(localStorageService.get('simpleRisksLikelihoodConsequence') ? localStorageService.get('simpleRisksLikelihoodConsequence') : {});
     RisksService.setMultipleRisksLikelihoodConsequence(localStorageService.get('multipleRisksLikelihoodConsequence') ? localStorageService.get('multipleRisksLikelihoodConsequence') : {});
     RisksService.setRisks(localStorageService.get('risksSelected') ? localStorageService.get('risksSelected') : []);
-    TreatmentsService.setTreatmentValues(localStorageService.get('treatmentValues') ? localStorageService.get('treatmentValues') : {});
-    TreatmentsService.setTreatments(localStorageService.get('treatmentsSelected') ? localStorageService.get('treatmentsSelected') : []);
     AssetsService.setCriticityBoundModels(localStorageService.get('criticityBoundModels') ? localStorageService.get('criticityBoundModels') : {});
     AssetsService.setTA(localStorageService.get('taAssets') ? localStorageService.get('taAssets') : []);
+
+    // Delay treatments initialization, otherwise selected treatments values are overwritten because other
+    // AngularJS are triggering updates.
+    $timeout(function(){
+        TreatmentsService.setTreatmentValues(localStorageService.get('treatmentValues') ? localStorageService.get('treatmentValues') : {});
+        TreatmentsService.setTreatments(localStorageService.get('treatmentsSelected') ? localStorageService.get('treatmentsSelected') : []);
+        TreatmentsService.loadingTreatmentsFromLocalStorage(false);
+        TreatmentsService.loadingTreatmentsValuesFromLocalStorage(false);
+        $rootScope.$broadcast('risksSelectedChanged');
+    }, 1000);
 }]);
 
 /******************************************************

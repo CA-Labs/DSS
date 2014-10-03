@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsService', 'localStorageService', function(AssetsService, RisksService, TreatmentsService, localStorageService){
+dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsService', 'localStorageService', 'flash', function(AssetsService, RisksService, TreatmentsService, localStorageService, flash){
 
     var proposalsFromLocalStorage = localStorageService.get('proposals') || {};
     var proposals = proposalsFromLocalStorage;
@@ -32,7 +32,9 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
      * initial proposals to be loaded.
      */
     this.setProposals = function(proposalsLoadedFromLocalStorage){
-        angular.copy(proposalsLoadedFromLocalStorage, proposals);
+        if(!angular.equals(proposals, proposalsLoadedFromLocalStorage)){
+            angular.copy(proposalsLoadedFromLocalStorage, proposals);
+        }
         loadingProposals = false;
     };
 
@@ -109,7 +111,9 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
      * list of filtered proposals to be loaded.
      */
     this.setFilteredProposals = function(filteredProposalsLoadedFromLocalStorage){
-        angular.copy(filteredProposalsLoadedFromLocalStorage, filteredProposals);
+        if(!angular.equals(filteredProposals, filteredProposalsFromLocalStorage)){
+            angular.copy(filteredProposalsLoadedFromLocalStorage, filteredProposals);
+        }
         loadingFilteredProposals = false;
     };
 
@@ -277,13 +281,20 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
         _.each(filteredProposals, function(proposals, taAssetName){
             _.each(proposals, function(proposal, index){
                 filteredProposals[taAssetName][index].score = 0.0;
+                filteredProposals[taAssetName][index].total = 0.0;
+                filteredProposals[taAssetName][index].unmitigatedRisks = [];
             });
         });
 
         var riskNames = [];
         var riskMitigatedNames = [];
 
-        // No treatments selected, all unacceptable risks are then unmitigated risks
+        /***************************************************************************************
+         ***************************************************************************************
+         ****** No treatments selected, all unacceptable risks are then unmitigated risks ******
+         ***************************************************************************************
+         ***************************************************************************************/
+
         if(treatments.length == 0){
             var unmitigatedRisks = [];
             var risksSelected = RisksService.getRisks();
@@ -298,10 +309,25 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
             _.each(filteredProposals, function(proposals, taAssetName){
                 _.each(proposals, function(proposal, index){
                     filteredProposals[taAssetName][index].unmitigatedRisks = unmitigatedRisks;
+                    // If all risks are acceptable (i.e. there are no unacceptable risks), all services should have a score of 10
+                    if(unmitigatedRisks.length == 0){
+                        // Simulate a score of 10, i.e. score and total are equal
+                        filteredProposals[taAssetName][index].score = 1;
+                        filteredProposals[taAssetName][index].total = 1;
+                    } else {
+                        // flash.error = 'This should\'t occur since we don\'t allow having unacceptable risks without treatments for simplicity';
+                        // console.error('There unacceptable risks and no treatment has been selected yet!');
+                    }
                 });
             });
             return;
         }
+
+        /***************************************************************************************
+         ***************************************************************************************
+         *************************** Some treatments were selected *****************************
+         ***************************************************************************************
+         ***************************************************************************************/
 
         _.each(treatments, function(treatment){
 
@@ -337,7 +363,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
                                     _.each(characteristics, function(characteristic){
                                         // console.log('Current service characteristic is ' + characteristic.name + ' with value ' + AssetsService.getInverseCriticityValue(characteristic.value));
-                                        if(characteristic.name == treatmentName && AssetsService.getInverseCriticityValue(characteristic.value) < criticityValue && !riskMitigated){
+                                        if(characteristic.name == treatmentName && AssetsService.getInverseCriticityValue(characteristic.value) <= criticityValue && !riskMitigated){
 
                                             // This characteristic is mitigating the risk
                                             riskMitigated = true;

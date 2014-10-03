@@ -31,6 +31,11 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
      */
     $scope.$on('risksSelectedChanged', function () {
 
+        // Ignore this event if data is still being loaded from local storage
+        if(TreatmentsService.isLoadingTreatmentsFromLocalStorage() || TreatmentsService.isLoadingTreatmentsValuesFromLocalStorage()){
+            return;
+        }
+
         // Retrieve all unacceptable risks
         var unacceptableRisksPerTA = RisksService.getUnacceptableRisks();
         var unacceptableRiskNames = [];
@@ -93,8 +98,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
 
         // If we are loaading treatments from local storage, don't update treatments models
         if (TreatmentsService.isLoadingTreatmentsFromLocalStorage()) {
-            TreatmentsService.loadingTreatmentsFromLocalStorage(false);
-            $scope.treatmentsSelected = newTreatments;
+            TreatmentsService.setTreatments(newTreatments);
             return;
         }
 
@@ -125,7 +129,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
                 newTreatment.options = $scope.$eval("{" + newTreatment.options + "}");
             }
         });
-        $scope.treatmentsSelected = newTreatments;
+        TreatmentsService.setTreatments(newTreatments);
 
     }, true);
 
@@ -135,16 +139,16 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
     $scope.$watch(function () {
         return TreatmentsService.getTreatmentsValues();
     }, function (newValue) {
+
         if (TreatmentsService.isLoadingTreatmentsValuesFromLocalStorage()) {
-            TreatmentsService.loadingTreatmentsValuesFromLocalStorage(false);
-            $scope.treatmentValues = newValue;
+            TreatmentsService.setTreatmentValues(newValue);
             // Bound corresponding models
             Object.keys($scope.treatmentValues).forEach(function (key) {
                 $scope.treatmentsBoundModels[key] = treatmentValueToDescription(key, $scope.treatmentValues[key]);
             });
             return;
         }
-        $scope.treatmentValues = newValue;
+        TreatmentsService.setTreatmentsValues(newValue);
     }, true);
 
     /**

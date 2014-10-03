@@ -107,7 +107,9 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
      * model to be loaded from local storage.
      */
     this.setTreatments = function(treatmentsLoadedFromLocalStorage){
-        angular.copy(treatmentsLoadedFromLocalStorage, treatments);
+        if(!angular.equals(treatments, treatmentsLoadedFromLocalStorage)){
+            angular.copy(treatmentsLoadedFromLocalStorage, treatments);
+        }
     };
 
     /**
@@ -116,7 +118,9 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
      * values model to be loaded from local storage.
      */
     this.setTreatmentValues = function(treatmentValuesLoadedFromLocalStorage){
-        angular.copy(treatmentValuesLoadedFromLocalStorage, treatmentsValues);
+        if(!angular.equals(treatmentsValues, treatmentValuesLoadedFromLocalStorage)){
+            angular.copy(treatmentValuesLoadedFromLocalStorage, treatmentsValues);
+        }
     };
 
     /**
@@ -161,7 +165,9 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
      * values to be set.
      */
     this.setRisksTreatmentsMapping = function(risksTreatmentsMappingValues){
-        angular.copy(risksTreatmentsMappingValues, risksTreatmentsMapping);
+        if(!angular.equals(risksTreatmentsMapping, risksTreatmentsMappingValues)){
+            angular.copy(risksTreatmentsMappingValues, risksTreatmentsMapping);
+        }
     };
 
     /**

@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'CloudService', 'localStorageService', '$timeout', function($rootScope, $scope, AssetsService, CloudService, localStorageService, $timeout){
+dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'CloudService', 'localStorageService', 'TreatmentsService', '$timeout', function($rootScope, $scope, AssetsService, CloudService, localStorageService, TreatmentsService, $timeout){
 
     //Initialization
 
@@ -42,10 +42,12 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'Clo
         if(element.init){
             AssetsService.setCriticityBoundModel(element.key, parseFloat(element.value));
         }
-        // This timeout seems to be necessary, otherwise slider models are not updated on time
-        $timeout(function(){
-            $rootScope.$broadcast('acceptabilityValueChanged');
-        }, 100);
+        if(!TreatmentsService.isLoadingTreatmentsFromLocalStorage() && !TreatmentsService.isLoadingTreatmentsValuesFromLocalStorage()){
+            // This timeout seems to be necessary, otherwise slider models are not updated on time
+            $timeout(function(){
+                $rootScope.$broadcast('acceptabilityValueChanged');
+            }, 100);
+        }
     });
 
 }]);

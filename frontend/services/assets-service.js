@@ -81,7 +81,9 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * be set.
      */
     this.setBSOIA = function(bsoiaLoadedFromLocalStorage){
-        angular.copy(bsoiaLoadedFromLocalStorage, bsoia);
+        if(!angular.equals(bsoia, bsoiaLoadedFromLocalStorage)){
+            angular.copy(bsoiaLoadedFromLocalStorage, bsoia);
+        }
     };
 
     /**
@@ -136,7 +138,9 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * be set.
      */
     this.setTOIA = function(toiaLoadedFromLocalStorage){
-        angular.copy(toiaLoadedFromLocalStorage, toia);
+        if(!angular.equals(toia, toiaLoadedFromLocalStorage)){
+            angular.copy(toiaLoadedFromLocalStorage, toia);
+        }
     };
 
     /**
@@ -314,7 +318,9 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * be set.
      */
     this.setTA = function(taLoadedFromLocalStorage) {
-        angular.copy(taLoadedFromLocalStorage, ta);
+        if(!angular.equals(ta, taLoadedFromLocalStorage)){
+            angular.copy(taLoadedFromLocalStorage, ta);
+        }
     };
 
     /**
@@ -322,7 +328,7 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * @param xmlObject
      */
     this.setXmlTaObject = function (xmlObject) {
-        if (typeof(xmlObject) == 'object') {
+        if (typeof(xmlObject) == 'object' && !angular.equals(xmlTaAssetsAsObject, xmlObject)) {
             angular.copy(xmlObject, xmlTaAssetsAsObject);
         }
     };
@@ -439,8 +445,10 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * The TA criticity models to be bound.
      */
     this.setCriticityBoundModels = function(criticityBoundModelsLoadedFromLocalStorage){
-        angular.copy(criticityBoundModelsLoadedFromLocalStorage, criticityBoundModels);
-    }
+        if(!angular.equals(criticityBoundModels, criticityBoundModelsLoadedFromLocalStorage)){
+            angular.copy(criticityBoundModelsLoadedFromLocalStorage, criticityBoundModels);
+        }
+    };
 
     /**
      * Sets the bound model value for a given TA asset.
@@ -450,6 +458,6 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      */
     this.setCriticityBoundModel = function(taAssetId, value){
         criticityBoundModels[taAssetId] = value;
-    }
+    };
 
 }]);
