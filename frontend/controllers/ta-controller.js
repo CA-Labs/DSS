@@ -35,6 +35,13 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'Clo
      * related risks unacceptability.
      */
     $scope.$on('sliderValueChanged', function($event, element){
+        /*
+         * For some reason, the slider model isn't bound until the slider is moved.
+         * This may cause unexpected errors, that's why we force it to be initialized.
+         */
+        if(element.init){
+            AssetsService.setCriticityBoundModel(element.key, parseFloat(element.value));
+        }
         // This timeout seems to be necessary, otherwise slider models are not updated on time
         $timeout(function(){
             $rootScope.$broadcast('acceptabilityValueChanged');

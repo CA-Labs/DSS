@@ -81,6 +81,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
      * @param data The list of proposals for TA asset.
      */
     this.setTAProposals = function(ta, data){
+        // console.log('Setting proposal for ta', ta.cloudType, data);
         switch(ta.cloudType){
             case 'IaaS':
                 proposals[ta.cloudResource._serviceName] = data;
@@ -218,6 +219,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
         var taAssets = AssetsService.getTA();
         var treatments = TreatmentsService.getTreatments();
+        // console.log('treatments in treatments filter', treatments);
 
         filteredProposals = {};
         var treatmentsFound = 0;
@@ -257,6 +259,9 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                 });
             }
         });
+
+        // console.log('result after filter proposals by treatments', filteredProposals);
+
     };
 
     /**
@@ -266,6 +271,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
     this.filterProposalsByThresholds = function(){
 
         var treatments = TreatmentsService.getTreatments();
+        // console.log('treatments in threshold filter', treatments);
 
         // Reset scores
         _.each(filteredProposals, function(proposals, taAssetName){
@@ -275,10 +281,12 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
         });
 
         var riskNames = [];
+        var riskMitigatedNames = [];
 
         // No treatments selected, all unacceptable risks are then unmitigated risks
         if(treatments.length == 0){
             var unmitigatedRisks = [];
+            var risksSelected = RisksService.getRisks();
             var unacceptableRisksPerTA = RisksService.getUnacceptableRisks();
             _.each(unacceptableRisksPerTA, function(risks, ta){
                 _.each(risks, function(risk){
@@ -311,9 +319,9 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                     var criticityValue = TreatmentsService.showTreatmentValue(treatmentName) ? AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatmentName)) : AssetsService.getTACriticityValue(ta._id);
                     // console.log('criticity value', criticityValue);
 
-                    if(RisksService.isUnacceptable(riskName, ta._id)){
+                    if(riskNames.indexOf(riskName) == -1) riskNames.push(riskName);
 
-                        riskNames.push(riskName);
+                    if(RisksService.isUnacceptable(riskName, ta._id)){
 
                         // console.log(riskName + '_' + ta._id + ' is unacceptable');
 
@@ -329,20 +337,23 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
                                     _.each(characteristics, function(characteristic){
                                         // console.log('Current service characteristic is ' + characteristic.name + ' with value ' + AssetsService.getInverseCriticityValue(characteristic.value));
-                                        if(characteristic.name == treatmentName && AssetsService.getInverseCriticityValue(characteristic.value) < criticityValue){
+                                        if(characteristic.name == treatmentName && AssetsService.getInverseCriticityValue(characteristic.value) < criticityValue && !riskMitigated){
 
                                             // This characteristic is mitigating the risk
                                             riskMitigated = true;
-                                            if(filteredProposals[taAssetName][index].score){
-                                                // console.log(characteristic.name + ' is mitigating risk ' + riskName);
-                                                filteredProposals[taAssetName][index].score++;
-                                                // console.log(filteredProposals[taAssetName][index].score)
-                                            } else {
-                                                // console.log(characteristic.name + ' is mitigating risk ' + riskName);
-                                                filteredProposals[taAssetName][index].score = 1.0;
-                                                // console.log(filteredProposals[taAssetName][index].score)
+                                            if(riskMitigatedNames.indexOf(riskName) == -1){
+                                                riskMitigatedNames.push(riskName);
+                                                if(filteredProposals[taAssetName][index].score){
+                                                    // console.log(characteristic.name + ' is mitigating risk ' + riskName);
+                                                    filteredProposals[taAssetName][index].score++;
+                                                    // console.log(filteredProposals[taAssetName][index].score)
+                                                } else {
+                                                    // console.log(characteristic.name + ' is mitigating risk ' + riskName);
+                                                    filteredProposals[taAssetName][index].score = 1.0;
+                                                    // console.log(filteredProposals[taAssetName][index].score)
+                                                }
+                                                // console.log('Incrementing score in service ' + proposal.service.name + ' for risk ' + riskName);
                                             }
-                                            // console.log('Incrementing score in service ' + proposal.service.name + ' for risk ' + riskName);
 
                                         }
                                     });
@@ -370,11 +381,14 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                         _.each(filteredProposals, function(proposals, taAssetName){
                             _.each(proposals, function(proposal, index){
                                 if(proposal.service.cloudType == ta.cloudType){
-                                    // console.log('Incrementing score in service ' + proposal.service.name + ' for risk ' + riskName);
-                                    if(filteredProposals[taAssetName][index].score){
-                                        filteredProposals[taAssetName][index].score++;
-                                    } else {
-                                        filteredProposals[taAssetName][index].score = 1.0;
+                                    if(riskMitigatedNames.indexOf(riskName) == -1){
+                                        riskMitigatedNames.push(riskName);
+                                        // console.log('Incrementing score in service ' + proposal.service.name + ' for risk ' + riskName);
+                                        if(filteredProposals[taAssetName][index].score){
+                                            filteredProposals[taAssetName][index].score++;
+                                        } else {
+                                            filteredProposals[taAssetName][index].score = 1.0;
+                                        }
                                     }
                                 }
                             });
@@ -396,7 +410,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
             });
         });
 
-        // console.log(filteredProposals);
+        // console.log('result after filter proposals by thresholds', filteredProposals);
 
     };
 

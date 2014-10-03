@@ -207,17 +207,17 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
      */
     this.getRisksFromTreatment = function(treatmentName){
         var selectedRisks = RisksService.getRisks();
-        var risksNames = [];
+        var riskNames = [];
         _.each(risksTreatmentsMapping, function(value, key){
-            if(_.contains(value, treatmentName) && !_.contains(risksNames, key)){
+            if(_.contains(value, treatmentName) && !_.contains(riskNames, key)){
                 _.each(selectedRisks, function(selectedRisk){
-                    if(selectedRisk.destination.name == key){
-                        risksNames.push(key);
+                    if(selectedRisk.destination.name == key && riskNames.indexOf(key) == -1){
+                        riskNames.push(key);
                     }
                 });
             }
         });
-        return risksNames;
+        return riskNames;
     };
 
     /**

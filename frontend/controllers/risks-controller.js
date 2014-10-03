@@ -551,9 +551,7 @@ dssApp.controller('risksController'
         });
         if($scope.showRiskPerTA){
             _.each(riskNames, function(riskName){
-                //console.log('RISK NAME', riskName);
                 _.each(taIds, function(taId){
-                    //console.log('TA ID', taId);
                     var riskLikelihoodConsequence = RisksService.getLikelihoodAndConsequenceValues(riskName, taId);
                     var isRiskUnacceptable = AssetsService.isRiskUnacceptable(riskLikelihoodConsequence.likelihood, riskLikelihoodConsequence.consequence, taId);
                     if(isRiskUnacceptable){

@@ -442,4 +442,14 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         angular.copy(criticityBoundModelsLoadedFromLocalStorage, criticityBoundModels);
     }
 
+    /**
+     * Sets the bound model value for a given TA asset.
+     * It is mainly used for binding initialization.
+     * @param taAssetId The TA asset id.
+     * @param value The value to be set.
+     */
+    this.setCriticityBoundModel = function(taAssetId, value){
+        criticityBoundModels[taAssetId] = value;
+    }
+
 }]);

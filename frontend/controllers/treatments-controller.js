@@ -31,7 +31,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
      */
     $scope.$on('risksSelectedChanged', function () {
 
-        // Retrieve all unaccepted risks
+        // Retrieve all unacceptable risks
         var unacceptableRisksPerTA = RisksService.getUnacceptableRisks();
         var unacceptableRiskNames = [];
         _.each(unacceptableRisksPerTA, function (value, key) {
@@ -46,6 +46,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
             if (error) {
                 flash.error = 'Some error occurred when trying to compute potential treatments after unacceptable risks changed';
             } else {
+
                 var aux = [];
                 _.each(data._documents, function (riskTreatments) {
                     var treatments = riskTreatments.treatments;
@@ -57,14 +58,26 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
                         }
                     });
                 });
+
                 $scope.potentialTreatments = aux;
+                var potentialTreatmentsNames = [];
                 $scope.potentialTreatmentsGrouped = [];
+
                 _.each($scope.potentialTreatments, function (potentialTreatment) {
-                    var mitigatedRisks = $scope.mitigatedRisks(potentialTreatment.name);
-                    _.each(mitigatedRisks, function (mitigatedRisk) {
-                        $scope.potentialTreatmentsGrouped.push({treatment: potentialTreatment, group: mitigatedRisk});
+                    potentialTreatmentsNames.push(potentialTreatment.name);
+                    var associatedRisks = $scope.associatedRisks(potentialTreatment.name);
+                    _.each(associatedRisks, function (associatedRisk) {
+                        $scope.potentialTreatmentsGrouped.push({treatment: potentialTreatment, group: associatedRisk});
                     });
                 });
+
+                /* If potential treatments changed, remove any single treatment that isn't a potential treatment anymore
+                 and that was selected previously
+                 */
+                TreatmentsService.setTreatments(_.reject($scope.treatmentsSelected, function(treatmentSelected){
+                   return potentialTreatmentsNames.indexOf(treatmentSelected.name) === -1;
+                }));
+
             }
         });
 
@@ -168,7 +181,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
      * @param treatmentName The treatment name.
      * @returns {*}
      */
-    $scope.mitigatedRisks = function (treatmentName) {
+    $scope.associatedRisks = function (treatmentName) {
         return TreatmentsService.getRisksFromTreatment(treatmentName);
     };
 

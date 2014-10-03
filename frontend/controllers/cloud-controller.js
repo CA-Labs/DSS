@@ -80,6 +80,30 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
     }, true);
 
     /**
+     * Whenever the TA sliders move, risks mitigation might change and hence, cloud service proposals should recompute
+     * (restart scores, etc.)
+     */
+    $scope.$on('acceptabilityValueChanged', function(){
+        if($scope.ta.length > 0){
+            _.each($scope.ta, function(ta){
+                var serviceType = ta.cloudType == 'IaaS' ? ta.cloudResource._serviceType : ta.cloudPlatform._serviceType;
+                ArangoDBService.getProposalsByCloudAndServiceTypes(ta.cloudType, serviceType, function(error, data){
+                    if(error){
+                        // console.log(error);
+                    } else {
+                        // console.log(data._documents);
+                        CloudService.setTAProposals(ta, data._documents);
+                        $timeout(function(){
+                            CloudService.filterProposalsByTreatments();
+                            CloudService.filterProposalsByThresholds();
+                        }, 100);
+                    }
+                });
+            });
+        }
+    });
+
+    /**
      * Returns the cloud type for a given TA asset.
      * @param taAsset
      * @returns {ServiceModel.schema.cloudType|*|service.cloudType|dataToSend.cloudType|services.cloudType|Document.serviceForm.cloudType}
