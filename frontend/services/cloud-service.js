@@ -362,23 +362,22 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                                     var riskMitigated = false;
 
                                     _.each(characteristics, function(characteristic){
-                                        // console.log('Current service characteristic is ' + characteristic.name + ' with value ' + AssetsService.getInverseCriticityValue(characteristic.value));
+                                        // console.log('Current service characteristic is ' + characteristic.name + ' with value ' + AssetsService.getInverseCriticityValue(characteristic.value) + ' criticity value is ' + criticityValue);
                                         if(characteristic.name == treatmentName && AssetsService.getInverseCriticityValue(characteristic.value) <= criticityValue && !riskMitigated){
 
                                             // This characteristic is mitigating the risk
                                             riskMitigated = true;
-                                            if(riskMitigatedNames.indexOf(riskName) == -1){
+                                            if(riskMitigatedNames.indexOf(riskName) == -1) {
                                                 riskMitigatedNames.push(riskName);
-                                                if(filteredProposals[taAssetName][index].score){
-                                                    // console.log(characteristic.name + ' is mitigating risk ' + riskName);
-                                                    filteredProposals[taAssetName][index].score++;
-                                                    // console.log(filteredProposals[taAssetName][index].score)
-                                                } else {
-                                                    // console.log(characteristic.name + ' is mitigating risk ' + riskName);
-                                                    filteredProposals[taAssetName][index].score = 1.0;
-                                                    // console.log(filteredProposals[taAssetName][index].score)
-                                                }
-                                                // console.log('Incrementing score in service ' + proposal.service.name + ' for risk ' + riskName);
+                                            }
+                                            if(filteredProposals[taAssetName][index].score){
+                                                // console.log(characteristic.name + ' is mitigating risk ' + riskName);
+                                                filteredProposals[taAssetName][index].score++;
+                                                // console.log(filteredProposals[taAssetName][index].score)
+                                            } else {
+                                                // console.log(characteristic.name + ' is mitigating risk ' + riskName);
+                                                filteredProposals[taAssetName][index].score = 1.0;
+                                                // console.log(filteredProposals[taAssetName][index].score)
                                             }
 
                                         }
