@@ -74,8 +74,7 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
                     ngDialog.open({
                         template: 'partials/treatments/treatments-popup.html',
                         className: 'ngdialog-theme-default',
-                        scope: $scope,
-                        controller: ['$scope', function($scope){
+                        controller: ['$scope', '$rootScope', function($scope, $rootScope){
                             // Defines behaviour when user selected to stay in the treatments slide
                             $scope.stay = function() {
                                 // This method is automatically injected into the scope
@@ -87,6 +86,9 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
                                 $scope.closeThisDialog();
                                 // Transition to next slide
                                 $('#dssSlides').carousel('next');
+                                // Trigger cloud service computation taking as treatments selected those associated to
+                                // every single risk unacceptable
+                                $rootScope.$broadcast('getServicesWithoutTreatments');
                             };
                         }]
                     });

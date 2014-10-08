@@ -269,6 +269,14 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
         }
     });
 
+    ArangoDBService.getTreatments(function (error, data){
+        if (error) {
+            flash.error = 'Some error ocurred while fetching all treatments';
+        } else {
+            TreatmentsService.setAllTreatments(data);
+        }
+    });
+
     _.each($scope.taAssets, function (taAsset) {
         var cloudType = taAsset.cloudType;
         var serviceType = '';

@@ -199,11 +199,38 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
      * treatment, exists a path between the proposal and the
      * treatment).
      */
-    this.filterProposalsByTreatments = function(){
+    this.filterProposalsByTreatments = function(useTreatmentsRisksMapping){
 
         var taAssets = AssetsService.getTA();
-        var treatments = TreatmentsService.getTreatments();
-        // console.log('treatments in treatments filter', treatments);
+        var treatments = [];
+        var treatmentNames = [];
+
+        if(useTreatmentsRisksMapping){
+            var unacceptableRisksPerTA = RisksService.getUnacceptableRisks();
+            var treatmentsRisksMapping = TreatmentsService.getRisksTreatmentsMapping();
+            var allTreatments = TreatmentsService.getAllTreatments();
+            // console.log('unacceptable risks per TA', unacceptableRisksPerTA);
+            // console.log('risks treatments mapping', treatmentsRisksMapping);
+            _.each(unacceptableRisksPerTA, function(risks, taAssetId){
+                _.each(risks, function(unacceptableRisk){
+                    _.each(treatmentsRisksMapping[unacceptableRisk], function(unacceptableRiskTreatment){
+                        if(treatmentNames.indexOf(unacceptableRiskTreatment) === -1){
+                            treatmentNames.push(unacceptableRiskTreatment);
+                            _.each(allTreatments, function(treatment){
+                                if(treatment.name == unacceptableRiskTreatment){
+                                    // Associate all tangible assets to all treatments
+                                    var aux = treatment;
+                                    aux.taRelations = taAssets;
+                                    treatments.push(aux);
+                                }
+                            });
+                        }
+                    });
+                })
+            });
+        } else {
+            treatments = TreatmentsService.getTreatments();
+        }
 
         filteredProposals = {};
         var treatmentsFound = 0;
@@ -233,18 +260,46 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
             }
         });
 
-        // console.log('result after filter proposals by treatments', filteredProposals);
-        // console.log('treatments', filteredProposals);
-
     };
 
     /**
      * Filters a list of proposals by threshold values (TA assets
      * criticity values).
      */
-    this.filterProposalsByThresholds = function(){
+    this.filterProposalsByThresholds = function(useTreatmentsRisksMapping){
 
-        var treatments = TreatmentsService.getTreatments();
+        var treatments = [];
+        var treatmentNames = [];
+        var taAssets = AssetsService.getTA();
+        if(useTreatmentsRisksMapping){
+            // console.log('use treatments risks mapping');
+            var unacceptableRisksPerTA = RisksService.getUnacceptableRisks();
+            var treatmentsRisksMapping = TreatmentsService.getRisksTreatmentsMapping();
+            var allTreatments = TreatmentsService.getAllTreatments();
+            // console.log('unacceptable risks per TA', unacceptableRisksPerTA);
+            // console.log('risks treatments mapping', treatmentsRisksMapping);
+            // console.log('all treatments', allTreatments);
+            _.each(unacceptableRisksPerTA, function(risks, taAssetId){
+                _.each(risks, function(unacceptableRisk){
+                    _.each(treatmentsRisksMapping[unacceptableRisk], function(unacceptableRiskTreatment){
+                        if(treatmentNames.indexOf(unacceptableRiskTreatment) === -1){
+                            treatmentNames.push(unacceptableRiskTreatment);
+                            _.each(allTreatments, function(treatment){
+                               if(treatment.name == unacceptableRiskTreatment){
+                                   // Associate all tangible assets to all treatments
+                                   var aux = treatment;
+                                   aux.taRelations = taAssets;
+                                   treatments.push(aux);
+                               }
+                            });
+                        }
+                    });
+                })
+            });
+            // console.log('treatments after all', treatments);
+        } else {
+            treatments = TreatmentsService.getTreatments();
+        }
 
         /***************************************************************************************
          ***************************************************************************************
@@ -271,13 +326,10 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                         // Simulate a score of 10, i.e. score and total are equal
                         filteredProposals[taAssetId][index].score = 1;
                         filteredProposals[taAssetId][index].total = 1;
-                    } else {
-                        // flash.error = 'This should\'t occur since we don\'t allow having unacceptable risks without treatments for simplicity';
-                        // console.error('There unacceptable risks and no treatment has been selected yet!');
                     }
                 });
             });
-            return;
+
         } else {
 
             /***************************************************************************************
@@ -323,6 +375,17 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                                                         // This characteristic is mitigating the risk for that TA and service proposal
                                                         riskMitigated = true;
                                                         if(filteredProposals[taAssetId][index].riskMitigatedNames.indexOf(unacceptableRisk) == -1){
+                                                            // Check if this risk was considered unmitigated before and remove it
+                                                            var i = -1;
+                                                            _.each(filteredProposals[taAssetId][index].unmitigatedRisks, function(unmitigatedRisk, j){
+                                                                if(unmitigatedRisk == unacceptableRisk){
+                                                                    // console.log(unmitigatedRisk + ' (' + treatmentName + ') was considered as unmitigated before for service ' + proposal.service.name);
+                                                                    i = j;
+                                                                }
+                                                            });
+                                                            if(i >= 0){
+                                                                filteredProposals[taAssetId][index].unmitigatedRisks.splice(i, 1);
+                                                            }
                                                             filteredProposals[taAssetId][index].riskMitigatedNames.push(unacceptableRisk);
                                                             if(filteredProposals[taAssetId][index].score){
                                                                 // console.log(characteristic.name + ' is mitigating risk ' + unacceptableRisk + ' in service ' + proposal.service.name + ' and asset ' + taAssetId + ' and proposal number ' + index);
@@ -334,20 +397,25 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                                                         }
                                                     }
                                                 });
-                                                 if(!riskMitigated){
-                                                    // console.log(unacceptableRisk + ' is not mitigated for service ' + proposal.service.name + ' and TA asset ' + ta._id);
-                                                    // Store what risks are unmitigated for that service
-                                                    if(filteredProposals[taAssetId][index].unmitigatedRisks){
-                                                        if(filteredProposals[taAssetId][index].unmitigatedRisks.indexOf(unacceptableRisk) == -1){
-                                                            filteredProposals[taAssetId][index].unmitigatedRisks.push(unacceptableRisk);
+                                                if(!riskMitigated){
+                                                    // Before considering this risk unmitigated, check if some other treatment already mitigated it
+                                                    if(filteredProposals[taAssetId][index].riskMitigatedNames.indexOf(unacceptableRisk) < 0){
+                                                        // console.log(unacceptableRisk + '(' + treatmentName + ') is not mitigated for service ' + proposal.service.name);
+                                                        // Store what risks are unmitigated for that service
+                                                        if(filteredProposals[taAssetId][index].unmitigatedRisks){
+                                                            if(filteredProposals[taAssetId][index].unmitigatedRisks.indexOf(unacceptableRisk) == -1){
+                                                                filteredProposals[taAssetId][index].unmitigatedRisks.push(unacceptableRisk);
+                                                            }
+                                                        } else {
+                                                            filteredProposals[taAssetId][index].unmitigatedRisks = [];
+                                                            if(filteredProposals[taAssetId][index].unmitigatedRisks.indexOf(unacceptableRisk) == -1){
+                                                                filteredProposals[taAssetId][index].unmitigatedRisks.push(unacceptableRisk);
+                                                            }
                                                         }
                                                     } else {
-                                                        filteredProposals[taAssetId][index].unmitigatedRisks = [];
-                                                        if(filteredProposals[taAssetId][index].unmitigatedRisks.indexOf(unacceptableRisk) == -1){
-                                                            filteredProposals[taAssetId][index].unmitigatedRisks.push(unacceptableRisk);
-                                                        }
+                                                        // console.info(unacceptableRisk + '(' + treatmentName + ') has been already mitigated by some other treatment');
                                                     }
-                                                 }
+                                                }
                                             }
                                         });
                                     }
