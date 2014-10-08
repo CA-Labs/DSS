@@ -366,14 +366,14 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                         // We had unacceptable risks and none has been mitigated, simulate a score of 0
                         if(filteredProposals[taAssetId][index].riskMitigatedNames.length == 0){
                             filteredProposals[taAssetId][index].score = 0.0;
-                            filteredProposals[taAssetId][index].total = 1.0;
+                            filteredProposals[taAssetId][index].total = filteredProposals[taAssetId][index].unmitigatedRisks.length;
                         } else {
-                            filteredProposals[taAssetId][index].total = filteredProposals[taAssetId][index].riskMitigatedNames.length;
+                            filteredProposals[taAssetId][index].total = filteredProposals[taAssetId][index].riskMitigatedNames.length + filteredProposals[taAssetId][index].unmitigatedRisks.length;
                         }
                     } else {
                         // Same case as above
                         filteredProposals[taAssetId][index].score = 0.0;
-                        filteredProposals[taAssetId][index].total = 1.0;
+                        filteredProposals[taAssetId][index].total = filteredProposals[taAssetId][index].riskMitigatedNames.length + filteredProposals[taAssetId][index].unmitigatedRisks.length;
                     }
                 });
             });
