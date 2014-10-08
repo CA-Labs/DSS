@@ -4,30 +4,8 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('mainController', [
-    '$scope'
-    , '$rootScope'
-    , '$upload'
-    , 'flash'
-    , '$http'
-    , '$q'
-    , 'localStorageService'
-    , 'AssetsService'
-    , 'RisksService'
-    , 'TreatmentsService'
-    , 'ArangoDBService'
-    , function(
-        $scope
-        , $rootScope
-        , $upload
-        , flash
-        , $http
-        , $q
-        , localStorageService
-        , AssetsService
-        , RisksService
-        , TreatmentsService
-        , ArangoDBService){
+dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash', '$http', '$q', 'localStorageService', 'AssetsService', 'RisksService', 'TreatmentsService', 'ArangoDBService', '$timeout'
+    , function($scope, $rootScope, $upload, flash, $http, $q, localStorageService, AssetsService, RisksService, TreatmentsService, ArangoDBService, $timeout){
 
     //Initialization
 
@@ -52,6 +30,10 @@ dssApp.controller('mainController', [
         window.location.reload();
     };
 
+    /**
+     * Saves the current user session (local storage values) on a file.
+     * @param event
+     */
     $scope.saveSessionFile = function (event) {
         var element = angular.element(event.target);
 
@@ -146,10 +128,18 @@ dssApp.controller('mainController', [
                 RisksService.setRiskBoundModels(localStorageValues.riskBoundModels);
                 RisksService.setMultipleRisksLikelihoodConsequence(localStorageValues.multipleRisksLikelihoodConsequence);
                 RisksService.setRisks(localStorageValues.risksSelected);
-                TreatmentsService.setTreatmentValues(localStorageValues.treatmentValues);
-                TreatmentsService.setTreatments(localStorageValues.treatmentsSelected);
                 AssetsService.setCriticityBoundModels(localStorageValues.criticityBoundModels);
                 AssetsService.setTA(localStorageValues.taAssets);
+
+                // Delay treatments initialization, otherwise selected treatments values are overwritten because other
+                // AngularJS are triggering updates.
+                $timeout(function(){
+                    TreatmentsService.setTreatmentValues(localStorageValues.treatmentValues);
+                    TreatmentsService.setTreatments(localStorageValues.treatmentsSelected);
+                    TreatmentsService.loadingTreatmentsFromLocalStorage(false);
+                    TreatmentsService.loadingTreatmentsValuesFromLocalStorage(false);
+                    $rootScope.$broadcast('risksSelectedChanged');
+                }, 1000);
             });
         } else {
             flash.error = 'Some error occured while trying to upload DSS session file';
@@ -167,6 +157,10 @@ dssApp.controller('mainController', [
         return deferred.promise;
     };
 
+    /**
+     * Saves the user services selection on a file.
+     * @param event
+     */
     $scope.saveCloudSelection = function (event) {
         var element = angular.element(event.target);
 

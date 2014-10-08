@@ -92,46 +92,111 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
         return treatmentsValues;
     };
 
+    /**
+     * Retrieves a treatment value by treatment name.
+     * @param treatmentName The treatment name.
+     * @returns {*}
+     */
     this.getTreatmentValue = function(treatmentName){
         return treatmentsValues[treatmentName];
     };
 
+    /**
+     * Sets the treatments model loaded from local storage.
+     * @param treatmentsLoadedFromLocalStorage The treatments
+     * model to be loaded from local storage.
+     */
     this.setTreatments = function(treatmentsLoadedFromLocalStorage){
-        treatments = treatmentsLoadedFromLocalStorage;
+        if(!angular.equals(treatments, treatmentsLoadedFromLocalStorage)){
+            angular.copy(treatmentsLoadedFromLocalStorage, treatments);
+        }
     };
 
+    /**
+     * Sets the treatments values model from local storage.
+     * @param treatmentValuesLoadedFromLocalStorage The treatments
+     * values model to be loaded from local storage.
+     */
     this.setTreatmentValues = function(treatmentValuesLoadedFromLocalStorage){
-        treatmentsValues = treatmentValuesLoadedFromLocalStorage;
+        if(!angular.equals(treatmentsValues, treatmentValuesLoadedFromLocalStorage)){
+            angular.copy(treatmentValuesLoadedFromLocalStorage, treatmentsValues);
+        }
     };
 
+    /**
+     * Sets a flag indicating whether the treatments model is being
+     * loaded from local storage or not.
+     * @param loading A boolean indicating the treatments model
+     * loading state.
+     */
     this.loadingTreatmentsFromLocalStorage = function(loading){
         loadingTreatmentsFromLocalStorage = loading;
     };
 
+    /**
+     * Sets a flag indicating whether the treatments values model
+     * is being loaded from local storage or not.
+     * @param loading A boolean indicating the treatments values
+     * model loading state.
+     */
     this.loadingTreatmentsValuesFromLocalStorage = function(loading){
         loadingTreatmentsValuesFromLocalStorage = loading;
     };
 
+    /**
+     * Whether the treatments model is still being loaded or not.
+     * @returns {boolean}
+     */
     this.isLoadingTreatmentsFromLocalStorage = function(){
         return loadingTreatmentsFromLocalStorage;
     };
 
+    /**
+     * Whehter the treatments values model is still being loaded or not.
+     * @returns {boolean}
+     */
     this.isLoadingTreatmentsValuesFromLocalStorage = function(){
         return loadingTreatmentsValuesFromLocalStorage;
     };
 
+    /**
+     * Sets the risks treatments mapping.
+     * @param risksTreatmentsMappingValues The risks treatments mapping
+     * values to be set.
+     */
     this.setRisksTreatmentsMapping = function(risksTreatmentsMappingValues){
-        risksTreatmentsMapping = risksTreatmentsMappingValues;
+        if(!angular.equals(risksTreatmentsMapping, risksTreatmentsMappingValues)){
+            angular.copy(risksTreatmentsMappingValues, risksTreatmentsMapping);
+        }
     };
 
+    /**
+     * Returns the risks treatments mapping.
+     * @returns {*|{}}
+     */
     this.getRisksTreatmentsMapping = function(){
         return risksTreatmentsMapping;
     };
 
+    /**
+     * Given a cloud type and a service type, sets what treatments are found
+     * in any single path between a service of this nature and a treatment in our
+     * graph model.
+     * @param cloudType A valid cloud type.
+     * @param serviceType A valid service type.
+     * @param treatmentsConnections The treatments connections found in the graph.
+     */
     this.setTreatmentsConnectedToCloudAndServiceTypes = function(cloudType, serviceType, treatmentsConnections){
         treatmentsConnectedToCloudAndServiceTypes[cloudType + '/' + serviceType] = treatmentsConnections;
     };
 
+    /**
+     * Given a cloud type and a service type, returns what treatments connections
+     * were previously found.
+     * @param cloudType A valid cloud type.
+     * @param serviceType A valid service type.
+     * @returns {*}
+     */
     this.getTreatmentsConnectedToCloudAndServiceTypes = function(cloudType, serviceType){
         var treatmentsConnections = treatmentsConnectedToCloudAndServiceTypes[cloudType + '/' + serviceType];
         if(treatmentsConnections){
@@ -141,25 +206,42 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
         }
     };
 
+    /**
+     * Given a treatment, return what risks are connected to it.
+     * @param treatmentName The tretment name.
+     * @returns {Array}
+     */
     this.getRisksFromTreatment = function(treatmentName){
         var selectedRisks = RisksService.getRisks();
-        var risksNames = [];
+        var riskNames = [];
         _.each(risksTreatmentsMapping, function(value, key){
-            if(_.contains(value, treatmentName) && !_.contains(risksNames, key)){
+            if(_.contains(value, treatmentName) && !_.contains(riskNames, key)){
                 _.each(selectedRisks, function(selectedRisk){
-                    if(selectedRisk.destination.name == key){
-                        risksNames.push(key);
+                    if(selectedRisk.destination.name == key && riskNames.indexOf(key) == -1){
+                        riskNames.push(key);
                     }
                 });
             }
         });
-        return risksNames;
+        return riskNames;
     };
 
+    /**
+     * Given a treatment name, returns true if the user selected to choose among
+     * its possible values or false otherwise (he is not interested in the values,
+     * but just in the concept).
+     * @param treatmentName The treatment name.
+     * @returns {boolean}
+     */
     this.showTreatmentValue = function(treatmentName){
         return showTreatmentsValues[treatmentName] !== undefined && showTreatmentsValues[treatmentName] === true;
     };
 
+    /**
+     * Sets the treatment options mode (show allowed values or not).
+     * @param treatmentName The treatment name.
+     * @param showTreatment A boolean indicating if treatment options should be displayed or not.
+     */
     this.setShowTreatmentValue = function(treatmentName, showTreatment){
         if(showTreatment){
             showTreatmentsValues[treatmentName] = true;
@@ -168,18 +250,28 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
         }
     };
 
+    /**
+     * Returns the treatments values model.
+     * @returns {*|{}}
+     */
     this.getShowTreatmentsValues = function(){
         return showTreatmentsValues;
     };
 
+    /**
+     * Sets the treatments values model to be loaded from
+     * local storage.
+     * @param showTreatmentsValuesFromLocalStorage The
+     * treatments values model to be loaded.
+     */
     this.setShowTreatmentsValues = function(showTreatmentsValuesFromLocalStorage){
         showTreatmentsValues = showTreatmentsValuesFromLocalStorage;
     };
 
     /**
-     * check if TA exists in the treatment
-     * @param treatment
-     * @param ta
+     * Checks if a TA asset is associated with a treatment.
+     * @param treatment The treatment.
+     * @param ta The TA asset.
      * @returns {boolean}
      */
     this.taAssetExists = function (treatment, ta) {
@@ -194,9 +286,10 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
     };
 
     /**
-     * Add TA to Treatment
-     * @param treatment
-     * @param ta
+     * Associates a TA asset with a treatment.
+     * @param treatment The treatment.
+     * @param ta The TA asset to be associated
+     * to that treatment.
      */
     this.addTAToTreatment = function (treatment, ta) {
         var index = -1;
@@ -221,9 +314,10 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
     };
 
     /**
-     * Remove Tangible Asset from Treatment
-     * @param treatment
-     * @param ta
+     * Removes a TA asset from a treatment.
+     * @param treatment The treatment.
+     * @param ta The TA asset to be removed from
+     * that treatment.
      * @returns {boolean}
      */
     this.removeTaFromTreatment = function (treatment, ta) {
@@ -231,7 +325,6 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
         var taPos = _.indexOf(treatment.taRelations, ta);
         if (taPos > -1) {
             treatment.taRelations.splice(taPos, 1);
-            return;
         }
     };
 

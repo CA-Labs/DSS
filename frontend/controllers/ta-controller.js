@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'CloudService', 'localStorageService', '$timeout', function($rootScope, $scope, AssetsService, CloudService, localStorageService, $timeout){
+dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'CloudService', 'localStorageService', 'TreatmentsService', '$timeout', function($rootScope, $scope, AssetsService, CloudService, localStorageService, TreatmentsService, $timeout){
 
     //Initialization
 
@@ -21,21 +21,6 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'Clo
         AssetsService.setDeploymentType();
     };
 
-    // Kind of a hack: this is necessary when loading TA assets from local storage,
-    // since the reference seems to be lost when setting the new TA assets in the service
-    // variable.
-    $scope.$watch(function(){
-        return AssetsService.getTA();
-    }, function(newTA){
-        $scope.taAssets = newTA;
-    }, true);
-
-    $scope.$watch(function(){
-        return AssetsService.getCriticityBoundModels();
-    }, function(newVal, oldVal){
-        $scope.criticityBoundModels = newVal;
-    }, true);
-
     /**
      * Removes a TA asset from the list of assets selected
      * by the user, by calling the Assets service.
@@ -50,10 +35,19 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'Clo
      * related risks unacceptability.
      */
     $scope.$on('sliderValueChanged', function($event, element){
-        // This timeout seems to be necessary, otherwise slider models are not updated on time
-        $timeout(function(){
-            $rootScope.$broadcast('acceptabilityValueChanged');
-        }, 100);
+        /*
+         * For some reason, the slider model isn't bound until the slider is moved.
+         * This may cause unexpected errors, that's why we force it to be initialized.
+         */
+        if(element.init){
+            AssetsService.setCriticityBoundModel(element.key, parseFloat(element.value));
+        }
+        if(!TreatmentsService.isLoadingTreatmentsFromLocalStorage() && !TreatmentsService.isLoadingTreatmentsValuesFromLocalStorage()){
+            // This timeout seems to be necessary, otherwise slider models are not updated on time
+            $timeout(function(){
+                $rootScope.$broadcast('acceptabilityValueChanged');
+            }, 100);
+        }
     });
 
 }]);

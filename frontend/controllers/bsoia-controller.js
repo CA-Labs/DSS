@@ -11,13 +11,14 @@ dssApp.controller('bsoiaController', ['$scope', '$rootScope', 'localStorageServi
     $scope.bsoiaAssetsSelected = AssetsService.getBSOIA();              //BSOIA assets selected by the user (shared across the Assets service)
     localStorageService.bind($scope, 'bsoiaAssetsSelected', $scope.bsoiaAssetsSelected);
 
-    // Kind of a hack: this is necessary when loading BSOIA assets from local storage,
-    // since the reference seems to be lost when setting the new BSOIA assets in the service
-    // variable.
+    /**
+     * Listen for changes in selected BSOIA
+     * assets, so that potential risks can be
+     * recomputed.
+     */
     $scope.$watch(function(){
         return AssetsService.getBSOIA();
-    }, function(newBSOIA){
-        $scope.bsoiaAssetsSelected = newBSOIA;
+    }, function(){
         $rootScope.$broadcast('bsoiaChanged');
     }, true);
 

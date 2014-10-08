@@ -7,28 +7,12 @@
 dssApp.controller('toiaController', ['$scope', '$rootScope', 'localStorageService', 'AssetsService', 'ArangoDBService', 'flash', function($scope, $rootScope, localStorageService, AssetsService, ArangoDBService, flash){
 
     //Initialization
-    $scope.toiaAssets = [];      //The TOIA assets retrieved from the DB
-    $scope.toiaAssetsSelected = AssetsService.getTOIA();    //TOIA assets selected by the user (shared across the Assets service)
-    localStorageService.bind($scope, 'toiaAssetsSelected', $scope.toiaAssetsSelected); // Bind toiaAssets to localStorage
-    $scope.bsoiaAssetsSelected = AssetsService.getBSOIA();  //BSOIA assets selected by the user (shared across the Assets service)
+    $scope.toiaAssets = [];                                                             //The TOIA assets retrieved from the DB
 
-    // Kind of a hack: this is necessary when loading TOIA assets from local storage,
-    // since the reference seems to be lost when setting the new TOIA assets in the service
-    // variable.
-    $scope.$watch(function(){
-        return AssetsService.getTOIA();
-    }, function(newTOIA){
-        $scope.toiaAssetsSelected = newTOIA;
-    }, true);
+    $scope.toiaAssetsSelected = AssetsService.getTOIA();                                //TOIA assets selected by the user (shared across the Assets service)
+    localStorageService.bind($scope, 'toiaAssetsSelected', $scope.toiaAssetsSelected);  // Local storage binding
 
-    // Kind of a hack: this is necessary when loading BSOIA assets from local storage,
-    // since the reference seems to be lost when setting the new BSOIA assets in the service
-    // variable.
-    $scope.$watch(function(){
-        return AssetsService.getBSOIA();
-    }, function(newBSOIA){
-        $scope.bsoiaAssetsSelected = newBSOIA;
-    }, true);
+    $scope.bsoiaAssetsSelected = AssetsService.getBSOIA();                              //BSOIA assets selected by the user (shared across the Assets service)
 
     /**
      * Adds a new TOIA asset to the list of selected TOIA,
@@ -77,9 +61,8 @@ dssApp.controller('toiaController', ['$scope', '$rootScope', 'localStorageServic
         if(AssetsService.existsBSOIAinTOIA($data.name, toiaAsset.asset.name)){
             flash.warn = 'BSOIA ' + $data.name + ' already added in TOIA ' + toiaAsset.asset.name
         } else {
-            toiaAsset.bsoiaRelations.push($data);
-            AssetsService.updateTOIAbyName(toiaAsset.asset.name, toiaAsset);
-            // udpate local storage as well
+            AssetsService.addBSOIAtoTOIA($data, toiaAsset.asset.name);
+            // udpate local storage as well since no deep inspection seems to be applied in angular local storage service
             localStorageService.set('toiaAssetsSelected', $scope.toiaAssetsSelected);
         }
     };

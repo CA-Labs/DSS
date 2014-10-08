@@ -6,10 +6,17 @@
 
 dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 'AssetsService', 'TreatmentsService', 'flash', function($scope, $rootScope, RisksService, AssetsService, TreatmentsService, flash){
 
-    $scope.unacceptableRisks = RisksService.getUnacceptableRisks();
+    $scope.unacceptableRisks = RisksService.getUnacceptableRisks();     // The list of unacceptable risks per TA asset
 
-    $scope.ta = AssetsService.getTA();
+    $scope.ta = AssetsService.getTA();                                  // The list of TA assets
 
+    /**
+     * Called whenever the next button is clicked. Handles
+     * what buttons should be displayed and triggers app
+     * events accordingly (e.g.: when Search button is clicked,
+     * filter cloud service proposals).
+     * @param $event
+     */
     $scope.next = function($event){
         if(_.size($scope.unacceptableRisks) > 0){
             var currentSlide = $('#dssSlides').find('.active');
@@ -56,21 +63,23 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
                 }
             }
             else if(currentSlide.hasClass('treatments-slide')){
+
                 var treatmentsSelected = TreatmentsService.getTreatments();
-                // var unnaceptableRisks = RisksService.getUnacceptableRisks();
+                var noUnnaceptableRisks = RisksService.noUnacceptableRisks();
                 var error = false;
-                /*
-                if((!treatmentsSelected || treatmentsSelected.length == 0) && !_.isEmpty(unnaceptableRisks)){
+
+                if((!treatmentsSelected || treatmentsSelected.length == 0) && !noUnnaceptableRisks){
                     error = true;
                     flash.error = 'There are unmitigated risks. Please select some treatments before and associate them to the corresponding tangible asset(s). Please do refine your selection.';
                 }
-                */
+
                 _.each(treatmentsSelected, function(treatment){
                     if(!treatment.taRelations || treatment.taRelations.length == 0){
                         error = true;
                         flash.error = 'You should associate at least one tangible asset for each treatment.';
                     }
                 });
+
                 if(error){
                     $event.stopPropagation();
                 } else {

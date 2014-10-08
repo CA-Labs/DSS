@@ -9,9 +9,11 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     //BSOIA assets
     var bsoiaFromStorage = localStorageService.get('bsoiaAssetsSelected') || [];
     var bsoia = bsoiaFromStorage;               //BSOIA assets selected by the user
+
     //TOIA assets
     var toiaFromStorage = localStorageService.get('toiaAssetsSelected') || [];
     var toia = toiaFromStorage;                 //TOIA assets selected by the user
+
     //TA assets
     var taFromStorage = localStorageService.get('ta') || [];
     var ta = taFromStorage;                     //TA assets selected by the user
@@ -79,7 +81,9 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * be set.
      */
     this.setBSOIA = function(bsoiaLoadedFromLocalStorage){
-        bsoia = bsoiaLoadedFromLocalStorage;
+        if(!angular.equals(bsoia, bsoiaLoadedFromLocalStorage)){
+            angular.copy(bsoiaLoadedFromLocalStorage, bsoia);
+        }
     };
 
     /**
@@ -134,7 +138,9 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * be set.
      */
     this.setTOIA = function(toiaLoadedFromLocalStorage){
-        toia = toiaLoadedFromLocalStorage;
+        if(!angular.equals(toia, toiaLoadedFromLocalStorage)){
+            angular.copy(toiaLoadedFromLocalStorage, toia);
+        }
     };
 
     /**
@@ -184,7 +190,6 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         });
         if(toiaIndex < 0){
             flash.error = toiaAssetName + ' does not exist';
-            return;
         } else {
             var bsoiaIndex = -1;
             _.each(toia[toiaIndex].bsoiaRelations, function(relation, j){
@@ -194,6 +199,37 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
             });
             if(bsoiaIndex >= 0){
                 toia[toiaIndex].bsoiaRelations.splice(bsoiaIndex, 1);
+            }
+        }
+    };
+
+    /**
+     * Adds a BSOIA asset to the list bsoia relations
+     * from a TOIA asset.
+     * @param bsoia The BSOIA asset to be added.
+     * @param toiaAssetName The TOIA asset that contains the BSOIA
+     * relations.
+     */
+    this.addBSOIAtoTOIA = function(bsoia, toiaAssetName){
+        var toiaIndex = -1;
+        _.each(toia, function(asset, i){
+            if(asset.asset.name == toiaAssetName){
+                toiaIndex = i;
+            }
+        });
+        if(toiaIndex < 0){
+            flash.error = toiaAssetName + ' does not exist';
+        } else {
+            var bsoiaIndex = -1;
+            _.each(toia[toiaIndex].bsoiaRelations, function(relation, j){
+                if(relation.name == bsoia.name){
+                    bsoiaIndex = j;
+                }
+            });
+            if(bsoiaIndex < 0){
+                toia[toiaIndex].bsoiaRelations.push(bsoia);
+            } else {
+                flash.error = 'BSOIA ' + bsoia.name + ' already exists in TOIA ' + toiaAssetName;
             }
         }
     };
@@ -282,7 +318,9 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * be set.
      */
     this.setTA = function(taLoadedFromLocalStorage) {
-        ta = taLoadedFromLocalStorage;
+        if(!angular.equals(ta, taLoadedFromLocalStorage)){
+            angular.copy(taLoadedFromLocalStorage, ta);
+        }
     };
 
     /**
@@ -290,8 +328,8 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * @param xmlObject
      */
     this.setXmlTaObject = function (xmlObject) {
-        if (typeof(xmlObject) == 'object') {
-            xmlTaAssetsAsObject = xmlObject;
+        if (typeof(xmlObject) == 'object' && !angular.equals(xmlTaAssetsAsObject, xmlObject)) {
+            angular.copy(xmlObject, xmlTaAssetsAsObject);
         }
     };
 
@@ -301,16 +339,6 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      */
     this.getXmlTaObject = function () {
         return xmlTaAssetsAsObject;
-    };
-
-    this.loadResourcesFromXML = function(file){
-        var fileReader = new FileReader();
-        var deferred = $q.defer();
-        var xmlString = fileReader.readAsText(file);
-        fileReader.onload = function(){
-            deferred.resolve(fileReader.result);
-        };
-        return deferred.promise;
     };
 
     /**
@@ -334,9 +362,9 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * Removes all assets (BSOIA/TOIA/TA).
      */
     this.removeAll = function(){
-        bsoia = [];
-        toia = [];
-        ta = [];
+        angular.copy([], bsoia);
+        angular.copy([], toia);
+        angular.copy([], ta);
     };
 
     /**
@@ -359,6 +387,12 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         }
     };
 
+    /**
+     * Given a certain TA asset id, returns its
+     * corresponding criticity value.
+     * @param taAssetId The TA asset id.
+     * @returns {*}
+     */
     this.getTACriticityValue = function(taAssetId){
         var criticity = null;
         if(criticityBoundModels[taAssetId]){
@@ -367,6 +401,11 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         return criticity;
     };
 
+    /**
+     * Returns a value from 1-25 from a SMI score (1 to 10 scale).
+     * @param smiScore An SMI score (1 to 10 scale).
+     * @returns {number}
+     */
     this.getInverseCriticityValue = function(smiScore){
         return Math.round(25 - smiScore * ((25 - 1)/10));
     };
@@ -390,12 +429,35 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         isMulticloudDeployment = !isMulticloudDeployment;
     };
 
+    /**
+     * Returns the criticity models bound for each TA
+     * criticity slider.
+     * @returns {*|{}}
+     */
     this.getCriticityBoundModels = function(){
         return criticityBoundModels;
     };
 
+    /**
+     * Sets the TA criticity bound models loaded from
+     * local storage.
+     * @param criticityBoundModelsLoadedFromLocalStorage
+     * The TA criticity models to be bound.
+     */
     this.setCriticityBoundModels = function(criticityBoundModelsLoadedFromLocalStorage){
-        criticityBoundModels = criticityBoundModelsLoadedFromLocalStorage;
-    }
+        if(!angular.equals(criticityBoundModels, criticityBoundModelsLoadedFromLocalStorage)){
+            angular.copy(criticityBoundModelsLoadedFromLocalStorage, criticityBoundModels);
+        }
+    };
+
+    /**
+     * Sets the bound model value for a given TA asset.
+     * It is mainly used for binding initialization.
+     * @param taAssetId The TA asset id.
+     * @param value The value to be set.
+     */
+    this.setCriticityBoundModel = function(taAssetId, value){
+        criticityBoundModels[taAssetId] = value;
+    };
 
 }]);

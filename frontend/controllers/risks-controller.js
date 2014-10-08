@@ -46,42 +46,6 @@ dssApp.controller('risksController'
 
     $scope.unacceptableRisks = RisksService.getUnacceptableRisks();
 
-    // Kind of a hack: this is necessary when loading simple risks model from local storage,
-    // since the reference seems to be lost when setting the new simple risks model in the service
-    // variable.
-    $scope.$watch(function(){
-        return RisksService.getRisksLikelihoodConsequence();
-    }, function(newSimpleRisksLikelihoodConsequence){
-        $scope.simpleRisksLikelihoodConsequence = newSimpleRisksLikelihoodConsequence;
-    }, true);
-
-    // Kind of a hack: this is necessary when loading multiple risks model from local storage,
-    // since the reference seems to be lost when setting the new multiple risks model in the service
-    // variable.
-    $scope.$watch(function(){
-        return RisksService.getRisksTALikelihoodConsequence();
-    }, function(newMultipleRisksLikelihoodConsequence){
-        $scope.multipleRisksLikelihoodConsequence = newMultipleRisksLikelihoodConsequence;
-    }, true);
-
-    $scope.$watch(function(){
-        return RisksService.getUnacceptableRisks();
-    }, function(newVal, oldVal){
-        $scope.unacceptableRisks = newVal;
-    }, true);
-
-    $scope.$watch(function(){
-        return RisksService.getRiskBoundModels();
-    }, function(newVal, oldVal){
-        $scope.riskBoundModels = newVal;
-    }, true);
-
-    $scope.$watch(function(){
-        return RisksService.getRisks();
-    }, function(newVal, oldVal){
-        $scope.risksSelected = newVal;
-    }, true);
-
     //List of available categories to categorize risks level for likelihood values
     var LIKELIHOOD_CATEGORIES = {
         RARE: {
@@ -587,19 +551,14 @@ dssApp.controller('risksController'
         });
         if($scope.showRiskPerTA){
             _.each(riskNames, function(riskName){
-                //console.log('RISK NAME', riskName);
                 _.each(taIds, function(taId){
-                    //console.log('TA ID', taId);
                     var riskLikelihoodConsequence = RisksService.getLikelihoodAndConsequenceValues(riskName, taId);
                     var isRiskUnacceptable = AssetsService.isRiskUnacceptable(riskLikelihoodConsequence.likelihood, riskLikelihoodConsequence.consequence, taId);
                     if(isRiskUnacceptable){
-                        //console.log(riskName + ' (multiple) is unnaceptable');
                         RisksService.addUnacceptableRisk(taId, riskName);
                     } else {
-                        //console.log(riskName + ' (multiple) is acceptable');
                         RisksService.removeUnacceptableRisk(taId, riskName);
                     }
-                    //console.log('**************************');
                 });
             })
         } else {
@@ -608,13 +567,10 @@ dssApp.controller('risksController'
                 _.each(taIds, function(taId){
                     var isRiskUnacceptable = AssetsService.isRiskUnacceptable(riskLikelihoodConsequence.likelihood, riskLikelihoodConsequence.consequence, taId);
                     if(isRiskUnacceptable){
-                        //console.log(riskName + ' (simple) is unacceptable');
                         RisksService.addUnacceptableRisk(taId, riskName);
                     } else {
-                        //console.log(riskName + ' (simple) is acceptable');
                         RisksService.removeUnacceptableRisk(taId, riskName);
                     }
-                    //console.log('******************');
                 });
             })
         }

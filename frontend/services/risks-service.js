@@ -71,7 +71,6 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param likelihood The likelihood value of that risk.
      */
     this.addRiskLikelihood = function(riskName, likelihood){
-        //console.log('adding risk likelihood for ' + riskName + ' in simple model');
         risksLikelihoodConsequence[riskName + SEPARATOR + 'likelihood'] = parseInt(likelihood);
     };
 
@@ -102,7 +101,6 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param consequence The consequence value of that risk.
      */
     this.addRiskConsequence = function(riskName, consequence){
-        //console.log('adding risk consequence for ' + riskName + ' in simple model');
         risksLikelihoodConsequence[riskName + SEPARATOR + 'consequence'] = parseInt(consequence);
     };
 
@@ -113,7 +111,6 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param likelihood The likelihood value.
      */
     this.addRiskTALikelihood = function(riskName, taAssetId, likelihood){
-        //console.log('adding risk likelihood for ' + riskName + '/' + taAssetId + ' in multiple model');
         risksTALikelihoodConsequence[riskName + SEPARATOR + taAssetId + SEPARATOR + 'likelihood'] = parseInt(likelihood);
     };
 
@@ -124,7 +121,6 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param consequence The consequence value.
      */
     this.addRiskTAConsequence = function(riskName, taAssetId, consequence){
-        //console.log('adding risk consequence for ' + riskName + '/' + taAssetId + ' in multiple model');
         risksTALikelihoodConsequence[riskName + SEPARATOR + taAssetId + SEPARATOR + 'consequence'] = parseInt(consequence);
     };
 
@@ -136,8 +132,7 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         // clear multiple model
         var regex = new RegExp('[\\w\\s]+' + SEPARATOR + taAssetId + SEPARATOR + '[\\w\\s]+', 'i');
         for(key in risksTALikelihoodConsequence){
-            if(regex.exec(key)){
-                //console.log('removing key ' + key + ' in multiple model');
+            if(regex.exec(key)){;
                 delete risksTALikelihoodConsequence[key];
             }
         };
@@ -164,7 +159,9 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param risksLoadedFromLocalStorage Local storage risks.
      */
     this.setRisks = function(risksLoadedFromLocalStorage){
-        risks = risksLoadedFromLocalStorage;
+        if(!angular.equals(risks, risksLoadedFromLocalStorage)){
+            angular.copy(risksLoadedFromLocalStorage, risks);
+        }
     };
 
     /**
@@ -173,7 +170,9 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * storage simple risk model.
      */
     this.setSimpleRisksLikelihoodConsequence = function(simpleRisksLikelihoodConsequenceLoadedFromLocalStorage){
-        risksLikelihoodConsequence = simpleRisksLikelihoodConsequenceLoadedFromLocalStorage;
+        if(!angular.equals(risksLikelihoodConsequence, simpleRisksLikelihoodConsequenceLoadedFromLocalStorage)){
+            angular.copy(simpleRisksLikelihoodConsequenceLoadedFromLocalStorage, risksLikelihoodConsequence);
+        }
     };
 
     /**
@@ -182,7 +181,9 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * storage multiple risk model.
      */
     this.setMultipleRisksLikelihoodConsequence = function(multipleRisksLikelihoodConsequenceLoadedFromLocalStorage){
-        risksTALikelihoodConsequence = multipleRisksLikelihoodConsequenceLoadedFromLocalStorage;
+        if(!angular.equals(risksTALikelihoodConsequence, multipleRisksLikelihoodConsequenceLoadedFromLocalStorage)){
+            angular.copy(multipleRisksLikelihoodConsequenceLoadedFromLocalStorage, risksTALikelihoodConsequence);
+        }
     };
 
     /**
@@ -242,6 +243,12 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         }
     };
 
+    /**
+     * Adds a new unacceptable risk to the list of unacceptable risks
+     * for a given TA asset.
+     * @param taAssetId The id of the TA asset.
+     * @param riskName The unnaceptable risk name to be added.
+     */
     this.addUnacceptableRisk = function(taAssetId, riskName){
         var aux = unacceptableRisks[taAssetId];
         if(aux){
@@ -258,10 +265,16 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         }
     };
 
+    /**
+     * Removes an unacceptable risk form the list of unacceptable risks
+     * for a given TA asset.
+     * @param taAssetId The if of the TA asset.
+     * @param riskName The unacceptable risk name to be removed.
+     */
     this.removeUnacceptableRisk = function(taAssetId, riskName){
         if(unacceptableRisks[taAssetId]){
             var index = -1;
-            _.each(unacceptableRisks, function(risk, i){
+            _.each(unacceptableRisks[taAssetId], function(risk, i){
                 if(risk == riskName) {
                     index = i;
                 }
@@ -272,32 +285,80 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         }
     };
 
+    /**
+     * Removes all unacceptable risks for a given TA asset.
+     * @param taAssetId The id of the TA asset.
+     */
     this.removeTAUnacceptableRisks = function(taAssetId){
         delete unacceptableRisks[taAssetId];
     };
 
+    /**
+     * Returns the list of unacceptable risks for a given TA asset.
+     * @param taAssetId The id of the TA asset.
+     * @returns {*}
+     */
     this.getTAUnacceptableRisks = function(taAssetId){
         return unacceptableRisks[taAssetId] ? unacceptableRisks[taAssetId] : [];
     };
 
+    /**
+     * Returns all unacceptable risks (by TA asset id).
+     * @returns {{}}
+     */
     this.getUnacceptableRisks = function(){
         return unacceptableRisks;
     };
 
+    /**
+     * Removes all unacceptable risks.
+     */
     this.clearUnacceptableRisks = function(){
         _.each(unacceptableRisks, function(values, key){
             unacceptableRisks[key] = [];
         });
     };
 
+    /**
+     * Returns true if there aren't any unacceptable risks,
+     * false otherwise.
+     * @returns {boolean}
+     */
+    this.noUnacceptableRisks = function() {
+        var n = 0;
+        _.each(unacceptableRisks, function(values, key){
+            n += values.length;
+        });
+        return n == 0;
+    };
+
+    /**
+     * Returns the risk sliders bound model.
+     * @returns {*|{}}
+     */
     this.getRiskBoundModels = function(){
         return riskBoundModels;
     };
 
+    /**
+     * Sets the risk sliders model loading it from
+     * local storage.
+     * @param riskBoundModelsFromStorage The risk sliders model
+     * to be loaded from local storage.
+     */
     this.setRiskBoundModels = function(riskBoundModelsFromStorage){
-        riskBoundModels = riskBoundModelsFromStorage;
+        if(!angular.equals(riskBoundModels, riskBoundModelsFromStorage)){
+            angular.copy(riskBoundModelsFromStorage, riskBoundModels);
+        }
     };
 
+    /**
+     * Returns true if a given risk is unacceptable for a certain TA
+     * asset, false otherwise.
+     * @param riskName The risk name.
+     * @param taAssetId The id of the TA asset.
+     * @returns {boolean}
+     */
     this.isUnacceptable = function(riskName, taAssetId){
         var unacceptable = false;
         if(taAssetId){
