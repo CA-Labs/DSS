@@ -6,7 +6,8 @@
   "description": "Decision Support System for MODAClouds European project",
   "controllers": {
     "/crud": "backend/controllers/crud-controller.js",
-    "/graph": "backend/controllers/graph-controller.js"
+    "/graph": "backend/controllers/graph-controller.js",
+    "/session": "backend/controllers/session-controller.js"
   },
   "setup": "backend/scripts/setup.js",
   "teardown": "backend/scripts/teardown.js",
