@@ -29,6 +29,28 @@ dssApp.filter('replaceDashWithDot', function() {
     };
 });
 
+dssApp.filter('multicloudReplication', function () {
+    return function (input, isMulticloudDeployment) {
+        var newInput = [];
+        console.log('filter called');
+        if (isMulticloudDeployment) {
+            return input;
+        }
+        _.each(input, function (deployment) {
+            var numberOfTaAssets = deployment.length - 1;
+
+            var haveTheSameProvider = false;
+            for (var i = 0; i < numberOfTaAssets; i++) {
+                haveTheSameProvider = deployment[i].provider._id == deployment[i++].provider._id;
+            }
+
+            if (haveTheSameProvider) newInput.push(deployment);
+        });
+
+        return newInput;
+    }
+});
+
 dssApp.filter('unique', function() {
     return function(items, filterOn) {
         var extractValueToCompare, newItems;
@@ -63,4 +85,16 @@ dssApp.filter('unique', function() {
         return items;
     };
 });
+
+dssApp.filter('byCloudAndServiceTypes', ['TreatmentsService', function(TreatmentsService){
+    return function(items, cloudType, serviceType){
+        var newArray = [];
+        _.each(items, function (item) {
+            if (_.contains(TreatmentsService.getTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType), item.treatment.name)) {
+                newArray.push(item);
+            }
+        });
+        return newArray;
+    }
+}]);
 

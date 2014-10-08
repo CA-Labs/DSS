@@ -63,34 +63,34 @@
 <!-- main container-->
 <div class="row mainContainer">
 <div class="row topMenu">
-    <div class="col-lg-2 bsoia-slide" data-target="#dssSlides" data-slide-to="0">
+    <div class="col-lg-2 bsoia-slide">
         <blockquote>
             <p class="active">1. Business-oriented intangible assets </p>
         </blockquote>
     </div>
-    <div class="col-lg-2 toia-slide" data-target="#dssSlides" data-slide-to="1">
+    <div class="col-lg-2 toia-slide">
         <blockquote>
             <p>2. Technical-oriented intangible assets </p>
         </blockquote>
     </div>
-    <div class="col-lg-2 ta-slide" data-target="#dssSlides" data-slide-to="2">
+    <div class="col-lg-2 ta-slide">
         <blockquote>
             <p>3. Tangible assets </p>
         </blockquote>
     </div>
-    <div class="col-lg-2 risks-slide" data-target="#dssSlides" data-slide-to="3">
+    <div class="col-lg-2 risks-slide">
         <blockquote>
-            <p>3. Risks</p>
+            <p>4. Risks</p>
         </blockquote>
     </div>
-    <div class="col-lg-2 treatments-slide" data-target="#dssSlides" data-slide-to="4">
+    <div class="col-lg-2 treatments-slide">
         <blockquote>
-            <p>4. Treatments</p>
+            <p>5. Treatments</p>
         </blockquote>
     </div>
-    <div class="col-lg-2 services-slide" data-target="#dssSlides" data-slide-to="5">
+    <div class="col-lg-2 services-slide">
         <blockquote>
-            <p>5. Cloud Services</p>
+            <p>6. Cloud Services</p>
         </blockquote>
     </div>
 </div>
@@ -175,13 +175,13 @@
     <div class="col-lg-12">
         <div class="pull-right">
             <div style="display: inline-block; position: relative; top: -7px;">
-                <label style="margin-top: -5px;">Multicloud Deployment</label>
+                <label style="margin-top: -5px;"><i class="glyphicon glyphicon-info-sign" data-content="A single application uses cloud services provided by different CSPs" popup-down></i> Multicloud Deployment </label>
             </div>
             <div style="display: inline-block;">
-                <input name="isMulticloudDeployment" bs-switch ng-model="isMulticloudDeployment" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="&laquo;" switch-off-text="&raquo;" switch-on-color="info" switch-off-color="info"/>
+                <input name="isMulticloudDeployment" bs-switch ng-model="isMulticloudDeployment" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="&laquo;" switch-off-text="&raquo;" switch-on-color="info" switch-off-color="info" ng-change="setDeploymentType()"/>
             </div>
             <div style="display: inline-block; position: relative; top: 3px;">
-                <label class="pull-right">Multicloud Replication</label>
+                <label class="pull-right"><i class="glyphicon glyphicon-info-sign" data-content="Several instances of the same application are replicated and deployed using different CSPs" popup-down></i> Multicloud Replication</label>
             </div>
         </div>
         <div class="list-group" style="margin-top: 40px;">
@@ -197,7 +197,7 @@
                 <p ng-switch-when="IaaS" style="margin-top: 10px;">{{ taAsset.cloudResource._serviceType }}</p>
                 <p ng-switch-when="PaaS" style="margin-top: 10px;">{{ taAsset.cloudPlatform._serviceType }}</p>
                 <p>
-                    <div style="display: inline-block; margin-left: 10px; position: relative; top: -5px;">Importance:</div>
+                    <div style="display: inline-block; margin-left: 10px; position: relative; top: -5px;">Risk Susceptibility: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-content="Acceptable Composite Risk Index" popup-right></i></div>
                     <div on-risks-type="criticity" data-type="criticity">
                         <div style="width: 60%; margin-left: 25px; margin-right: 25px; display: inline-block;" slider data-model="criticity" ng-model="criticityBoundModels[taAsset._id]" start="1" end="25" step="2.4"></div>
                         <span class="label label-default secondary radius right" style="position: relative; top: -5px;">{{ 10*(25-criticityBoundModels[taAsset._id])/(25-1) | number:0 }}</span>
@@ -230,7 +230,7 @@
                     <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
                     <br/>
                     <div class="col-lg-6" style="margin-top: 10px;" >
-                        <p style="margin-bottom: 15px">Likelihood: </p>
+                        <p style="margin-bottom: 15px" class="popover-enabled">Likelihood: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Probability/frequency of risk to occur" popup-right></i></p>
                         <div on-risks-type="simple" data-type="likelihood">
                             <div style="width: 80%; margin-bottom: 15px;" slider data-model="simple" data-hash-key="{{risk.destination.name + '/likelihood'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '/likelihood']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
                                 <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
@@ -238,7 +238,7 @@
                         </div>
                     </div>
                     <div class="col-lg-6" style="margin-top: 10px">
-                        <p style="margin-bottom: 15px;">Consequence :</p>
+                        <p style="margin-bottom: 15px;">Consequence: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Impact of risk on asset" popup-right></i></p>
                         <div on-risks-type="simple" data-type="consequence">
                             <div style="width: 80%; margin-bottom: 15px;" slider data-model="simple" data-hash-key="{{risk.destination.name + '/consequence'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '/consequence']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
                                 <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
@@ -257,7 +257,7 @@
                         </div>
                         <br/>
                         <div class="col-lg-6" style="margin-top: 10px; display: block;">
-                            <p style="margin-bottom: 15px">Likelihood: </p>
+                            <p style="margin-bottom: 15px">Likelihood: <i class="glyphicon glyphicon-info-sign"  data-toggle="popover" data-placement="top" data-content="Probability/frequency of risk to occur" popup-right></i> </p>
                             <div on-risks-type="multiple" data-type="likelihood" ng-switch="taAsset.cloudType">
                                 <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-model="multiple" data-hash-key="{{$parent.risk.destination.name + '/' + taAsset._id + '/likelihood'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '/' + taAsset._id + '/likelihood']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
                                     <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
@@ -268,7 +268,7 @@
                             </div>
                         </div>
                         <div class="col-lg-6" style="margin-top: 10px; display: block">
-                            <p style="margin-bottom: 15px;">Consequence :</p>
+                            <p style="margin-bottom: 15px;">Consequence: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Impact of risk on asset" popup-right></i></p>
                             <div on-risks-type="multiple" data-type="consequence" ng-switch="taAsset.cloudType">
                                 <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-model="multiple" data-hash-key="{{$parent.risk.destination.name + '/' + taAsset._id + '/consequence'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '/' + taAsset._id + '/consequence']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
                                     <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
@@ -287,25 +287,36 @@
 <!--treatments slide-->
 <div class="item treatments-slide" ng-controller="treatmentsController">
     <div class="col-lg-4 form-group form-inline">
-        <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment" ng-options="potentialTreatment.treatment.name group by potentialTreatment.group for potentialTreatment in potentialTreatmentsGrouped">
-            <option></option>
-        </select>
-        <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment)" style="width: 19% !important;">Add</button>
-        <div ng-if="taAssets.length > 0" style="margin-top: 45px;">
-            <p>Tangible Assets</p>
-        </div>
-        <div ng-if="taAssets.length == 0" style="margin-top: 45px;">
-            <div class="alert alert-danger" role="alert">
-                No tangible assets added.
-            </div>
-        </div>
-        <div id="selected-ta" class="col-lg-4">
-            <button ui-draggable="true" drag="taAsset" class="btn btn-sm bsoia-tag" ng-class="isTaEverUsed(taAsset) ? 'btn-info' : 'btn-warning'" ng-repeat="taAsset in taAssets">
-                <div ng-switch="taAsset.cloudType">
-                    <div ng-switch-when="IaaS">{{taAsset.cloudResource._serviceName}} ({{taAsset.cloudType}})</div>
-                    <div ng-switch-when="PaaS">{{taAsset.cloudPlatform._serviceName}} ({{taAsset.cloudType}})</div>
+        <div class="panel-group" id="treatments-accordion">
+            <div class="panel panel-default" ng-repeat="taAsset in taAssets track by $index">
+                <div class="panel-heading">
+                    <h4 class="panel-title">
+                        <a data-toggle="collapse" data-parent="#treatments-accordion" ng-href="{{'#collapse' + $index}}" ng-switch="taAsset.cloudType">
+                            <p ng-switch-when="IaaS"> {{ taAsset.cloudResource._serviceName + ' (IaaS)' }} </p>
+                            <p ng-switch-when="PaaS"> {{ taAsset.cloudPlatform._serviceName + ' (PaaS)' }} </p>
+                        </a>
+                    </h4>
                 </div>
-            </button>
+                <div id="{{ 'collapse' + $index }}" class="panel-collapse collapse">
+                    <div class="panel-body" ng-switch="taAsset.cloudType">
+                        <div ng-switch-when="IaaS">
+                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment"
+                                    ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudType, taAsset.cloudResource._serviceType)" select2>
+                                <option></option>
+                            </select>
+                            <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment, taAsset)" style="width:19% !important;">Add</button>
+                        </div>
+                        <div ng-switch-when="PaaS">
+                            <!--| byCloudAndServiceTypes:taAsset.cloudType:taAsset.cloudPlatform._serviceType"-->
+                            <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment"
+                                    ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudType, taAsset.cloudPlatform._serviceType)" select2>
+                                <option></option>
+                            </select>
+                            <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment, taAsset)" style="width:19% !important;">Add</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <div class="col-lg-8">
@@ -313,48 +324,43 @@
             <div  ng-if="treatmentsSelected.length > 0">
                 <h4>Treatments Selected</h4>
             </div>
-            <a class="list-group-item selected-treatment dropzone-wrapper" href="#" ng-repeat="treatmentSelected in treatmentsSelected">
-                <input name="showTreatmentValues" bs-switch ng-model="showTreatmentValues[treatmentSelected.name]" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleTreatmentValues(treatmentSelected.name)"/>
+            <a class="list-group-item selected-treatment" href="#" ng-repeat="treatmentSelected in treatmentsSelected">
+                <span class="glyphicon glyphicon-remove remove-treatment" ng-click="removeTreatment(treatmentSelected)">&nbsp;</span>
+                <input name="showTreatmentValues" bs-switch ng-model="showTreatmentValues[treatmentSelected.name]" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleTreatmentValues(treatmentSelected.name)">
                 <label class="pull-right">Specify treatment value&nbsp;</label>
                 <strong>{{ treatmentSelected.name }}</strong>
-                <!--
-                <p>
-                    <i>Mitigating risks:</i>
-                <ul>
-                    <li ng-repeat="risk in mitigatedRisks(treatmentSelected.name) | orderBy:'':true">
-                        <i>{{risk}}</i>
-                    </li>
-                </ul>
-                -->
-                </p>
-                <span class="glyphicon glyphicon-remove remove-treatment" ng-click="removeTreatment(treatmentSelected)">&nbsp;</span>
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12">
+                        Associated risks:
+                        <div ng-repeat="risk in mitigatedRisks(treatmentSelected.name) | orderBy:'':true" style="display: inline-block;">
+                        <button class="btn btn-sm btn-margin">{{ risk }}</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-lg-12 col-sm-12">
+                        Associated tangible assets:
+                        <div ng-repeat="taRelation in treatmentSelected.taRelations" ng-switch="taRelation.cloudType" class="remove-ta-treatment" style="display: inline-block;">
+                            <button ng-switch-when="IaaS" class="btn btn-sm btn-info btn-margin">
+                                {{ taRelation.cloudResource._serviceName }} (IaaS)
+                                <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected, taRelation)">&nbsp;</span></small></button>
+                            <button ng-switch-when="PaaS" class="btn btn-sm btn-info btn-margin">
+                                {{ taRelation.cloudPlatform._serviceName }} (PaaS)
+                                <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected, taRelation)">&nbsp;</span></small></button>
+                        </div>
+                    </div>
+                </div>
                 <div ng-switch="treatmentSelected.representation">
                     <div ng-switch-when="select">
+                        <br>
                         <select ng-show="showTreatmentValues[treatmentSelected.name]" label="treatmentValue" class="form-control" data-hash-key="treatmentSelected.name" ng-model="treatmentValue" ng-options="value for (key,value) in treatmentSelected.options | orderBy:'':true" ng-change="treatmentValueChanged(treatmentValue, treatmentSelected)"/>
                         <option value="" disabled selected>--- Select a value ---</option>
                         </select>
                         <br/>
-                        <div ui-on-drop="taDropped($event, $data, treatmentSelected)" class="dropzone-container">
-                            <button ui-draggable="false" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.taRelations">
-                                <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected, taRelation)">&nbsp;</span></small>
-                                <b ng-switch="taRelation.cloudType">
-                                    <span ng-switch-when="IaaS">{{taRelation.cloudResource._serviceName}} ({{taRelation.cloudType}})</span>
-                                    <span ng-switch-when="PaaS">{{taRelation.cloudPlatform._serviceName}} ({{taRelation.cloudType}})</span>
-                                </b>
-                            </button>
-                        </div>
                     </div>
                     <div ng-switch-when="radio">
+                        <br>
                         <div ng-init="addRadioValue(treatmentSelected.name)"></div>
-                        <div ui-on-drop="taDropped($event, $data, treatmentSelected)" class="dropzone-container">
-                            <button ui-draggable="false" class="btn btn-sm bsoia-tag-chosen btn-info" ng-repeat="taRelation in treatmentSelected.taRelations">
-                                <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected, taRelation)">&nbsp;</span></small>
-                                <b ng-switch="taRelation.cloudType">
-                                    <span ng-switch-when="IaaS">{{taRelation.cloudResource._serviceName}} ({{taRelation.cloudType}})</span>
-                                    <span ng-switch-when="PaaS">{{taRelation.cloudPlatform._serviceName}} ({{taRelation.cloudType}})</span>
-                                </b>
-                            </button>
-                        </div>
                     </div>
                 </div>
             </a>
@@ -364,100 +370,184 @@
 <!--services slide-->
 <div class="item services-slide" ng-controller="cloudController">
     <div class="col-lg-12">
-        <!--results table-->
-        <table class="table" style="table-layout: fixed;">
-            <tr>
-                <td ng-repeat="taAsset in ta track by $index">
-                    <div class="panel panel-default">
-                        <div class="panel-body">
-                            <div ng-switch="taAsset.cloudType">
-                                <h3 ng-switch-when="IaaS">{{ taAsset.cloudResource._serviceType }} ({{ taAsset.cloudType }})</h3>
-                                <h3 ng-switch-when="PaaS">{{ taAsset.cloudPlatform._serviceType }} ({{ taAsset.cloudType }})</h3>
-                                <h5 ng-switch-when="IaaS" class="pull-right">Results found: <span class="badge">{{ getTAProposals(taAsset.cloudResource._serviceName).length }}</span></h5>
-                                <h5 ng-switch-when="PaaS" class="pull-right">Results found: <span class="badge">{{ getTAProposals(taAsset.cloudPlatform._serviceName).length }}</span></h5>
+        <!--per deployment results-->
+            <ul class="list-group">
+                <li class="list-group-item service-proposal-panel" ng-class="{ 'service-selected': isSelected(result) }" ng-repeat="result in getDeploymentProposals() | orderBy:'overallScore':true track by $index | filter: { multicloudReplication: isMulticloudDeployment  }">
+                    <div class="row" ng-click="selectService(result)">
+                        <div class="col-lg-1">
+                            <div class="well service-proposal-score service-proposal-score-overall">
+                                <h6>Deployment<br/>Score</h6>
+                                <hr/>
+                                <h3>{{ result.overallScore * 10.0 | number: 2 }}</h3>
                             </div>
-                            <hr style="margin-top: 55px;"/>
-                            <!--result accordion-->
-                            <div ng-attr-id="{{'collapse' + $index}}" class="panel-collapse collapse in">
-                                <div class="panel-body" ng-switch="taAsset.cloudType">
-                                    <div ng-switch-when="IaaS">
-                                        <div class="panel-group">
-                                            <div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudResource._serviceName) | orderBy:'score':true track by $index">
-                                                <div class="panel heading">
-                                                    <h4 class="panel-title service-proposal-title">
-                                                        <a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">
-                                                            Service: <strong>{{ result.service.name }}</strong> (Provider: <strong>{{result.provider.name}}</strong>)
-                                                        </a>
-                                                    </h4>
+                        </div>
+                        <div class="col-lg-11">
+                            <table class="table" style="table-layout: fixed;">
+                                <tr>
+                                    <td ng-repeat="service in result track by $index">
+                                        <div class="panel panel-default">
+                                            <div class="panel-heading service-proposal-title">
+                                                <div ng-switch="service.ta.cloudType">
+                                                    <h3 ng-switch-when="IaaS">{{ service.ta.cloudResource._serviceType }} ({{ service.ta.cloudType }})</h3>
+                                                    <h3 ng-switch-when="PaaS">{{ service.ta.cloudPlatform._serviceType }} ({{ service.ta.cloudType }})</h3>
                                                 </div>
-                                                <div ng-attr-id="{{'s' + result.service._key}}" class="panel-collapse collapse in">
-                                                    <div class="service-proposal">
-                                                        <div class="well pull-right service-proposal-score">
-                                                            <h6>Score</h6>
-                                                            <hr/>
-                                                            <h3>{{ result.score * 100 | number: 0 }}</h3>
-                                                        </div>
-                                                        <div class="service-proposal-logo">
-                                                            <img ng-src="{{result.provider.logo_url}}"/>
-                                                        </div>
-                                                        <div class="service-proposal-description">
-                                                            <p>{{result.provider.description}}</p>
-                                                            <button class="btn btn-sm btn-default pull-right" ng-click="showHideDetails($event, result)">Characteristics</button>
-                                                            <div class="service-proposal-details" ng-show="result.showDetails">
-                                                                <h4>Service Characteristics Values</h4>
-                                                                <ul>
-                                                                    <li ng-repeat="characteristic in result.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>
-                                                                </ul>
+                                            </div>
+                                            <div class="panel-body">
+                                                <div class="service-proposal">
+                                                    <div class="row">
+                                                        <div class="col-lg-4 col-sm-12">
+                                                            <div class="service-proposal-logo">
+                                                                <img ng-src="{{service.provider.logo_url}}"/>
                                                             </div>
+                                                        </div>
+                                                        <div class="col-lg-5 col-sm-8">
+                                                            <p><strong>Provider: </strong>{{ service.provider.name }}</p>
+                                                            <p><strong>Service: </strong>{{ service.service.name }}</p>
+                                                        </div>
+                                                        <div class="col-lg-3 col-sm-4">
+                                                            <div class="well service-proposal-score">
+                                                                <h6>Score</h6>
+                                                                <hr/>
+                                                                <h3>{{ ((service.score / service.total) || 0.0) * 10.0 | number: 2 }}</h3>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="col-lg-12">
+                                                            <button class="btn btn-sm btn-default pull-right" style="margin-right: 30px;" ng-click="showHideDetails($event, service.service, $index)">Details</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="service-proposal-description">
+                                                        <div class="service-proposal-details" ng-show="service.service.showDetails">
+                                                            <h4>Description</h4>
+                                                            <p>{{service.provider.description}}</p>
+                                                            <hr/>
+                                                            <h4>Provider Information</h4>
+                                                            <ul>
+                                                                <li>Year founded: {{ service.provider.year_founding || "-" }}</li>
+                                                                <li>Number of Employees: {{ service.provider.number_of_employees || "-" }}</li>
+                                                                <li>Headquarters: {{ service.provider.headquarters || "-" }}</li>
+                                                                <li>Website: <a href="{{ service.provider.website }}">{{ service.provider.website || "-" }}</a></li>
+                                                            </ul>
+                                                            <hr/>
+                                                            <h4>Service Characteristics Values</h4>
+                                                            <ul>
+                                                                <li ng-repeat="characteristic in service.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>
+                                                            </ul>
+                                                            <hr/>
+                                                            <h4 ng-show="service.unmitigatedRisks">Unmitigated Risks</h4>
+                                                            <ul>
+                                                                <li ng-repeat="unmitigatedRisk in service.unmitigatedRisks | orderBy: ''">{{unmitigatedRisk}}</li>
+                                                            </ul>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
-                                    <div ng-switch-when="PaaS">
-                                        <div class="panel-group">
-                                            <div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudPlatform._serviceName) | orderBy: 'score':true track by $index">
-                                                <div class="panel heading">
-                                                    <h4 class="panel-title service-proposal-title">
-                                                        <a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">
-                                                            Service: <strong>{{ result.service.name }}</strong> (Provider: <strong>{{result.provider.name}}</strong>)
-                                                        </a>
-                                                    </h4>
-                                                </div>
-                                                <div ng-attr-id="{{'s' + result.service._key}}" class="panel-collapse collapse in">
-                                                    <div class="service-proposal">
-                                                        <div class="well pull-right service-proposal-score">
-                                                            <h6>Score</h6>
-                                                            <hr/>
-                                                            <h3>{{ result.score * 100 | number: 0 }}</h3>
-                                                        </div>
-                                                        <div class="service-proposal-logo">
-                                                            <img ng-src="{{result.provider.logo_url}}"/>
-                                                        </div>
-                                                        <div class="service-proposal-description">
-                                                            <p>{{result.provider.description}}</p>
-                                                            <button class="btn btn-sm btn-default pull-right" ng-click="showHideDetails($event, result)">Characteristics</button>
-                                                            <div class="service-proposal-details" ng-show="result.showDetails">
-                                                                <h4>Service Characteristics Values</h4>
-                                                                <ul>
-                                                                    <li ng-repeat="characteristic in result.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- results accordion -->
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
-                </td>
-            </tr>
-        </table>
+                </li>
+            </ul>
+        <!--//per deployment results-->
+        <!--results table-->
+        <!--<table class="table" style="table-layout: fixed;">-->
+            <!--<tr>-->
+                <!--<td ng-repeat="taAsset in ta track by $index">-->
+                    <!--<div class="panel panel-default">-->
+                        <!--<div class="panel-body">-->
+                            <!--<div ng-switch="taAsset.cloudType">-->
+                                <!--<h3 ng-switch-when="IaaS">{{ taAsset.cloudResource._serviceType }} ({{ taAsset.cloudType }})</h3>-->
+                                <!--<h3 ng-switch-when="PaaS">{{ taAsset.cloudPlatform._serviceType }} ({{ taAsset.cloudType }})</h3>-->
+                                <!--<h5 ng-switch-when="IaaS" class="pull-right">Results found: <span class="badge">{{ getTAProposals(taAsset.cloudResource._serviceName).length }}</span></h5>-->
+                                <!--<h5 ng-switch-when="PaaS" class="pull-right">Results found: <span class="badge">{{ getTAProposals(taAsset.cloudPlatform._serviceName).length }}</span></h5>-->
+                            <!--</div>-->
+                            <!--<hr style="margin-top: 55px;"/>-->
+                            <!--<!--result accordion-->
+                            <!--<div ng-attr-id="{{'collapse' + $index}}" class="panel-collapse collapse in">-->
+                                <!--<div class="panel-body" ng-switch="taAsset.cloudType">-->
+                                    <!--<div ng-switch-when="IaaS">-->
+                                        <!--<div class="panel-group">-->
+                                            <!--<div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudResource._serviceName) | orderBy:'score':true track by $index">-->
+                                                <!--<div class="panel heading">-->
+                                                    <!--<h4 class="panel-title service-proposal-title">-->
+                                                        <!--<a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">-->
+                                                            <!--Service: <strong>{{ result.service.name }}</strong> (Provider: <strong>{{result.provider.name}}</strong>)-->
+                                                        <!--</a>-->
+                                                    <!--</h4>-->
+                                                <!--</div>-->
+                                                <!--<div ng-attr-id="{{'s' + result.service._key}}" class="panel-collapse collapse in">-->
+                                                    <!--<div class="service-proposal">-->
+                                                        <!--<div class="well pull-right service-proposal-score">-->
+                                                            <!--<h6>Score</h6>-->
+                                                            <!--<hr/>-->
+                                                            <!--<h3>{{ result.score * 100 | number: 0 }}</h3>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="service-proposal-logo">-->
+                                                            <!--<img ng-src="{{result.provider.logo_url}}"/>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="service-proposal-description">-->
+                                                            <!--<p>{{result.provider.description}}</p>-->
+                                                            <!--<button class="btn btn-sm btn-default pull-right" ng-click="showHideDetails($event, result)">Characteristics</button>-->
+                                                            <!--<div class="service-proposal-details" ng-show="result.showDetails">-->
+                                                                <!--<h4>Service Characteristics Values</h4>-->
+                                                                <!--<ul>-->
+                                                                    <!--<li ng-repeat="characteristic in result.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>-->
+                                                                <!--</ul>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                    <!--<div ng-switch-when="PaaS">-->
+                                        <!--<div class="panel-group">-->
+                                            <!--<div class="panel panel-default service-proposal-panel" ng-class="{ 'service-selected': isSelected(taAsset._id, result.service._id) }" ng-click="selectService(result, taAsset)" ng-repeat="result in getTAProposals(taAsset.cloudPlatform._serviceName) | orderBy: 'score':true track by $index">-->
+                                                <!--<div class="panel heading">-->
+                                                    <!--<h4 class="panel-title service-proposal-title">-->
+                                                        <!--<a data-toggle="collapse" data-target="{{'#s' + result.service._key}}" ng-href="{{'#s' + result.service._key}}">-->
+                                                            <!--Service: <strong>{{ result.service.name }}</strong> (Provider: <strong>{{result.provider.name}}</strong>)-->
+                                                        <!--</a>-->
+                                                    <!--</h4>-->
+                                                <!--</div>-->
+                                                <!--<div ng-attr-id="{{'s' + result.service._key}}" class="panel-collapse collapse in">-->
+                                                    <!--<div class="service-proposal">-->
+                                                        <!--<div class="well pull-right service-proposal-score">-->
+                                                            <!--<h6>Score</h6>-->
+                                                            <!--<hr/>-->
+                                                            <!--<h3>{{ result.score * 100 | number: 0 }}</h3>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="service-proposal-logo">-->
+                                                            <!--<img ng-src="{{result.provider.logo_url}}"/>-->
+                                                        <!--</div>-->
+                                                        <!--<div class="service-proposal-description">-->
+                                                            <!--<p>{{result.provider.description}}</p>-->
+                                                            <!--<button class="btn btn-sm btn-default pull-right" ng-click="showHideDetails($event, result)">Characteristics</button>-->
+                                                            <!--<div class="service-proposal-details" ng-show="result.showDetails">-->
+                                                                <!--<h4>Service Characteristics Values</h4>-->
+                                                                <!--<ul>-->
+                                                                    <!--<li ng-repeat="characteristic in result.characteristics | orderBy:'name'">{{characteristic.name + ': ' + characteristic.value}}</li>-->
+                                                                <!--</ul>-->
+                                                            <!--</div>-->
+                                                        <!--</div>-->
+                                                    <!--</div>-->
+                                                <!--</div>-->
+                                            <!--</div>-->
+                                        <!--</div>-->
+                                    <!--</div>-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<!-- results accordion -->
+                        <!--</div>-->
+                    <!--</div>-->
+                <!--</td>-->
+            <!--</tr>-->
+        <!--</table>-->
+
+
     </div>
 </div>
 <!--slides end-->
@@ -471,7 +561,7 @@
     <div class="col-lg-12 text-right">
         <button class="btn btn-primary slide-prev" href="#dssSlides" data-slide="prev" disabled>Previous step</button>
         <button class="btn btn-primary slide-next" href="#dssSlides" data-slide="next" ng-click="next($event)">Next step</button>
-        <button style="display: none" class="btn btn-primary slide-services" data-target="#dssSlides" data-slide-to="5">Search Cloud Services</button>
+        <button style="display: none" class="btn btn-primary slide-services" data-target="#dssSlides" ng-click="next($event)" data-slide-to="5">Search Cloud Services</button>
     </div>
 </div>
 </div>

@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'RisksService', 'CloudService', 'localStorageService', function($scope, ArangoDBService, TreatmentsService, AssetsService, RisksService, CloudService, localStorageService){
+dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'RisksService', 'CloudService', 'localStorageService', function($scope, $rootScope, $timeout, ArangoDBService, TreatmentsService, AssetsService, RisksService, CloudService, localStorageService){
 
     $scope.ta = AssetsService.getTA();                                  // The selected TA assets loaded from the cloud descriptor xml file
 
@@ -14,9 +14,69 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     $scope.filteredProposals = CloudService.getFilteredProposals();
     localStorageService.bind($scope, 'filteredProposals', $scope.filteredProposals);
 
-    $scope.servicesSelected = {};
+    $scope.deploymentsProposals = [];
 
-    $scope.xmlTaAsObject = AssetsService.getXmlTaObject();              // gets the Object representation of the Modelio loaded XML
+    $scope.servicesSelected = {};
+    localStorageService.bind($scope, 'servicesSelected', $scope.servicesSelected);
+
+    $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
+
+    $scope.$watch(function () {
+        return AssetsService.getDeploymentType();
+    }, function (newVal) {
+        $scope.isMulticloudDeployment = newVal;
+    });
+
+    $scope.$watch(function(){
+        return CloudService.getProposals();
+    }, function(newVal, oldVal){
+        $scope.proposals = newVal;
+    }, true);
+
+    $scope.$watch(function(){
+        return CloudService.getFilteredProposals();
+    }, function(newVal, oldVal){
+        $scope.filteredProposals = newVal;
+    }, true);
+
+    $scope.$watch(function(){
+        return CloudService.getDeploymentsProposals();
+    }, function(newVal, oldVal){
+        $scope.deploymentsProposals = newVal;
+    }, true);
+
+    $scope.getDeploymentProposals = function () {
+        var deploymentsProposals = [];
+        if ($scope.isMulticloudDeployment) {
+            return $scope.deploymentsProposals;
+        }
+
+        _.each($scope.deploymentsProposals, function (deployment) {
+            var numberOfTaAssets = deployment.length - 1;
+
+            // fall back for case when there is only 1 TA
+            if (numberOfTaAssets == 0) {
+                return $scope.deploymentsProposals;
+            }
+
+            var haveTheSameProvider = 0;
+            for (var i = 0; i < numberOfTaAssets; i++) {
+                if (deployment[i].provider._id == deployment[i+1].provider._id) {
+                    haveTheSameProvider++;
+                }
+            }
+
+            if (haveTheSameProvider == numberOfTaAssets) deploymentsProposals.push(deployment);
+        });
+
+        return deploymentsProposals;
+    };
+
+    $scope.$watch(function(){
+        return AssetsService.getXmlTaObject();
+    }, function(newVal, oldVal){
+        $scope.xmlTaAsObject = newVal;          // gets the Object representation of the Modelio loaded XML
+    }, true);
 
     $scope.$watch(function(){
         return AssetsService.getTA();
@@ -32,6 +92,10 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
                     } else {
                         // console.log(data._documents);
                         CloudService.setTAProposals(ta, data._documents);
+                        $timeout(function(){
+                            CloudService.filterProposalsByTreatments();
+                            CloudService.filterProposalsByThresholds();
+                        }, 100);
                     }
                 });
             });
@@ -41,7 +105,6 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     $scope.$watch(function(){
         return CloudService.getFilteredProposals();
     }, function(newProposals){
-        console.log(newProposals);
         $scope.filteredProposals = newProposals;
     }, true);
 
@@ -56,6 +119,7 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
     $scope.$on('risksSelectedChanged', function(){
         CloudService.filterProposalsByTreatments();
         CloudService.filterProposalsByThresholds();
+        $scope.deploymentsProposals = CloudService.getDeploymentsProposals();
     });
 
     $scope.filterProposalsByTreatments = function(){
@@ -71,22 +135,22 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
      * @param {object} proposal - service object selected by the user
      * @param {object} taAsset - ta asset object to which the proposal is assigned to
      */
-    $scope.selectService = function (proposal, taAsset) {
-        var data = {
-            ta: taAsset,
-            serviceSelected: proposal
-        };
-        $scope.servicesSelected[taAsset._id] = data;
-        console.log('xml', $scope.xmlTaAsObject.resourceModelExtension.resourceContainer, 'services', $scope.servicesSelected[taAsset._id].serviceSelected.service.name);
+    $scope.selectService = function (proposal) {
+        $scope.servicesSelected = proposal;
+
+        // update xmlTAAsObject
         _.each($scope.xmlTaAsObject.resourceModelExtension.resourceContainer, function (resourceContainer) {
-            if (resourceContainer._id == taAsset._id) {
-                resourceContainer._provider = $scope.servicesSelected[taAsset._id].serviceSelected.provider.name;
-                if (resourceContainer.cloudResource) {
-                    resourceContainer.cloudResource._serviceName = $scope.servicesSelected[taAsset._id].serviceSelected.service.name;
-                } else if (resourceContainer.cloudPlatform) {
-                    resourceContainer.cloudPlatform._serviceName = $scope.servicesSelected[taAsset._id].serviceSelected.service.name;
+            _.each(proposal, function (proposalItem) {
+                if (resourceContainer._id == proposalItem.ta._id) {
+                    resourceContainer._provider = proposalItem.provider.name;
+                        if (_.has(resourceContainer, 'cloudResource')) {
+                            resourceContainer.cloudResource._serviceName = proposalItem.service.name;
+                        }
+                        if (_.has(resourceContainer, 'cloudPlatform')) {
+                            resourceContainer.cloudPlatform._serviceName = proposalItem.service.name;
+                        }
                 }
-            }
+            });
         });
     };
 
@@ -96,19 +160,23 @@ dssApp.controller('cloudController', ['$scope', 'ArangoDBService', 'TreatmentsSe
      * @param serviceId
      * @returns {boolean}
      */
-    $scope.isSelected = function (taAssetId, serviceId) {
-        var bool = false;
-        if (_.has($scope.servicesSelected, taAssetId) && $scope.servicesSelected[taAssetId].serviceSelected.service._id == serviceId) {
-            bool = true;
-        }
-        return bool;
+    $scope.isSelected = function (listItem) {
+        var bool = 0;
+        _.each(listItem, function (item) {
+            _.each($scope.servicesSelected, function (selected) {
+                if (item.service._id == selected.service._id) {
+                    bool++;
+                }
+            });
+        });
+        return (bool == $scope.servicesSelected.length);
     };
 
     /**
      * Show hide details of the cloud service
      * @param {object} item - service item from the ng-repeat
      */
-    $scope.showHideDetails = function (event, item) {
+    $scope.showHideDetails = function (event, item, index) {
         event.stopPropagation();
         item.showDetails = !item.showDetails;
     };

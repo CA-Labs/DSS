@@ -185,17 +185,20 @@ blockquote {
   width: 100%;
   height: 150px;
   max-height: 450px !important; }
+  .service-proposal p:first-of-type {
+    margin-top: 15px; }
 
 .service-proposal-panel {
-  border: 3px solid #ecf0f1;
-  margin-bottom: 30px !important; }
+  margin-bottom: 5px;
+  border: 2px solid #ecf0f1; }
   .service-proposal-panel:hover {
-    box-shadow: 0px 0px 5px #7f8c8d; }
+    border-color: rgba(44, 62, 80, 0.6); }
 
 .service-proposal-title {
-  margin: 10px; }
-  .service-proposal-title a {
-    text-decoration: none; }
+  background: #fff !important;
+  padding: 0 40px; }
+  .service-proposal-title h3 {
+    font-size: 20px; }
 
 .service-proposal-logo {
   width: 150px;
@@ -203,10 +206,10 @@ blockquote {
   float: left; }
 
 .service-proposal-logo > img {
-  width: 150px;
-  height: auto;
+  dislay: block;
+  width: 100%;
   margin-top: 30px;
-  margin-left: 30px; }
+  margin-left: 20px; }
 
 .service-proposal-description {
   float: left;
@@ -218,7 +221,6 @@ blockquote {
   text-align: center; }
 
 .service-proposal-score {
-  margin-right: 30px;
   margin-top: 15px;
   padding: 14px; }
   .service-proposal-score h3, .service-proposal-score h6 {
@@ -228,6 +230,15 @@ blockquote {
     margin-top: 0;
     margin-bottom: 0;
     border-color: #fff; }
+
+.service-proposal-score-overall {
+  margin-left: auto;
+  margin-right: auto; }
+  .service-proposal-score-overall h6 {
+    font-size: 13px;
+    font-size: 0.7vw; }
+  .service-proposal-score-overall h3 {
+    font-size: 1.5vw; }
 
 .service-proposal-score-positive {
   width: 0;
@@ -246,10 +257,19 @@ blockquote {
   margin: 0 auto; }
 
 .service-selected {
-  border: 3px solid #2980b9; }
+  border: 2px solid #2c3e50; }
 
 .unacceptable-risk {
   background-color: indianred; }
 
 .acceptable-risk {
   background-color: palegreen; }
+
+.specify-treatment-value {
+  margin-right: 20px; }
+
+.btn-margin {
+  margin-right: 7px;
+  margin-top: 7px;
+  position: relative;
+  top: -3px; }

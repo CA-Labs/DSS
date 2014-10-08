@@ -143,9 +143,8 @@ dssApp.controller('mainController', [
                 AssetsService.setBSOIA(localStorageValues.bsoiaAssetsSelected);
                 AssetsService.setTOIA(localStorageValues.toiaAssetsSelected);
                 RisksService.setSimpleRisksLikelihoodConsequence(localStorageValues.simpleRisksLikelihoodConsequence);
+                RisksService.setRiskBoundModels(localStorageValues.riskBoundModels);
                 RisksService.setMultipleRisksLikelihoodConsequence(localStorageValues.multipleRisksLikelihoodConsequence);
-                RisksService.setSimpleRisksLikelihoodConsequenceAcceptance(localStorageValues.simpleRisksLikelihoodConsequenceAcceptance);
-                RisksService.setMultipleRisksLikelihoodConsequenceAcceptance(localStorageValues.multipleRisksLikelihoodConsequenceAcceptance);
                 RisksService.setRisks(localStorageValues.risksSelected);
                 TreatmentsService.setTreatmentValues(localStorageValues.treatmentValues);
                 TreatmentsService.setTreatments(localStorageValues.treatmentsSelected);
