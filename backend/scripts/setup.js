@@ -101,6 +101,13 @@ if(db._collection('meta') === null){
     db._collection('meta').ensureUniqueConstraint('name');
 }
 
+//Check if session collection exists (used for saving user cloud service selections)
+if(db._collection('session') === null){
+    console.log('Creating document collection "session" in "dss" database...');
+    db._createDocumentCollection('session');
+    //TODO: unique constraint required on some field?
+}
+
 //TODO: Review edges collection and graph (we probably need to distinguish different edge types)
 
 //Check if dss_edges collection exists
