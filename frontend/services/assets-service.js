@@ -312,6 +312,21 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     };
 
     /**
+     * Retrieves a TA asset by id.
+     * @param taAssetId The id of the TA asset.
+     * @returns {{}}
+     */
+    this.getTAById = function(taAssetId){
+        var result = {};
+        _.each(ta, function(asset){
+            if(asset._id == taAssetId){
+                result = asset;
+            }
+        });
+        return result;
+    };
+
+    /**
      * Sets the current TA assets, loading them from
      * local storage.
      * @param taLoadedFromLocalStorage The TA assets to
