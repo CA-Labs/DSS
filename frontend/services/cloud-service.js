@@ -14,6 +14,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
     var loadingProposals = false;
     var loadingFilteredProposals = true;
+    var specifyTreatmentsPerCloudService = false;
 
     var deploymentProposals = [];
 
@@ -195,258 +196,78 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
     };
 
     /**
-     * Filters a list of proposals by treatments (i.e. for each
-     * treatment, exists a path between the proposal and the
-     * treatment).
+     * Scores the cloud service proposals.
      */
-    this.filterProposalsByTreatments = function(useTreatmentsRisksMapping){
+    this.scoreProposals = function(useTreatmentsRisksMapping){
 
-        var taAssets = AssetsService.getTA();
+        filteredProposals = proposals;
         var treatments = [];
-        var treatmentNames = [];
+        var tretmentsValues = [];
+        var ta = AssetsService.getTA();
+        var unacceptableRisksPerTA = RisksService.getUnacceptableRisks();
 
-        if(useTreatmentsRisksMapping){
-            var unacceptableRisksPerTA = RisksService.getUnacceptableRisks();
-            var treatmentsRisksMapping = TreatmentsService.getRisksTreatmentsMapping();
-            var allTreatments = TreatmentsService.getAllTreatments();
-            // console.log('unacceptable risks per TA', unacceptableRisksPerTA);
-            // console.log('risks treatments mapping', treatmentsRisksMapping);
-            _.each(unacceptableRisksPerTA, function(risks, taAssetId){
-                _.each(risks, function(unacceptableRisk){
-                    _.each(treatmentsRisksMapping[unacceptableRisk], function(unacceptableRiskTreatment){
-                        if(treatmentNames.indexOf(unacceptableRiskTreatment) === -1){
-                            treatmentNames.push(unacceptableRiskTreatment);
-                            _.each(allTreatments, function(treatment){
-                                if(treatment.name == unacceptableRiskTreatment){
-                                    // Associate all tangible assets to all treatments
-                                    var aux = treatment;
-                                    aux.taRelations = taAssets;
-                                    treatments.push(aux);
+        _.each(proposals, function(proposalsPerTA, taAssetId){
+            var unacceptableRisks = unacceptableRisksPerTA[taAssetId] || [];
+            _.each(proposalsPerTA, function(proposal, i){
+                filteredProposals[taAssetId][i].unacceptableRisks = unacceptableRisks;
+                filteredProposals[taAssetId][i].mitigatedRisks = [];
+                filteredProposals[taAssetId][i].unmitigatedRisks = [];
+                if(proposal.service.cloudType == AssetsService.getTAById(taAssetId).cloudType){
+                    // Determine what treatments should be taken into account
+                    treatments = proposal.characteristics.map(function(c){ return c.name });
+                    treatmentsValues = proposal.characteristics.map(function(c){ return c.value});
+                    if (!useTreatmentsRisksMapping) {
+                        // Take into account only selected treatments
+                        treatments = TreatmentsService.getTreatments().map(function(t){ return t.name });
+                    }
+                    _.each(treatments, function(treatment, j){
+                        // console.log('Current treatment', treatment)
+                        var criticityValue = TreatmentsService.showTreatmentValue(treatment) ?
+                            AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatment)) : AssetsService.getTACriticityValue(taAssetId);
+                        var treatmentValue = AssetsService.getInverseCriticityValue(treatmentsValues[j]);
+                        // console.log('Criticity value vs treatment value', criticityValue, treatmentValue);
+                        var risksFromTreatment = TreatmentsService.getRisksFromTreatment(treatment);
+                        _.each(unacceptableRisks, function(unacceptableRisk){
+                            if(_.contains(risksFromTreatment, unacceptableRisk) && treatmentValue <= criticityValue){
+                                // This treatment is mitigating the risk
+                                if(filteredProposals[taAssetId][i].mitigatedRisks.indexOf(unacceptableRisk) == -1){
+                                    // console.log('treatment ' + treatment + ' is mitigating risk ' + unacceptableRisk);
+                                    filteredProposals[taAssetId][i].mitigatedRisks.push(unacceptableRisk);
                                 }
-                            });
-                        }
-                    });
-                })
-            });
-        } else {
-            treatments = TreatmentsService.getTreatments();
-        }
-
-        filteredProposals = {};
-        var treatmentsFound = 0;
-        _.each(taAssets, function(ta){
-            var taProposals = [];
-            var cloudType = ta.cloudType;
-            taProposals = proposals[ta._id];
-            if(taProposals){
-                _.each(taProposals, function(taProposal){
-                    treatmentsFound = 0;
-                    // Check if this proposal contains all treatments in its path
-                    var taProposalCharacteristicNames = taProposal.characteristics.map(function(e){ return e.name });
-                    _.each(treatments, function(treatment){
-                        if(_.contains(taProposalCharacteristicNames, treatment.name)){
-                            treatmentsFound++;
-                        }
-                    });
-                    if(treatmentsFound == treatments.length){
-                        if(filteredProposals[ta._id]){
-                            filteredProposals[ta._id].push(taProposal);
-                        } else {
-                            filteredProposals[ta._id] = [];
-                            filteredProposals[ta._id].push(taProposal);
-                        }
-                    }
-                });
-            }
-        });
-
-    };
-
-    /**
-     * Filters a list of proposals by threshold values (TA assets
-     * criticity values).
-     */
-    this.filterProposalsByThresholds = function(useTreatmentsRisksMapping){
-
-        var treatments = [];
-        var treatmentNames = [];
-        var taAssets = AssetsService.getTA();
-        if(useTreatmentsRisksMapping){
-            // console.log('use treatments risks mapping');
-            var unacceptableRisksPerTA = RisksService.getUnacceptableRisks();
-            var treatmentsRisksMapping = TreatmentsService.getRisksTreatmentsMapping();
-            var allTreatments = TreatmentsService.getAllTreatments();
-            // console.log('unacceptable risks per TA', unacceptableRisksPerTA);
-            // console.log('risks treatments mapping', treatmentsRisksMapping);
-            // console.log('all treatments', allTreatments);
-            _.each(unacceptableRisksPerTA, function(risks, taAssetId){
-                _.each(risks, function(unacceptableRisk){
-                    _.each(treatmentsRisksMapping[unacceptableRisk], function(unacceptableRiskTreatment){
-                        if(treatmentNames.indexOf(unacceptableRiskTreatment) === -1){
-                            treatmentNames.push(unacceptableRiskTreatment);
-                            _.each(allTreatments, function(treatment){
-                               if(treatment.name == unacceptableRiskTreatment){
-                                   // Associate all tangible assets to all treatments
-                                   var aux = treatment;
-                                   aux.taRelations = taAssets;
-                                   treatments.push(aux);
-                               }
-                            });
-                        }
-                    });
-                })
-            });
-            // console.log('treatments after all', treatments);
-        } else {
-            treatments = TreatmentsService.getTreatments();
-        }
-
-        /***************************************************************************************
-         ***************************************************************************************
-         ****** No treatments selected, all unacceptable risks are then unmitigated risks ******
-         ***************************************************************************************
-         ***************************************************************************************/
-
-        if(treatments.length == 0){
-            var unmitigatedRisks = [];
-            var risksSelected = RisksService.getRisks();
-            var unacceptableRisksPerTA = RisksService.getUnacceptableRisks();
-            _.each(unacceptableRisksPerTA, function(risks, ta){
-                _.each(risks, function(risk){
-                    if(unmitigatedRisks.indexOf(risk) == -1){
-                        unmitigatedRisks.push(risk);
-                    }
-                });
-            });
-            _.each(filteredProposals, function(proposals, taAssetId){
-                _.each(proposals, function(proposal, index){
-                    filteredProposals[taAssetId][index].unmitigatedRisks = unmitigatedRisks;
-                    // If all risks are acceptable (i.e. there are no unacceptable risks), all services should have a score of 10
-                    if(unmitigatedRisks.length == 0){
-                        // Simulate a score of 10, i.e. score and total are equal
-                        filteredProposals[taAssetId][index].score = 1;
-                        filteredProposals[taAssetId][index].total = 1;
-                    }
-                });
-            });
-
-        } else {
-
-            /***************************************************************************************
-             ***************************************************************************************
-             *************************** Some treatments were selected *****************************
-             ***************************************************************************************
-             ***************************************************************************************/
-
-            // Reset scores
-            _.each(filteredProposals, function(proposals, taAssetId){
-                _.each(proposals, function(proposal, index){
-                    filteredProposals[taAssetId][index].score = 0.0;
-                    filteredProposals[taAssetId][index].total = 0.0;
-                    filteredProposals[taAssetId][index].unmitigatedRisks = [];
-                    filteredProposals[taAssetId][index].riskMitigatedNames = [];
-                });
-            });
-
-            _.each(RisksService.getUnacceptableRisks(), function(unacceptableRisksPerTA, taAssetId){
-                _.each(unacceptableRisksPerTA, function(unacceptableRisk){
-                    _.each(treatments, function(treatment){
-                        var treatmentName = treatment.name;
-                        _.each(treatment.taRelations, function(ta){
-                            if(ta._id == taAssetId){
-                                // Retrieve criticity value to take into account. If treatment value is selected,
-                                // that's the criticity value to take into account. If not, take the TA asset
-                                // importance as the criticity value.
-                                var criticityValue = TreatmentsService.showTreatmentValue(treatmentName) ? AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatmentName)) : AssetsService.getTACriticityValue(ta._id);
-                                // Check if this treatment is mitigating the current unacceptable risk
-                                _.each(filteredProposals, function(proposals, taId){
-                                    if(taId == taAssetId){
-                                        _.each(proposals, function(proposal, index){
-                                            if(!filteredProposals[taAssetId][index].riskMitigatedNames){
-                                                filteredProposals[taAssetId][index].riskMitigatedNames = [];
-                                            }
-                                            if(proposal.service.cloudType == ta.cloudType){
-                                                // console.log('Evaluating service ' + proposal.service.name + ' (index=' + index + ') for TA asset ' + ta._id + ' and unacceptable risk ' + unacceptableRisk);
-                                                // console.log('The criticity value to take into account is ' + criticityValue);
-                                                var riskMitigated = false;
-                                                _.each(proposal.characteristics, function(characteristic){
-                                                    // console.log('Current characteristic is ' + characteristic.name + ' with value ' + AssetsService.getInverseCriticityValue(characteristic.value) + ', comparting to treatment ' + treatmentName);
-                                                    if(characteristic.name == treatmentName && AssetsService.getInverseCriticityValue(characteristic.value) <= criticityValue && !riskMitigated){
-                                                        // This characteristic is mitigating the risk for that TA and service proposal
-                                                        riskMitigated = true;
-                                                        if(filteredProposals[taAssetId][index].riskMitigatedNames.indexOf(unacceptableRisk) == -1){
-                                                            // Check if this risk was considered unmitigated before and remove it
-                                                            var i = -1;
-                                                            _.each(filteredProposals[taAssetId][index].unmitigatedRisks, function(unmitigatedRisk, j){
-                                                                if(unmitigatedRisk == unacceptableRisk){
-                                                                    // console.log(unmitigatedRisk + ' (' + treatmentName + ') was considered as unmitigated before for service ' + proposal.service.name);
-                                                                    i = j;
-                                                                }
-                                                            });
-                                                            if(i >= 0){
-                                                                filteredProposals[taAssetId][index].unmitigatedRisks.splice(i, 1);
-                                                            }
-                                                            filteredProposals[taAssetId][index].riskMitigatedNames.push(unacceptableRisk);
-                                                            if(filteredProposals[taAssetId][index].score){
-                                                                // console.log(characteristic.name + ' is mitigating risk ' + unacceptableRisk + ' in service ' + proposal.service.name + ' and asset ' + taAssetId + ' and proposal number ' + index);
-                                                                filteredProposals[taAssetId][index].score++;
-                                                            } else {
-                                                                // console.log(characteristic.name + ' is mitigating risk ' + unacceptableRisk + ' in service ' + proposal.service.name + ' and asset ' + taAssetId + ' and proposal number ' + index);
-                                                                filteredProposals[taAssetId][index].score = 1.0;
-                                                            }
-                                                        }
-                                                    }
-                                                });
-                                                if(!riskMitigated){
-                                                    // Before considering this risk unmitigated, check if some other treatment already mitigated it
-                                                    if(filteredProposals[taAssetId][index].riskMitigatedNames.indexOf(unacceptableRisk) < 0){
-                                                        // console.log(unacceptableRisk + '(' + treatmentName + ') is not mitigated for service ' + proposal.service.name);
-                                                        // Store what risks are unmitigated for that service
-                                                        if(filteredProposals[taAssetId][index].unmitigatedRisks){
-                                                            if(filteredProposals[taAssetId][index].unmitigatedRisks.indexOf(unacceptableRisk) == -1){
-                                                                filteredProposals[taAssetId][index].unmitigatedRisks.push(unacceptableRisk);
-                                                            }
-                                                        } else {
-                                                            filteredProposals[taAssetId][index].unmitigatedRisks = [];
-                                                            if(filteredProposals[taAssetId][index].unmitigatedRisks.indexOf(unacceptableRisk) == -1){
-                                                                filteredProposals[taAssetId][index].unmitigatedRisks.push(unacceptableRisk);
-                                                            }
-                                                        }
-                                                    } else {
-                                                        // console.info(unacceptableRisk + '(' + treatmentName + ') has been already mitigated by some other treatment');
-                                                    }
-                                                }
-                                            }
-                                        });
+                                // Check if this treatment was considered unmitigated before
+                                var k = -1;
+                                _.each(filteredProposals[taAssetId][i].unmitigatedRisks, function(unmitigatedRisk, l){
+                                    if(unmitigatedRisk == unacceptableRisk){
+                                        k = l;
                                     }
                                 });
+                                if(k >= 0){
+                                    // console.log('unacceptable risk ' + unacceptableRisk + ' was considered unmitigated before');
+                                    filteredProposals[taAssetId][i].unmitigatedRisks.splice(k, 1);
+                                }
+                            } else {
+                                // Before considering it unmitigated, check if other treatment mitigated that risk
+                                if(filteredProposals[taAssetId][i].mitigatedRisks.indexOf(unacceptableRisk) == -1){
+                                    if(filteredProposals[taAssetId][i].unmitigatedRisks.indexOf(unacceptableRisk) == -1){
+                                        filteredProposals[taAssetId][i].unmitigatedRisks.push(unacceptableRisk);
+                                    }
+                                }
                             }
                         });
-                    });
-                });
+                    })
+                }
             });
+        });
 
-
-            // Normalization
-            _.each(filteredProposals, function(proposals, taAssetId){
-                _.each(proposals, function(proposal, index){
-                    if(_.isNumber(proposal.score)){
-                        // We had unacceptable risks and none has been mitigated, simulate a score of 0
-                        if(filteredProposals[taAssetId][index].riskMitigatedNames.length == 0){
-                            filteredProposals[taAssetId][index].score = 0.0;
-                            filteredProposals[taAssetId][index].total = filteredProposals[taAssetId][index].unmitigatedRisks.length;
-                        } else {
-                            filteredProposals[taAssetId][index].total = filteredProposals[taAssetId][index].riskMitigatedNames.length + filteredProposals[taAssetId][index].unmitigatedRisks.length;
-                        }
-                    } else {
-                        // Same case as above
-                        filteredProposals[taAssetId][index].score = 0.0;
-                        filteredProposals[taAssetId][index].total = filteredProposals[taAssetId][index].riskMitigatedNames.length + filteredProposals[taAssetId][index].unmitigatedRisks.length;
-                    }
-                });
+        // Normalization
+        _.each(filteredProposals, function(proposals, taAssetId){
+            _.each(proposals, function(proposal, index){
+                filteredProposals[taAssetId][index].score = proposal.mitigatedRisks.length;
+                filteredProposals[taAssetId][index].total = proposal.unacceptableRisks.length;
             });
+        });
 
-        }
+        // console.log('end result', filteredProposals);
 
     };
 

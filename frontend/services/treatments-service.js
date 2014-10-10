@@ -248,6 +248,22 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
     };
 
     /**
+     * Given a list of treatments, returns what risks are mitigated.
+     * @param treatments The list of treatments.
+     */
+    this.getRisksMitigatedFromTreatments = function(treatments){
+        var riskNames = [];
+        _.each(risksTreatmentsMapping, function(value, key){
+            _.each(treatments, function(treatment){
+                if(_.contains(value, treatment) && !_.contains(riskNames, key)){
+                    riskNames.push(key);
+                }
+            });
+        });
+        return riskNames;
+    };
+
+    /**
      * Given a treatment name, returns true if the user selected to choose among
      * its possible values or false otherwise (he is not interested in the values,
      * but just in the concept).
