@@ -214,19 +214,27 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                 filteredProposals[taAssetId][i].unmitigatedRisks = [];
                 if(proposal.service.cloudType == AssetsService.getTAById(taAssetId).cloudType){
                     // Determine what treatments should be taken into account
-                    treatments = proposal.characteristics.map(function(c){ return c.name });
+                    treatments = proposal.characteristics;
                     treatmentsValues = proposal.characteristics.map(function(c){ return c.value});
                     if (!useTreatmentsRisksMapping) {
                         // Take into account only selected treatments
-                        treatments = TreatmentsService.getTreatments().map(function(t){ return t.name });
+                        treatments = TreatmentsService.getTreatments();
                     }
                     _.each(treatments, function(treatment, j){
                         // console.log('Current treatment', treatment)
-                        var criticityValue = TreatmentsService.showTreatmentValue(treatment) ?
-                            AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatment)) : AssetsService.getTACriticityValue(taAssetId);
-                        var treatmentValue = AssetsService.getInverseCriticityValue(treatmentsValues[j]);
+                        var criticityValue = null;
+                        var treatmentValue = null;
+                        if(treatment.hasOwnProperty('value')){
+                            criticityValue = TreatmentsService.showTreatmentValue(treatment.name) ?
+                                AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatment.name)) : AssetsService.getTACriticityValue(taAssetId);
+                            treatmentValue = AssetsService.getInverseCriticityValue(treatment.value);
+                        } else {
+                            criticityValue = TreatmentsService.showTreatmentValue(treatment.name) ?
+                                AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatment.name)) : AssetsService.getTACriticityValue(taAssetId);
+                            var treatmentValue = AssetsService.getInverseCriticityValue(proposal.characteristics.filter(function(t){ return t.name == treatment.name})[0].value);
+                        }
                         // console.log('Criticity value vs treatment value', criticityValue, treatmentValue);
-                        var risksFromTreatment = TreatmentsService.getRisksFromTreatment(treatment);
+                        var risksFromTreatment = TreatmentsService.getRisksFromTreatment(treatment.name);
                         _.each(unacceptableRisks, function(unacceptableRisk){
                             if(_.contains(risksFromTreatment, unacceptableRisk) && treatmentValue <= criticityValue){
                                 // This treatment is mitigating the risk
