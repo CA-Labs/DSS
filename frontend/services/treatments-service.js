@@ -6,6 +6,8 @@
 
 dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksService', function(flash, localStorageService, RisksService){
 
+    var allTreatments = [];
+
     var treatmentsFromStorage = localStorageService.get('treatmentsSelected') || [];
     var treatments = treatmentsFromStorage;
 
@@ -68,6 +70,14 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
     };
 
     /**
+     * Retrieves the list of all treatments.
+     * @returns {Array}
+     */
+    this.getAllTreatments = function(){
+        return allTreatments;
+    }
+
+    /**
      * Adds a new treatment value to the model of selected treatments values.
      * @param treatmentName The treatment name.
      * @param treatmentValue The treatment value.
@@ -109,6 +119,17 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
     this.setTreatments = function(treatmentsLoadedFromLocalStorage){
         if(!angular.equals(treatments, treatmentsLoadedFromLocalStorage)){
             angular.copy(treatmentsLoadedFromLocalStorage, treatments);
+        }
+    };
+
+    /**
+     * Sets the all treatments model loaded from local storage.
+     * @param newAllTreatmentsLoadedFromLocalStorage The all treatments
+     * model to be loaded from local storage.
+     */
+    this.setAllTreatments = function(newAllTreatmentsLoadedFromLocalStorage){
+        if(!angular.equals(allTreatments, newAllTreatmentsLoadedFromLocalStorage)){
+            angular.copy(newAllTreatmentsLoadedFromLocalStorage, allTreatments);
         }
     };
 
@@ -222,6 +243,22 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
                     }
                 });
             }
+        });
+        return riskNames;
+    };
+
+    /**
+     * Given a list of treatments, returns what risks are mitigated.
+     * @param treatments The list of treatments.
+     */
+    this.getRisksMitigatedFromTreatments = function(treatments){
+        var riskNames = [];
+        _.each(risksTreatmentsMapping, function(value, key){
+            _.each(treatments, function(treatment){
+                if(_.contains(value, treatment) && !_.contains(riskNames, key)){
+                    riskNames.push(key);
+                }
+            });
         });
         return riskNames;
     };

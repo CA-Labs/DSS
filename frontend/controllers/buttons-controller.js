@@ -4,11 +4,13 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 'AssetsService', 'TreatmentsService', 'flash', function($scope, $rootScope, RisksService, AssetsService, TreatmentsService, flash){
+dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 'AssetsService', 'TreatmentsService', 'flash', 'ngDialog', function($scope, $rootScope, RisksService, AssetsService, TreatmentsService, flash, ngDialog){
 
     $scope.unacceptableRisks = RisksService.getUnacceptableRisks();     // The list of unacceptable risks per TA asset
 
     $scope.ta = AssetsService.getTA();                                  // The list of TA assets
+
+    $scope.error = false;
 
     /**
      * Called whenever the next button is clicked. Handles
@@ -22,11 +24,10 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
             var currentSlide = $('#dssSlides').find('.active');
             if(currentSlide.hasClass('risks-slide')){
                 var errorMessage = 'The following risks aren\'t mitigated: ';
-                var error = false;
                 var i = 0;
                 _.each($scope.unacceptableRisks, function(value, key){
                     if(value.length > 0){
-                        error = true;
+                        $scope.error = true;
                         var first = true;
                         var taName = '';
                         _.each($scope.ta, function(ta){
@@ -57,7 +58,8 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
                     }
                     i++;
                 });
-                if(error){
+                if($scope.error){
+                    $scope.error = false;
                     // flash.error = errorMessage + '.';
                     // $event.stopPropagation();
                 }
@@ -66,21 +68,41 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
 
                 var treatmentsSelected = TreatmentsService.getTreatments();
                 var noUnnaceptableRisks = RisksService.noUnacceptableRisks();
-                var error = false;
 
                 if((!treatmentsSelected || treatmentsSelected.length == 0) && !noUnnaceptableRisks){
-                    error = true;
-                    flash.error = 'There are unmitigated risks. Please select some treatments before and associate them to the corresponding tangible asset(s). Please do refine your selection.';
+                    $scope.error = true;
+                    ngDialog.open({
+                        template: 'partials/treatments/treatments-popup.html',
+                        className: 'ngdialog-theme-default',
+                        controller: ['$scope', '$rootScope', function($scope, $rootScope){
+                            // Defines behaviour when user selected to stay in the treatments slide
+                            $scope.stay = function() {
+                                // This method is automatically injected into the scope
+                                $scope.closeThisDialog();
+                            };
+                            // Defines behaviour when user selected to continue although warning was displayed
+                            $scope.continue = function() {
+                                // Don't consider this as an error so that slide transition to next one takes place
+                                $scope.closeThisDialog();
+                                // Transition to next slide
+                                $('#dssSlides').carousel('next');
+                                // Trigger cloud service computation taking as treatments selected those associated to
+                                // every single risk unacceptable
+                                $rootScope.$broadcast('getServicesWithoutTreatments');
+                            };
+                        }]
+                    });
+                } else {
+                    _.each(treatmentsSelected, function(treatment){
+                        if(!treatment.taRelations || treatment.taRelations.length == 0){
+                            $scope.error = true;
+                            flash.error = 'You should associate at least one tangible asset for each treatment.';
+                        }
+                    });
                 }
 
-                _.each(treatmentsSelected, function(treatment){
-                    if(!treatment.taRelations || treatment.taRelations.length == 0){
-                        error = true;
-                        flash.error = 'You should associate at least one tangible asset for each treatment.';
-                    }
-                });
-
-                if(error){
+                if($scope.error){
+                    $scope.error = false;
                     $event.stopPropagation();
                 } else {
                     $rootScope.$broadcast('acceptabilityValueChanged');

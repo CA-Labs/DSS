@@ -70,8 +70,7 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
                         // console.log(data._documents);
                         CloudService.setTAProposals(ta, data._documents);
                         $timeout(function(){
-                            CloudService.filterProposalsByTreatments();
-                            CloudService.filterProposalsByThresholds();
+                            CloudService.scoreProposals(false);
                         }, 100);
                     }
                 });
@@ -94,8 +93,7 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
                         // console.log(data._documents);
                         CloudService.setTAProposals(ta, data._documents);
                         $timeout(function(){
-                            CloudService.filterProposalsByTreatments();
-                            CloudService.filterProposalsByThresholds();
+                            CloudService.scoreProposals(false);
                         }, 100);
                     }
                 });
@@ -128,23 +126,24 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
      * score might have changed as well.
      */
     $scope.$on('risksSelectedChanged', function(){
-        CloudService.filterProposalsByTreatments();
-        CloudService.filterProposalsByThresholds();
+        CloudService.scoreProposals(false);
         $scope.deploymentsProposals = CloudService.getDeploymentsProposals();
     });
 
     /**
-     * Filters proposals by treatments, calling the cloud service.
+     * Event triggered when the user decided to get proposals
+     * without specifying any treatment.
      */
-    $scope.filterProposalsByTreatments = function(){
-        CloudService.filterProposalsByTreatments();
-    };
+    $scope.$on('getServicesWithoutTreatments', function(){
+        CloudService.scoreProposals(true);
+        $scope.deploymentsProposals = CloudService.getDeploymentsProposals();
+    });
 
     /**
      * Filteres proposals by thresholds, calling the cloud service.
      */
-    $scope.filterProposalsByThresholds = function(){
-        CloudService.filterProposalsByThresholds();
+    $scope.filterProposalsByThresholds = function(useRisksTreatmentsMapping){
+        CloudService.scoreProposals(useRisksTreatmentsMapping);
     };
 
     /**
