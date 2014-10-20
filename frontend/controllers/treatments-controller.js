@@ -160,6 +160,10 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
      * @ta The TA asset to associate with the treatment.
      */
     $scope.addTreatment = function (treatment, ta) {
+        if(treatment == null || typeof treatment == 'undefined'){
+            flash.error = 'You should select some treatment!';
+            return;
+        }
         var treatmentCopy = _.extend({}, treatment);
         TreatmentsService.addTreatment(treatmentCopy);
         // For some reason, updating service data takes a while
