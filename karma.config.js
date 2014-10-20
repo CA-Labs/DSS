@@ -34,6 +34,7 @@ module.exports = function(config) {
         'frontend/components/x2js/xml2json.js',
         'frontend/components/bootstrap-switch/dist/js/bootstrap-switch.js',
         'frontend/components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js',
+        'frontend/components/ngDialog/js/ngDialog.js',
         // app js files
         'frontend/app.min.js',
         'frontend/controllers/bsoia-controller.js',
