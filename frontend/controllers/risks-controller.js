@@ -460,7 +460,7 @@ dssApp.controller('risksController'
         };
 
         //Current slider value
-        var sliderValue = element.value;
+        var sliderValue = element.value || 1;
         var sliderType = element.type;
         var sliderModel = element.model;
 
