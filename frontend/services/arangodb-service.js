@@ -15,11 +15,8 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
     //Set Authorization header
     $http.defaults.headers.common['Authorization'] = 'Basic ' + btoa('root:CATech2014!');
 
-    //TODO: Fix an stable arangoDB server base URL
-    //var ARANGODB_BASE_URL = 'http://109.231.124.30:8529/_db/_system/dss/api/';
-    this.ARANGODB_BASE_URL = 'http://dss.jarandaf.com:8529/_db/dss/dss/';
-    //this.ARANGODB_BASE_URL = 'http://localhost:8529/_db/dss/dss/';
-    this.XSD_SERVICE_BASE_URL = 'http://dss.jarandaf.com:3999/';
+    this.ARANGODB_BASE_URL = 'http://dssdb.jarandaf.com/';
+    this.XSD_SERVICE_BASE_URL = 'http://dssxsd.jarandaf.com/';
 
     //Closures
     var self = this;
