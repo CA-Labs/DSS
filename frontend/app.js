@@ -50,6 +50,8 @@ $('#dssSlides').carousel('pause' ,{
 
 });
 
+
+
 var dssApp = angular.module('dssApp', [
     'LocalStorageModule',
     'angular-flash.service',
@@ -182,6 +184,19 @@ $(function(){
         $(select).select2({
             placeholder: 'Select a treatment'
         });
+    });
+
+    // once page ready attach the button to scroll to the top
+    $(document).on('scroll', function () {
+        if ($(window).scrollTop() > 100) {
+            $('.scroll-top').fadeIn();
+        } else {
+            $('.scroll-top').fadeOut();
+        }
+    });
+
+    $('.scroll-top').on('click', function () {
+        $("html, body").animate({scrollTop: 0}, 500, 'linear');
     });
 });
 

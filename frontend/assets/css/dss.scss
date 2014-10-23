@@ -2,6 +2,12 @@ html, body {
   height: 100%;
 }
 
+
+.scroll-top {
+  position: fixed; bottom: 15px; left: 15px;
+  display: none;
+}
+
 .margin-10 {
   margin: {
     left: 10px;
