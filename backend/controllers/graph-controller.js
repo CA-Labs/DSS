@@ -19,12 +19,21 @@
      */
     controller.get('potentialRisks', function(req, res){
 
-        //TODO: Return projections and not full paths?
+        /*
         var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 2})' +
             'let sourceType = (p.source.type)' +
             'let destinationType = (p.destination.type)' +
             'let sourceName = (lower(p.source.name))' +
             'filter ((sourceType == "bsoia" || sourceType == "toia") && (destinationType == "risk") && (contains(lower(@bsoias), sourceName) || contains(lower(@toias), sourceName)))' +
+            'return p';
+        */
+
+        // Ignore BSOIA's when finding potential risks (at least by now)
+        var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
+            'let sourceType = (p.source.type)' +
+            'let destinationType = (p.destination.type)' +
+            'let sourceName = (lower(p.source.name))' +
+            'filter ((sourceType == "toia") && (destinationType == "risk") && (contains(lower(@toias), sourceName)))' +
             'return p';
 
         var stmt = db._createStatement({query: query});
