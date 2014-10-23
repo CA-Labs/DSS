@@ -38,13 +38,15 @@
 
         var stmt = db._createStatement({query: query});
 
-        var bsoias = '';
+        // var bsoias = '';
         var toias = '';
 
+        /*
         if(req.params('bsoias') !== null && typeof req.params('bsoias') !== 'undefined'){
             bsoias = req.params('bsoias');
         }
         stmt.bind('bsoias', bsoias);
+        */
 
         if(req.params('toias') !== null && typeof req.params('toias') !== 'undefined'){
             toias = req.params('toias');
