@@ -22,7 +22,36 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
     $scope.next = function($event){
         if(_.size($scope.unacceptableRisks) > 0){
             var currentSlide = $('#dssSlides').find('.active');
-            if(currentSlide.hasClass('risks-slide')){
+            if(currentSlide.hasClass('toia-slide')){
+                _.each(AssetsService.getTOIA(), function(toia){
+                    if(toia.bsoiaRelations.length == 0){
+                        $scope.error = true;
+                    }
+                });
+                if($scope.error){
+                    ngDialog.open({
+                        template: 'partials/assets/toia-bsoia-relation-popup.html',
+                        className: 'ngdialog-theme-default',
+                        controller: ['$scope', function($scope){
+                            // Defines behaviour when user selected to stay in the treatments slide
+                            $scope.stay = function() {
+                                // This method is automatically injected into the scope
+                                $scope.closeThisDialog();
+                            };
+                            // Defines behaviour when user selected to continue although warning was displayed
+                            $scope.continue = function() {
+                                // Don't consider this as an error so that slide transition to next one takes place
+                                $scope.closeThisDialog();
+                                // Transition to next slide
+                                $('#dssSlides').carousel('next');
+                            };
+                        }]
+                    });
+                    $scope.error = false;
+                    $event.stopPropagation();
+                }
+            }
+            else if(currentSlide.hasClass('risks-slide')){
                 var errorMessage = 'The following risks aren\'t mitigated: ';
                 var i = 0;
                 _.each($scope.unacceptableRisks, function(value, key){
