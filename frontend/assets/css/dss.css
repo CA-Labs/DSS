@@ -6,7 +6,7 @@ html, body {
   margin-right: 10px; }
 
 .logo {
-  background: url("../img/image4094_1.png") no-repeat white;
+  background: url("../img/image4094_1.png") no-repeat #ffffff;
   display: block;
   width: 111px;
   height: 65px;
@@ -15,7 +15,11 @@ html, body {
   margin-left: 20px; }
 
 .logo-text h3 {
-  font-size: 48px; }
+  margin-top: 32px;
+  font-size: 36px;
+  display: inline-flex; }
+  .logo-text h3 p:first-child {
+    color: #18bc9c; }
 
 blockquote {
   cursor: hand; }
@@ -273,3 +277,5 @@ blockquote {
   margin-top: 7px;
   position: relative;
   top: -3px; }
+
+/*# sourceMappingURL=dss.css.map */

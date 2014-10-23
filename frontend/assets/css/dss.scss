@@ -23,7 +23,12 @@ html, body {
 
 .logo-text {
   h3 {
-    font-size: 48px;
+    margin-top: 32px;
+    font-size: 36px;
+    display: inline-flex;
+    p:first-child {
+      color: #18bc9c;
+    }
   }
 }
 
