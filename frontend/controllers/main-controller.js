@@ -4,8 +4,8 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash', '$http', '$q', 'localStorageService', 'AssetsService', 'RisksService', 'TreatmentsService', 'ArangoDBService', '$timeout'
-    , function($scope, $rootScope, $upload, flash, $http, $q, localStorageService, AssetsService, RisksService, TreatmentsService, ArangoDBService, $timeout){
+dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash', '$http', '$q', 'localStorageService', 'AssetsService', 'RisksService', 'TreatmentsService', 'ArangoDBService', '$timeout', 'ngDialog'
+    , function($scope, $rootScope, $upload, flash, $http, $q, localStorageService, AssetsService, RisksService, TreatmentsService, ArangoDBService, $timeout, ngDialog){
 
     //Initialization
 
@@ -174,5 +174,15 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
         console.log(decodeURIComponent(x2js.json2xml_str($scope.xmlAsJsonObject)));
 
     };
+
+    /************************ DSS GRAPH WITH SELECTION ***********************
+     *************************************************************************
+     ************************************************************************/
+    $scope.showDSSGraph = function() {
+        ngDialog.open({
+            template: 'partials/dss-graph.html',
+            className: 'ngdialog-theme-default'
+        });
+    }
 
 }]);
