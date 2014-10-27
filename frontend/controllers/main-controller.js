@@ -79,17 +79,33 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
                             AssetsService.setXmlTaObject($scope.xmlAsJsonObject);
 
                             var resources = $scope.xmlAsJsonObject.resourceModelExtension.resourceContainer;
-                            _.each(resources, function(resource){
+
+                            // Mind the hack! XML library used returns 'Object' type when only one element
+                            // is retrieved from an XML sequence and 'Array' type when multiple elements
+                            // are retrieved.
+                            if(_.isArray(resources)){
+                                _.each(resources, function(resource){
+                                    // IaaS
+                                    if(resource.hasOwnProperty('cloudResource')){
+                                        resource.cloudType = 'IaaS';
+                                    }
+                                    // PaaS
+                                    else if(resource.hasOwnProperty('cloudPlatform')){
+                                        resource.cloudType = 'PaaS';
+                                    }
+                                    AssetsService.addTA(resource);
+                                });
+                            } else if(_.isObject(resources)){
                                 // IaaS
-                                if(resource.hasOwnProperty('cloudResource')){
-                                    resource.cloudType = 'IaaS';
+                                if(resources.hasOwnProperty('cloudResource')){
+                                    resources.cloudType = 'IaaS';
                                 }
                                 // PaaS
-                                else if(resource.hasOwnProperty('cloudPlatform')){
-                                    resource.cloudType = 'PaaS';
+                                else if(resources.hasOwnProperty('cloudPlatform')){
+                                    resources.cloudType = 'PaaS';
                                 }
-                                AssetsService.addTA(resource);
-                            });
+                                AssetsService.addTA(resources);
+                            }
                             $rootScope.$broadcast('loadedTA');
                         } else {
                             flash.error = 'Some error occurred while trying to upload your requirements';
