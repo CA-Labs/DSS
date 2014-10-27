@@ -356,12 +356,30 @@ blockquote {
 /* DSS graph */
 
 .node circle {
-  fill: #fff;
-  stroke: steelblue;
   stroke-width: 3px;
 }
 
-.node text { font: 12px sans-serif; }
+circle.node-bsoia {
+  fill: #ffa5a7 !important;
+  stroke: #ff4146 !important;
+}
+
+circle.node-toia {
+  fill: #b4d6ff !important;
+  stroke: #4c41ff !important;
+}
+
+circle.node-risk {
+  fill: #95ae84 !important;
+  stroke: #3b8034 !important;
+}
+
+circle.node-treatment {
+  fill: #fff6a8 !important;
+  stroke: #ffea3f !important;
+}
+
+.node text { font: 8px sans-serif; }
 
 .link {
   fill: none;

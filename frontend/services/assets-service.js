@@ -235,6 +235,20 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     };
 
     /**
+     * Get all TOIA assets connected to a given BSOIA asset.
+     * @param bsoiaAssetName The BSOIA asset name.
+     * @returns {Array|*}
+     */
+    this.getTOIAFromBSOIA = function(bsoiaAssetName){
+        var bsoiaInRelations = function(bsoiaRelations, bsoiaAssetName){
+            var aux = bsoiaRelations.map(function(bsoiaRelation){ return bsoiaRelation.name });
+            return aux.indexOf(bsoiaAssetName) !== -1;
+        };
+        return toia.filter(function(t) { return bsoiaInRelations(t.bsoiaRelations, bsoiaAssetName) })
+            .map(function(t) { return t.asset.name });
+    };
+
+    /**
      * Checks if a BSOIA asset has ever been linked
      * to some TOIA asset.
      * @param bsoiaAssetName The name of the BSOIA

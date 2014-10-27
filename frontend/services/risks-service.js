@@ -378,4 +378,14 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         return SEPARATOR;
     };
 
+    /**
+     * Returns all risks associated to a given TOIA asset.
+     * @param toiaAssetName The TOIA asset name.
+     * @returns {Array|*}
+     */
+    this.getRisksFromTOIA = function(toiaAssetName){
+        return risks.filter(function(risk) { return risk.vertices[0].name == toiaAssetName })
+            .map(function(risk) { return risk.vertices[1].name });
+    };
+
 }]);

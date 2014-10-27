@@ -4,26 +4,56 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.directive('dssGraph', ['d3Factory', function(d3Factory){
+dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'TreatmentsService', function(d3Factory, AssetsService, RisksService, TreatmentsService){
     return {
         restrict: 'E',
         scope: {},
         link: function(scope, element, attrs){
-            var data = [
-                {
-                    name: 'test',
-                    parent: 'null',
-                    children: [
-                        {
-                            name: 'a',
-                            children: [
-                                {name: 'b', size: 30},
-                                {name: 'c', size: 30}
-                            ]
+
+            var buildNodes = function(){
+
+                var bsoia = AssetsService.getBSOIA();
+                var toia = AssetsService.getTOIA();
+                var risks = RisksService.getRisks();
+                var treatments = TreatmentsService.getTreatments();
+                var treatmentNames = treatments.map(function(treatment){ return treatment.name});
+
+                var data = {
+                    name: 'DSS',
+                    children: bsoia.map(function(bsoia){
+                        return {
+                            name: bsoia.name,
+                            class: 'node-bsoia',
+                            children: AssetsService.getTOIAFromBSOIA(bsoia.name).map(function(toia){
+                                return {
+                                    name: toia,
+                                    class: 'node-toia',
+                                    children: RisksService.getRisksFromTOIA(toia).map(function(risk){
+                                        return {
+                                            name: risk,
+                                            class: 'node-risk',
+                                            children: TreatmentsService.getTreatmentsFromRisk(risk).filter(function(treatment){
+                                                return treatmentNames.indexOf(treatment) !== -1;
+                                            }).map(function(treatment){
+                                                return {
+                                                    name: treatment,
+                                                    class: 'node-treatment',
+                                                    children: []
+                                                }
+                                            })
+                                        }
+                                    })
+                                }
+                            })
                         }
-                    ]
-                }
-            ];
+                    })
+                };
+
+                // console.log(data);
+
+                return data;
+
+            };
 
             d3Factory.d3().then(function(d3){
 
@@ -49,7 +79,7 @@ dssApp.directive('dssGraph', ['d3Factory', function(d3Factory){
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-                var root = data[0].children[0];
+                var root = buildNodes();
                 var i = 0;
 
                 update(root);
@@ -58,6 +88,8 @@ dssApp.directive('dssGraph', ['d3Factory', function(d3Factory){
 
                     var nodes = tree.nodes(root).reverse(),
                         links = tree.links(nodes);
+
+                    console.log('nodes', nodes);
 
                     // Normalize for fixed depth
                     nodes.forEach(function(d) {d.y = d.depth * 180 });
@@ -68,20 +100,19 @@ dssApp.directive('dssGraph', ['d3Factory', function(d3Factory){
 
                     // Enter the nodes
                     var nodeEnter = node.enter().append('g')
-                        .attr('class', 'dss-node')
                         .attr('transform', function(d) { return 'translate(' + d.y + ',' + d.x + ')'});
 
-                    nodeEnter.append("circle")
-                        .attr("r", 10)
+                    nodeEnter.append('circle')
+                        .attr('r', 10)
+                        .attr('class', function(d){ return d.class; });
 
-                    nodeEnter.append("text")
-                        .attr("x", function(d) {
-                            return d.children || d._children ? -13 : 13; })
-                        .attr("dy", ".35em")
-                        .attr("text-anchor", function(d) {
-                            return d.children || d._children ? "end" : "start"; })
+
+                    nodeEnter.append('text')
+                        .attr('x', function(d) { return -(d.name.length / 2.5) * 10 })
+                        .attr('dy', '-1em')
+                        .attr('text-anchor', function(d) { return 'start'; })
                         .text(function(d) { return d.name; })
-                        .style("fill-opacity", 1);
+                        .style('fill-opacity', 1);
 
                     var link = svg.selectAll('path.link')
                         .data(links, function(d) { return d.target.id; });
