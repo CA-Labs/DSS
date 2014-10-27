@@ -17,6 +17,9 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     var riskBoundModelsFromStorage = localStorageService.get('riskBoundModels') || {};                                                          //Risk bound models
     var riskBoundModels = riskBoundModelsFromStorage;
 
+    var toiaRisksMappingFromStorage = localStorageService.get('toiaRisksMapping') || {};                                                        //TOIA/Risks mapping
+    var toiaRisksMapping = toiaRisksMappingFromStorage;
+
     var unacceptableRisks = {};                                                                                                                 //List of unacceptable risks per tangible asset
 
     var loadingDataFromLocalStorage = false;                                                                                                    //Flag to control local storage restore state
@@ -379,13 +382,29 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     };
 
     /**
+     * Retrieves the toia-risks mapping loaded from local storage.
+     * @returns {*|{}}
+     */
+    this.getTOIARisksMapping = function(){
+        return toiaRisksMapping;
+    };
+
+    /**
+     * Sets the toia/risks mapping loaded from local storage.
+     * @param toiaRisksMappingFromLocalStorage The toia/risks mapping
+     * loaded from local storage.
+     */
+    this.setTOIARisksMapping = function(toiaRisksMappingFromLocalStorage) {
+        toiaRisksMapping = toiaRisksMappingFromStorage;
+    };
+
+    /**
      * Returns all risks associated to a given TOIA asset.
      * @param toiaAssetName The TOIA asset name.
      * @returns {Array|*}
      */
     this.getRisksFromTOIA = function(toiaAssetName){
-        return risks.filter(function(risk) { return risk.vertices[0].name == toiaAssetName })
-            .map(function(risk) { return risk.vertices[1].name });
+        return toiaRisksMapping[toiaAssetName];
     };
 
 }]);

@@ -79,6 +79,9 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
         getRisksTreatmentsMapping: function(){
             return self.ARANGODB_BASE_URL + 'graph/risksTreatmentsMapping';
         },
+        getTOIARisksMapping: function(){
+            return self.ARANGODB_BASE_URL + 'graph/toiaRisksMapping';
+        },
         getTreatmentsConnectionsPerCloudAndServiceTypes: function(cloudType, serviceType){
             return self.ARANGODB_BASE_URL + 'graph/treatmentsConnectionsPerCloudAndServiceTypes?cloudType=' + cloudType + '&serviceType=' + serviceType;
         },
@@ -191,6 +194,20 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
      */
     this.getRisksTreatmentsMapping = function(callback){
         $http({method: 'GET', url: self.FOXX_API.getRisksTreatmentsMapping()})
+            .success(function(data, status, headers, config){
+                callback(null, data);
+            })
+            .error(function(data, status, headers, config){
+                callback(data, null);
+            });
+    };
+
+    /**
+     * Retrieves toia-risks mapping.
+     * @param callback Callback fn to execute on data retrieval.
+     */
+    this.getTOIARisksMapping = function(callback){
+        $http({method: 'GET', url: self.FOXX_API.getTOIARisksMapping()})
             .success(function(data, status, headers, config){
                 callback(null, data);
             })

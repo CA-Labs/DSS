@@ -117,6 +117,24 @@
     });
 
     /**
+     * Retrieves toia-risks mapping
+     */
+    controller.get('toiaRisksMapping', function(req, res){
+        var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1}) ' +
+            'let sourceType = (p.source.type) ' +
+            'let destinationType = (p.destination.type) ' +
+            'let sourceName = (lower(p.source.name)) ' +
+            'filter (sourceType == "toia") && (destinationType == "risk") ' +
+            'collect toia = (p.source.name) into risks ' +
+            'return {toia: toia, risks: risks[*].p.destination.name}';
+
+        var stmt = db._createStatement({query: query});
+
+        var result = stmt.execute();
+        res.json(result);
+    });
+
+    /**
      * Retrieves treatments connections to services.
      */
     controller.get('treatmentsConnectionsPerCloudAndServiceTypes', function(req, res){

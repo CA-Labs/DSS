@@ -46,6 +46,8 @@ dssApp.controller('risksController'
 
     $scope.unacceptableRisks = RisksService.getUnacceptableRisks();
 
+    $scope.toiaRisksMapping = RisksService.getTOIARisksMapping();
+
     //List of available categories to categorize risks level for likelihood values
     var LIKELIHOOD_CATEGORIES = {
         RARE: {
@@ -575,6 +577,34 @@ dssApp.controller('risksController'
             })
         }
         $rootScope.$broadcast('risksSelectedChanged');
+    });
+
+    /**
+     * Aggregates risks by TOIA associated to them.
+     */
+    $scope.potentialRisksGrouped = function(){
+        var data = [];
+        var selectedRiskNames = risksSelected.map(function(risk){ return risk.destination.name; });
+        _.each($scope.toiaRisksMapping, function(values, key){
+            if(_.contains(selectedRiskNames, key)) {
+                _.each(values, function(value){
+                    data.push({group: key, value: value});
+                });
+            }
+        });
+    };
+
+    // Initial data fetch
+    ArangoDBService.getTOIARisksMapping(function(error, data){
+        if (error) {
+            flash.error = 'Some error occurred while fetching TOIA/risks mapping values';
+        } else {
+            var mapping = {};
+            _.each(data._documents, function (e) {
+                mapping[e.toia] = e.risks;
+            });
+            RisksService.setTOIARisksMapping(mapping);
+        }
     });
 
 }]);
