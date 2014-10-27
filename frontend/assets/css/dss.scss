@@ -2,6 +2,20 @@ html, body {
   height: 100%;
 }
 
+
+.scroll-top {
+  position: fixed; bottom: 15px; left: 15px;
+  display: none;
+}
+
+.inline * {
+  display: inline-block;
+}
+
+.popover {
+  min-width: 400px;
+}
+
 .margin-10 {
   margin: {
     left: 10px;
@@ -23,7 +37,12 @@ html, body {
 
 .logo-text {
   h3 {
-    font-size: 48px;
+    margin-top: 32px;
+    font-size: 36px;
+    display: inline-flex;
+    p:first-child {
+      color: #18bc9c;
+    }
   }
 }
 
@@ -41,6 +60,66 @@ blockquote {
   }
   p.active {
     color: #18bc9c;
+  }
+}
+
+.nav-pills.nav-wizard {
+
+  & > li {
+    & > a {
+      border-radius: 0px !important;
+    }
+    float: left;
+    background-color: #eee;
+    position: relative;
+    overflow: visible;
+//    padding: 8px;
+    border: {
+      left: 15px solid #fff;
+      right: 10px solid #fff;
+    }
+    &:first-child {
+      border-left: 0;
+    }
+    &:last-child {
+      border-right: 0;
+      float: right;
+    }
+    .nav-arrow {
+      position: absolute;
+      top: 0;
+      right: -20px;
+      width: 0;
+      height: 0;
+      border: {
+        style: solid;
+        width: 21px 0 20px 20px;
+        color: transparent transparent transparent #eee;
+      }
+    ;
+      z-index: 150;
+    }
+    .nav-wedge {
+      position: absolute;
+      top: 0;
+      left: -20px;
+      width: 0;
+      height: 0;
+      border: {
+        style: solid;
+        width: 21px 0 20px 20px;
+        color: #eee #eee #eee transparent;
+      }
+      z-index: 150;
+    }
+  }
+  & > li.active {
+    .nav-arrow {
+      border-color: transparent transparent transparent #2c3e50;
+    }
+    .nav-wedge {
+      border-color: #2c3e50 #2c3e50 #2c3e50 transparent;
+    }
   }
 }
 
@@ -112,7 +191,7 @@ blockquote {
 
 /* Drop zones */
 .dropzone {
-  background-color: #E8FDF9;
+//  background-color: #E8FDF9;
   min-height: 150px;
   height: auto !important;
   max-height: 800px;
