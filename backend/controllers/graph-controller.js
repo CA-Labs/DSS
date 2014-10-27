@@ -19,23 +19,34 @@
      */
     controller.get('potentialRisks', function(req, res){
 
-        //TODO: Return projections and not full paths?
+        /*
         var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 2})' +
             'let sourceType = (p.source.type)' +
             'let destinationType = (p.destination.type)' +
             'let sourceName = (lower(p.source.name))' +
             'filter ((sourceType == "bsoia" || sourceType == "toia") && (destinationType == "risk") && (contains(lower(@bsoias), sourceName) || contains(lower(@toias), sourceName)))' +
             'return p';
+        */
+
+        // Ignore BSOIA's when finding potential risks (at least by now)
+        var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
+            'let sourceType = (p.source.type)' +
+            'let destinationType = (p.destination.type)' +
+            'let sourceName = (lower(p.source.name))' +
+            'filter ((sourceType == "toia") && (destinationType == "risk") && (contains(lower(@toias), sourceName)))' +
+            'return p';
 
         var stmt = db._createStatement({query: query});
 
-        var bsoias = '';
+        // var bsoias = '';
         var toias = '';
 
+        /*
         if(req.params('bsoias') !== null && typeof req.params('bsoias') !== 'undefined'){
             bsoias = req.params('bsoias');
         }
         stmt.bind('bsoias', bsoias);
+        */
 
         if(req.params('toias') !== null && typeof req.params('toias') !== 'undefined'){
             toias = req.params('toias');
@@ -98,6 +109,24 @@
             'filter (sourceType == "risk") && (destinationType == "treatment") ' +
             'collect risk = (p.source.name) into treatments ' +
             'return {risk: risk, treatments: treatments[*].p.destination.name}';
+
+        var stmt = db._createStatement({query: query});
+
+        var result = stmt.execute();
+        res.json(result);
+    });
+
+    /**
+     * Retrieves toia-risks mapping
+     */
+    controller.get('toiaRisksMapping', function(req, res){
+        var query = 'for p in graph_paths("dss", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1}) ' +
+            'let sourceType = (p.source.type) ' +
+            'let destinationType = (p.destination.type) ' +
+            'let sourceName = (lower(p.source.name)) ' +
+            'filter (sourceType == "toia") && (destinationType == "risk") ' +
+            'collect toia = (p.source.name) into risks ' +
+            'return {toia: toia, risks: risks[*].p.destination.name}';
 
         var stmt = db._createStatement({query: query});
 

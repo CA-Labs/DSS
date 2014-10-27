@@ -347,3 +347,42 @@ blockquote {
   margin-top: 7px;
   position: relative; top: -3px;
 }
+
+/* NgDialog */
+.ngdialog-content {
+  font-size: 18px;
+}
+
+/* DSS graph */
+
+.node circle {
+  stroke-width: 3px;
+}
+
+circle.node-bsoia {
+  fill: #ffa5a7 !important;
+  stroke: #ff4146 !important;
+}
+
+circle.node-toia {
+  fill: #b4d6ff !important;
+  stroke: #4c41ff !important;
+}
+
+circle.node-risk {
+  fill: #95ae84 !important;
+  stroke: #3b8034 !important;
+}
+
+circle.node-treatment {
+  fill: #fff6a8 !important;
+  stroke: #ffea3f !important;
+}
+
+.node text { font: 8px sans-serif; }
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px;
+}
