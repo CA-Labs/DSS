@@ -7,6 +7,12 @@ html, body {
   left: 15px;
   display: none; }
 
+.inline * {
+  display: inline-block; }
+
+.popover {
+  min-width: 400px; }
+
 .margin-10 {
   margin-left: 10px;
   margin-right: 10px; }
@@ -42,6 +48,7 @@ blockquote {
     color: #18bc9c; }
 
 .nav-pills.nav-wizard > li {
+  float: left;
   background-color: #eee;
   position: relative;
   overflow: visible;
@@ -52,7 +59,8 @@ blockquote {
   .nav-pills.nav-wizard > li:first-child {
     border-left: 0; }
   .nav-pills.nav-wizard > li:last-child {
-    border-right: 0; }
+    border-right: 0;
+    float: right; }
   .nav-pills.nav-wizard > li .nav-arrow {
     position: absolute;
     top: 0;

@@ -8,6 +8,14 @@ html, body {
   display: none;
 }
 
+.inline * {
+  display: inline-block;
+}
+
+.popover {
+  min-width: 400px;
+}
+
 .margin-10 {
   margin: {
     left: 10px;
@@ -61,6 +69,7 @@ blockquote {
     & > a {
       border-radius: 0px !important;
     }
+    float: left;
     background-color: #eee;
     position: relative;
     overflow: visible;
@@ -74,6 +83,7 @@ blockquote {
     }
     &:last-child {
       border-right: 0;
+      float: right;
     }
     .nav-arrow {
       position: absolute;
