@@ -604,6 +604,22 @@ dssApp.controller('risksController'
         return $scope.potentialRisks.filter(function(risk) { return risk.destination.name == riskName })[0];
     };
 
+    /**
+     * Returns all selected TOIA assets associated to a given risk.
+     * @param riskName The risk name.
+     * @returns {Array}
+     */
+    $scope.associatedTOIA = function(riskName){
+        var associatedTOIA = [];
+        var toiaSelectedNames = AssetsService.getTOIA().map(function(toia){ return toia.asset.name });
+        _.each($scope.toiaRisksMapping, function(values, key){
+            if(_.contains(values, riskName) && _.contains(toiaSelectedNames, key)){
+                associatedTOIA.push(key);
+            }
+        });
+        return associatedTOIA;
+    };
+
     // Initial data fetch
     ArangoDBService.getTOIARisksMapping(function(error, data){
         if (error) {

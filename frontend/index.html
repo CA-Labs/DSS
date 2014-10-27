@@ -234,6 +234,14 @@
                 <div style="margin-top: 10px" ng-show="!showRiskPerTA">
                     <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
                     <br/>
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            Associated TOIA assets:
+                            <div ng-repeat="toia in associatedTOIA(risk.destination.name) | orderBy:'':true" style="display: inline-block;">
+                                <button class="btn btn-sm btn-margin">{{ toia }}</button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-lg-6" style="margin-top: 10px;" >
                         <p style="margin-bottom: 15px" class="popover-enabled">Likelihood: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Probability/frequency of risk to occur" popup-right></i></p>
                         <div on-risks-type="simple" data-type="likelihood">
@@ -255,6 +263,14 @@
                 <div style="margin-top: 10px" ng-show="showRiskPerTA">
                     <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
                     <br/>
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            Associated TOIA assets:
+                            <div ng-repeat="toia in associatedTOIA(risk.destination.name) | orderBy:'':true" style="display: inline-block;">
+                                <button class="btn btn-sm btn-margin">{{ toia }}</button>
+                            </div>
+                        </div>
+                    </div>
                     <div ng-repeat="taAsset in taAssets" on-repeat-done="repeatDone" class="col-lg-12">
                         <div ng-switch="taAsset.cloudType">
                             <span ng-switch-when="IaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudResource._serviceType }}"><strong>{{taAsset.cloudResource._serviceName}}</strong></span>
