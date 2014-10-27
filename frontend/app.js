@@ -6,43 +6,55 @@ $('#dssSlides').carousel('pause' ,{
     interval: false
 }).on('slid.bs.carousel', function () {
 
-    var topMenu = $('.topMenu');
+    var topMenu = $('.nav-wizard');
     var slideClass = $(this).find('.active');
-    var stickyBottom = $('.sticky-bottom');
+    var stickyBottom = $('.nav-buttons');
     var cloudServicesButton = stickyBottom.find('.slide-services');
     topMenu.find('blockquote p').removeClass('active');
 
     if (slideClass.hasClass('bsoia-slide')) {
-        topMenu.find('.bsoia-slide blockquote p').addClass('active');
+        var currentSlide = topMenu.find('.bsoia-slide');
+        currentSlide.addClass('active');
+        currentSlide.nextAll().removeClass('active');
         stickyBottom.find('.slide-prev').prop('disabled', true);
         stickyBottom.find('.slide-next').prop('disabled', false);
         stickyBottom.find('.slide-next').css('display', 'inline');
         cloudServicesButton.css('display', 'none');
     } else if (slideClass.hasClass('toia-slide')) {
-        topMenu.find('.toia-slide blockquote p').addClass('active');
+        var currentSlide = topMenu.find('.toia-slide');
+        currentSlide.addClass('active');
+        currentSlide.nextAll().removeClass('active');
         stickyBottom.find('.slide-prev').prop('disabled', false);
         stickyBottom.find('.slide-next').prop('disabled', false);
         stickyBottom.find('.slide-next').css('display', 'inline');
         cloudServicesButton.css('display', 'none');
     } else if (slideClass.hasClass('ta-slide')) {
-        topMenu.find('.ta-slide blockquote p').addClass('active');
+        var currentSlide = topMenu.find('.ta-slide');
+        currentSlide.addClass('active');
+        currentSlide.nextAll().removeClass('active');
         stickyBottom.find('.slide-prev').prop('disabled', false);
         stickyBottom.find('.slide-next').prop('disabled', false);
         stickyBottom.find('.slide-next').css('display', 'inline');
         cloudServicesButton.css('display', 'none');
     } else if (slideClass.hasClass('risks-slide')) {
-        topMenu.find('.risks-slide blockquote p').addClass('active');
+        var currentSlide = topMenu.find('.risks-slide');
+        currentSlide.addClass('active');
+        currentSlide.nextAll().removeClass('active');
         stickyBottom.find('.slide-prev').prop('disabled', false);
         stickyBottom.find('.slide-next').prop('disabled', false);
         stickyBottom.find('.slide-next').css('display', 'inline');
         cloudServicesButton.css('display', 'none');
     } else if (slideClass.hasClass('treatments-slide')) {
-        topMenu.find('.treatments-slide blockquote p').addClass('active');
+        var currentSlide = topMenu.find('.treatments-slide');
+        currentSlide.addClass('active');
+        currentSlide.nextAll().removeClass('active');
         stickyBottom.find('.slide-prev').prop('disabled', false);
         stickyBottom.find('.slide-next').css('display', 'none');
         cloudServicesButton.css('display', 'inline');
     } else {
-        topMenu.find('.services-slide blockquote p').addClass('active');
+        var currentSlide = topMenu.find('.services-slide');
+        currentSlide.addClass('active');
+        currentSlide.nextAll().removeClass('active');
         stickyBottom.find('.slide-prev').prop('disabled', false);
         stickyBottom.find('.slide-next').css('display', 'none');
         cloudServicesButton.css('display', 'none');
@@ -195,6 +207,7 @@ $(function(){
         }
     });
 
+    // attach animate action to the button
     $('.scroll-top').on('click', function () {
         $("html, body").animate({scrollTop: 0}, 500, 'linear');
     });
