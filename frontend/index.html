@@ -2,7 +2,7 @@
 <html lang="en" ng-app="dssApp">
 <head>
     <meta charset="UTF-8">
-    <title>MODAClouds - Decision Support System</title>
+    <title>MODAClouds - Venues4Clouds</title>
     <link rel="stylesheet" href="assets/css/bootstrap.css"/>
     <link rel="stylesheet" href="assets/css/dss.css"/>
     <link rel="stylesheet" href="components/nouislider/jquery.nouislider.css"/>
@@ -18,8 +18,8 @@
 <div class="container-fluid margin-10">
 <div class="row">
     <div class="col-lg-4 logo"></div>
-    <div class="col-lg-8 logo-text">
-        <h3>Decision Support System</h3>
+    <div class="col-lg-8 logo-text inline">
+        <h3><p>Venues</p><p>4Clouds</p></h3>
     </div>
 </div>
 <!--navbar-->
@@ -67,38 +67,41 @@
 <!--end navbar-->
 <!-- main container-->
 <div class="row mainContainer">
-<div class="row topMenu">
-    <div class="col-lg-2 bsoia-slide">
-        <blockquote>
-            <p class="active">1. Business-oriented intangible assets </p>
-        </blockquote>
-    </div>
-    <div class="col-lg-2 toia-slide">
-        <blockquote>
-            <p>2. Technical-oriented intangible assets </p>
-        </blockquote>
-    </div>
-    <div class="col-lg-2 ta-slide">
-        <blockquote>
-            <p>3. Tangible assets </p>
-        </blockquote>
-    </div>
-    <div class="col-lg-2 risks-slide">
-        <blockquote>
-            <p>4. Risks</p>
-        </blockquote>
-    </div>
-    <div class="col-lg-2 treatments-slide">
-        <blockquote>
-            <p>5. Treatments</p>
-        </blockquote>
-    </div>
-    <div class="col-lg-2 services-slide">
-        <blockquote>
-            <p>6. Cloud Services</p>
-        </blockquote>
-    </div>
-</div>
+<ul class="nav nav-pills nav-wizard">
+    <li class="active bsoia-slide">
+        <a href="#">Business Service Oriented intangible assets</a>
+        <div class="nav-arrow"></div>
+    </li>
+    <li class="toia-slide">
+        <div class="nav-wedge"></div>
+        <a href="#">Technical Oriented intangible assets</a>
+        <div class="nav-arrow"></div>
+    </li>
+    <li class="ta-slide">
+        <div class="nav-wedge"></div>
+        <a href="#">Tangible assets</a>
+        <div class="nav-arrow"></div>
+    </li>
+    <li class="risks-slide">
+        <div class="nav-wedge"></div>
+        <a href="#">Risks</a>
+        <div class="nav-arrow"></div>
+    </li>
+    <li class="treatments-slide">
+        <div class="nav-wedge"></div>
+        <a href="#">Treatments</a>
+        <div class="nav-arrow"></div>
+    </li>
+    <li class="services-slide">
+        <div class="nav-wedge"></div>
+        <a href="#">Cloud Services</a>
+    </li>
+    <li class="nav-buttons">
+        <button class="btn btn-primary slide-prev" href="#dssSlides" data-slide="prev" disabled>Previous step</button>
+        <button class="btn btn-primary slide-next" href="#dssSlides" data-slide="next" ng-click="next($event)">Next step</button>
+        <button style="display: none" class="btn btn-primary slide-services" data-target="#dssSlides" ng-click="next($event)" data-slide-to="5">Search Cloud Services</button>
+    </li>
+</ul>
 <!-- Error flash -->
 <div class="fade alert-danger col-lg-12 alert-flash" flash-alert="error" active-class="in alert">
     <strong class="alert-heading">Oops!</strong>
@@ -117,6 +120,10 @@
 <!-- bsoia assets slide -->
 <div class="active item bsoia-slide" ng-controller="bsoiaController">
     <div class="col-lg-4 form-group form-inline">
+        <div class="inline">
+            <h4>Select you business oriented intangible asset</h4>
+            <i class="glyphicon glyphicon-info-sign" data-content="The business oriented intangible assets refer to the non-physical entities which are important from business perspectives like financial, marketing and other non-technical perspectives." popup-down></i>
+        </div>
         <select label="assets" class="form-control form assets-select item-select" ng-model="bsoiaAsset" ng-options="a.name for a in bsoiaAssets">
             <option></option>
         </select>
@@ -136,13 +143,17 @@
 <!-- toia assets slide -->
 <div class="item toia-slide" ng-controller="toiaController">
     <div class="col-lg-4 form-group form-inline">
+        <div class="inline">
+            <h4>Select your technical oriented intangible assets</h4>
+            <i class="glyphicon glyphicon-info-sign" data-content="The technical oriented intangible assets refer to the non-physical entities which are important from the technical perspective of cloud service selection." popup-down></i>
+        </div>
         <select label="assets" class="form-control form assets-select item-select" ng-model="toiaAsset" ng-options="a.name for a in toiaAssets">
             <option></option>
         </select>
         <button class="btn btn-success" ng-click="addToiaAsset(toiaAsset)" style="width: 19% !important;">Add</button>
         <!-- bsoia tags -->
         <div ng-if="bsoiaAssetsSelected.length > 0" style="margin-top: 45px;">
-            <p>You have previously selected the following BSOIA:</p>
+            <p>Please use the drag and drop action to connect the business oriented intangible assets to the technical oriented intangible assets. This exercise allows you to translate the business perspective based critical entities to the technical perspective based entities.</p>
         </div>
         <div ng-if="bsoiaAssetsSelected.length == 0" style="margin-top: 45px;">
             <div class="alert alert-danger" role="alert">
@@ -189,7 +200,11 @@
                 <label class="pull-right"><i class="glyphicon glyphicon-info-sign" data-content="Several instances of the same application are replicated and deployed using different CSPs" popup-down></i> Multicloud Replication</label>
             </div>
         </div>
-        <div class="list-group" style="margin-top: 40px;">
+        <div class="inline">
+            <h4>Load your tangible assets</h4>
+            <i class="glyphicon glyphicon-info-sign" data-content="The tangible assets describe the architectural elements that are intended to be externalized using the cloud services. The cloud services will be recommended based for each tangible asset loaded." popup-down></i>
+        </div>
+        <div class="list-group" style="margin-top: 40px; min-height: 400px;">
             <div ng-if="taAssets.length == 0" style="margin-top: 45px;">
                 <div class="alert alert-danger" role="alert">
                     <strong>Oops!</strong>&nbsp;No cloud resources have been loaded yet.
@@ -202,10 +217,13 @@
                 <p ng-switch-when="IaaS" style="margin-top: 10px;">{{ taAsset.cloudResource._serviceType }}</p>
                 <p ng-switch-when="PaaS" style="margin-top: 10px;">{{ taAsset.cloudPlatform._serviceType }}</p>
                 <p>
-                    <div style="display: inline-block; margin-left: 10px; position: relative; top: -5px;">Risk Susceptibility: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-content="Acceptable Composite Risk Index" popup-right></i></div>
+                    <div style="display: inline-block; margin-left: 10px; position: relative; top: -5px;">Risk Acceptability level : <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-content="This slider allows you to specify the risk level which will be acceptable on each asset. The risk level is measured as a product of probability of the risk to occur (scale 1-5) and impact of the risk on your asset (scale 1-5). As you move the slider to the right, it would indicate that your asset can endure higher level of risks. As you move the slider to the left, it would indicate a lower resistance to risk thereby indicating the asset should not be exposed to any risk." popup-right></i></div>
                     <div on-risks-type="criticity" data-type="criticity">
-                        <div style="width: 60%; margin-left: 25px; margin-right: 25px; display: inline-block;" slider data-hash-key="{{taAsset._id}}" ng-model="criticityBoundModels[taAsset._id]" start="1" end="25" step="2.4"></div>
-                        <span class="label label-default secondary radius right" style="position: relative; top: -5px;">{{ 10*(25-criticityBoundModels[taAsset._id])/(25-1) | number:0 }}</span>
+                        <div class="inline">
+                            <span class="label label-danger" style="position: relative; top: -5px;">No risk Accepted</span>
+                            <div style="width: 60%; margin-left: 25px; margin-right: 25px; display: inline-block;" slider data-hash-key="{{taAsset._id}}" ng-model="criticityBoundModels[taAsset._id]" start="1" end="25" step="2.4"></div>
+                            <span class="label label-info" style="position: relative; top: -5px;">All risks Acceptable</span>
+                        </div>
                     </div>
                 </p>
             </a>
@@ -216,6 +234,10 @@
 <div class="item risks-slide" ng-controller="risksController">
     <div class="col-lg-4 form-group form-inline">
         <!-- TODO: Apply unique filter in potential risks -->
+        <div class="inline">
+            <h4>Choose the relevant risks</h4>
+            <i class="glyphicon glyphicon-info-sign" data-content="The risks refer to unwanted events which may occur based on the selected assets. Based on your specification of assets, the drop down menu below on the left allows you to specify the risks which are associated with the assets. For each risk, you can specify the probability/likelihood of the risk to occur and impact/consequence of the risk." popup-down></i>
+        </div>
         <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.risk as r.risk.destination.name group by r.group for r in potentialRisksGrouped()">
             <option></option>
         </select>
@@ -307,7 +329,11 @@
 </div>
 <!--treatments slide-->
 <div class="item treatments-slide" ng-controller="treatmentsController">
-    <div class="col-lg-4 form-group form-inline">
+    <div class="col-lg-4 form-group form-inline" style="min-height: 300px;">
+        <div class="inline">
+            <h4>Choose the treatment</h4>
+            <i class="glyphicon glyphicon-info-sign" data-content="The treatments refer to the actions which should be taken or the property which the cloud services should have in order to protect the asset from the risk(s) selected in previous screen. You can use the drop-down menu below on the left to choose the treatment for each tangible asset which have been grouped together by the risk they mitigate." popup-down></i>
+        </div>
         <div class="panel-group" id="treatments-accordion">
             <div class="panel panel-default" ng-repeat="taAsset in taAssets track by $index">
                 <div class="panel-heading">
@@ -481,14 +507,8 @@
 <!--slider end-->
 </div>
 <!--end main container-->
-<div class="row sticky-bottom" ng-controller="buttonsController">
-    <div class="col-lg-12 text-right">
-        <button class="btn btn-primary slide-prev" href="#dssSlides" data-slide="prev" disabled>Previous step</button>
-        <button class="btn btn-primary slide-next" href="#dssSlides" data-slide="next" ng-click="next($event)">Next step</button>
-        <button style="display: none" class="btn btn-primary slide-services" data-target="#dssSlides" ng-click="next($event)" data-slide-to="5">Search Cloud Services</button>
-    </div>
 </div>
-</div>
+<button class="btn btn-default btn-sm scroll-top">Back to Top&nbsp;<span class="glyphicon glyphicon-circle-arrow-up"></span></button>
 
 <!-- Don't change scripts order, it is important to keep it so it is -->
 <script src="components/jquery/dist/jquery.min.js"></script>

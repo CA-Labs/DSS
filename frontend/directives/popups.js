@@ -25,12 +25,10 @@ dssApp.directive('popupRight', ['$timeout', function($timeout){
         restrict: 'A',
         scope: false,
         link: function(scope, element, attrs){
-//            $timeout(function(){
                 element.popover({
                     trigger: 'hover',
                     placement: 'right'
-//                });
-            });
+                });
         }
     };
 }]);
