@@ -216,7 +216,7 @@
 <div class="item risks-slide" ng-controller="risksController">
     <div class="col-lg-4 form-group form-inline">
         <!-- TODO: Apply unique filter in potential risks -->
-        <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r as r.value group by r.group for r in potentialRisksGrouped()">
+        <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.risk as r.risk.destination.name group by r.group for r in potentialRisksGrouped()">
             <option></option>
         </select>
         <button class="btn btn-success" ng-click="addRisk(risk)" style="width: 19% !important;">Add</button>

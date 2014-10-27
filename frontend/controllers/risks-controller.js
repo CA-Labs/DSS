@@ -584,12 +584,24 @@ dssApp.controller('risksController'
      */
     $scope.potentialRisksGrouped = function(){
         var data = [];
+        var potentialRiskNames = $scope.potentialRisks.map(function(potentialRisk) { return potentialRisk.destination.name });
         _.each($scope.toiaRisksMapping, function(values, key){
             _.each(values, function(value){
-                data.push({group: key, value: value});
+                if(_.contains(potentialRiskNames, value)){
+                    data.push({group: key, risk: $scope.getRiskByName(value)});
+                }
             });
         });
         return data;
+    };
+
+    /**
+     * Retrieves a risk by its name .
+     * @param riskName The risk name.
+     * @returns {*}
+     */
+    $scope.getRiskByName = function(riskName){
+        return $scope.potentialRisks.filter(function(risk) { return risk.destination.name == riskName })[0];
     };
 
     // Initial data fetch
