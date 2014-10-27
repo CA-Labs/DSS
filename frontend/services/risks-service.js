@@ -394,8 +394,10 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      * @param toiaRisksMappingFromLocalStorage The toia/risks mapping
      * loaded from local storage.
      */
-    this.setTOIARisksMapping = function(toiaRisksMappingFromLocalStorage) {
-        toiaRisksMapping = toiaRisksMappingFromStorage;
+    this.setTOIARisksMapping = function(toiaRisksMappingFromStorage) {
+        if(!angular.equals(toiaRisksMapping, toiaRisksMappingFromStorage)){
+            angular.copy(toiaRisksMappingFromStorage, toiaRisksMapping);
+        }
     };
 
     /**

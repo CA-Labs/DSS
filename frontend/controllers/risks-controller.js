@@ -584,14 +584,12 @@ dssApp.controller('risksController'
      */
     $scope.potentialRisksGrouped = function(){
         var data = [];
-        var selectedRiskNames = risksSelected.map(function(risk){ return risk.destination.name; });
         _.each($scope.toiaRisksMapping, function(values, key){
-            if(_.contains(selectedRiskNames, key)) {
-                _.each(values, function(value){
-                    data.push({group: key, value: value});
-                });
-            }
+            _.each(values, function(value){
+                data.push({group: key, value: value});
+            });
         });
+        return data;
     };
 
     // Initial data fetch
