@@ -181,15 +181,13 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
             // calculate overall score
             _.each(deploymentProposals, function(proposal, index) {
-                var numerator = 0.0;
-                var denominator = 0.0;
+                var overallScore = 0;
                 _.each(proposal, function (service) {
-                    numerator += service.score;
-                    denominator += service.total;
+                    overallScore += service.score/service.total;
                 });
 
                 // calulate overallScore
-                deploymentProposals[index].overallScore = (numerator/denominator) || 0.0;
+                deploymentProposals[index].overallScore = overallScore / proposal.length;
             });
             return deploymentProposals;
         }
@@ -270,8 +268,8 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
         // Normalization
         _.each(filteredProposals, function(proposals, taAssetId){
             _.each(proposals, function(proposal, index){
-                filteredProposals[taAssetId][index].score = proposal.mitigatedRisks.length;
-                filteredProposals[taAssetId][index].total = proposal.unacceptableRisks.length;
+                filteredProposals[taAssetId][index].score = proposal.mitigatedRisks.length || 1;
+                filteredProposals[taAssetId][index].total = proposal.unacceptableRisks.length || 1;
             });
         });
 
