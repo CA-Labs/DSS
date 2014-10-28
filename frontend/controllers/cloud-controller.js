@@ -151,23 +151,44 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
      * @param {object} proposal - service object selected by the user
      * @param {object} taAsset - ta asset object to which the proposal is assigned to
      */
-    $scope.selectService = function (proposal) {
-        $scope.servicesSelected = proposal;
+    $scope.selectService = function (proposals) {
+        $scope.servicesSelected = proposals;
+        AssetsService.setXmlTaObject(prepareJsonToXml(AssetsService.getXmlTaObject(), proposals));
+    };
 
-        // update xmlTAAsObject
-        _.each($scope.xmlTaAsObject.resourceModelExtension.resourceContainer, function (resourceContainer) {
-            _.each(proposal, function (proposalItem) {
-                if (resourceContainer._id == proposalItem.ta._id) {
-                    resourceContainer._provider = proposalItem.provider.name;
-                        if (_.has(resourceContainer, 'cloudResource')) {
-                            resourceContainer.cloudResource._serviceName = proposalItem.service.name;
-                        }
-                        if (_.has(resourceContainer, 'cloudPlatform')) {
-                            resourceContainer.cloudPlatform._serviceName = proposalItem.service.name;
-                        }
+    // Auxiliar function to prepare services selection JSON object to be converted back to XML model
+    var prepareJsonToXml = function(xmlAsJson, proposals){
+        // Make a copy of the servicesSelected
+        var copy = _.clone(xmlAsJson);
+
+        // Check whether we have only one TA or more
+        if(_.isArray(copy.resourceModelExtension.resourceContainer)){
+            _.each(copy.resourceModelExtension.resourceContainer, function(resourceContainer, index){
+                _.each(proposals, function(proposal){
+                   if(resourceContainer._id == proposal.ta._id){
+                       copy.resourceModelExtension.resourceContainer[index]._provider = proposal.provider.name;
+                       if(_.has(resourceContainer, 'cloudResource')){
+                           copy.resourceModelExtension.resourceContainer[index].cloudResource._serviceName = proposal.service.name;
+                       } else if(_.has(resourceContainer, 'cloudPlatform')){
+                           copy.resourceModelExtension.resourceContainer[index].cloudPlatform._serviceName = proposal.service.name;
+                       }
+                   }
+                });
+            });
+        }
+        else if(_.isObject(copy.resourceModelExtension.resourceContainer)){
+            _.each(proposals, function(proposal){
+                if(copy.resourceModelExtension.resourceContainer._id == proposal.ta._id){
+                    copy.resourceModelExtension.resourceContainer._provider = proposal.provider.name;
+                    if(_.has(copy.resourceModelExtension.resourceContainer, 'cloudResource')){
+                        copy.resourceModelExtension.resourceContainer.cloudResource._serviceName = proposal.service.name;
+                    } else if(_.has(resourceContainer, 'cloudPlatform')){
+                        copy.resourceModelExtension.resourceContainer.cloudPlatform._serviceName = proposal.service.name;
+                    }
                 }
             });
-        });
+        }
+        return copy;
     };
 
     /**
