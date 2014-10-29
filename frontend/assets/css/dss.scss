@@ -438,27 +438,47 @@ blockquote {
   stroke-width: 3px;
 }
 
-circle.node-bsoia {
+circle.node-bsoia-expand {
   fill: #ffa5a7 !important;
   stroke: #ff4146 !important;
 }
 
-circle.node-toia {
+circle.node-bsoia-collapse {
+  fill: white !important;
+  stroke: #ff4146 !important;
+}
+
+circle.node-toia-expand {
   fill: #b4d6ff !important;
   stroke: #4c41ff !important;
 }
 
-circle.node-risk {
+circle.node-toia-collapse {
+  fill: white !important;
+  stroke: #4c41ff !important;
+}
+
+circle.node-risk-expand {
   fill: #95ae84 !important;
   stroke: #3b8034 !important;
 }
 
-circle.node-treatment {
+circle.node-risk-collapse {
+  fill: white !important;
+  stroke: #3b8034 !important;
+}
+
+circle.node-treatment-expand {
   fill: #fff6a8 !important;
   stroke: #ffea3f !important;
 }
 
-.node text { font: 8px sans-serif; }
+circle.node-treatment-collapse {
+  fill: white !important;
+  stroke: #ffea3f !important;
+}
+
+.node text { font: 15px sans-serif; }
 
 .link {
   fill: none;
