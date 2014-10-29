@@ -16,7 +16,7 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
 
     $scope.deploymentsProposals = [];
 
-    $scope.servicesSelected = {};
+    $scope.servicesSelected = CloudService.getServicesSelected();
     localStorageService.bind($scope, 'servicesSelected', $scope.servicesSelected);
 
     $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
@@ -152,7 +152,7 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
      * @param {object} taAsset - ta asset object to which the proposal is assigned to
      */
     $scope.selectService = function (proposals) {
-        $scope.servicesSelected = proposals;
+        CloudService.setServicesSelected(proposals);
         AssetsService.setXmlTaObject(prepareJsonToXml(AssetsService.getXmlTaObject(), proposals));
     };
 

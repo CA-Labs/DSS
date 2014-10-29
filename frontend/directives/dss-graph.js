@@ -4,13 +4,13 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'TreatmentsService', '$window', function(d3Factory, AssetsService, RisksService, TreatmentsService, $window){
+dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'TreatmentsService', 'CloudService', '$window', function(d3Factory, AssetsService, RisksService, TreatmentsService, CloudService, $window){
     return {
         restrict: 'E',
         scope: {},
         link: function(scope, element, attrs){
 
-            var buildNodes = function(){
+            var buildFlowNodes = function(){
 
                 var bsoias = AssetsService.getBSOIA();
                 var toias = AssetsService.getTOIA();
@@ -27,6 +27,7 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                     children: bsoiaNames.map(function(bsoia){
                         return {
                             name: bsoia,
+                            type: 'bsoia',
                             expand: 'node-bsoia-expand',
                             collapse: 'node-bsoia-collapse',
                             children: AssetsService.getTOIAFromBSOIA(bsoia).filter(function(t){
@@ -34,6 +35,7 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                             }).map(function(toia){
                                 return {
                                     name: toia,
+                                    type: 'toia',
                                     expand: 'node-toia-expand',
                                     collapse: 'node-toia-collapse',
                                     children: RisksService.getRisksFromTOIA(toia).filter(function(r){
@@ -41,6 +43,7 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                                     }).map(function(risk){
                                         return {
                                             name: risk,
+                                            type: 'risk',
                                             expand: 'node-risk-expand',
                                             collapse: 'node-risk-collapse',
                                             children: TreatmentsService.getTreatmentsFromRisk(risk).filter(function(treatment){
@@ -48,6 +51,7 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                                             }).map(function(treatment){
                                                 return {
                                                     name: treatment,
+                                                    type: 'treatment',
                                                     expand: 'node-treatment-expand',
                                                     collapse: 'node-treatment-collapse',
                                                     children: []
@@ -65,6 +69,7 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
 
             };
 
+
             // Helper functions to expand/collapse tree nodes
             var toggle = function(node){
                 if(node.children){
@@ -80,6 +85,43 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                     node.children.forEach(togleAll);
                 }
                 toggle(node);
+            };
+
+            // Helper functions to generate tree paths given the links list
+            var findPaths = function(links){
+                var sortedLinks = links.sort(function(a, b){ return a.source.depth - b.source.depth });
+                var paths = [];
+                _.each(sortedLinks, function(link, index, cxt){
+                    // Every single path will start from a BSOIA node
+                    if(link.source.type == 'bsoia') {
+                        var currentPath = [];
+                        // Add this first edge to the current path
+                        currentPath.push(link);
+                        // Use a queue to push unvisited children edges
+                        var queueToVisit = [];
+                        // Find next edges to visit and add them to the queue
+                        var children = findLinksStartingByNode(cxt, link.target.name);
+                        _.each(children, function(child){ queueToVisit.push(child)});
+                        while(queueToVisit.length > 0){
+                            var currentLink = queueToVisit.shift();
+                            currentPath.push(currentLink);
+                            var children = findLinksStartingByNode(sortedLinks, currentLink.target.name);
+                            if(children.length == 0){
+                                // This means we are on the last edge of a path, store the path
+                                paths.push(_.clone(currentPath));
+                                // Remove last edge added to continue with a different path
+                                currentPath.pop();
+                            } else {
+                                _.each(children, function(child){ queueToVisit.push(child)});
+                            }
+                        }
+                    }
+                });
+                return paths;
+            };
+            var findLinksStartingByNode = function(links, nodeName){
+                // console.log('nodeName', nodeName);
+                return links.filter(function(link){ return link.source.name == nodeName });
             };
 
             d3Factory.d3().then(function(d3){
@@ -116,7 +158,7 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
-                var root = buildNodes();
+                var root = buildFlowNodes();
                 root.x0 = margin.left;
                 root.y0 = width / 4.5;
                 var i = 0;

@@ -12,6 +12,9 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
     var filteredProposalsFromLocalStorage = localStorageService.get('filteredProposals') || {};
     var filteredProposals = filteredProposalsFromLocalStorage;
 
+    var servicesSelectedFromLocalStorage = localStorageService.get('servicesSelected') || [];
+    var servicesSelected = servicesSelectedFromLocalStorage;
+
     var loadingProposals = false;
     var loadingFilteredProposals = true;
     var specifyTreatmentsPerCloudService = false;
@@ -275,6 +278,25 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
         // console.log('end result', filteredProposals);
 
+    };
+
+    /**
+     * Sets the list of services selected from local storage.
+     * @param servicesSelectedFromLocalStorage The services selected
+     * to be loaded from local storage.
+     */
+    this.setServicesSelected = function(servicesSelectedFromLocalStorage){
+        if(!angular.equals(servicesSelectedFromLocalStorage, servicesSelected)){
+            angular.copy(servicesSelectedFromLocalStorage, servicesSelected);
+        }
+    };
+
+    /**
+     * Returns the list of services selected.
+     * @returns {*|{}}
+     */
+    this.getServicesSelected = function(){
+        return servicesSelected;
     };
 
 }]);
