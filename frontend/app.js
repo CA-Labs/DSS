@@ -73,7 +73,8 @@ var dssApp = angular.module('dssApp', [
     'angularFileUpload',
     'frapontillo.bootstrap-switch',
     'nouislider',
-    'ngDialog'
+    'ngDialog',
+    'angularSpinner'
 ]).config(['cfpLoadingBarProvider', 'localStorageServiceProvider', '$rootScopeProvider', function(cfpLoadingBarProvider, localStorageServiceProvider, $rootScopeProvider) {
     cfpLoadingBarProvider.includeSpinner = false;
     localStorageServiceProvider.setPrefix('DSS');

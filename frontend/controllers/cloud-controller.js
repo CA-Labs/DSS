@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'RisksService', 'CloudService', 'localStorageService', function($scope, $rootScope, $timeout, ArangoDBService, TreatmentsService, AssetsService, RisksService, CloudService, localStorageService){
+dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'RisksService', 'CloudService', 'localStorageService', 'usSpinnerService', function($scope, $rootScope, $timeout, ArangoDBService, TreatmentsService, AssetsService, RisksService, CloudService, localStorageService, usSpinnerService){
 
     $scope.ta = AssetsService.getTA();                                  // The selected TA assets loaded from the cloud descriptor xml file
 
@@ -51,6 +51,14 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
 
         return deploymentsProposals;
     };
+
+    $scope.$watch(function(){
+        return $scope.getDeploymentProposals();
+    }, function(newVal, oldVal){
+        if(newVal.length > 0){
+            $rootScope.$broadcast('repeatDone');
+        }
+    });
 
     /**
      * Builds up an initial list of proposals whenever the list of TA assets changes.
