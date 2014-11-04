@@ -11,7 +11,8 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'Clo
     $scope.criticityBoundModels = AssetsService.getCriticityBoundModels();
     localStorageService.bind($scope, 'criticityBoundModels', $scope.criticityBoundModels);
 
-    $scope.taAssets = AssetsService.getTA();                            // The list of TA assets read from the cloud services descriptor xml file
+    $scope.taAssets = AssetsService.getTA();                            // The list of TA assets read from the cloud
+                                                                        // services descriptor xml file
     localStorageService.bind($scope, 'taAssets', $scope.taAssets);      // Bind the taAssets to localStorage
 
     $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
@@ -28,6 +29,23 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'Clo
      */
     $scope.removeTaAsset = function(taAsset){
         AssetsService.removeTA(taAsset);
+    };
+
+    $scope.getValueDescription = function (value) {
+        var descriptions = [
+            'All risks are unacceptable on your asset. Your asset is very important.',
+            'All risks with product of likelihood [range(1..5)] and consequence [range(1..5)]  greater than 3.4 are unacceptable.',
+            'All risks with product of likelihood [range(1..5)] and consequence [range(1..5)]  greater than 5.8 are unacceptable.',
+            'All risks with product of likelihood [range(1..5)] and consequence [range(1..5)]  greater than 8.2 are unacceptable.',
+            'All risks with product of likelihood [range(1..5)] and consequence [range(1..5)]  greater than 10.6 are unacceptable.',
+            'All risks with product of likelihood [range(1..5)] and consequence [range(1..5)]  greater than 13 are unacceptable.',
+            'All risks with product of likelihood [range(1..5)] and consequence [range(1..5)]  greater than 15.4 are unacceptable.',
+            'All risks with product of likelihood [range(1..5)] and consequence [range(1..5)]  greater than 17.8 are unacceptable.',
+            'All risks with product of likelihood [range(1..5)] and consequence [range(1..5)]  greater than 20.2 are unacceptable.',
+            'All risks with product of likelihood [range(1..5)] and consequence [range(1..5)]  greater than 22.6 are unacceptable.',
+            'All risks are acceptable. Your asset has very high endurance.'
+        ];
+        return descriptions[Math.round(10-(10*(25-value)/(25-1)))];
     };
 
     /**
