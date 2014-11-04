@@ -30,7 +30,7 @@
                 <form id="cloud-descriptor-file-selector">
                     <input id="load-requirements" ng-file-select="onDSSCloudResourceFileSelect($files)" type="file" class="hidden"/>
                 </form>
-                <a href="#" ng-click="showFileUploadDialog('#load-requirements')"><span class="glyphicon glyphicon-import"></span> Load Requirements </a>
+                <a href="#" ng-click="showFileUploadDialog('#load-requirements')"><span class="glyphicon glyphicon-import"></span> Load MODAClouds IDE Model </a>
             </li>
             <li>
                 <a href="#" ng-click="saveCloudSelection($event)"><span class="glyphicon glyphicon-export"></span> Export Results</a>
@@ -119,7 +119,7 @@
 <div class="carousel-inner">
 <!-- bsoia assets slide -->
 <div class="active item bsoia-slide" ng-controller="bsoiaController">
-    <div class="col-lg-4 form-group form-inline">
+    <div class="col-lg-4 form-group form-inline" style="min-height: 200px;">
         <div class="inline">
             <h4>Select you business oriented intangible asset</h4>
             <i class="glyphicon glyphicon-info-sign" data-content="The business oriented intangible assets refer to the non-physical entities which are important from business perspectives like financial, marketing and other non-technical perspectives." popup-down></i>
@@ -202,7 +202,7 @@
         </div>
         <div class="inline">
             <h4>Load your tangible assets</h4>
-            <i class="glyphicon glyphicon-info-sign" data-content="The tangible assets describe the architectural elements that are intended to be externalized using the cloud services. The cloud services will be recommended based for each tangible asset loaded." popup-down></i>
+            <i class="glyphicon glyphicon-info-sign" data-content="The tangible assets describe the architectural elements that are intended to be externalized using the cloud services. The cloud services will be recommended for each tangible asset loaded." popup-down></i>
         </div>
         <div class="list-group" style="margin-top: 40px; min-height: 400px;">
             <div ng-if="taAssets.length == 0" style="margin-top: 45px;">
@@ -219,10 +219,13 @@
                 <p>
                     <div style="display: inline-block; margin-left: 10px; position: relative; top: -5px;">Risk Acceptability level : <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-content="This slider allows you to specify the risk level which will be acceptable on each asset. The risk level is measured as a product of probability of the risk to occur (scale 1-5) and impact of the risk on your asset (scale 1-5). As you move the slider to the right, it would indicate that your asset can endure higher level of risks. As you move the slider to the left, it would indicate a lower resistance to risk thereby indicating the asset should not be exposed to any risk." popup-right></i></div>
                     <div on-risks-type="criticity" data-type="criticity">
-                        <div class="inline">
+                        <div class="inline" style="width: 70%;" popup-right-with-content data-content="{{ getValueDescription(criticityBoundModels[taAsset._id]) }}">
                             <span class="label label-danger" style="position: relative; top: -5px;">No risk Accepted</span>
-                            <div style="width: 60%; margin-left: 25px; margin-right: 25px; display: inline-block;" slider data-hash-key="{{taAsset._id}}" ng-model="criticityBoundModels[taAsset._id]" start="1" end="25" step="2.4"></div>
+                            <div style="width: 70%; margin-left: 25px; margin-right: 25px; display: inline-block;" slider data-hash-key="{{taAsset._id}}" ng-model="criticityBoundModels[taAsset._id]" start="1" end="25" step="2.4"></div>
                             <span class="label label-info" style="position: relative; top: -5px;">All risks Acceptable</span>
+                            <!--<p style="position: relative; top: -5px;">&nbsp;Current Value: <span class="badge">{{ criticityBoundModels[taAsset._id] }}</span>&nbsp;-->
+                            <!--<i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-content="{{ getValueDescription(criticityBoundModels[taAsset._id]) }}" popup-down-with-content></i>-->
+                            <!--</p>-->
                         </div>
                     </div>
                 </p>
@@ -232,7 +235,7 @@
 </div>
 <!--risks slide -->
 <div class="item risks-slide" ng-controller="risksController">
-    <div class="col-lg-4 form-group form-inline">
+    <div class="col-lg-4 form-group form-inline" style="min-height: 200px;">
         <!-- TODO: Apply unique filter in potential risks -->
         <div class="inline">
             <h4>Choose the relevant risks</h4>
@@ -293,7 +296,7 @@
                             </div>
                         </div>
                     </div>
-                    <div ng-repeat="taAsset in taAssets" on-repeat-done="repeatDone" class="col-lg-12">
+                    <div ng-repeat="taAsset in taAssets" class="col-lg-12">
                         <div ng-switch="taAsset.cloudType">
                             <span ng-switch-when="IaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudResource._serviceType }}"><strong>{{taAsset.cloudResource._serviceName}}</strong></span>
                             <span ng-switch-when="PaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudPlatform._serviceType }}"><strong>{{taAsset.cloudPlatform._serviceName}}</strong></span>
@@ -419,7 +422,7 @@
     <div class="col-lg-12">
         <!--per deployment results-->
         <ul class="list-group">
-            <li class="list-group-item service-proposal-panel" ng-class="{ 'service-selected': isSelected(result) }" ng-repeat="result in getDeploymentProposals() | orderBy:'overallScore':true track by $index | filter: { multicloudReplication: isMulticloudDeployment  }">
+            <li class="list-group-item service-proposal-panel" ng-class="{ 'service-selected': isSelected(result) }" on-repeat-done ng-repeat="result in getDeploymentProposals() | orderBy:'overallScore':true track by $index | filter: { multicloudReplication: isMulticloudDeployment  }">
                 <div class="row" ng-click="selectService(result)">
                     <div class="col-lg-1">
                         <div class="well service-proposal-score service-proposal-score-overall">
@@ -508,6 +511,9 @@
 </div>
 <!--end main container-->
 </div>
+<div id="spinner">
+    <span us-spinner="{radius: 30, width:8, length: 16}" spinner-key="dss-spinner" hide-spinner=""></span>
+</div>
 <button class="btn btn-default btn-sm scroll-top">Back to Top&nbsp;<span class="glyphicon glyphicon-circle-arrow-up"></span></button>
 
 <!-- Don't change scripts order, it is important to keep it so it is -->
@@ -532,6 +538,8 @@
 <script src="components/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
 <script src="components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js"></script>
 <script src="components/ngDialog/js/ngDialog.js"></script>
+<script src="components/spin.js/spin.js"></script>
+<script src="components/angular-spinner/angular-spinner.js"></script>
 <!-- DSS-related scripts -->
 <script src="app.min.js"></script>
 </body>

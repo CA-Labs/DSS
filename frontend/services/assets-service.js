@@ -357,7 +357,7 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * @param xmlObject
      */
     this.setXmlTaObject = function (xmlObject) {
-        if (typeof(xmlObject) == 'object' && !angular.equals(xmlTaAssetsAsObject, xmlObject)) {
+        if (!angular.equals(xmlTaAssetsAsObject, xmlObject)) {
             angular.copy(xmlObject, xmlTaAssetsAsObject);
         }
     };

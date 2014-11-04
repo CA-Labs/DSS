@@ -45,3 +45,28 @@ dssApp.directive('popupDown', ['$timeout', function($timeout){
         }
     };
 }]);
+
+
+
+dssApp.directive('popupRightWithContent', ['$timeout', function ($timeout) {
+    return {
+        restrict: 'A',
+        link: function(scope, element, attr) {
+            element.popover({
+                trigger: 'manual',
+                placement: 'right',
+                //template: 'frontend/partials/ta/popover.html'
+                //content: attr.popoverContent
+            });
+            element.find('.noUi-handle').mouseover(function () {
+                $timeout(function () {
+                    element.popover('show');
+                }, 300);
+            }).mouseleave(function () {
+                $timeout(function () {
+                    element.popover('hide');
+                }, 1000);
+            });
+        }
+    }
+}]);

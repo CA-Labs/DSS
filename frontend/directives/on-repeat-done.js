@@ -8,11 +8,15 @@
  * Used to know when ng-repeat finishes over a list of items
  */
 
-dssApp.directive('onRepeatDone', function(){
+dssApp.directive('onRepeatDone', ['$timeout', function($timeout){
     return {
         restrict: 'A',
         link: function (scope, element, attrs) {
-            scope.$emit('repeatDone', element);
+            if (scope.$last === true) {
+                $timeout(function () {
+                    scope.$emit('repeatDone', element);
+                }, 100);
+            }
         }
     };
-});
+}]);

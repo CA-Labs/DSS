@@ -75,10 +75,9 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
                         flash.error = 'Some error occurred while trying to upload your requirements';
                     } else {
                         if(data.correct){
-                            $scope.xmlAsJsonObject = x2js.xml_str2json(xmlString);
-                            AssetsService.setXmlTaObject($scope.xmlAsJsonObject);
 
-                            var resources = $scope.xmlAsJsonObject.resourceModelExtension.resourceContainer;
+                            AssetsService.setXmlTaObject(x2js.xml_str2json(xmlString));
+                            var resources = AssetsService.getXmlTaObject().resourceModelExtension.resourceContainer;
 
                             // Mind the hack! XML library used returns 'Object' type when only one element
                             // is retrieved from an XML sequence and 'Array' type when multiple elements
@@ -178,17 +177,25 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
      * @param event
      */
     $scope.saveCloudSelection = function (event) {
-        var element = angular.element(event.target);
+        // Remove cloudType property added by the app from TA assets
+        // angular.toJson call is required to remove $$_ internal properties
+        var copy = _.clone(JSON.parse(angular.toJson(AssetsService.getXmlTaObject())));
+        if(_.isArray(copy.resourceModelExtension.resourceContainer)){
+            _.each(copy.resourceModelExtension.resourceContainer, function(resourceContainer, index){
+                delete copy.resourceModelExtension.resourceContainer[index]['cloudType'];
+            });
+        } else if(_.isObject(copy.resourceModelExtension.resourceContainer)){
+            delete copy.resourceModelExtension.resourceContainer['cloudType'];
+        }
 
+        var element = angular.element(event.target);
         // Set export file name
         var fileName = ($scope.xmlTaAssetsFileName == '') ? 'DSS_CloudServicesSelection.xml' : 'export_' + $scope.xmlTaAssetsFileName;
         element.attr({
             download: fileName,
-            href: 'data:application/xml;charset=utf-8,' + decodeURI(x2js.json2xml_str($scope.xmlAsJsonObject)),
+            href: 'data:application/xml;charset=utf-8,' + decodeURI(x2js.json2xml_str(copy)),
             target: '_blank'
         });
-        console.log(decodeURIComponent(x2js.json2xml_str($scope.xmlAsJsonObject)));
-
     };
 
     /************************ DSS GRAPH WITH SELECTION ***********************

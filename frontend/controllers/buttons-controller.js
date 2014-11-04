@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 'AssetsService', 'TreatmentsService', 'flash', 'ngDialog', function($scope, $rootScope, RisksService, AssetsService, TreatmentsService, flash, ngDialog){
+dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 'AssetsService', 'TreatmentsService', 'flash', 'ngDialog', 'usSpinnerService', '$timeout', function($scope, $rootScope, RisksService, AssetsService, TreatmentsService, flash, ngDialog, usSpinnerService, $timeout){
 
     $scope.unacceptableRisks = RisksService.getUnacceptableRisks();     // The list of unacceptable risks per TA asset
 
@@ -133,10 +133,28 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
                 $scope.error = false;
                 $event.stopPropagation();
             } else {
-                $rootScope.$broadcast('acceptabilityValueChanged');
+                // Don't move the slide until we actually have results!
+                $event.stopPropagation();
+                // Show DSS spinner
+                $timeout(function(){
+                    // Firstly show the spinner so that the UI does not block right away
+                    usSpinnerService.spin('dss-spinner');
+                    // Compute scores, once calculated, move the slides forward
+                    $timeout(function(){
+                        $rootScope.$broadcast('getServicesWithTreatments');
+                    }, 100);
+                }, 100);
             }
-
         }
     };
+
+    /**
+     * Event used for moving slides from any controller. It is
+     * basically used to move forward to the services slides once
+     * we actually get results, so that the UI experience is better.
+     */
+    $scope.$on('moveSlides', function(){
+        $('#dssSlides').carousel('next')
+    });
 
 }]);
