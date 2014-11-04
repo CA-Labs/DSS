@@ -12,7 +12,7 @@ dssApp.directive('hideSpinner', ['$rootScope', function($rootScope){
                 $(element).parent().show();
                 $(element).show();
             });
-            // Hide spinner when he list of service proposals finished rendering
+            // Hide spinner when the list of service proposals finished rendering
             $rootScope.$on('repeatDone', function(){
                 $(element).parent().hide();
                 $(element).hide();
