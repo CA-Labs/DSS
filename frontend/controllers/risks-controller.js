@@ -576,7 +576,9 @@ dssApp.controller('risksController'
                 });
             })
         }
+
         $rootScope.$broadcast('risksSelectedChanged');
+
     });
 
     /**

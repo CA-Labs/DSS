@@ -92,9 +92,6 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
                     } else {
                         // console.log(data._documents);
                         CloudService.setTAProposals(ta, data._documents);
-                        $timeout(function(){
-                            CloudService.scoreProposals(false);
-                        }, 100);
                     }
                 });
             });
@@ -124,8 +121,21 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
      * the list of proposals must be filtered again, since the list of
      * unacceptable risks may have changed, and hence, the proposals
      * score might have changed as well.
+     * @WARNING: This event triggers too often, just compute the scores
+     * when next button is clicked instead (treatments slide).
      */
+    /*
     $scope.$on('risksSelectedChanged', function(){
+        CloudService.scoreProposals(false);
+        $scope.deploymentsProposals = CloudService.getDeploymentsProposals();
+    });
+    */
+
+    /**
+     * Event triggered when the user decided to get proposals by
+     * specifying some treatments.
+     */
+    $scope.$on('getServicesWithTreatments', function(){
         CloudService.scoreProposals(false);
         $scope.deploymentsProposals = CloudService.getDeploymentsProposals();
     });

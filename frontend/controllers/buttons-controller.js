@@ -133,7 +133,7 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
                 $scope.error = false;
                 $event.stopPropagation();
             } else {
-                $rootScope.$broadcast('acceptabilityValueChanged');
+                $rootScope.$broadcast('getServicesWithTreatments');
             }
 
         }
