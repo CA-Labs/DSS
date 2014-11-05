@@ -248,6 +248,15 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
     };
 
     /**
+     * Given a risk name, return what treatments are connected to it.
+     * @param riskName The risk name.
+     * @returns {*}
+     */
+    this.getTreatmentsFromRisk = function(riskName){
+        return risksTreatmentsMapping[riskName];
+    };
+
+    /**
      * Given a list of treatments, returns what risks are mitigated.
      * @param treatments The list of treatments.
      */

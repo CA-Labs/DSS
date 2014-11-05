@@ -17,6 +17,9 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     var riskBoundModelsFromStorage = localStorageService.get('riskBoundModels') || {};                                                          //Risk bound models
     var riskBoundModels = riskBoundModelsFromStorage;
 
+    var toiaRisksMappingFromStorage = localStorageService.get('toiaRisksMapping') || {};                                                        //TOIA/Risks mapping
+    var toiaRisksMapping = toiaRisksMappingFromStorage;
+
     var unacceptableRisks = {};                                                                                                                 //List of unacceptable risks per tangible asset
 
     var loadingDataFromLocalStorage = false;                                                                                                    //Flag to control local storage restore state
@@ -376,6 +379,34 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
 
     this.getSeparator = function(){
         return SEPARATOR;
+    };
+
+    /**
+     * Retrieves the toia-risks mapping loaded from local storage.
+     * @returns {*|{}}
+     */
+    this.getTOIARisksMapping = function(){
+        return toiaRisksMapping;
+    };
+
+    /**
+     * Sets the toia/risks mapping loaded from local storage.
+     * @param toiaRisksMappingFromLocalStorage The toia/risks mapping
+     * loaded from local storage.
+     */
+    this.setTOIARisksMapping = function(toiaRisksMappingFromStorage) {
+        if(!angular.equals(toiaRisksMapping, toiaRisksMappingFromStorage)){
+            angular.copy(toiaRisksMappingFromStorage, toiaRisksMapping);
+        }
+    };
+
+    /**
+     * Returns all risks associated to a given TOIA asset.
+     * @param toiaAssetName The TOIA asset name.
+     * @returns {Array|*}
+     */
+    this.getRisksFromTOIA = function(toiaAssetName){
+        return toiaRisksMapping[toiaAssetName];
     };
 
 }]);

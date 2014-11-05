@@ -35,6 +35,8 @@ module.exports = function(config) {
         'frontend/components/bootstrap-switch/dist/js/bootstrap-switch.js',
         'frontend/components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js',
         'frontend/components/ngDialog/js/ngDialog.js',
+        'frontend/components/spin.js/spin.js',
+        'frontend/components/angular-spinner/angular-spinner.js',
         // app js files
         'frontend/app.min.js',
         'frontend/controllers/bsoia-controller.js',

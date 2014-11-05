@@ -36,6 +36,9 @@
                 <a href="#" ng-click="saveCloudSelection($event)"><span class="glyphicon glyphicon-export"></span> Export Results</a>
             </li>
             <li>
+                <a href="#" ng-click="showDSSGraph()"><span class="glyphicon glyphicon-eye-open"></span> View current selection </a>
+            </li>
+            <li>
                 <form class="navbar-form">
                     <input type="text" class="form-control col-lg-4" placeholder="Search Cloud Service" />
                 </form>
@@ -93,7 +96,7 @@
         <div class="nav-wedge"></div>
         <a href="#">Cloud Services</a>
     </li>
-    <li class="nav-buttons">
+    <li class="nav-buttons" ng-controller="buttonsController">
         <button class="btn btn-primary slide-prev" href="#dssSlides" data-slide="prev" disabled>Previous step</button>
         <button class="btn btn-primary slide-next" href="#dssSlides" data-slide="next" ng-click="next($event)">Next step</button>
         <button style="display: none" class="btn btn-primary slide-services" data-target="#dssSlides" ng-click="next($event)" data-slide-to="5">Search Cloud Services</button>
@@ -238,7 +241,7 @@
             <h4>Choose the relevant risks</h4>
             <i class="glyphicon glyphicon-info-sign" data-content="The risks refer to unwanted events which may occur based on the selected assets. Based on your specification of assets, the drop down menu below on the left allows you to specify the risks which are associated with the assets. For each risk, you can specify the probability/likelihood of the risk to occur and impact/consequence of the risk." popup-down></i>
         </div>
-        <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.destination.name for r in potentialRisks">
+        <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.risk as r.risk.destination.name group by r.group for r in potentialRisksGrouped()">
             <option></option>
         </select>
         <button class="btn btn-success" ng-click="addRisk(risk)" style="width: 19% !important;">Add</button>
@@ -256,6 +259,14 @@
                 <div style="margin-top: 10px" ng-show="!showRiskPerTA">
                     <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
                     <br/>
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            Associated TOIA assets:
+                            <div ng-repeat="toia in associatedTOIA(risk.destination.name) | orderBy:'':true" style="display: inline-block;">
+                                <button class="btn btn-sm btn-margin">{{ toia }}</button>
+                            </div>
+                        </div>
+                    </div>
                     <div class="col-lg-6" style="margin-top: 10px;" >
                         <p style="margin-bottom: 15px" class="popover-enabled">Likelihood: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Probability/frequency of risk to occur" popup-right></i></p>
                         <div on-risks-type="simple" data-type="likelihood">
@@ -277,7 +288,15 @@
                 <div style="margin-top: 10px" ng-show="showRiskPerTA">
                     <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
                     <br/>
-                    <div ng-repeat="taAsset in taAssets" on-repeat-done="repeatDone" class="col-lg-12">
+                    <div class="row">
+                        <div class="col-lg-12 col-sm-12">
+                            Associated TOIA assets:
+                            <div ng-repeat="toia in associatedTOIA(risk.destination.name) | orderBy:'':true" style="display: inline-block;">
+                                <button class="btn btn-sm btn-margin">{{ toia }}</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div ng-repeat="taAsset in taAssets" class="col-lg-12">
                         <div ng-switch="taAsset.cloudType">
                             <span ng-switch-when="IaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudResource._serviceType }}"><strong>{{taAsset.cloudResource._serviceName}}</strong></span>
                             <span ng-switch-when="PaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudPlatform._serviceType }}"><strong>{{taAsset.cloudPlatform._serviceName}}</strong></span>
@@ -403,7 +422,7 @@
     <div class="col-lg-12">
         <!--per deployment results-->
         <ul class="list-group">
-            <li class="list-group-item service-proposal-panel" ng-class="{ 'service-selected': isSelected(result) }" ng-repeat="result in getDeploymentProposals() | orderBy:'overallScore':true track by $index | filter: { multicloudReplication: isMulticloudDeployment  }">
+            <li class="list-group-item service-proposal-panel" ng-class="{ 'service-selected': isSelected(result) }" on-repeat-done ng-repeat="result in getDeploymentProposals() | orderBy:'overallScore':true track by $index | filter: { multicloudReplication: isMulticloudDeployment  }">
                 <div class="row" ng-click="selectService(result)">
                     <div class="col-lg-1">
                         <div class="well service-proposal-score service-proposal-score-overall">
@@ -492,7 +511,11 @@
 </div>
 <!--end main container-->
 </div>
+<div id="spinner">
+    <span us-spinner="{radius: 30, width:8, length: 16}" spinner-key="dss-spinner" hide-spinner=""></span>
+</div>
 <button class="btn btn-default btn-sm scroll-top">Back to Top&nbsp;<span class="glyphicon glyphicon-circle-arrow-up"></span></button>
+
 <!-- Don't change scripts order, it is important to keep it so it is -->
 <script src="components/jquery/dist/jquery.min.js"></script>
 <script src="components/jquery-ui/jquery-ui.min.js"></script>
@@ -515,6 +538,8 @@
 <script src="components/bootstrap-switch/dist/js/bootstrap-switch.js"></script>
 <script src="components/angular-bootstrap-switch/dist/angular-bootstrap-switch.js"></script>
 <script src="components/ngDialog/js/ngDialog.js"></script>
+<script src="components/spin.js/spin.js"></script>
+<script src="components/angular-spinner/angular-spinner.js"></script>
 <!-- DSS-related scripts -->
 <script src="app.min.js"></script>
 </body>
