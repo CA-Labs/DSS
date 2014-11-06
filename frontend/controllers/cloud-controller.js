@@ -225,15 +225,20 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
      * @returns {boolean}
      */
     $scope.isSelected = function (listItem) {
-        var bool = 0;
-        _.each(listItem, function (item) {
-            _.each($scope.servicesSelected, function (selected) {
-                if (item.service._id == selected.service._id) {
-                    bool++;
+        var selected = true;
+        if($scope.servicesSelected.length == 0) {
+            selected = false;
+        }
+        if(listItem.length != $scope.servicesSelected.length){
+            selected = false;
+        } else {
+            _.each(listItem, function (item, index) {
+                if (item.service._id !== $scope.servicesSelected[index].service._id) {
+                    selected = false;
                 }
             });
-        });
-        return (bool == $scope.servicesSelected.length);
+        }
+        return selected;
     };
 
     /**
