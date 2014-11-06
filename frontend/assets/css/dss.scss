@@ -314,7 +314,9 @@ blockquote {
 
 .service-proposal-panel {
   &:hover {
-    border-color: rgba(44, 62, 80, 0.6);
+    border-color: rgb(44, 62, 80);
+    transform: scale(1.01) translateZ(0);
+
 //    box-shadow: -5px 0 5px -5px #666, 5px 0 5px -5px #666;
   }
   margin-bottom: 5px;
@@ -406,7 +408,7 @@ blockquote {
 }
 
 .service-selected {
-  border: 2px solid rgb(44, 62, 80);
+  border: 2px solid rgb(24, 188, 156);
 }
 
 .unacceptable-risk {
