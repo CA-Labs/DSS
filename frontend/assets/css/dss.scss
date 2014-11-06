@@ -408,11 +408,16 @@ blockquote {
 }
 
 .service-selected {
-  border: 2px solid rgb(24, 188, 156);
+  border: 2px solid #f39c12;
 }
 
 .unacceptable-risk {
   background-color: indianred;
+}
+
+span.selected.label
+{
+  font-size: 2em;
 }
 
 .acceptable-risk {

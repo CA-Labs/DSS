@@ -429,6 +429,10 @@
                             <h6>Deployment<br/>Score</h6>
                             <hr/>
                             <h3>{{ (result.overallScore * 10.0 || 0) | number: 2 }}</h3>
+                            <br/>
+                            <span class="selected label label-warning">
+                                <i class="glyphicon glyphicon-ok" ng-show="isSelected(result)"></i>
+                            </span>
                         </div>
                     </div>
                     <div class="col-lg-11">
