@@ -62,6 +62,19 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
     };
 
     /**
+     * Removes the proposals for a certain TA asset.
+     * @param taAssetId The TA asset id.
+     */
+    this.removeProposals = function(taAssetId){
+        if(proposals[taAssetId]) {
+            delete proposals[taAssetId];
+        }
+        if(filteredProposals[taAssetId]) {
+            delete filteredProposals[taAssetId];
+        }
+    };
+
+    /**
      * Returns array of all possible permutations of the arguments.
      * @returns {Array}
      */
@@ -232,7 +245,13 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                         } else {
                             criticityValue = TreatmentsService.showTreatmentValue(treatment.name) ?
                                 AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatment.name)) : AssetsService.getTACriticityValue(taAssetId);
-                            var treatmentValue = AssetsService.getInverseCriticityValue(proposal.characteristics.filter(function(t){ return t.name == treatment.name})[0].value);
+                            var proposalCharacteristic = proposal.characteristics.filter(function(t){ return t.name == treatment.name});
+                            if(proposalCharacteristic.length > 0){
+                                treatmentValue = AssetsService.getInverseCriticityValue(proposalCharacteristic[0].value);
+                            } else {
+                                // If the service does not have this characteristic, consider it has it with the lowest value possible
+                                treatmentValue = 0;
+                            }
                         }
                         // console.log('Criticity value vs treatment value', criticityValue, treatmentValue);
                         var risksFromTreatment = TreatmentsService.getRisksFromTreatment(treatment.name);

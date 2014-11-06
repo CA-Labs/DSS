@@ -29,11 +29,10 @@ dssApp.filter('replaceDashWithDot', function() {
     };
 });
 
-dssApp.filter('multicloudReplication', function () {
-    return function (input, isMulticloudDeployment) {
+dssApp.filter('multicloudReplication', ['AssetsService', function (AssetsService) {
+    return function (input) {
         var newInput = [];
-        console.log('filter called');
-        if (isMulticloudDeployment) {
+        if (AssetsService.getDeploymentType()) {
             return input;
         }
         _.each(input, function (deployment) {
@@ -41,7 +40,7 @@ dssApp.filter('multicloudReplication', function () {
 
             var haveTheSameProvider = false;
             for (var i = 0; i < numberOfTaAssets; i++) {
-                haveTheSameProvider = deployment[i].provider._id == deployment[i++].provider._id;
+                haveTheSameProvider = deployment[i].provider._id == deployment[++i].provider._id;
             }
 
             if (haveTheSameProvider) newInput.push(deployment);
@@ -49,7 +48,7 @@ dssApp.filter('multicloudReplication', function () {
 
         return newInput;
     }
-});
+}]);
 
 dssApp.filter('unique', function() {
     return function(items, filterOn) {

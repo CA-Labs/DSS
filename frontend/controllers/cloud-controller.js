@@ -19,7 +19,9 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
     $scope.servicesSelected = CloudService.getServicesSelected();
     localStorageService.bind($scope, 'servicesSelected', $scope.servicesSelected);
 
-    $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
+    $scope.isMulticloudDeployment = function(){
+        return AssetsService.getDeploymentType();
+    };
 
     /**
      * Generates the final list of deployment proposals offered to the user.
@@ -104,6 +106,13 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
                 });
             });
         }
+    });
+
+    /**
+     * Whenever some TA asset is removed, we should remove the proposals computed for it.
+     */
+    $scope.$on('removeProposalsForTAAsset', function($event, taAssetId){
+        CloudService.removeProposals(taAssetId);
     });
 
     /**
@@ -216,15 +225,20 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
      * @returns {boolean}
      */
     $scope.isSelected = function (listItem) {
-        var bool = 0;
-        _.each(listItem, function (item) {
-            _.each($scope.servicesSelected, function (selected) {
-                if (item.service._id == selected.service._id) {
-                    bool++;
+        var selected = true;
+        if($scope.servicesSelected.length == 0) {
+            selected = false;
+        }
+        if(listItem.length != $scope.servicesSelected.length){
+            selected = false;
+        } else {
+            _.each(listItem, function (item, index) {
+                if (item.service._id !== $scope.servicesSelected[index].service._id) {
+                    selected = false;
                 }
             });
-        });
-        return (bool == $scope.servicesSelected.length);
+        }
+        return selected;
     };
 
     /**

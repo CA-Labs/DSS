@@ -455,7 +455,7 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      * @param {string} type - string of deploymentType
      */
     this.setDeploymentType = function () {
-        isMulticloudDeployment = !isMulticloudDeployment;
+        isMulticloudDeployment = isMulticloudDeployment ? false : true;
     };
 
     /**
