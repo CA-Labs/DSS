@@ -107,6 +107,13 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
     });
 
     /**
+     * Whenever some TA asset is removed, we should remove the proposals computed for it.
+     */
+    $scope.$on('removeProposalsForTAAsset', function($event, taAssetId){
+        CloudService.removeProposals(taAssetId);
+    });
+
+    /**
      * Returns the cloud type for a given TA asset.
      * @param taAsset
      * @returns {ServiceModel.schema.cloudType|*|service.cloudType|dataToSend.cloudType|services.cloudType|Document.serviceForm.cloudType}

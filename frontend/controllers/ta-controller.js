@@ -29,6 +29,7 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'Clo
      */
     $scope.removeTaAsset = function(taAsset){
         AssetsService.removeTA(taAsset);
+        $rootScope.$broadcast('removeProposalsForTAAsset', taAsset._id);
     };
 
     $scope.getValueDescription = function (value) {
