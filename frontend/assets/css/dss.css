@@ -18,7 +18,7 @@ html, body {
   margin-right: 10px; }
 
 .logo {
-  background: url("../img/image4094_1.png") no-repeat white;
+  background: url("../img/image4094_1.png") no-repeat #ffffff;
   display: block;
   width: 111px;
   height: 65px;
@@ -246,7 +246,8 @@ blockquote {
   margin-bottom: 5px;
   border: 2px solid #ecf0f1; }
   .service-proposal-panel:hover {
-    border-color: rgba(44, 62, 80, 0.6); }
+    border-color: #2c3e50;
+    transform: scale(1.01) translateZ(0); }
 
 .service-proposal-title {
   background: #fff !important;
@@ -311,10 +312,13 @@ blockquote {
   margin: 0 auto; }
 
 .service-selected {
-  border: 2px solid #2c3e50; }
+  border: 2px solid #f39c12; }
 
 .unacceptable-risk {
   background-color: indianred; }
+
+span.selected.label {
+  font-size: 2em; }
 
 .acceptable-risk {
   background-color: palegreen; }
@@ -386,3 +390,5 @@ circle.node-treatment-collapse {
   top: 0;
   display: none;
   z-index: 10000; }
+
+/*# sourceMappingURL=dss.css.map */
