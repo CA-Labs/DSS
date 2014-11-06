@@ -427,8 +427,10 @@
                             <hr/>
                             <h3>{{ (result.overallScore * 10.0 || 0) | number: 2 }}</h3>
                             <br/>
-                            <span class="selected label label-warning">
-                                <i class="glyphicon glyphicon-ok" ng-show="isSelected(result)"></i>
+                        </div>
+                        <div class="center-block center-text">
+                            <span class="selected label label-warning" ng-show="isSelected(result)">
+                                <i class="glyphicon glyphicon-ok"></i>
                             </span>
                         </div>
                     </div>
