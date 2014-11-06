@@ -139,6 +139,7 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
                 TreatmentsService.loadingTreatmentsValuesFromLocalStorage(true);
                 AssetsService.setBSOIA(localStorageValues.bsoiaAssetsSelected);
                 AssetsService.setTOIA(localStorageValues.toiaAssetsSelected);
+                AssetsService.setXmlTaObject(localStorageValues.xmlAsJsonObject);
                 RisksService.setSimpleRisksLikelihoodConsequence(localStorageValues.simpleRisksLikelihoodConsequence);
                 RisksService.setRiskBoundModels(localStorageValues.riskBoundModels);
                 RisksService.setMultipleRisksLikelihoodConsequence(localStorageValues.multipleRisksLikelihoodConsequence);
