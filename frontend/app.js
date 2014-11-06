@@ -8,55 +8,57 @@ $('#dssSlides').carousel('pause' ,{
 
     var topMenu = $('.nav-wizard');
     var slideClass = $(this).find('.active');
-    var stickyBottom = $('.nav-buttons');
-    var cloudServicesButton = stickyBottom.find('.slide-services');
+    var navButtons = $('.nav-buttons');
+    var cloudServicesButton = navButtons.find('.slide-services');
+    var currentSlide = topMenu.find('.bsoia-slide');
     topMenu.find('blockquote p').removeClass('active');
 
+
     if (slideClass.hasClass('bsoia-slide')) {
-        var currentSlide = topMenu.find('.bsoia-slide');
+        currentSlide = topMenu.find('.bsoia-slide');
         currentSlide.addClass('active');
         currentSlide.nextAll().removeClass('active');
-        stickyBottom.find('.slide-prev').prop('disabled', true);
-        stickyBottom.find('.slide-next').prop('disabled', false);
-        stickyBottom.find('.slide-next').css('display', 'inline');
+        navButtons.find('.slide-prev').prop('disabled', true);
+        navButtons.find('.slide-next').prop('disabled', false);
+        navButtons.find('.slide-next').css('display', 'inline');
         cloudServicesButton.css('display', 'none');
     } else if (slideClass.hasClass('toia-slide')) {
-        var currentSlide = topMenu.find('.toia-slide');
+        currentSlide = topMenu.find('.toia-slide');
         currentSlide.addClass('active');
         currentSlide.nextAll().removeClass('active');
-        stickyBottom.find('.slide-prev').prop('disabled', false);
-        stickyBottom.find('.slide-next').prop('disabled', false);
-        stickyBottom.find('.slide-next').css('display', 'inline');
+        navButtons.find('.slide-prev').prop('disabled', false);
+        navButtons.find('.slide-next').prop('disabled', false);
+        navButtons.find('.slide-next').css('display', 'inline');
         cloudServicesButton.css('display', 'none');
     } else if (slideClass.hasClass('ta-slide')) {
-        var currentSlide = topMenu.find('.ta-slide');
+        currentSlide = topMenu.find('.ta-slide');
         currentSlide.addClass('active');
         currentSlide.nextAll().removeClass('active');
-        stickyBottom.find('.slide-prev').prop('disabled', false);
-        stickyBottom.find('.slide-next').prop('disabled', false);
-        stickyBottom.find('.slide-next').css('display', 'inline');
+        navButtons.find('.slide-prev').prop('disabled', false);
+        navButtons.find('.slide-next').prop('disabled', false);
+        navButtons.find('.slide-next').css('display', 'inline');
         cloudServicesButton.css('display', 'none');
     } else if (slideClass.hasClass('risks-slide')) {
-        var currentSlide = topMenu.find('.risks-slide');
+        currentSlide = topMenu.find('.risks-slide');
         currentSlide.addClass('active');
         currentSlide.nextAll().removeClass('active');
-        stickyBottom.find('.slide-prev').prop('disabled', false);
-        stickyBottom.find('.slide-next').prop('disabled', false);
-        stickyBottom.find('.slide-next').css('display', 'inline');
+        navButtons.find('.slide-prev').prop('disabled', false);
+        navButtons.find('.slide-next').prop('disabled', false);
+        navButtons.find('.slide-next').css('display', 'inline');
         cloudServicesButton.css('display', 'none');
     } else if (slideClass.hasClass('treatments-slide')) {
-        var currentSlide = topMenu.find('.treatments-slide');
+        currentSlide = topMenu.find('.treatments-slide');
         currentSlide.addClass('active');
         currentSlide.nextAll().removeClass('active');
-        stickyBottom.find('.slide-prev').prop('disabled', false);
-        stickyBottom.find('.slide-next').css('display', 'none');
+        navButtons.find('.slide-prev').prop('disabled', false);
+        navButtons.find('.slide-next').css('display', 'none');
         cloudServicesButton.css('display', 'inline');
     } else {
-        var currentSlide = topMenu.find('.services-slide');
+        currentSlide = topMenu.find('.services-slide');
         currentSlide.addClass('active');
         currentSlide.nextAll().removeClass('active');
-        stickyBottom.find('.slide-prev').prop('disabled', false);
-        stickyBottom.find('.slide-next').css('display', 'none');
+        navButtons.find('.slide-prev').prop('disabled', false);
+        navButtons.find('.slide-next').css('display', 'none');
         cloudServicesButton.css('display', 'none');
     }
 
