@@ -19,7 +19,9 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
     $scope.servicesSelected = CloudService.getServicesSelected();
     localStorageService.bind($scope, 'servicesSelected', $scope.servicesSelected);
 
-    $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
+    $scope.isMulticloudDeployment = function(){
+        return AssetsService.getDeploymentType();
+    };
 
     /**
      * Generates the final list of deployment proposals offered to the user.
