@@ -69,7 +69,7 @@
 <div class="row mainContainer">
 <ul class="nav nav-pills nav-wizard">
     <li class="active bsoia-slide">
-        <a href="#">Business Service Oriented intangible assets</a>
+        <a href="#">Business Oriented intangible assets</a>
         <div class="nav-arrow"></div>
     </li>
     <li class="toia-slide">
@@ -121,7 +121,7 @@
 <div class="active item bsoia-slide" ng-controller="bsoiaController">
     <div class="col-lg-4 form-group form-inline" style="min-height: 200px;">
         <div class="inline">
-            <h4>Select you business oriented intangible asset</h4>
+            <h4>Select what is important for your business</h4>
             <i class="glyphicon glyphicon-info-sign" data-content="The business oriented intangible assets refer to the non-physical entities which are important from business perspectives like financial, marketing and other non-technical perspectives." popup-down></i>
         </div>
         <select label="assets" class="form-control form assets-select item-select" ng-model="bsoiaAsset" ng-options="a.name for a in bsoiaAssets">
@@ -144,7 +144,7 @@
 <div class="item toia-slide" ng-controller="toiaController">
     <div class="col-lg-4 form-group form-inline">
         <div class="inline">
-            <h4>Select your technical oriented intangible assets</h4>
+            <h4>Select your IT expectation</h4>
             <i class="glyphicon glyphicon-info-sign" data-content="The technical oriented intangible assets refer to the non-physical entities which are important from the technical perspective of cloud service selection." popup-down></i>
         </div>
         <select label="assets" class="form-control form assets-select item-select" ng-model="toiaAsset" ng-options="a.name for a in toiaAssets">
@@ -235,7 +235,7 @@
     <div class="col-lg-4 form-group form-inline" style="min-height: 200px;">
         <!-- TODO: Apply unique filter in potential risks -->
         <div class="inline">
-            <h4>Choose the relevant risks</h4>
+            <h4>Choose the relevant risks to avoid</h4>
             <i class="glyphicon glyphicon-info-sign" data-content="The risks refer to unwanted events which may occur based on the selected assets. Based on your specification of assets, the drop down menu below on the left allows you to specify the risks which are associated with the assets. For each risk, you can specify the probability/likelihood of the risk to occur and impact/consequence of the risk." popup-down></i>
         </div>
         <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.risk as r.risk.destination.name group by r.group for r in potentialRisksGrouped()">
