@@ -26,12 +26,12 @@
 <div class="row">
     <div class="navbar navbar-inverse" ng-controller="mainController">
         <ul class="nav navbar-nav navbar-right">
-            <li>
-                <form id="cloud-descriptor-file-selector">
-                    <input id="load-requirements" ng-file-select="onDSSCloudResourceFileSelect($files)" type="file" class="hidden"/>
-                </form>
-                <a href="#" ng-click="showFileUploadDialog('#load-requirements')"><span class="glyphicon glyphicon-import"></span> Load MODAClouds IDE Model </a>
-            </li>
+            <!--<li>-->
+                <!--<form id="cloud-descriptor-file-selector">-->
+                    <!--<input id="load-requirements" ng-file-select="onDSSCloudResourceFileSelect($files)" type="file" class="hidden"/>-->
+                <!--</form>-->
+                <!--<a href="#" ng-click="showFileUploadDialog('#load-requirements')"><span class="glyphicon glyphicon-import"></span> Load MODAClouds IDE Model </a>-->
+            <!--</li>-->
             <li>
                 <a href="#" ng-click="saveCloudSelection($event)"><span class="glyphicon glyphicon-export"></span> Export Results</a>
             </li>
@@ -201,7 +201,11 @@
             </div>
         </div>
         <div class="inline">
-            <h4>Load your tangible assets</h4>
+            <form id="cloud-descriptor-file-selector">
+                <input id="load-requirements" ng-file-select="onDSSCloudResourceFileSelect($files)" type="file" class="hidden"/>
+            </form>
+            <button ng-click="showFileUploadDialog('#load-requirements')" class="btn btn-success"><span class="glyphicon glyphicon-import"></span> Load MODAClouds IDE Model </button>
+            <!--<h4>Load your tangible assets</h4>-->
             <i class="glyphicon glyphicon-info-sign" data-content="The tangible assets describe the architectural elements that are intended to be externalized using the cloud services. The cloud services will be recommended for each tangible asset loaded." popup-down></i>
         </div>
         <div class="list-group" style="margin-top: 40px; min-height: 400px;">
