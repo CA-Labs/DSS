@@ -191,7 +191,7 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
 
         var element = angular.element(event.target);
         // Set export file name
-        var fileName = ($scope.xmlTaAssetsFileName == '') ? 'DSS_CloudServicesSelection.xml' : 'export_' + $scope.xmlTaAssetsFileName;
+        var fileName = 'DSS_CloudServicesSelection.xml';
         element.attr({
             download: fileName,
             href: 'data:application/xml;charset=utf-8,' + decodeURI(x2js.json2xml_str(copy)),
