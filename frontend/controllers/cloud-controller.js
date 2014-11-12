@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'RisksService', 'CloudService', 'localStorageService', function($scope, $rootScope, $timeout, ArangoDBService, TreatmentsService, AssetsService, RisksService, CloudService, localStorageService){
+dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'RisksService', 'CloudService', 'localStorageService', 'usSpinnerService', function($scope, $rootScope, $timeout, ArangoDBService, TreatmentsService, AssetsService, RisksService, CloudService, localStorageService, usSpinnerService){
 
     $scope.ta = AssetsService.getTA();                                  // The selected TA assets loaded from the cloud descriptor xml file
 
@@ -16,10 +16,12 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
 
     $scope.deploymentsProposals = [];
 
-    $scope.servicesSelected = {};
+    $scope.servicesSelected = CloudService.getServicesSelected();
     localStorageService.bind($scope, 'servicesSelected', $scope.servicesSelected);
 
-    $scope.isMulticloudDeployment = AssetsService.getDeploymentType();
+    $scope.isMulticloudDeployment = function(){
+        return AssetsService.getDeploymentType();
+    };
 
     /**
      * Generates the final list of deployment proposals offered to the user.
@@ -51,6 +53,14 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
 
         return deploymentsProposals;
     };
+
+    $scope.$watch(function(){
+        return $scope.getDeploymentProposals();
+    }, function(newVal, oldVal){
+        if(newVal.length > 0){
+            $rootScope.$broadcast('repeatDone');
+        }
+    });
 
     /**
      * Builds up an initial list of proposals whenever the list of TA assets changes.
@@ -92,13 +102,17 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
                     } else {
                         // console.log(data._documents);
                         CloudService.setTAProposals(ta, data._documents);
-                        $timeout(function(){
-                            CloudService.scoreProposals(false);
-                        }, 100);
                     }
                 });
             });
         }
+    });
+
+    /**
+     * Whenever some TA asset is removed, we should remove the proposals computed for it.
+     */
+    $scope.$on('removeProposalsForTAAsset', function($event, taAssetId){
+        CloudService.removeProposals(taAssetId);
     });
 
     /**
@@ -124,8 +138,21 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
      * the list of proposals must be filtered again, since the list of
      * unacceptable risks may have changed, and hence, the proposals
      * score might have changed as well.
+     * @WARNING: This event triggers too often, just compute the scores
+     * when next button is clicked instead (treatments slide).
      */
+    /*
     $scope.$on('risksSelectedChanged', function(){
+        CloudService.scoreProposals(false);
+        $scope.deploymentsProposals = CloudService.getDeploymentsProposals();
+    });
+    */
+
+    /**
+     * Event triggered when the user decided to get proposals by
+     * specifying some treatments.
+     */
+    $scope.$on('getServicesWithTreatments', function(){
         CloudService.scoreProposals(false);
         $scope.deploymentsProposals = CloudService.getDeploymentsProposals();
     });
@@ -151,23 +178,44 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
      * @param {object} proposal - service object selected by the user
      * @param {object} taAsset - ta asset object to which the proposal is assigned to
      */
-    $scope.selectService = function (proposal) {
-        $scope.servicesSelected = proposal;
+    $scope.selectService = function (proposals) {
+        CloudService.setServicesSelected(proposals);
+        AssetsService.setXmlTaObject(prepareJsonToXml(AssetsService.getXmlTaObject(), proposals));
+    };
 
-        // update xmlTAAsObject
-        _.each($scope.xmlTaAsObject.resourceModelExtension.resourceContainer, function (resourceContainer) {
-            _.each(proposal, function (proposalItem) {
-                if (resourceContainer._id == proposalItem.ta._id) {
-                    resourceContainer._provider = proposalItem.provider.name;
-                        if (_.has(resourceContainer, 'cloudResource')) {
-                            resourceContainer.cloudResource._serviceName = proposalItem.service.name;
-                        }
-                        if (_.has(resourceContainer, 'cloudPlatform')) {
-                            resourceContainer.cloudPlatform._serviceName = proposalItem.service.name;
-                        }
+    // Auxiliar function to prepare services selection JSON object to be converted back to XML model
+    var prepareJsonToXml = function(xmlAsJson, proposals){
+        // Make a copy of the servicesSelected
+        var copy = _.clone(xmlAsJson);
+
+        // Check whether we have only one TA or more
+        if(_.isArray(copy.resourceModelExtension.resourceContainer)){
+            _.each(copy.resourceModelExtension.resourceContainer, function(resourceContainer, index){
+                _.each(proposals, function(proposal){
+                   if(resourceContainer._id == proposal.ta._id){
+                       copy.resourceModelExtension.resourceContainer[index]._provider = proposal.provider.name;
+                       if(_.has(resourceContainer, 'cloudResource')){
+                           copy.resourceModelExtension.resourceContainer[index].cloudResource._serviceName = proposal.service.name;
+                       } else if(_.has(resourceContainer, 'cloudPlatform')){
+                           copy.resourceModelExtension.resourceContainer[index].cloudPlatform._serviceName = proposal.service.name;
+                       }
+                   }
+                });
+            });
+        }
+        else if(_.isObject(copy.resourceModelExtension.resourceContainer)){
+            _.each(proposals, function(proposal){
+                if(copy.resourceModelExtension.resourceContainer._id == proposal.ta._id){
+                    copy.resourceModelExtension.resourceContainer._provider = proposal.provider.name;
+                    if(_.has(copy.resourceModelExtension.resourceContainer, 'cloudResource')){
+                        copy.resourceModelExtension.resourceContainer.cloudResource._serviceName = proposal.service.name;
+                    } else if(_.has(resourceContainer, 'cloudPlatform')){
+                        copy.resourceModelExtension.resourceContainer.cloudPlatform._serviceName = proposal.service.name;
+                    }
                 }
             });
-        });
+        }
+        return copy;
     };
 
     /**
@@ -177,15 +225,20 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
      * @returns {boolean}
      */
     $scope.isSelected = function (listItem) {
-        var bool = 0;
-        _.each(listItem, function (item) {
-            _.each($scope.servicesSelected, function (selected) {
-                if (item.service._id == selected.service._id) {
-                    bool++;
+        var selected = true;
+        if($scope.servicesSelected.length == 0) {
+            selected = false;
+        }
+        if(listItem.length != $scope.servicesSelected.length){
+            selected = false;
+        } else {
+            _.each(listItem, function (item, index) {
+                if (item.service._id !== $scope.servicesSelected[index].service._id) {
+                    selected = false;
                 }
             });
-        });
-        return (bool == $scope.servicesSelected.length);
+        }
+        return selected;
     };
 
     /**

@@ -12,6 +12,9 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
     var filteredProposalsFromLocalStorage = localStorageService.get('filteredProposals') || {};
     var filteredProposals = filteredProposalsFromLocalStorage;
 
+    var servicesSelectedFromLocalStorage = localStorageService.get('servicesSelected') || [];
+    var servicesSelected = servicesSelectedFromLocalStorage;
+
     var loadingProposals = false;
     var loadingFilteredProposals = true;
     var specifyTreatmentsPerCloudService = false;
@@ -56,6 +59,19 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
      */
     this.isLoadingProposals = function(){
         return loadingProposals;
+    };
+
+    /**
+     * Removes the proposals for a certain TA asset.
+     * @param taAssetId The TA asset id.
+     */
+    this.removeProposals = function(taAssetId){
+        if(proposals[taAssetId]) {
+            delete proposals[taAssetId];
+        }
+        if(filteredProposals[taAssetId]) {
+            delete filteredProposals[taAssetId];
+        }
     };
 
     /**
@@ -181,15 +197,13 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
             // calculate overall score
             _.each(deploymentProposals, function(proposal, index) {
-                var numerator = 0.0;
-                var denominator = 0.0;
+                var overallScore = 0;
                 _.each(proposal, function (service) {
-                    numerator += service.score;
-                    denominator += service.total;
+                    overallScore += service.score/service.total;
                 });
 
                 // calulate overallScore
-                deploymentProposals[index].overallScore = (numerator/denominator) || 0.0;
+                deploymentProposals[index].overallScore = overallScore / proposal.length;
             });
             return deploymentProposals;
         }
@@ -231,7 +245,13 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                         } else {
                             criticityValue = TreatmentsService.showTreatmentValue(treatment.name) ?
                                 AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatment.name)) : AssetsService.getTACriticityValue(taAssetId);
-                            var treatmentValue = AssetsService.getInverseCriticityValue(proposal.characteristics.filter(function(t){ return t.name == treatment.name})[0].value);
+                            var proposalCharacteristic = proposal.characteristics.filter(function(t){ return t.name == treatment.name});
+                            if(proposalCharacteristic.length > 0){
+                                treatmentValue = AssetsService.getInverseCriticityValue(proposalCharacteristic[0].value);
+                            } else {
+                                // If the service does not have this characteristic, consider it has it with the lowest value possible
+                                treatmentValue = 0;
+                            }
                         }
                         // console.log('Criticity value vs treatment value', criticityValue, treatmentValue);
                         var risksFromTreatment = TreatmentsService.getRisksFromTreatment(treatment.name);
@@ -270,13 +290,32 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
         // Normalization
         _.each(filteredProposals, function(proposals, taAssetId){
             _.each(proposals, function(proposal, index){
-                filteredProposals[taAssetId][index].score = proposal.mitigatedRisks.length;
-                filteredProposals[taAssetId][index].total = proposal.unacceptableRisks.length;
+                filteredProposals[taAssetId][index].score = proposal.mitigatedRisks.length || 1;
+                filteredProposals[taAssetId][index].total = proposal.unacceptableRisks.length || 1;
             });
         });
 
         // console.log('end result', filteredProposals);
 
+    };
+
+    /**
+     * Sets the list of services selected from local storage.
+     * @param servicesSelectedFromLocalStorage The services selected
+     * to be loaded from local storage.
+     */
+    this.setServicesSelected = function(servicesSelectedFromLocalStorage){
+        if(!angular.equals(servicesSelectedFromLocalStorage, servicesSelected)){
+            angular.copy(servicesSelectedFromLocalStorage, servicesSelected);
+        }
+    };
+
+    /**
+     * Returns the list of services selected.
+     * @returns {*|{}}
+     */
+    this.getServicesSelected = function(){
+        return servicesSelected;
     };
 
 }]);

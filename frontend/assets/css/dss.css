@@ -1,6 +1,18 @@
 html, body {
   height: 100%; }
 
+.scroll-top {
+  position: fixed;
+  bottom: 15px;
+  left: 15px;
+  display: none; }
+
+.inline * {
+  display: inline-block; }
+
+.popover {
+  min-width: 400px; }
+
 .margin-10 {
   margin-left: 10px;
   margin-right: 10px; }
@@ -15,7 +27,11 @@ html, body {
   margin-left: 20px; }
 
 .logo-text h3 {
-  font-size: 48px; }
+  margin-top: 32px;
+  font-size: 36px;
+  display: inline-flex; }
+  .logo-text h3 p:first-child {
+    color: #18bc9c; }
 
 blockquote {
   cursor: hand; }
@@ -30,6 +46,45 @@ blockquote {
     transition: all 0.2s ease-in-out; }
   blockquote p.active {
     color: #18bc9c; }
+
+.nav-pills.nav-wizard > li {
+  float: left;
+  background-color: #eee;
+  position: relative;
+  overflow: visible;
+  border-left: 15px solid #fff;
+  border-right: 10px solid #fff; }
+  .nav-pills.nav-wizard > li > a {
+    border-radius: 0px !important; }
+  .nav-pills.nav-wizard > li:first-child {
+    border-left: 0; }
+  .nav-pills.nav-wizard > li:last-child {
+    border-right: 0;
+    float: right; }
+  .nav-pills.nav-wizard > li .nav-arrow {
+    position: absolute;
+    top: 0;
+    right: -20px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 21px 0 20px 20px;
+    border-color: transparent transparent transparent #eee;
+    z-index: 150; }
+  .nav-pills.nav-wizard > li .nav-wedge {
+    position: absolute;
+    top: 0;
+    left: -20px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 21px 0 20px 20px;
+    border-color: #eee #eee #eee transparent;
+    z-index: 150; }
+.nav-pills.nav-wizard > li.active .nav-arrow {
+  border-color: transparent transparent transparent #2c3e50; }
+.nav-pills.nav-wizard > li.active .nav-wedge {
+  border-color: #2c3e50 #2c3e50 #2c3e50 transparent; }
 
 .sticky-bottom {
   position: relative;
@@ -88,7 +143,6 @@ blockquote {
 
 /* Drop zones */
 .dropzone {
-  background-color: #E8FDF9;
   min-height: 150px;
   height: auto !important;
   max-height: 800px;
@@ -192,7 +246,8 @@ blockquote {
   margin-bottom: 5px;
   border: 2px solid #ecf0f1; }
   .service-proposal-panel:hover {
-    border-color: rgba(44, 62, 80, 0.6); }
+    border-color: #2c3e50;
+    transform: scale(1.01) translateZ(0); }
 
 .service-proposal-title {
   background: #fff !important;
@@ -257,10 +312,16 @@ blockquote {
   margin: 0 auto; }
 
 .service-selected {
-  border: 2px solid #2c3e50; }
+  border: 2px solid #f39c12; }
+
+.center-text {
+  text-align: center; }
 
 .unacceptable-risk {
   background-color: indianred; }
+
+span.selected.label {
+  font-size: 2em; }
 
 .acceptable-risk {
   background-color: palegreen; }
@@ -273,3 +334,62 @@ blockquote {
   margin-top: 7px;
   position: relative;
   top: -3px; }
+
+/* NgDialog */
+.ngdialog-content {
+  font-size: 18px; }
+
+/* DSS graph */
+.node circle {
+  stroke-width: 3px; }
+
+circle.node-bsoia-expand {
+  fill: #ffa5a7 !important;
+  stroke: #ff4146 !important; }
+
+circle.node-bsoia-collapse {
+  fill: white !important;
+  stroke: #ff4146 !important; }
+
+circle.node-toia-expand {
+  fill: #b4d6ff !important;
+  stroke: #4c41ff !important; }
+
+circle.node-toia-collapse {
+  fill: white !important;
+  stroke: #4c41ff !important; }
+
+circle.node-risk-expand {
+  fill: #95ae84 !important;
+  stroke: #3b8034 !important; }
+
+circle.node-risk-collapse {
+  fill: white !important;
+  stroke: #3b8034 !important; }
+
+circle.node-treatment-expand {
+  fill: #fff6a8 !important;
+  stroke: #ffea3f !important; }
+
+circle.node-treatment-collapse {
+  fill: white !important;
+  stroke: #ffea3f !important; }
+
+.node text {
+  font: 15px sans-serif; }
+
+.link {
+  fill: none;
+  stroke: #ccc;
+  stroke-width: 2px; }
+
+#spinner {
+  width: 100%;
+  height: 100%;
+  background-color: grey;
+  opacity: 0.6;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: none;
+  z-index: 10000; }

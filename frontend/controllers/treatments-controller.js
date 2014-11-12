@@ -148,7 +148,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
             });
             return;
         }
-        TreatmentsService.setTreatmentsValues(newValue);
+        TreatmentsService.setTreatmentValues(newValue);
     }, true);
 
     /**
@@ -160,6 +160,10 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
      * @ta The TA asset to associate with the treatment.
      */
     $scope.addTreatment = function (treatment, ta) {
+        if(treatment == null || typeof treatment == 'undefined'){
+            flash.error = 'You should select some treatment!';
+            return;
+        }
         var treatmentCopy = _.extend({}, treatment);
         TreatmentsService.addTreatment(treatmentCopy);
         // For some reason, updating service data takes a while
@@ -253,7 +257,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
      * @param treatmentName
      */
     $scope.addRadioValue = function (treatmentName) {
-        TreatmentsService.addTreatmentValue(treatmentName, 1);
+        TreatmentsService.addTreatmentValue(treatmentName, "1");
     };
 
     // Initial data fetch

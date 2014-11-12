@@ -46,6 +46,8 @@ dssApp.controller('risksController'
 
     $scope.unacceptableRisks = RisksService.getUnacceptableRisks();
 
+    $scope.toiaRisksMapping = RisksService.getTOIARisksMapping();
+
     //List of available categories to categorize risks level for likelihood values
     var LIKELIHOOD_CATEGORIES = {
         RARE: {
@@ -574,7 +576,63 @@ dssApp.controller('risksController'
                 });
             })
         }
+
         $rootScope.$broadcast('risksSelectedChanged');
+
+    });
+
+    /**
+     * Aggregates risks by TOIA associated to them.
+     */
+    $scope.potentialRisksGrouped = function(){
+        var data = [];
+        var potentialRiskNames = $scope.potentialRisks.map(function(potentialRisk) { return potentialRisk.destination.name });
+        _.each($scope.toiaRisksMapping, function(values, key){
+            _.each(values, function(value){
+                if(_.contains(potentialRiskNames, value)){
+                    data.push({group: key, risk: $scope.getRiskByName(value)});
+                }
+            });
+        });
+        return data;
+    };
+
+    /**
+     * Retrieves a risk by its name .
+     * @param riskName The risk name.
+     * @returns {*}
+     */
+    $scope.getRiskByName = function(riskName){
+        return $scope.potentialRisks.filter(function(risk) { return risk.destination.name == riskName })[0];
+    };
+
+    /**
+     * Returns all selected TOIA assets associated to a given risk.
+     * @param riskName The risk name.
+     * @returns {Array}
+     */
+    $scope.associatedTOIA = function(riskName){
+        var associatedTOIA = [];
+        var toiaSelectedNames = AssetsService.getTOIA().map(function(toia){ return toia.asset.name });
+        _.each($scope.toiaRisksMapping, function(values, key){
+            if(_.contains(values, riskName) && _.contains(toiaSelectedNames, key)){
+                associatedTOIA.push(key);
+            }
+        });
+        return associatedTOIA;
+    };
+
+    // Initial data fetch
+    ArangoDBService.getTOIARisksMapping(function(error, data){
+        if (error) {
+            flash.error = 'Some error occurred while fetching TOIA/risks mapping values';
+        } else {
+            var mapping = {};
+            _.each(data._documents, function (e) {
+                mapping[e.toia] = e.risks;
+            });
+            RisksService.setTOIARisksMapping(mapping);
+        }
     });
 
 }]);
