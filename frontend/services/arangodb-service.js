@@ -16,7 +16,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
     $http.defaults.headers.common['Authorization'] = 'Basic ' + btoa('root:CATech2014!');
 
     this.ARANGODB_BASE_URL = 'http://dss.tools.modaclouds.eu/';
-    this.XSD_SERVICE_BASE_URL = 'http://dss.tools.modaclouds.eu:3999/';
+    this.XSD_SERVICE_BASE_URL = 'http://dss.tools.modaclouds.eu:443/';
 
     //Closures
     var self = this;
