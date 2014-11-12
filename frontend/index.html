@@ -380,8 +380,10 @@
             </div>
             <a class="list-group-item selected-treatment" href="#" ng-repeat="treatmentSelected in treatmentsSelected">
                 <span class="glyphicon glyphicon-remove remove-treatment" ng-click="removeTreatment(treatmentSelected)">&nbsp;</span>
-                <input name="showTreatmentValues" bs-switch ng-model="showTreatmentValues[treatmentSelected.name]" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleTreatmentValues(treatmentSelected.name)">
-                <label class="pull-right">Specify treatment value&nbsp;</label>
+                <div ng-show="treatmentSelected.representation == 'select'">
+                    <input name="showTreatmentValues" bs-switch ng-model="showTreatmentValues[treatmentSelected.name]" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleTreatmentValues(treatmentSelected.name)">
+                    <label class="pull-right">Specify treatment value&nbsp;</label>
+                </div>
                 <strong>{{ treatmentSelected.name }}</strong>
                 <div class="row">
                     <div class="col-lg-12 col-sm-12">

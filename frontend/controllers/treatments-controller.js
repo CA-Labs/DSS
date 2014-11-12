@@ -148,7 +148,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
             });
             return;
         }
-        TreatmentsService.setTreatmentsValues(newValue);
+        TreatmentsService.setTreatmentValues(newValue);
     }, true);
 
     /**
@@ -257,7 +257,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
      * @param treatmentName
      */
     $scope.addRadioValue = function (treatmentName) {
-        TreatmentsService.addTreatmentValue(treatmentName, 1);
+        TreatmentsService.addTreatmentValue(treatmentName, "1");
     };
 
     // Initial data fetch

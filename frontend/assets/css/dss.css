@@ -18,7 +18,7 @@ html, body {
   margin-right: 10px; }
 
 .logo {
-  background: url("../img/image4094_1.png") no-repeat #ffffff;
+  background: url("../img/image4094_1.png") no-repeat white;
   display: block;
   width: 111px;
   height: 65px;
@@ -393,5 +393,3 @@ circle.node-treatment-collapse {
   top: 0;
   display: none;
   z-index: 10000; }
-
-/*# sourceMappingURL=dss.css.map */
