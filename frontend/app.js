@@ -108,6 +108,12 @@ dssApp.run(['$rootScope', '$timeout', 'AssetsService', 'RisksService', 'Treatmen
         TreatmentsService.loadingTreatmentsValuesFromLocalStorage(false);
         $rootScope.$broadcast('risksSelectedChanged');
     }, 1000);
+
+    //Helper functions
+    $rootScope.utils = {
+        keys: Object.keys
+    };
+
 }]);
 
 /******************************************************
