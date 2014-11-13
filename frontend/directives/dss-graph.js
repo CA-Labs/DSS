@@ -176,7 +176,7 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
 
                 update(root);
 
-                function update(source){
+                function update(source) {
 
                     var selectedServices = CloudService.getServicesSelected();
 
@@ -187,154 +187,179 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                         links = tree.links(nodes);
 
                     // Normalize for fixed depth
-                    nodes.forEach(function(d) {
+                    nodes.forEach(function (d) {
                         d.y = d.depth * (width / 4.5);    // We have up to 4 levels, divide by 4.5 to be sure all 4 levels fit within the area
                         d.x = d.x * height / width;
                     });
 
-                    if(selectedServices !== null && typeof selectedServices !== 'undefined' && selectedServices.length > 0){
-                        // The user already selected some services, display mitigated/unmitigated risks in the tree
+                    /*
+                     if(selectedServices !== null && typeof selectedServices !== 'undefined' && selectedServices.length > 0){
+                     // The user already selected some services, display mitigated/unmitigated risks in the tree
 
-                        // Find all tree paths
-                        var paths = findPaths(links);
-                        console.log('Computed paths', paths);
-                        var auxLinks = [];
-                        // Iterate over paths found
-                        _.each(paths, function(path){
-                            // Retrieve the link starting from a Risk asset
-                            var riskLink = path.filter(function(link){ return link.source.type == 'risk'; })[0];
-                            var riskMitigated = false;
-                            // Check if this link is contained in a path where the risk has been mitigated by some selected service
-                            _.each(selectedServices, function(selectedService){
-                                if(pathContainingMitigatedRisk(path, riskLink.source.name, selectedService)){
-                                    riskMitigated = true;
-                                }
-                            });
-                            _.each(path, function(link){
-                                link.mitigated = riskMitigated ? true : false;
-                                auxLinks.push(link);
-                            });
+                     // Find all tree paths
+                     var paths = findPaths(links);
+                     console.log('Computed paths', paths);
+                     var auxLinks = [];
+                     // Iterate over paths found
+                     _.each(paths, function(path){
+                     // Retrieve the link starting from a Risk asset
+                     var riskLink = path.filter(function(link){ return link.source.type == 'risk'; })[0];
+                     var riskMitigated = false;
+                     // Check if this link is contained in a path where the risk has been mitigated by some selected service
+                     _.each(selectedServices, function(selectedService){
+                     if(pathContainingMitigatedRisk(path, riskLink.source.name, selectedService)){
+                     riskMitigated = true;
+                     }
+                     });
+                     _.each(path, function(link){
+                     link.mitigated = riskMitigated ? true : false;
+                     auxLinks.push(link);
+                     });
+                     });
+                     console.log('Original links', links);
+                     console.log('Computed links', auxLinks);
+
+                     }
+
+                     // The user didn't choose any services yet, display assets/risks/treatments connections
+
+                     */
+
+                    // Update the nodes
+                    var node = svg.selectAll('g.node')
+                        .data(nodes, function (d) {
+                            return d.id || (d.id = ++i)
                         });
-                        console.log('Original links', links);
-                        console.log('Computed links', auxLinks);
 
-                    } else {
-                        // The user didn't choose any services yet, display assets/risks/treatments connections
+                    /************************************************************
+                     *********************** NEW NODES **************************
+                     ************************************************************/
 
-                        // Update the nodes
-                        var node = svg.selectAll('g.node')
-                            .data(nodes, function(d){ return d.id || (d.id = ++i) });
+                    // Enter any new nodes at the parent's previous position
+                    var nodeEnter = node.enter().append('g')
+                        .attr('class', 'node')
+                        .attr('transform', function (d) {
+                            return 'translate(' + source.y0 + ',' + source.x0 + ')';
+                        })
+                        .on('click', function (d) {
+                            toggle(d);
+                            update(d);
+                        });
 
-                        /************************************************************
-                         *********************** NEW NODES **************************
-                         ************************************************************/
+                    nodeEnter.append('circle')
+                        .attr('r', 1e-6)
+                        .attr('class', function (d) {
+                            return d._children ? d.collapse : d.expand;
+                        });
 
-                        // Enter any new nodes at the parent's previous position
-                        var nodeEnter = node.enter().append('g')
-                            .attr('class', 'node')
-                            .attr('transform', function(d) { return 'translate(' + source.y0 + ',' + source.x0 + ')'; })
-                            .on('click', function(d) { toggle(d); update(d); });
+                    nodeEnter.append('text')
+                        .attr('x', function (d) {
+                            return -(d.name.length / 2.5) * 10
+                        })
+                        .attr('dy', '-1em')
+                        .attr('text-anchor', function (d) {
+                            return 'start';
+                        })
+                        .text(function (d) {
+                            return d.name;
+                        })
+                        .style('fill-opacity', 1e-6);
 
-                        nodeEnter.append('circle')
-                            .attr('r', 1e-6)
-                            .attr('class', function(d){ return d._children ? d.collapse : d.expand ; });
+                    /************************************************************
+                     ********************* UPDATE NODES *************************
+                     ************************************************************/
 
-                        nodeEnter.append('text')
-                            .attr('x', function(d) { return -(d.name.length / 2.5) * 10 })
-                            .attr('dy', '-1em')
-                            .attr('text-anchor', function(d) { return 'start'; })
-                            .text(function(d) { return d.name; })
-                            .style('fill-opacity', 1e-6);
+                    // Transition nodes to their new position
+                    var nodeUpdate = node.transition()
+                        .duration(duration)
+                        .attr('transform', function (d) {
+                            return 'translate(' + d.y + ',' + d.x + ')';
+                        });
 
-                        /************************************************************
-                         ********************* UPDATE NODES *************************
-                         ************************************************************/
+                    nodeUpdate.select('circle')
+                        .attr('r', 10)
+                        .attr('class', function (d) {
+                            return d._children ? d.collapse : d.expand;
+                        });
 
-                        // Transition nodes to their new position
-                        var nodeUpdate = node.transition()
-                            .duration(duration)
-                            .attr('transform', function(d) { return 'translate(' + d.y + ',' + d.x + ')'; });
+                    nodeUpdate.select('text')
+                        .style('fill-opacity', 1);
 
-                        nodeUpdate.select('circle')
-                            .attr('r', 10)
-                            .attr('class', function(d) { return d._children ? d.collapse : d.expand; });
+                    /************************************************************
+                     ********************* REMOVED NODES ************************
+                     ************************************************************/
 
-                        nodeUpdate.select('text')
-                            .style('fill-opacity', 1);
+                    // Transition exiting nodes to the parent's new position
+                    var nodeExit = node.exit().transition()
+                        .duration(duration)
+                        .attr('transform', function (d) {
+                            return 'translate(' + source.y + ',' + source.x + ')';
+                        })
+                        .remove();
 
-                        /************************************************************
-                         ********************* REMOVED NODES ************************
-                         ************************************************************/
+                    nodeExit.select('circle')
+                        .attr('r', 1e-6)
+                        .remove();
 
-                        // Transition exiting nodes to the parent's new position
-                        var nodeExit = node.exit().transition()
-                            .duration(duration)
-                            .attr('transform', function(d) { return 'translate(' + source.y + ',' + source.x + ')'; })
-                            .remove();
+                    nodeExit.select('text')
+                        .style('fill-opacity', 1e-6)
+                        .remove();
 
-                        nodeExit.select('circle')
-                            .attr('r', 1e-6)
-                            .remove();
+                    /************************************************************
+                     ********************** UPDATE LINKS ************************
+                     ************************************************************/
 
-                        nodeExit.select('text')
-                            .style('fill-opacity', 1e-6)
-                            .remove();
+                    // Update the links
+                    var link = svg.selectAll('path.link')
+                        .data(links, function (d) {
+                            return d.target.id;
+                        });
 
-                        /************************************************************
-                         ********************** UPDATE LINKS ************************
-                         ************************************************************/
+                    /************************************************************
+                     *********************** NEW LINKS **************************
+                     ************************************************************/
 
-                        // Update the links
-                        var link = svg.selectAll('path.link')
-                            .data(links, function(d) { return d.target.id; });
+                        // Enter any new links at the parent's previous position
+                    link.enter().insert('path', 'g')
+                        .attr('class', 'link')
+                        .attr('d', diagonal);
 
-                        /************************************************************
-                         *********************** NEW LINKS **************************
-                         ************************************************************/
+                    // Enter any new links at the parent's previous position.
+                    link.enter().insert('path', 'g')
+                        .attr('class', 'link')
+                        .attr('d', function (d) {
+                            var o = {x: source.x0, y: source.y0};
+                            return diagonal({source: o, target: o});
+                        })
+                        .transition()
+                        .duration(duration)
+                        .attr('d', diagonal);
 
-                            // Enter any new links at the parent's previous position
-                        link.enter().insert('path', 'g')
-                            .attr('class', 'link')
-                            .attr('d', diagonal);
+                    // Transition links to their new position.
+                    link.transition()
+                        .duration(duration)
+                        .attr('d', diagonal);
 
-                        // Enter any new links at the parent's previous position.
-                        link.enter().insert('path', 'g')
-                            .attr('class', 'link')
-                            .attr('d', function(d) {
-                                var o = {x: source.x0, y: source.y0};
-                                return diagonal({source: o, target: o});
-                            })
-                            .transition()
-                            .duration(duration)
-                            .attr('d', diagonal);
+                    /************************************************************
+                     ********************* REMOVED LINKS ************************
+                     ************************************************************/
 
-                        // Transition links to their new position.
-                        link.transition()
-                            .duration(duration)
-                            .attr('d', diagonal);
-
-                        /************************************************************
-                         ********************* REMOVED LINKS ************************
-                         ************************************************************/
-
-                            // Transition exiting nodes to the parent's new position.
-                        link.exit().transition()
-                            .duration(duration)
-                            .attr('d', function(d) {
-                                var o = {x: source.x, y: source.y};
-                                return diagonal({source: o, target: o});
-                            })
-                            .remove();
-                    }
+                        // Transition exiting nodes to the parent's new position.
+                    link.exit().transition()
+                        .duration(duration)
+                        .attr('d', function (d) {
+                            var o = {x: source.x, y: source.y};
+                            return diagonal({source: o, target: o});
+                        })
+                        .remove();
 
                     // Stash the old positions for transition.
-                    nodes.forEach(function(d) {
+                    nodes.forEach(function (d) {
                         d.x0 = d.x;
                         d.y0 = d.y;
                     });
 
                 }
-
             });
         }
     }
