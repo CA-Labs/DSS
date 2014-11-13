@@ -241,7 +241,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
         var description = '';
         _.each($scope.treatmentsSelected, function (treatment) {
             if (treatment.name == treatmentName) {
-                var treatmentOptions = $scope.$eval('{' + treatment.options + '}');
+                var treatmentOptions = typeof treatment.options == "string" ? $scope.$eval('{' + treatment.options + '}') : treatment.options;
                 Object.keys(treatmentOptions).forEach(function (option) {
                     if (option == treatmentValue) {
                         description = treatmentOptions[option];
