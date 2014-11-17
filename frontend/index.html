@@ -409,7 +409,12 @@
                 <div ng-switch="treatmentSelected.representation">
                     <div ng-switch-when="select">
                         <br>
-                        <select ng-show="showTreatmentValues[treatmentSelected.name]" label="treatmentValue" class="form-control" data-hash-key="treatmentSelected.name" ng-model="treatmentValues[treatmentSelected.name]" ng-options="value for (key,value) in treatmentSelected.options | orderBy:'':true">
+                        <select ng-init="treatmentValues[treatmentSelected.name]=utils.keys(treatmentSelected.options)[0]"
+                                ng-show="showTreatmentValues[treatmentSelected.name]"
+                                class="form-control" data-hash-key="treatmentSelected.name"
+                                ng-model="treatmentValues[treatmentSelected.name]"
+                                ng-options="key as value for (key,value) in treatmentSelected.options | orderBy:'key':true" track by $index
+                                ng-change="treatmentValueChanged(treatmentSelected.options[treatmentValues[treatmentSelected.name]], treatmentSelected)">
                             <option value="" disabled selected>--- Select a value ---</option>
                         </select>
                         <br/>

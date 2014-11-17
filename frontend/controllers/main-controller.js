@@ -4,8 +4,8 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash', '$http', '$q', 'localStorageService', 'AssetsService', 'RisksService', 'TreatmentsService', 'ArangoDBService', '$timeout', 'ngDialog'
-    , function($scope, $rootScope, $upload, flash, $http, $q, localStorageService, AssetsService, RisksService, TreatmentsService, ArangoDBService, $timeout, ngDialog){
+dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash', '$http', '$q', 'localStorageService', 'AssetsService', 'RisksService', 'TreatmentsService', 'CloudService', 'ArangoDBService', '$timeout', 'ngDialog'
+    , function($scope, $rootScope, $upload, flash, $http, $q, localStorageService, AssetsService, RisksService, TreatmentsService, CloudService, ArangoDBService, $timeout, ngDialog){
 
     //Initialization
 
@@ -178,25 +178,31 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
      * @param event
      */
     $scope.saveCloudSelection = function (event) {
-        // Remove cloudType property added by the app from TA assets
-        // angular.toJson call is required to remove $$_ internal properties
-        var copy = _.clone(JSON.parse(angular.toJson(AssetsService.getXmlTaObject())));
-        if(_.isArray(copy.resourceModelExtension.resourceContainer)){
-            _.each(copy.resourceModelExtension.resourceContainer, function(resourceContainer, index){
-                delete copy.resourceModelExtension.resourceContainer[index]['cloudType'];
-            });
-        } else if(_.isObject(copy.resourceModelExtension.resourceContainer)){
-            delete copy.resourceModelExtension.resourceContainer['cloudType'];
-        }
+        var selectedServices = CloudService.getServicesSelected();
+        if(!selectedServices || typeof selectedServices === 'undefined' || selectedServices.length == 0){
+            flash.error = 'No cloud services were selected, nothing to export.'
+            return;
+        } else {
+            // Remove cloudType property added by the app from TA assets
+            // angular.toJson call is required to remove $$_ internal properties
+            var copy = _.clone(JSON.parse(angular.toJson(AssetsService.getXmlTaObject())));
+            if(_.isArray(copy.resourceModelExtension.resourceContainer)){
+                _.each(copy.resourceModelExtension.resourceContainer, function(resourceContainer, index){
+                    delete copy.resourceModelExtension.resourceContainer[index]['cloudType'];
+                });
+            } else if(_.isObject(copy.resourceModelExtension.resourceContainer)){
+                delete copy.resourceModelExtension.resourceContainer['cloudType'];
+            }
 
-        var element = angular.element(event.target);
-        // Set export file name
-        var fileName = 'DSS_CloudServicesSelection.xml';
-        element.attr({
-            download: fileName,
-            href: 'data:application/xml;charset=utf-8,' + decodeURI(x2js.json2xml_str(copy)),
-            target: '_blank'
-        });
+            var element = angular.element(event.target);
+            // Set export file name
+            var fileName = 'DSS_CloudServicesSelection.xml';
+            element.attr({
+                download: fileName,
+                href: 'data:application/xml;charset=utf-8,' + decodeURI(x2js.json2xml_str(copy)),
+                target: '_blank'
+            });
+        }
     };
 
     /************************ DSS GRAPH WITH SELECTION ***********************

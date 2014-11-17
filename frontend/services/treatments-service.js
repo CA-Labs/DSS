@@ -108,7 +108,7 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
      * @returns {*}
      */
     this.getTreatmentValue = function(treatmentName){
-        return treatmentsValues[treatmentName];
+        return parseInt(treatmentsValues[treatmentName]);
     };
 
     /**
