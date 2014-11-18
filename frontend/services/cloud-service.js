@@ -290,7 +290,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
         // Normalization
         _.each(filteredProposals, function(proposals, taAssetId){
             _.each(proposals, function(proposal, index){
-                filteredProposals[taAssetId][index].score = proposal.mitigatedRisks.length || 1;
+                filteredProposals[taAssetId][index].score = proposal.unacceptableRisks.length == 0 ? 1 : proposal.mitigatedRisks.length;
                 filteredProposals[taAssetId][index].total = proposal.unacceptableRisks.length || 1;
             });
         });
