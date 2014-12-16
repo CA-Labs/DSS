@@ -10,7 +10,7 @@
  * Manages all data retrieval from the
  * ArangoDB database instance.
  */
-dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
+dssApp.service('ArangoDBService', ['$http', '$q', 'ArangoClient', function($http, $q, ArangoClient){
 
     //Set Authorization header
     $http.defaults.headers.common['Authorization'] = 'Basic ' + btoa('root:CATech2014!');
@@ -99,12 +99,11 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
      * on data retrieval.
      */
     this.getBSOIA = function(callback){
-        $http({method: 'GET', url: self.FOXX_API.getBSOIA()})
-            .success(function(data, status, headers, config){
-                callback(null, data);
-            })
-            .error(function(data, status, headers, config){
-                callback(data, null);
+        ArangoClient.getNodesByType('bsoia')
+            .then(function(res){
+                callback(null, res);
+            }, function(err){
+                callback(err, null);
             });
     };
 
@@ -114,12 +113,11 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
      * on data retrieval.
      */
     this.getTOIA = function(callback){
-        $http({method: 'GET', url: self.FOXX_API.getTOIA(), headers: {}})
-            .success(function(data, status, headers, config){
-                callback(null, data);
-            })
-            .error(function(data, status, headers, config){
-                callback(data, null);
+        ArangoClient.getNodesByType('toia')
+            .then(function(res){
+                callback(null, res);
+            }, function(err){
+                callback(err, null);
             });
     };
 
@@ -129,12 +127,11 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
      * on data retrieval.
      */
     this.getRisks = function(callback){
-        $http({method: 'GET', url: self.FOXX_API.getRisks()})
-            .success(function(data, status, headers, config){
-                callback(null, data);
-            })
-            .error(function(data, status, headers, config){
-                callback(data, null);
+        ArangoClient.getNodesByType('risk')
+            .then(function(res){
+                callback(null, res);
+            }, function(err){
+                callback(err, null);
             });
     };
 
@@ -144,12 +141,11 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
      * on data retrieval.
      */
     this.getTreatments = function(callback) {
-        $http({method: 'GET', url: self.FOXX_API.getTreatments()})
-            .success(function (data, status, headers, config) {
-                callback(null, data);
-            })
-            .error(function (data, status, headers, config) {
-                callback(data, null);
+        ArangoClient.getNodesByType('treatment')
+            .then(function(res){
+                callback(null, res);
+            }, function(err){
+                callback(err, null);
             });
     };
 
@@ -162,12 +158,11 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
      * on data retrieval.
      */
     this.getPotentialRisks = function(bsoia, toia, callback) {
-        $http({method: 'GET', url: self.FOXX_API.getPotentialRisks(bsoia, toia)})
-            .success(function(data, status, headers, config){
-                callback(null, data);
-            })
-            .error(function (data, status, headers, config){
-               callback(data, null);
+        ArangoClient.getPotentialRisks(toia)
+            .then(function(res){
+                callback(null, res);
+            }, function(err){
+                callback(err, null);
             });
     };
 
@@ -179,12 +174,11 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
      * on data retrieval.
      */
     this.getPotentialTreatments = function(risks, callback){
-        $http({method: 'GET', url: self.FOXX_API.getPotentialTreatments(risks)})
-            .success(function(data, status, headers, config){
-                callback(null, data);
-            })
-            .error(function(data, status, headers, config){
-                callback(data, null);
+        ArangoClient.getPotentialTreatments(risks)
+            .then(function(res){
+                callback(null, res);
+            }, function(err){
+                callback(err, null);
             });
     };
 
@@ -193,12 +187,11 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
      * @param callback Callback fn to execute on data retrieval.
      */
     this.getRisksTreatmentsMapping = function(callback){
-        $http({method: 'GET', url: self.FOXX_API.getRisksTreatmentsMapping()})
-            .success(function(data, status, headers, config){
-                callback(null, data);
-            })
-            .error(function(data, status, headers, config){
-                callback(data, null);
+        ArangoClient.getRisksTreatmentsMapping()
+            .then(function(res){
+                callback(null, res);
+            }, function(err){
+                callback(err, null);
             });
     };
 
@@ -207,12 +200,11 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
      * @param callback Callback fn to execute on data retrieval.
      */
     this.getTOIARisksMapping = function(callback){
-        $http({method: 'GET', url: self.FOXX_API.getTOIARisksMapping()})
-            .success(function(data, status, headers, config){
-                callback(null, data);
-            })
-            .error(function(data, status, headers, config){
-                callback(data, null);
+        ArangoClient.getTOIARisksMapping()
+            .then(function(res){
+                callback(null, res);
+            }, function(err){
+                callback(err, null);
             });
     };
 
@@ -221,26 +213,12 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
      * @param callback Callback fn to execute on data retrieval.
      */
     this.getTreatmentsConnectionsPerCloudAndServiceTypes = function(cloudType, serviceType, callback){
-        $http({method: 'GET', url: self.FOXX_API.getTreatmentsConnectionsPerCloudAndServiceTypes(cloudType, serviceType)})
-            .success(function(data, status, headers, config){
-                callback(null, data);
-            })
-            .error(function(data, status, headers, config){
-                callback(data, null);
+        ArangoClient.getTreatmentsConnectionsPerCloudAndServiceTypes(cloudType, serviceType)
+            .then(function(res){
+                callback(null, res);
+            }, function(err){
+                callback(err, null);
             });
-    };
-
-    /**
-     * Get all the data from the given url API endpoint
-     * @param {string} urlEndPoint - valid url end point
-     * @returns {promise}
-     */
-    this.getAll = function (urlEndPoint, callback) {
-        $http.get(self.FOXX_API.getUrl(urlEndPoint)).success(function (data) {
-            callback(null, data);
-        }).error(function (err) {
-            callback(err, null);
-        });
     };
 
     /**
@@ -250,47 +228,12 @@ dssApp.service('ArangoDBService', ['$http', '$q', function($http, $q){
      * @returns Service proposal array matching requested criteria.
      */
     this.getProposalsByCloudAndServiceTypes = function(cloudType, serviceType, callback){
-        $http.get(self.FOXX_API.getProposalsByCloudAndServiceTypes(cloudType, serviceType))
-            .success(function(data, status, headers, config){
-                callback(null, data);
-            })
-            .error(function(data, status, headers, config){
-                callback(data, null);
+        ArangoClient.getProposalsByCloudAndServiceTypes(cloudType, serviceType)
+            .then(function(res){
+                callback(null, res);
+            }, function(err){
+                callback(err, null);
             });
-    };
-
-    /**
-     * Save new object
-     * @param {string} urlEndPoint - valid url end point
-     * @param {object} data - data to be saved
-     * @returns {promise}
-     */
-    this.save = function (urlEndPoint, data) {
-        var deffered = $q.defer();
-        $http.post(self.FOXX_API.postUrl(), data).success(function (data) {
-            deffered.resolve(data);
-        }).error(function (err) {
-            deffered.reject(err);
-        });
-
-        return deffered.promise;
-    };
-
-    /**
-     * Update existing object
-     * @param {string} urlEndPoint - valid url end point - need to contain the key
-     * @param {object} data - data to be saved
-     * @returns {promise}
-     */
-    this.update = function (urlEndPoint, data) {
-        var deffered = $q.defer();
-        $http.put(self.FOXX_API.getUrl(urlEndPoint), data).success(function (data) {
-            deffered.resolve(data);
-        }).error(function (err) {
-            deffered.reject(err);
-        });
-
-        return deffered.promise;
     };
 
     /**

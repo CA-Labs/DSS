@@ -77,8 +77,7 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
                     if(error){
                         // console.log(error);
                     } else {
-                        // console.log(data._documents);
-                        CloudService.setTAProposals(ta, data._documents);
+                        CloudService.setTAProposals(ta, data);
                         $timeout(function(){
                             CloudService.scoreProposals(false);
                         }, 100);
@@ -100,8 +99,7 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
                     if(error){
                         // console.log(error);
                     } else {
-                        // console.log(data._documents);
-                        CloudService.setTAProposals(ta, data._documents);
+                        CloudService.setTAProposals(ta, data);
                     }
                 });
             });

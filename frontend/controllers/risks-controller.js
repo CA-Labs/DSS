@@ -163,8 +163,7 @@ dssApp.controller('risksController'
                 } else {
                     var seen = [];
                     var aux = [];
-                    _.each(data._documents, function(risk){
-                        //TODO: Move this logic to an Angular filter
+                    _.each(data, function(risk){
                         //Filter repeated risks by hand since AngularJS filter "unique" does not seem to work properly
                         if(seen.indexOf(risk.destination.name) === -1){
                             seen.push(risk.destination.name);
@@ -188,8 +187,7 @@ dssApp.controller('risksController'
            } else {
                var seen = [];
                var aux = [];
-               _.each(data._documents, function(risk){
-                   //TODO: Move this logic to an Angular filter
+               _.each(data, function(risk){
                    //Filter repeated risks by hand since AngularJS filter "unique" does not seem to work properly
                    if(seen.indexOf(risk.destination.name) === -1){
                        seen.push(risk.destination.name);
@@ -628,7 +626,7 @@ dssApp.controller('risksController'
             flash.error = 'Some error occurred while fetching TOIA/risks mapping values';
         } else {
             var mapping = {};
-            _.each(data._documents, function (e) {
+            _.each(data, function (e) {
                 mapping[e.toia] = e.risks;
             });
             RisksService.setTOIARisksMapping(mapping);

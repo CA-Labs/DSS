@@ -53,7 +53,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
             } else {
 
                 var aux = [];
-                _.each(data._documents, function (riskTreatments) {
+                _.each(data, function (riskTreatments) {
                     var treatments = riskTreatments.treatments;
                     _.each(treatments, function (treatment) {
                         if (_.filter(aux, function (e) {
@@ -266,7 +266,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
             flash.error = 'Some error occurred while fetching risks/treatments mapping values';
         } else {
             var mapping = {};
-            _.each(data._documents, function (e) {
+            _.each(data, function (e) {
                 mapping[e.risk] = e.treatments;
             });
             TreatmentsService.setRisksTreatmentsMapping(mapping);
@@ -299,7 +299,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
                 flash.error = 'Some error occurred while fetching treatments connections to services with certain cloud and service types';
             } else {
                 var connections = [];
-                _.each(data._documents, function (treatments) {
+                _.each(data, function (treatments) {
                     if (connections.indexOf(treatments.treatments) == -1) {
                         connections.push(treatments.treatments);
                     }
@@ -332,7 +332,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
                     flash.error = 'Some error occurred while fetching treatments connections to services with certain cloud and service types';
                 } else {
                     var connections = [];
-                    _.each(data._documents, function (treatments) {
+                    _.each(data, function (treatments) {
                         if (connections.indexOf(treatments.treatments) == -1) {
                             connections.push(treatments.treatments);
                         }
@@ -345,12 +345,14 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
 
     $scope.potentialTreatmentsGroupedAndFiltered = function (cloudType, serviceType) {
         var newArray = [];
-        // console.log($scope.potentialTreatmentsGrouped);
         _.each($scope.potentialTreatmentsGrouped, function (item) {
             if (_.contains(TreatmentsService.getTreatmentsConnectedToCloudAndServiceTypes(cloudType, serviceType), item.treatment.name)) {
                 newArray.push(item);
             }
         });
+        console.log($scope.potentialTreatmentsGrouped)
+        console.log(newArray, cloudType, serviceType);
+        console.log("*******");
         return newArray;
     };
 }]);
