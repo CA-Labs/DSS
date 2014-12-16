@@ -179,6 +179,8 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
      * @param {object} taAsset - ta asset object to which the proposal is assigned to
      */
     $scope.selectService = function (proposals) {
+        // set the service as selected // TEMP solution for M24 review
+        proposals.isSelected = !proposals.isSelected;
         CloudService.setServicesSelected(proposals);
         AssetsService.setXmlTaObject(prepareJsonToXml(AssetsService.getXmlTaObject(), proposals));
     };
@@ -225,20 +227,21 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
      * @returns {boolean}
      */
     $scope.isSelected = function (listItem) {
-        var selected = true;
-        if($scope.servicesSelected.length == 0) {
-            selected = false;
-        }
-        if(listItem.length != $scope.servicesSelected.length){
-            selected = false;
-        } else {
-            _.each(listItem, function (item, index) {
-                if (item.service._id !== $scope.servicesSelected[index].service._id) {
-                    selected = false;
-                }
-            });
-        }
-        return selected;
+        return (!!listItem.isSelected);
+        //var selected = true;
+        //if($scope.servicesSelected.length == 0) {
+        //    selected = false;
+        //}
+        //if(listItem.length != $scope.servicesSelected.length){
+        //    selected = false;
+        //} else {
+        //    _.each(listItem, function (item, index) {
+        //        if (item.service._id !== $scope.servicesSelected[index].service._id) {
+        //            selected = false;
+        //        }
+        //    });
+        //}
+        //return selected;
     };
 
     /**

@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="components/ngDialog/css/ngDialog.css"/>
     <link rel="stylesheet" href="components/ngDialog/css/ngDialog-theme-default.css"/>
 </head>
-<body>
+<body ng-cloak>
 <div class="container-fluid margin-10">
 <div class="row">
     <div class="col-lg-4 logo"></div>
@@ -534,10 +534,13 @@
 <button class="btn btn-default btn-sm scroll-top">Back to Top&nbsp;<span class="glyphicon glyphicon-circle-arrow-up"></span></button>
 
 <!-- Don't change scripts order, it is important to keep it so it is -->
-<script src="components/jquery/dist/jquery.min.js"></script>
-<script src="components/jquery-ui/jquery-ui.min.js"></script>
+<!--<script src="components/jquery/dist/jquery.min.js"></script>-->
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+<!--<script src="components/jquery-ui/jquery-ui.min.js"></script>-->
+<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.0/jquery-ui.min.js"></script>
 <script src="components/ng-file-upload/angular-file-upload-shim.js"></script>
-<script src="components/angular/angular.js"></script>
+<!--<script src="components/angular/angular.js"></script>-->
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.2.21/angular.min.js"></script>
 <script src="components/angular-local-storage/angular-local-storage.js"></script>
 <script src="components/bootstrap/dist/js/bootstrap.js"></script>
 <script src="components/bootstrap/js/transition.js"></script>
