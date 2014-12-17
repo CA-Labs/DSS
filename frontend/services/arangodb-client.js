@@ -10,7 +10,7 @@ dssApp.service('ArangoClient', ['$q', function($q){
      ************************** INITIALIZATION ************************
      ******************************************************************/
 
-    var host = "localhost";
+    var host = window.location.host;
     var db = "dss";
 
     var db = new arango.Connection({_name: db, _server: {hostname: host}});
