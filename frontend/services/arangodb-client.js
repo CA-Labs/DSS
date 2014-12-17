@@ -10,10 +10,10 @@ dssApp.service('ArangoClient', ['$q', function($q){
      ************************** INITIALIZATION ************************
      ******************************************************************/
 
-    var host = window.location.host;
-    var db = "dss";
+    var host = 'db.dss.effortable.com';
+    var db = 'dss';
 
-    var db = new arango.Connection({_name: db, _server: {hostname: host}});
+    var db = new arango.Connection({_name: db, _server: {hostname: host, port: 80}});
 
     /**
      * Tries to create a user-defined AQL function.

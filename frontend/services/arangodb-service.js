@@ -12,82 +12,13 @@
  */
 dssApp.service('ArangoDBService', ['$http', '$q', 'ArangoClient', function($http, $q, ArangoClient){
 
-    //Set Authorization header
-    $http.defaults.headers.common['Authorization'] = 'Basic ' + btoa('root:CATech2014!');
-
-    this.ARANGODB_BASE_URL = 'http://dss.tools.modaclouds.eu/';
-    this.XSD_SERVICE_BASE_URL = 'http://dss.tools.modaclouds.eu:443/';
+    this.XSD_SERVICE_BASE_URL = 'http://validate.dss.effortable.com/';
 
     //Closures
     var self = this;
 
-    //FOXX API endpoints
-    this.FOXX_API = {
-        getUrl: function (url) {
-            return self.ARANGODB_BASE_URL + 'crud/nodes/' + url
-        },
-        postUrl: function () {
-            return self.ARANGODB_BASE_URL + 'crud/nodes';
-        },
-        getBSOIA: function(){
-            return self.ARANGODB_BASE_URL + 'crud/nodes/bsoia'
-        },
-        getTOIA: function(){
-            return self.ARANGODB_BASE_URL + 'crud/nodes/toia'
-        },
-        getRisks: function(){
-            return self.ARANGODB_BASE_URL + 'crud/nodes/risk';
-        },
-        getTreatments: function(){
-            return self.ARANGODB_BASE_URL + 'crud/nodes/treatment';
-        },
-        getPotentialRisks: function(selectedBsoias, selectedToias){
-            //Build correct URL from selectedBsoias/Toias lists
-            var firstBsoia = firstToia = true;
-            var url = self.ARANGODB_BASE_URL + 'graph/potentialRisks?';
-            _.each(selectedBsoias, function(bsoia){
-               if(firstBsoia){
-                   firstBsoia = false;
-                   url += 'bsoias=' + bsoia.name;
-               } else {
-                   url += ',' + bsoia.name;
-               }
-            });
-            _.each(selectedToias, function(toia){
-               if(firstToia){
-                   firstToia = false;
-                   url += '&toias=' + toia.asset.name;
-               } else {
-                   url += ',' + toia.asset.name;
-               }
-            });
-            return url;
-        },
-        getPotentialTreatments: function(selectedRisks){
-            var firstRisk = true;
-            var url = self.ARANGODB_BASE_URL + 'graph/potentialTreatments?';
-            _.each(selectedRisks, function(risk){
-                if(firstRisk){
-                    firstRisk = false;
-                    url += 'risks=' + risk;
-                } else {
-                    url += ',' + risk
-                }
-            });
-            return url;
-        },
-        getRisksTreatmentsMapping: function(){
-            return self.ARANGODB_BASE_URL + 'graph/risksTreatmentsMapping';
-        },
-        getTOIARisksMapping: function(){
-            return self.ARANGODB_BASE_URL + 'graph/toiaRisksMapping';
-        },
-        getTreatmentsConnectionsPerCloudAndServiceTypes: function(cloudType, serviceType){
-            return self.ARANGODB_BASE_URL + 'graph/treatmentsConnectionsPerCloudAndServiceTypes?cloudType=' + cloudType + '&serviceType=' + serviceType;
-        },
-        getProposalsByCloudAndServiceTypes: function(cloudType, serviceType){
-            return self.ARANGODB_BASE_URL + 'graph/lookupServices?queryType=1&cloudType=' + cloudType + '&serviceType=' + serviceType;
-        },
+    //External API endpoints
+    this.API = {
         validateDocument: function(){
             return self.XSD_SERVICE_BASE_URL + 'validateDSSXML';
         }
@@ -242,7 +173,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'ArangoClient', function($http
      * @param callback Callback fn to execute.
      */
     this.validateSchema = function(xmlString, callback){
-        $http({method: 'POST', url: self.FOXX_API.validateDocument(), data: {xmlString: xmlString}})
+        $http({method: 'POST', url: self.API.validateDocument(), data: {xmlString: xmlString}})
             .success(function (data) {
                 callback(null, data);
             })
