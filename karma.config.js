@@ -53,9 +53,7 @@ module.exports = function(config) {
         'frontend/common/mainInterfaces.js',
         'frontend/directives/*.js',
         // test js files
-        'frontend/components/angular-mocks/angular-mocks.js',
-        'test/frontend/**/*.js',
-        'test/backend/**/*.js'
+        'frontend/components/angular-mocks/angular-mocks.js'
     ],
 
 
