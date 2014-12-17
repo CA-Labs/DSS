@@ -585,9 +585,10 @@ dssApp.controller('risksController'
     $scope.potentialRisksGrouped = function(){
         var data = [];
         var potentialRiskNames = $scope.potentialRisks.map(function(potentialRisk) { return potentialRisk.destination.name });
+        var selectedToiaNames = AssetsService.getTOIA().map(function(toia){ return toia.asset.name });
         _.each($scope.toiaRisksMapping, function(values, key){
             _.each(values, function(value){
-                if(_.contains(potentialRiskNames, value)){
+                if(_.contains(potentialRiskNames, value) && _.contains(selectedToiaNames, key)){
                     data.push({group: key, risk: $scope.getRiskByName(value)});
                 }
             });

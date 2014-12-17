@@ -350,9 +350,6 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
                 newArray.push(item);
             }
         });
-        console.log($scope.potentialTreatmentsGrouped)
-        console.log(newArray, cloudType, serviceType);
-        console.log("*******");
         return newArray;
     };
 }]);
