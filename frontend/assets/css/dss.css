@@ -393,3 +393,19 @@ circle.node-treatment-collapse {
   top: 0;
   display: none;
   z-index: 10000; }
+
+.mitigation-all {
+  stroke: green;
+  fill: none; }
+
+.mitigation-some {
+  stroke: orange;
+  fill: none; }
+
+.mitigation-none {
+  stroke: red;
+  fill: none; }
+
+.mitigation-undefined {
+  stroke: grey;
+  fill: none; }
