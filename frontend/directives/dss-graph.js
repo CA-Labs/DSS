@@ -217,19 +217,24 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                             }
                         });
 
-                        console.log('Original links', links);
+                        //console.log('Original links', links);
 
                         // Modify original links
+                        var linksIdsUsed = [];
                         _.each(links, function(link, index){
                             _.each(auxLinks, function(auxLink){
-                                if(link.source.name == auxLink.source.name && link.target.name == auxLink.target.name){
+                                if(link.source.name == auxLink.source.name && link.target.name == auxLink.target.name && !linksIdsUsed.indexOf(link.target.id)){
+                                    linksIdsUsed.push(link.target.id);
                                     links[index] = auxLink
                                 }
-                            })
+                            });
                         });
 
-                        console.log('Modified links', links)
+                        //console.log('Modified links', links)
                     }
+
+                    console.log('NODES', nodes);
+                    console.log('LINKS', links);
 
                     // Normalize for fixed depth
                     nodes.forEach(function (d) {
@@ -330,7 +335,7 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                         // Enter any new links at the parent's previous position.
                     link.enter().insert('path', 'g')
                         .attr('class', 'link')
-                        //.attr('class', function(d){ return d.mitigationClass})
+                        .attr('class', function(d){ return d.mitigationClass})
                         .attr('d', function (d) {
                             var o = {x: source.x0, y: source.y0};
                             return diagonal({source: o, target: o});
