@@ -18,7 +18,7 @@ html, body {
   margin-right: 10px; }
 
 .logo {
-  background: url("../img/image4094_1.png") no-repeat white;
+  background: url("../img/image4094_1.png") no-repeat #ffffff;
   display: block;
   width: 111px;
   height: 65px;
@@ -314,6 +314,9 @@ blockquote {
 .service-selected {
   border: 2px solid #f39c12; }
 
+.has-risks {
+  border-color: #e01010; }
+
 .center-text {
   text-align: center; }
 
@@ -321,7 +324,8 @@ blockquote {
   background-color: indianred; }
 
 span.selected.label {
-  font-size: 2em; }
+  font-size: 2em;
+  line-height: 2em; }
 
 .acceptable-risk {
   background-color: palegreen; }
@@ -409,3 +413,5 @@ circle.node-treatment-collapse {
 .mitigation-undefined {
   stroke: grey;
   fill: none; }
+
+/*# sourceMappingURL=dss.css.map */

@@ -244,11 +244,22 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
         //return selected;
     };
 
+    /**
+     * Check if the deployment strategy has unmitigated risks or not
+     * @param deployment
+     * @returns {boolean}
+     */
     $scope.hasUnmitigatedRisks = function (deployment) {
 
-        _.each(deployment, function (service, key) {
+        var hasUnmitigatedRisks = false;
 
-        })
+        _.each(deployment, function (service) {
+            if (service.unacceptableRisks.length != service.mitigatedRisks.length) {
+                hasUnmitigatedRisks = true;
+            }
+        });
+
+        return hasUnmitigatedRisks;
 
     };
 

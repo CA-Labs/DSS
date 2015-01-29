@@ -54,7 +54,7 @@ dssApp.directive('popupRightWithContent', ['$timeout', function ($timeout) {
         link: function(scope, element, attr) {
             element.popover({
                 trigger: 'manual',
-                placement: 'right',
+                placement: 'right'
                 //template: 'frontend/partials/ta/popover.html'
                 //content: attr.popoverContent
             });

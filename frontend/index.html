@@ -443,7 +443,12 @@
                             <br/>
                         </div>
                         <div class="center-block center-text">
-                            <span class="selected label label-warning" ng-show="isSelected(result)">
+                            <span class="selected hasRisks label label-danger" ng-show="hasUnmitigatedRisks(result)" data-content="Some risks are unmitigated within one or more providers." popup-right>
+                                <i class="glyphicon glyphicon-exclamation-sign"></i>
+                            </span>
+                        </div>
+                        <div class="center-block center-text">
+                            <span class="selected label label-warning" ng-show="isSelected(result)" >
                                 <i class="glyphicon glyphicon-ok"></i>
                             </span>
                         </div>

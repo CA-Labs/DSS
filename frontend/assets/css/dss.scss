@@ -411,6 +411,10 @@ blockquote {
   border: 2px solid #f39c12;
 }
 
+.has-risks {
+  border-color: #e01010;
+}
+
 .center-text {
   text-align: center;
 }
@@ -422,6 +426,7 @@ blockquote {
 span.selected.label
 {
   font-size: 2em;
+  line-height: 2em;
 }
 
 .acceptable-risk {
