@@ -250,7 +250,6 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
      * @returns {boolean}
      */
     $scope.hasUnmitigatedRisks = function (deployment) {
-
         var hasUnmitigatedRisks = false;
 
         _.each(deployment, function (service) {
