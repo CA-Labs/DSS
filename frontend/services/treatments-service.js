@@ -12,7 +12,8 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
     var treatments = treatmentsFromStorage;
 
     var treatmentsValuesFromStorage = localStorageService.get('treatmentValues') || {};
-    var treatmentsValues = treatmentsValuesFromStorage;         // Treatments values model used to store select/sliders/radio UI components values
+    var treatmentsValues = treatmentsValuesFromStorage;         // Treatments values model used to store
+                                                                // select/sliders/radio UI components values
 
     var risksTreatmentsMappingFromStorage = localStorageService.get('risksTreatmentsMapping') || {};
     var risksTreatmentsMapping = risksTreatmentsMappingFromStorage;
@@ -372,6 +373,14 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
         if (taPos > -1) {
             treatment.taRelations.splice(taPos, 1);
         }
+    };
+
+    /**
+     * Count Treatments Selected
+     * @returns {Number}
+     */
+    this.countTreatmentsSelected = function () {
+        return treatments.length;
     };
 
 }]);

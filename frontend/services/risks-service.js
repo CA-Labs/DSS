@@ -6,6 +6,9 @@
 
 dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService', function(flash, localStorageService, ArangoDBService){
 
+    // closure
+    var self = this;
+
     var risks = [];
 
     var risksLikelihoodConsequenceFromStorage = localStorageService.get('simpleRisksLikelihoodConsequence') || {};                              //Likelihood/consequences values for each risk (as a whole) of the form
@@ -44,6 +47,25 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
                 flash.warn = 'This risk has been already added';
             }
         }
+    };
+
+    /**
+     * set Standardised Likelihood across all the riskBoundModels when the switch "Specify Likelihood"
+     * is positioned as "NO"
+     */
+    this.setStandardisedLikelihood = function () {
+        _.each(riskBoundModels, function (value, key) {
+            var splitKey = key.split('/');
+            if (splitKey[splitKey.length - 1] == 'likelihood') {
+                riskBoundModels[key] = 5;
+                if (risksTALikelihoodConsequence.hasOwnProperty(key)) {
+                    risksTALikelihoodConsequence[key] = 5;
+                }
+                if (risksLikelihoodConsequence.hasOwnProperty(key)) {
+                    risksLikelihoodConsequence[key] = 5;
+                }
+            }
+        });
     };
 
     /**
@@ -407,6 +429,14 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
      */
     this.getRisksFromTOIA = function(toiaAssetName){
         return toiaRisksMapping[toiaAssetName];
+    };
+
+    /**
+     * Count Risks Selected
+     * @returns {Number}
+     */
+    this.countRisksSelected = function () {
+        return risks.length;
     };
 
 }]);
