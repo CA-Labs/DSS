@@ -68,6 +68,19 @@ blockquote {
   & > li {
     & > a {
       border-radius: 0px !important;
+      padding-left: 1px;
+//      padding-right: 1px;
+      .checkpoint-icon {
+        font-size: 1.3em;
+        position: relative;
+        top: 5px;
+      }
+      & i.green {
+        color: #27ae60;
+      }
+      & i.red {
+        color: #c0392b;
+      }
     }
     float: left;
     background-color: #eee;
@@ -75,39 +88,48 @@ blockquote {
     overflow: visible;
 //    padding: 8px;
     border: {
-      left: 15px solid #fff;
+      left: 35px solid #fff;
       right: 10px solid #fff;
     }
     &:first-child {
       border-left: 0;
+      & > a {
+        padding-left: 15px;
+      }
     }
     &:last-child {
       border-right: 0;
       float: right;
+      & > a {
+        padding-left: 15px;
+      }
     }
     .nav-arrow {
       position: absolute;
       top: 0;
-      right: -20px;
+      right: -40px;
       width: 0;
       height: 0;
       border: {
         style: solid;
-        width: 21px 0 20px 20px;
+        width: 32px 15px 33px 25px;
         color: transparent transparent transparent #eee;
       }
-    ;
       z-index: 150;
+    }
+    small {
+      color: #999;
+      margin-left: 23px;
     }
     .nav-wedge {
       position: absolute;
       top: 0;
-      left: -20px;
+      left: -40px;
       width: 0;
       height: 0;
       border: {
         style: solid;
-        width: 21px 0 20px 20px;
+        width: 32px 15px 33px 25px;
         color: #eee #eee #eee transparent;
       }
       z-index: 150;
@@ -119,6 +141,9 @@ blockquote {
     }
     .nav-wedge {
       border-color: #2c3e50 #2c3e50 #2c3e50 transparent;
+    }
+    small {
+      color: #ccc;
     }
   }
 }
@@ -411,6 +436,10 @@ blockquote {
   border: 2px solid #f39c12;
 }
 
+.has-risks {
+  border-color: #e01010;
+}
+
 .center-text {
   text-align: center;
 }
@@ -422,6 +451,7 @@ blockquote {
 span.selected.label
 {
   font-size: 2em;
+  line-height: 2em;
 }
 
 .acceptable-risk {

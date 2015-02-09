@@ -66,35 +66,54 @@
 </div>
 <!--end navbar-->
 <!-- main container-->
-<div class="row mainContainer">
+<div class="row mainContainer" ng-controller="mainController">
 <ul class="nav nav-pills nav-wizard">
     <li class="active bsoia-slide">
-        <a href="#">Business Oriented intangible assets</a>
+        <a href="#">
+            <i class="glyphicon checkpoint-icon" ng-class="{'glyphicon-ok-circle green': haveBSOIASelected(), 'glyphicon-remove-circle red': !haveBSOIASelected() }"></i> Business Oriented intangible assets <br/>
+            <small> Business Decision Maker</small>
+
+        </a>
         <div class="nav-arrow"></div>
     </li>
     <li class="toia-slide">
         <div class="nav-wedge"></div>
-        <a href="#">Technical Oriented intangible assets</a>
+        <a href="#">
+            <i class="glyphicon checkpoint-icon" ng-class="{'glyphicon-ok-circle green': haveTOIASelected(), 'glyphicon-remove-circle red': !haveTOIASelected() }"></i> Technical Oriented intangible assets <br/>
+            <small>Architect</small>
+        </a>
         <div class="nav-arrow"></div>
     </li>
     <li class="ta-slide">
         <div class="nav-wedge"></div>
-        <a href="#">Tangible assets</a>
+        <a href="#">
+            <i class="glyphicon checkpoint-icon" ng-class="{'glyphicon-ok-circle green': isTALoaded(), 'glyphicon-remove-circle red': !isTALoaded() }"></i> Tangible assets <br/>
+            <small>Architect</small>
+        </a>
         <div class="nav-arrow"></div>
     </li>
     <li class="risks-slide">
         <div class="nav-wedge"></div>
-        <a href="#">Risks</a>
+        <a href="#">
+            <i class="glyphicon checkpoint-icon" ng-class="{'glyphicon-ok-circle green': haveRisksSelected(), 'glyphicon-remove-circle red': !haveRisksSelected() }"></i> Risks <br/>
+            <small>Risk Policy Manager</small>
+        </a>
         <div class="nav-arrow"></div>
     </li>
     <li class="treatments-slide">
         <div class="nav-wedge"></div>
-        <a href="#">Treatments</a>
+        <a href="#">
+            <i class="glyphicon checkpoint-icon" ng-class="{'glyphicon-ok-circle green': haveTreatmentsSelected(), 'glyphicon-remove-circle red': !haveTreatmentsSelected() }"></i> Treatments <br/>
+            <small>Architect</small>
+        </a>
         <div class="nav-arrow"></div>
     </li>
     <li class="services-slide">
         <div class="nav-wedge"></div>
-        <a href="#">Cloud Services</a>
+        <a href="#">
+            <i class="glyphicon checkpoint-icon glyphicon-cloud"></i> Cloud Services <br/>
+            <small> </small>
+        </a>
     </li>
     <li class="nav-buttons" ng-controller="buttonsController">
         <button class="btn btn-primary slide-prev" href="#dssSlides" data-slide="prev" disabled>Previous step</button>
@@ -254,7 +273,9 @@
         <div class="list-group">
             <div>
                 <input name="risks-per-ta" bs-switch ng-model="showRiskPerTA" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleActivation()"/>
-                <label class="pull-right">Specify risk per tangible asset&nbsp;</label>
+                <label class="pull-right">&nbsp;&nbsp;Specify risk per tangible asset&nbsp;</label>
+                <input name="risks-per-ta" ng-model="specifyLikelihood" bs-switch type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleStandardiseLikelihood()"/>
+                <label class="pull-right">Specify Likelihood&nbsp;</label>
                 <h4 ng-show="risksSelected.length > 0">Risks Selected</h4>
             </div>
             <div class="list-group-item selected-risk risk-container" href="#" ng-repeat="risk in risksSelected track by $index">
@@ -271,7 +292,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6" style="margin-top: 10px;" >
+                    <div class="col-lg-6" style="margin-top: 10px;" ng-show="specifyLikelihood">
                         <p style="margin-bottom: 15px" class="popover-enabled">Likelihood: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Probability/frequency of risk to occur" popup-right></i></p>
                         <div on-risks-type="simple" data-type="likelihood">
                             <div style="width: 80%; margin-bottom: 15px;" slider data-model="simple" data-hash-key="{{risk.destination.name + '/likelihood'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '/likelihood']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
@@ -279,7 +300,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6" style="margin-top: 10px">
+                    <div class="" style="margin-top: 10px" ng-class="{ 'col-lg-12': !specifyLikelihood, 'col-lg-6': specifyLikelihood }">
                         <p style="margin-bottom: 15px;">Consequence: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Impact of risk on asset" popup-right></i></p>
                         <div on-risks-type="simple" data-type="consequence">
                             <div style="width: 80%; margin-bottom: 15px;" slider data-model="simple" data-hash-key="{{risk.destination.name + '/consequence'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '/consequence']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
@@ -306,7 +327,7 @@
                             <span ng-switch-when="PaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudPlatform._serviceType }}"><strong>{{taAsset.cloudPlatform._serviceName}}</strong></span>
                         </div>
                         <br/>
-                        <div class="col-lg-6" style="margin-top: 10px; display: block;">
+                        <div class="col-lg-6" style="margin-top: 10px; display: block;" ng-show="specifyLikelihood">
                             <p style="margin-bottom: 15px">Likelihood: <i class="glyphicon glyphicon-info-sign"  data-toggle="popover" data-placement="top" data-content="Probability/frequency of risk to occur" popup-right></i> </p>
                             <div on-risks-type="multiple" data-type="likelihood" ng-switch="taAsset.cloudType">
                                 <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-model="multiple" data-hash-key="{{$parent.risk.destination.name + '/' + taAsset._id + '/likelihood'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '/' + taAsset._id + '/likelihood']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
@@ -317,7 +338,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="col-lg-6" style="margin-top: 10px; display: block">
+                        <div class="" style="margin-top: 10px; display: block" ng-class="{'col-lg-12': !specifyLikelihood, 'col-lg-6': specifyLikelihood }">
                             <p style="margin-bottom: 15px;">Consequence: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Impact of risk on asset" popup-right></i></p>
                             <div on-risks-type="multiple" data-type="consequence" ng-switch="taAsset.cloudType">
                                 <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-model="multiple" data-hash-key="{{$parent.risk.destination.name + '/' + taAsset._id + '/consequence'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '/' + taAsset._id + '/consequence']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
@@ -384,7 +405,7 @@
                     <input name="showTreatmentValues" bs-switch ng-model="showTreatmentValues[treatmentSelected.name]" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleTreatmentValues(treatmentSelected.name)">
                     <label class="pull-right">Specify treatment value&nbsp;</label>
                 </div>
-                <strong>{{ treatmentSelected.name }}</strong>
+                <strong>{{ treatmentSelected.label }}</strong>
                 <div class="row">
                     <div class="col-lg-12 col-sm-12">
                         Associated risks:
@@ -433,7 +454,7 @@
     <div class="col-lg-12">
         <!--per deployment results-->
         <ul class="list-group">
-            <li class="list-group-item service-proposal-panel" ng-class="{ 'service-selected': isSelected(result) }" on-repeat-done ng-repeat="result in getDeploymentProposals() | multicloudReplication | orderBy:'overallScore':true track by $index">
+            <li class="list-group-item service-proposal-panel" ng-class="{ 'service-selected': isSelected(result), 'has-risks': hasUnmitigatedRisks(result) }" on-repeat-done ng-repeat="result in getDeploymentProposals() | multicloudReplication | orderBy:'overallScore':true track by $index">
                 <div class="row" ng-click="selectService(result)">
                     <div class="col-lg-1">
                         <div class="well service-proposal-score service-proposal-score-overall">
@@ -443,7 +464,12 @@
                             <br/>
                         </div>
                         <div class="center-block center-text">
-                            <span class="selected label label-warning" ng-show="isSelected(result)">
+                            <span class="selected hasRisks label label-danger" ng-show="hasUnmitigatedRisks(result)" data-content="Some risks are unmitigated within one or more providers." popup-right>
+                                <i class="glyphicon glyphicon-exclamation-sign"></i>
+                            </span>
+                        </div>
+                        <div class="center-block center-text">
+                            <span class="selected label label-warning" ng-show="isSelected(result)" >
                                 <i class="glyphicon glyphicon-ok"></i>
                             </span>
                         </div>

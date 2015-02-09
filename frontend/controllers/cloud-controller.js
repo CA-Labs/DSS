@@ -6,9 +6,11 @@
 
 dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'RisksService', 'CloudService', 'localStorageService', 'usSpinnerService', function($scope, $rootScope, $timeout, ArangoDBService, TreatmentsService, AssetsService, RisksService, CloudService, localStorageService, usSpinnerService){
 
-    $scope.ta = AssetsService.getTA();                                  // The selected TA assets loaded from the cloud descriptor xml file
+    $scope.ta = AssetsService.getTA();                                  // The selected TA assets loaded from the cloud
+                                                                        // descriptor xml file
 
-    $scope.proposals = CloudService.getProposals();                     // The cloud service proposals (by TA) offered by the graph engine
+    $scope.proposals = CloudService.getProposals();                     // The cloud service proposals (by TA) offered
+                                                                        // by the graph engine
     localStorageService.bind($scope, 'proposals', $scope.proposals);
 
     $scope.filteredProposals = CloudService.getFilteredProposals();
@@ -240,6 +242,24 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
         //    });
         //}
         //return selected;
+    };
+
+    /**
+     * Check if the deployment strategy has unmitigated risks or not
+     * @param deployment
+     * @returns {boolean}
+     */
+    $scope.hasUnmitigatedRisks = function (deployment) {
+        var hasUnmitigatedRisks = false;
+
+        _.each(deployment, function (service) {
+            if (service.unacceptableRisks.length != service.mitigatedRisks.length) {
+                hasUnmitigatedRisks = true;
+            }
+        });
+
+        return hasUnmitigatedRisks;
+
     };
 
     /**
