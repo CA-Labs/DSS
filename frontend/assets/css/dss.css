@@ -72,6 +72,8 @@ blockquote {
   .nav-pills.nav-wizard > li:last-child {
     border-right: 0;
     float: right; }
+    .nav-pills.nav-wizard > li:last-child > a {
+      padding-left: 15px; }
   .nav-pills.nav-wizard > li .nav-arrow {
     position: absolute;
     top: 0;
