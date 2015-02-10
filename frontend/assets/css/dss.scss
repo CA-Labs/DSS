@@ -542,19 +542,23 @@ circle.node-treatment-collapse {
 .mitigation-all {
   stroke: green;
   fill: none;
+  stroke-width: 3px;
 }
 
 .mitigation-some {
   stroke: orange;
   fill: none;
+  stroke-width: 3px;
 }
 
 .mitigation-none {
   stroke: red;
   fill: none;
+  stroke-width: 3px;
 }
 
 .mitigation-undefined {
   stroke: grey;
   fill: none;
+  stroke-width: 3px;
 }
