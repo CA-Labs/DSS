@@ -64,7 +64,7 @@ blockquote {
     .nav-pills.nav-wizard > li > a i.green {
       color: #27ae60; }
     .nav-pills.nav-wizard > li > a i.red {
-      color: #c0392b; }
+      color: #c9c9c9; }
   .nav-pills.nav-wizard > li:first-child {
     border-left: 0; }
     .nav-pills.nav-wizard > li:first-child > a {
@@ -330,7 +330,7 @@ blockquote {
   margin: 0 auto; }
 
 .service-selected {
-  border: 2px solid #f39c12; }
+  border: 2px solid #27ae60; }
 
 .has-risks {
   border-color: #e01010; }
