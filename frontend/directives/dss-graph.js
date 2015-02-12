@@ -69,50 +69,51 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
 
             };
 
-
-            // Helper functions to expand/collapse tree nodes
-            var toggle = function(node){
-                if(node.children){
-                    node._children = node.children;
-                    node.children = null;
-                } else {
-                    node.children = node._children;
-                    node._children = null;
-                }
-            };
-            var togleAll = function(node){
-                if(node.children){
-                    node.children.forEach(togleAll);
-                }
-                toggle(node);
-            };
-
             // Helper functions to generate tree paths given the links list
             var findPaths = function(links){
-                var sortedLinks = links.sort(function(a, b){ return a.source.depth - b.source.depth });
+                var sortedLinks = _.clone(links.sort(function(a, b){ return a.source.depth - b.source.depth }));
+                var aux = _.clone(sortedLinks);
                 var paths = [];
-                _.each(sortedLinks, function(link, index, cxt){
+                _.each(sortedLinks, function(link, index){
                     // Every single path will start from a BSOIA node
-                    if(link.source.type == 'bsoia') {
-                        var currentPath = [];
+                    //console.log('LINK', index, link);
+                    aux.shift();
+                    var currentPath = [];
+                    if (link.source.type == 'bsoia') {
                         // Add this first edge to the current path
                         currentPath.push(link);
-                        // Use a queue to push unvisited children edges
-                        var queueToVisit = [];
+                        //console.log('CURRENT PATH', _.clone(currentPath));
+                        // Use a stack to push unvisited children edges (depth search)
+                        var stackToVisit = [];
                         // Find next edges to visit and add them to the queue
-                        var children = findLinksStartingByNode(cxt.slice(0, 1), link.target.name);
-                        _.each(children, function(child){ queueToVisit.push(child)});
-                        while(queueToVisit.length > 0){
-                            var currentLink = queueToVisit.shift();
-                            currentPath.push(currentLink);
-                            var children = findLinksStartingByNode(sortedLinks, currentLink.target.name);
-                            if(children.length == 0){
-                                // This means we are on the last edge of a path, store the path
-                                paths.push(_.clone(currentPath));
-                                // Remove last edge added to continue with a different path
-                                currentPath.pop();
-                            } else {
-                                _.each(children, function(child){ queueToVisit.push(child)});
+                        var children = findLinksStartingByNode(aux, link.target.name);
+                        //console.log('CHILDREN', children)
+                        // This is actually the end of the path
+                        if(children.length == 0) {
+                            //console.log('PATH FOUND!', currentPath);
+                            paths.push(currentPath);
+                        } else {
+                            _.each(children, function(child){ stackToVisit.push(child)});
+                            while(stackToVisit.length > 0){
+                                //console.log('STACK', _.clone(stackToVisit));
+                                var currentLink = stackToVisit.pop();
+                                // This is necessary to navigate backwards when some branch has already been visited
+                                while (currentLink.source.name == currentPath[currentPath.length-1].source.name) {
+                                    currentPath.pop();
+                                }
+                                currentPath.push(currentLink);
+                                //console.log('CURRENT PATH', _.clone(currentPath));
+                                var children = findLinksStartingByNode(aux, currentLink.target.name);
+                                //console.log('CHILDREN', children)
+                                if(children.length == 0){
+                                    // This means we are on the last edge of a path, store the path
+                                    paths.push(_.clone(currentPath));
+                                    //console.log('PATH FOUND!', _.clone(currentPath));
+                                    // Remove last edge added to continue with a different path
+                                    currentPath.pop();
+                                } else {
+                                    _.each(children, function(child){ stackToVisit.push(child)});
+                                }
                             }
                         }
                     }
@@ -185,6 +186,55 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                     // Compute the new tree layout
                     var nodes = tree.nodes(root).reverse(),
                         links = tree.links(nodes);
+                    // Initialize mitigation class to empty value
+                    _.each(links, function(link){ link.mitigationClass = "mitigation-undefined"} );
+
+                    // The user already selected some services, display mitigated/unmitigated risks in the tree
+                    if(selectedServices !== null && typeof selectedServices !== 'undefined' && selectedServices.length > 0){
+                        // Find all tree paths
+                        var paths = findPaths(links);
+                        //console.log('Computed paths', paths);
+                        var auxLinks = [];
+                        // Iterate over paths found
+                        _.each(paths, function(path){
+                            // Retrieve the link starting from a Risk asset
+                            var riskLink = path.filter(function(link){ return link.source.type == 'risk'; })[0];
+                            if (riskLink) {
+                                //console.log('RISK LINK', riskLink);
+                                var riskMitigated = 0;
+                                // Check if this link is contained in a path where the risk has been mitigated by some selected service
+                                _.each(selectedServices, function(selectedService){
+                                    if(pathContainingMitigatedRisk(path, riskLink.source.name, selectedService)){
+                                        riskMitigated++;
+                                    }
+                                });
+                                _.each(path, function(link){
+                                    link.mitigationClass = riskMitigated > 0 ? riskMitigated == selectedServices.length ? 'mitigation-all' : 'mitigation-some' : 'mitigation-none';
+                                    auxLinks.push(link);
+                                });
+                            } else {
+                                //console.error("No risk link found in path!", path);
+                            }
+                        });
+
+                        //console.log('Original links', links);
+
+                        // Modify original links
+                        var linksIdsUsed = [];
+                        _.each(links, function(link, index){
+                            _.each(auxLinks, function(auxLink){
+                                if(link.source.name == auxLink.source.name && link.target.name == auxLink.target.name && !linksIdsUsed.indexOf(link.target.id)){
+                                    linksIdsUsed.push(link.target.id);
+                                    links[index] = auxLink
+                                }
+                            });
+                        });
+
+                        //console.log('Modified links', links)
+                    }
+
+                    console.log('NODES', nodes);
+                    console.log('LINKS', links);
 
                     // Normalize for fixed depth
                     nodes.forEach(function (d) {
@@ -192,43 +242,10 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                         d.x = d.x * height / width;
                     });
 
-                    /*
-                     if(selectedServices !== null && typeof selectedServices !== 'undefined' && selectedServices.length > 0){
-                     // The user already selected some services, display mitigated/unmitigated risks in the tree
-
-                     // Find all tree paths
-                     var paths = findPaths(links);
-                     console.log('Computed paths', paths);
-                     var auxLinks = [];
-                     // Iterate over paths found
-                     _.each(paths, function(path){
-                     // Retrieve the link starting from a Risk asset
-                     var riskLink = path.filter(function(link){ return link.source.type == 'risk'; })[0];
-                     var riskMitigated = false;
-                     // Check if this link is contained in a path where the risk has been mitigated by some selected service
-                     _.each(selectedServices, function(selectedService){
-                     if(pathContainingMitigatedRisk(path, riskLink.source.name, selectedService)){
-                     riskMitigated = true;
-                     }
-                     });
-                     _.each(path, function(link){
-                     link.mitigated = riskMitigated ? true : false;
-                     auxLinks.push(link);
-                     });
-                     });
-                     console.log('Original links', links);
-                     console.log('Computed links', auxLinks);
-
-                     }
-
-                     // The user didn't choose any services yet, display assets/risks/treatments connections
-
-                     */
-
                     // Update the nodes
                     var node = svg.selectAll('g.node')
                         .data(nodes, function (d) {
-                            return d.id || (d.id = ++i)
+                            return d.id || (d.id = ++i);
                         });
 
                     /************************************************************
@@ -240,10 +257,6 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                         .attr('class', 'node')
                         .attr('transform', function (d) {
                             return 'translate(' + source.y0 + ',' + source.x0 + ')';
-                        })
-                        .on('click', function (d) {
-                            toggle(d);
-                            update(d);
                         });
 
                     nodeEnter.append('circle')
@@ -319,14 +332,10 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                      *********************** NEW LINKS **************************
                      ************************************************************/
 
-                        // Enter any new links at the parent's previous position
+                        // Enter any new links at the parent's previous position.
                     link.enter().insert('path', 'g')
                         .attr('class', 'link')
-                        .attr('d', diagonal);
-
-                    // Enter any new links at the parent's previous position.
-                    link.enter().insert('path', 'g')
-                        .attr('class', 'link')
+                        .attr('class', function(d){ return d.mitigationClass})
                         .attr('d', function (d) {
                             var o = {x: source.x0, y: source.y0};
                             return diagonal({source: o, target: o});

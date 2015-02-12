@@ -1,0 +1,8 @@
+node_modules
+build
+documentation
+.DS_Store
+components
+*~
+*.log
+test/port.js
