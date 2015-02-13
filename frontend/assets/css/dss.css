@@ -18,7 +18,7 @@ html, body {
   margin-right: 10px; }
 
 .logo {
-  background: url("../img/image4094_1.png") no-repeat #ffffff;
+  background: url("../img/image4094_1.png") no-repeat white;
   display: block;
   width: 111px;
   height: 65px;
@@ -416,6 +416,7 @@ circle.node-treatment-collapse {
   display: none;
   z-index: 10000; }
 
+/* Risks mitigation */
 .mitigation-all {
   stroke: green;
   fill: none;
@@ -436,4 +437,37 @@ circle.node-treatment-collapse {
   fill: none;
   stroke-width: 3px; }
 
-/*# sourceMappingURL=dss.css.map */
+/* Continents map */
+#map .continent {
+  stroke: #ccc; }
+
+#map .continent:hover {
+  fill: #ccb; }
+
+/* Colour the continents */
+.continent[data-name="North America"] {
+  fill: #0067A5; }
+
+.continent[data-name="South America"] {
+  fill: #FF70DB; }
+
+.continent[data-name="Asia"] {
+  fill: #00A86B; }
+
+.continent[data-name="Africa"] {
+  fill: orange; }
+
+.continent[data-name="Europe"] {
+  fill: #CC3333; }
+
+.continent[data-name="Oceania"] {
+  fill: purple; }
+
+.continent[data-name="Antarctica"] {
+  fill: #DDD; }
+
+/* Radar Chart */
+dss-radar svg {
+  margin-top: 20px;
+  display: block;
+  margin: 0 auto; }

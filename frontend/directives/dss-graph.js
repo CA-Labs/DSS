@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'TreatmentsService', 'CloudService', '$window', function(d3Factory, AssetsService, RisksService, TreatmentsService, CloudService, $window){
+dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsService', 'CloudService', '$window', '$timeout', function(AssetsService, RisksService, TreatmentsService, CloudService, $window, $timeout){
     return {
         restrict: 'E',
         scope: {},
@@ -136,11 +136,16 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                 return mitigatedRisk;
             };
 
-            d3Factory.d3().then(function(d3){
+            /********************************************************************
+             *********************** PARTY STARTS HERE **************************
+             ********************************************************************/
 
+            $timeout(function(){
                 // Adapt graph size to current window width and height
                 var modalWidth = $window.innerWidth * 0.75,
                     modalHeight = $window.innerHeight * 0.75;
+
+                console.log('modalWidth', 'modalHeight', modalWidth, modalHeight);
 
                 var margin = {
                     top: modalHeight * 0.03,
@@ -232,9 +237,6 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
 
                         //console.log('Modified links', links)
                     }
-
-                    console.log('NODES', nodes);
-                    console.log('LINKS', links);
 
                     // Normalize for fixed depth
                     nodes.forEach(function (d) {
@@ -369,7 +371,7 @@ dssApp.directive('dssGraph', ['d3Factory', 'AssetsService', 'RisksService', 'Tre
                     });
 
                 }
-            });
+            }, 100);
         }
     }
 }]);
