@@ -9,6 +9,7 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     //BSOIA assets
     var bsoiaFromStorage = localStorageService.get('bsoiaAssetsSelected') || [];
     var bsoia = bsoiaFromStorage;               //BSOIA assets selected by the user
+    var skipBsoia = false;
 
     //TOIA assets
     var toiaFromStorage = localStorageService.get('toiaAssetsSelected') || [];
@@ -25,6 +26,7 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
                                                                             // as object
 
     var deploymentTypeFromStorage = Boolean(localStorageService.get('isMulticloudDeployment')) || true; // set the
+
                                                                                                         // isMulticloudDeployment
                                                                                                         // to be
                                                                                                         // multicloudDeployment
@@ -514,6 +516,15 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
 
     this.countTALoaded = function () {
         return ta.length;
+    };
+
+    // skip bsoia toggle function
+    this.skipBsoia = function () {
+        skipBsoia = !skipBsoia;
+    };
+
+    this.getSkipBsoia = function () {
+        return skipBsoia;
     };
 
 }]);

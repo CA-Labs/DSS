@@ -47,62 +47,66 @@ blockquote {
   blockquote p.active {
     color: #18bc9c; }
 
-.nav-pills.nav-wizard > li {
-  float: left;
-  background-color: #eee;
-  position: relative;
-  overflow: visible;
-  border-left: 35px solid #fff;
-  border-right: 10px solid #fff; }
-  .nav-pills.nav-wizard > li > a {
-    border-radius: 0px !important;
-    padding-left: 1px; }
-    .nav-pills.nav-wizard > li > a .checkpoint-icon {
-      font-size: 1.3em;
-      position: relative;
-      top: 5px; }
-    .nav-pills.nav-wizard > li > a i.green {
-      color: #27ae60; }
-    .nav-pills.nav-wizard > li > a i.red {
-      color: #c9c9c9; }
-  .nav-pills.nav-wizard > li:first-child {
-    border-left: 0; }
-    .nav-pills.nav-wizard > li:first-child > a {
-      padding-left: 15px; }
-  .nav-pills.nav-wizard > li:last-child {
-    border-right: 0;
-    float: right; }
-    .nav-pills.nav-wizard > li:last-child > a {
-      padding-left: 15px; }
-  .nav-pills.nav-wizard > li .nav-arrow {
-    position: absolute;
-    top: 0;
-    right: -40px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 32px 15px 33px 25px;
-    border-color: transparent transparent transparent #eee;
-    z-index: 150; }
-  .nav-pills.nav-wizard > li small {
-    color: #999;
-    margin-left: 23px; }
-  .nav-pills.nav-wizard > li .nav-wedge {
-    position: absolute;
-    top: 0;
-    left: -40px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 32px 15px 33px 25px;
-    border-color: #eee #eee #eee transparent;
-    z-index: 150; }
-.nav-pills.nav-wizard > li.active .nav-arrow {
-  border-color: transparent transparent transparent #2c3e50; }
-.nav-pills.nav-wizard > li.active .nav-wedge {
-  border-color: #2c3e50 #2c3e50 #2c3e50 transparent; }
-.nav-pills.nav-wizard > li.active small {
-  color: #ccc; }
+.nav-pills.nav-wizard {
+  font-size: 12px; }
+  .nav-pills.nav-wizard > li {
+    float: left;
+    background-color: #eee;
+    position: relative;
+    overflow: visible;
+    border-left: 35px solid #fff;
+    border-right: 10px solid #fff; }
+    .nav-pills.nav-wizard > li > a {
+      border-radius: 0px !important;
+      padding-left: 1px; }
+      .nav-pills.nav-wizard > li > a .checkpoint-icon {
+        font-size: 1.3em;
+        position: relative;
+        top: 5px; }
+      .nav-pills.nav-wizard > li > a i.green {
+        color: #27ae60; }
+      .nav-pills.nav-wizard > li > a i.red {
+        color: #c9c9c9; }
+      .nav-pills.nav-wizard > li > a i.orange {
+        color: orange; }
+    .nav-pills.nav-wizard > li:first-child {
+      border-left: 0; }
+      .nav-pills.nav-wizard > li:first-child > a {
+        padding-left: 15px; }
+    .nav-pills.nav-wizard > li:last-child {
+      border-right: 0;
+      float: right; }
+      .nav-pills.nav-wizard > li:last-child > a {
+        padding-left: 15px; }
+    .nav-pills.nav-wizard > li .nav-arrow {
+      position: absolute;
+      top: 0;
+      right: -40px;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 28px 15px 28px 25px;
+      border-color: transparent transparent transparent #eee;
+      z-index: 150; }
+    .nav-pills.nav-wizard > li small {
+      color: #999;
+      margin-left: 23px; }
+    .nav-pills.nav-wizard > li .nav-wedge {
+      position: absolute;
+      top: 0;
+      left: -40px;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 28px 15px 28px 25px;
+      border-color: #eee #eee #eee transparent;
+      z-index: 150; }
+  .nav-pills.nav-wizard > li.active .nav-arrow {
+    border-color: transparent transparent transparent #2c3e50; }
+  .nav-pills.nav-wizard > li.active .nav-wedge {
+    border-color: #2c3e50 #2c3e50 #2c3e50 transparent; }
+  .nav-pills.nav-wizard > li.active small {
+    color: #ccc; }
 
 .sticky-bottom {
   position: relative;

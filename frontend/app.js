@@ -13,28 +13,29 @@ $('#dssSlides').carousel('pause' ,{
     var currentSlide = topMenu.find('.bsoia-slide');
     topMenu.find('blockquote p').removeClass('active');
 
-
     if (slideClass.hasClass('bsoia-slide')) {
         currentSlide = topMenu.find('.bsoia-slide');
         currentSlide.addClass('active');
         currentSlide.nextAll().removeClass('active');
-        navButtons.find('.slide-prev').prop('disabled', true);
+        navButtons.find('.slide-prev').css('display', 'none');
         navButtons.find('.slide-next').prop('disabled', false);
         navButtons.find('.slide-next').css('display', 'inline');
+        navButtons.find('.slide-skip').css('display', 'inline');
         cloudServicesButton.css('display', 'none');
     } else if (slideClass.hasClass('toia-slide')) {
         currentSlide = topMenu.find('.toia-slide');
         currentSlide.addClass('active');
         currentSlide.nextAll().removeClass('active');
-        navButtons.find('.slide-prev').prop('disabled', false);
+        navButtons.find('.slide-prev').css('display', 'inline');
         navButtons.find('.slide-next').prop('disabled', false);
         navButtons.find('.slide-next').css('display', 'inline');
+        navButtons.find('.slide-skip').css('display', 'none');
         cloudServicesButton.css('display', 'none');
     } else if (slideClass.hasClass('ta-slide')) {
         currentSlide = topMenu.find('.ta-slide');
         currentSlide.addClass('active');
         currentSlide.nextAll().removeClass('active');
-        navButtons.find('.slide-prev').prop('disabled', false);
+        navButtons.find('.slide-prev').css('display', 'inline');
         navButtons.find('.slide-next').prop('disabled', false);
         navButtons.find('.slide-next').css('display', 'inline');
         cloudServicesButton.css('display', 'none');
@@ -42,7 +43,7 @@ $('#dssSlides').carousel('pause' ,{
         currentSlide = topMenu.find('.risks-slide');
         currentSlide.addClass('active');
         currentSlide.nextAll().removeClass('active');
-        navButtons.find('.slide-prev').prop('disabled', false);
+        navButtons.find('.slide-prev').css('display', 'inline');
         navButtons.find('.slide-next').prop('disabled', false);
         navButtons.find('.slide-next').css('display', 'inline');
         cloudServicesButton.css('display', 'none');
@@ -50,14 +51,14 @@ $('#dssSlides').carousel('pause' ,{
         currentSlide = topMenu.find('.treatments-slide');
         currentSlide.addClass('active');
         currentSlide.nextAll().removeClass('active');
-        navButtons.find('.slide-prev').prop('disabled', false);
+        navButtons.find('.slide-prev').css('display', 'inline');
         navButtons.find('.slide-next').css('display', 'none');
         cloudServicesButton.css('display', 'inline');
     } else {
         currentSlide = topMenu.find('.services-slide');
         currentSlide.addClass('active');
         currentSlide.nextAll().removeClass('active');
-        navButtons.find('.slide-prev').prop('disabled', false);
+        navButtons.find('.slide-prev').css('display', 'inline');
         navButtons.find('.slide-next').css('display', 'none');
         cloudServicesButton.css('display', 'none');
     }

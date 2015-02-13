@@ -64,6 +64,7 @@ blockquote {
 }
 
 .nav-pills.nav-wizard {
+  font-size: 12px;
 
   & > li {
     & > a {
@@ -80,6 +81,9 @@ blockquote {
       }
       & i.red {
         color: #c9c9c9;
+      }
+      & i.orange {
+        color: orange;
       }
     }
     float: left;
@@ -112,7 +116,7 @@ blockquote {
       height: 0;
       border: {
         style: solid;
-        width: 32px 15px 33px 25px;
+        width: 28px 15px 28px 25px;
         color: transparent transparent transparent #eee;
       }
       z-index: 150;
@@ -129,7 +133,7 @@ blockquote {
       height: 0;
       border: {
         style: solid;
-        width: 32px 15px 33px 25px;
+        width: 28px 15px 28px 25px;
         color: #eee #eee #eee transparent;
       }
       z-index: 150;
