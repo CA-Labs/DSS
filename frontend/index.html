@@ -72,7 +72,7 @@
 <ul class="nav nav-pills nav-wizard">
     <li class="active bsoia-slide">
         <a href="#">
-            <i class="glyphicon checkpoint-icon" ng-class="{'glyphicon-ok-circle green': haveBSOIASelected(), 'glyphicon-remove-circle red': !haveBSOIASelected() }"></i> Business Oriented intangible assets <br/>
+            <i class="glyphicon checkpoint-icon" ng-class="{'glyphicon-ok-circle green': haveBSOIASelected(), 'glyphicon-remove-circle red': !haveBSOIASelected() && !isSkipBsoia, 'glyphicon-minus-sign orange': isSkipBsoia && !haveBSOIASelected() }"></i>  Business Oriented intangible assets <br/>
             <small> Business Decision Maker</small>
 
         </a>
@@ -118,9 +118,10 @@
         </a>
     </li>
     <li class="nav-buttons" ng-controller="buttonsController">
-        <button class="btn btn-primary slide-prev" href="#dssSlides" data-slide="prev" disabled>Previous step</button>
-        <button class="btn btn-primary slide-next" href="#dssSlides" data-slide="next" ng-click="next($event)">Next step</button>
-        <button style="display: none" class="btn btn-primary slide-services" data-target="#dssSlides" ng-click="next($event)" data-slide-to="5">Search Cloud Services</button>
+        <button class="btn btn-primary btn-sm slide-prev" href="#dssSlides" data-slide="prev" style="display: none;">Previous step</button>
+        <button class="btn btn-primary btn-sm slide-skip" href="#dssSlides" data-slide="next" ng-click="skip()">Skip</button>
+        <button class="btn btn-primary btn-sm slide-next" href="#dssSlides" data-slide="next" ng-click="next($event)">Next step</button>
+        <button style="display: none" class="btn btn-primary btn-sm slide-services" data-target="#dssSlides" ng-click="next($event)" data-slide-to="5">Results</button>
     </li>
 </ul>
 <!-- Error flash -->

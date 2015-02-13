@@ -239,4 +239,8 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
             return TreatmentsService.countTreatmentsSelected() > 0;
         };
 
+
+        // skipBsoia
+        $scope.isSkipBsoia = AssetsService.getSkipBsoia();
+
 }]);

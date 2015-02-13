@@ -157,4 +157,8 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
         $('#dssSlides').carousel('next')
     });
 
+    $scope.skip = function () {
+        AssetsService.skipBsoia();
+    };
+
 }]);

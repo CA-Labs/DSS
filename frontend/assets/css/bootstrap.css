@@ -274,7 +274,7 @@ html {
 }
 body {
   font-family: "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1.42857143;
   color: #2c3e50;
   background-color: #ffffff;
@@ -455,11 +455,11 @@ h3,
 }
 h4,
 .h4 {
-  font-size: 19px;
+  font-size: 17px;
 }
 h5,
 .h5 {
-  font-size: 15px;
+  font-size: 13px;
 }
 h6,
 .h6 {
@@ -1684,7 +1684,7 @@ input[type="checkbox"]:focus {
 output {
   display: block;
   padding-top: 11px;
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1.42857143;
   color: #2c3e50;
 }
@@ -1693,7 +1693,7 @@ output {
   width: 100%;
   height: 43px;
   padding: 10px 15px;
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1.42857143;
   color: #2c3e50;
   background-color: #ffffff;
@@ -2001,7 +2001,7 @@ select[multiple].input-lg {
   border: 1px solid transparent;
   white-space: nowrap;
   padding: 10px 15px;
-  font-size: 15px;
+  font-size: 13px;
   line-height: 1.42857143;
   border-radius: 4px;
   -webkit-user-select: none;
@@ -3019,7 +3019,7 @@ input[type="button"].btn-block {
   padding: 5px 0;
   margin: 2px 0 0;
   list-style: none;
-  font-size: 15px;
+  font-size: 13px;
   background-color: #ffffff;
   border: 1px solid #cccccc;
   border: 1px solid rgba(0, 0, 0, 0.15);
@@ -3375,7 +3375,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 }
 .input-group-addon {
   padding: 10px 15px;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: normal;
   line-height: 1;
   color: #2c3e50;
@@ -4777,7 +4777,7 @@ a.list-group-item-danger.active:focus {
 .panel-title {
   margin-top: 0;
   margin-bottom: 0;
-  font-size: 17px;
+  font-size: 15px;
   color: inherit;
 }
 .panel-title > a {
@@ -5326,7 +5326,7 @@ button.close {
 .popover-title {
   margin: 0;
   padding: 8px 14px;
-  font-size: 15px;
+  font-size: 13px;
   font-weight: normal;
   line-height: 18px;
   background-color: #f7f7f7;
