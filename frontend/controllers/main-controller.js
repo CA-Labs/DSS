@@ -240,7 +240,13 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
         };
 
 
-        // skipBsoia
-        $scope.isSkipBsoia = AssetsService.getSkipBsoia();
+        // skipBsoia status
+        $scope.isSkipBsoia = function () {
+           return AssetsService.getSkipBsoia();
+        };
 
+        // skip Toia status
+        $scope.isSkipToia = function () {
+            return AssetsService.getSkipToia();
+        };
 }]);

@@ -27,12 +27,6 @@
 <div class="row">
     <div class="navbar navbar-inverse" ng-controller="mainController">
         <ul class="nav navbar-nav navbar-right">
-            <!--<li>-->
-                <!--<form id="cloud-descriptor-file-selector">-->
-                    <!--<input id="load-requirements" ng-file-select="onDSSCloudResourceFileSelect($files)" type="file" class="hidden"/>-->
-                <!--</form>-->
-                <!--<a href="#" ng-click="showFileUploadDialog('#load-requirements')"><span class="glyphicon glyphicon-import"></span> Load MODAClouds IDE Model </a>-->
-            <!--</li>-->
             <li>
                 <a href="#" ng-click="saveCloudSelection($event)"><span class="glyphicon glyphicon-export"></span> Export Results</a>
             </li>
@@ -71,8 +65,8 @@
 <ul class="nav nav-pills nav-wizard">
     <li class="active bsoia-slide">
         <a href="#">
-            <i class="glyphicon checkpoint-icon" ng-class="{'glyphicon-ok-circle green': haveBSOIASelected(), 'glyphicon-remove-circle red': !haveBSOIASelected() && !isSkipBsoia, 'glyphicon-minus-sign orange': isSkipBsoia && !haveBSOIASelected() }"></i>  Business Oriented intangible assets <br/>
-            <small> Business Decision Maker</small>
+            <i class="glyphicon checkpoint-icon" ng-class="{'glyphicon-ok-circle green': haveBSOIASelected(), 'glyphicon-remove-circle red': !haveBSOIASelected() && !isSkipBsoia(), 'glyphicon-minus-sign orange': isSkipBsoia() && !haveBSOIASelected() }"></i>  Business Oriented intangible assets <br/>
+            <small><span class="spacer"></span>Business Decision Maker</small>
 
         </a>
         <div class="nav-arrow"></div>
@@ -80,8 +74,8 @@
     <li class="toia-slide">
         <div class="nav-wedge"></div>
         <a href="#">
-            <i class="glyphicon checkpoint-icon" ng-class="{'glyphicon-ok-circle green': haveTOIASelected(), 'glyphicon-remove-circle red': !haveTOIASelected() }"></i> Technical Oriented intangible assets <br/>
-            <small>Architect</small>
+            <i class="glyphicon checkpoint-icon" ng-class="{'glyphicon-ok-circle green': haveTOIASelected(), 'glyphicon-remove-circle red': !haveTOIASelected() && !isSkipToia(), 'glyphicon-minus-sign orange': isSkipToia() && !haveTOIASelected() }"></i> Technical Oriented intangible assets <br/>
+            <small><span class="spacer"></span>Architect</small>
         </a>
         <div class="nav-arrow"></div>
     </li>
@@ -89,7 +83,7 @@
         <div class="nav-wedge"></div>
         <a href="#">
             <i class="glyphicon checkpoint-icon" ng-class="{'glyphicon-ok-circle green': isTALoaded(), 'glyphicon-remove-circle red': !isTALoaded() }"></i> Tangible assets <br/>
-            <small>Architect</small>
+            <small><span class="spacer"></span>Architect</small>
         </a>
         <div class="nav-arrow"></div>
     </li>
@@ -97,7 +91,7 @@
         <div class="nav-wedge"></div>
         <a href="#">
             <i class="glyphicon checkpoint-icon" ng-class="{'glyphicon-ok-circle green': haveRisksSelected(), 'glyphicon-remove-circle red': !haveRisksSelected() }"></i> Risks <br/>
-            <small>Risk Policy Manager</small>
+            <small><span class="spacer"></span>Risk Policy Manager</small>
         </a>
         <div class="nav-arrow"></div>
     </li>
@@ -105,7 +99,7 @@
         <div class="nav-wedge"></div>
         <a href="#">
             <i class="glyphicon checkpoint-icon" ng-class="{'glyphicon-ok-circle green': haveTreatmentsSelected(), 'glyphicon-remove-circle red': !haveTreatmentsSelected() }"></i> Treatments <br/>
-            <small>Architect</small>
+            <small><span class="spacer"></span>Architect</small>
         </a>
         <div class="nav-arrow"></div>
     </li>
@@ -113,14 +107,26 @@
         <div class="nav-wedge"></div>
         <a href="#">
             <i class="glyphicon checkpoint-icon glyphicon-cloud"></i> Cloud Services <br/>
-            <small> </small>
+            <small><span class="spacer"></span></small>
         </a>
     </li>
     <li class="nav-buttons" ng-controller="buttonsController">
-        <button class="btn btn-primary btn-sm slide-prev" href="#dssSlides" data-slide="prev" style="display: none;">Previous step</button>
-        <button class="btn btn-primary btn-sm slide-skip" href="#dssSlides" data-slide="next" ng-click="skip()">Skip</button>
-        <button class="btn btn-primary btn-sm slide-next" href="#dssSlides" data-slide="next" ng-click="next($event)">Next step</button>
-        <button style="display: none" class="btn btn-primary btn-sm slide-services" data-target="#dssSlides" ng-click="next($event)" data-slide-to="5">Results</button>
+        <button class="btn btn-primary btn-sm slide-prev" href="#dssSlides" data-slide="prev" style="display: none;">
+            <i class="glyphicon glyphicon-backward"></i>
+            Previous step
+        </button>
+        <button class="btn btn-primary btn-sm slide-skip" href="#dssSlides" data-slide="next" ng-click="skip()">
+            Skip
+            <i class="glyphicon glyphicon-step-forward"></i>
+        </button>
+        <button class="btn btn-primary btn-sm slide-next" href="#dssSlides" data-slide="next" ng-click="next($event)">
+            Next step
+            <i class="glyphicon glyphicon-forward"></i>
+        </button>
+        <button style="display: none" class="btn btn-primary btn-sm slide-services" data-target="#dssSlides" ng-click="next($event)" data-slide-to="5">
+            <i class="glyphicon glyphicon-search"></i>
+            Results
+        </button>
     </li>
 </ul>
 <!-- Error flash -->

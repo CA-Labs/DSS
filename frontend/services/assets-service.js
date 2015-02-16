@@ -9,7 +9,8 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     //BSOIA assets
     var bsoiaFromStorage = localStorageService.get('bsoiaAssetsSelected') || [];
     var bsoia = bsoiaFromStorage;               //BSOIA assets selected by the user
-    var skipBsoia = false;
+    var skipBsoia = false; // flag to see if the user skipped bsoia
+    var skipToia = false; // flag to see if the user skipped toia
 
     //TOIA assets
     var toiaFromStorage = localStorageService.get('toiaAssetsSelected') || [];
@@ -519,12 +520,20 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     };
 
     // skip bsoia toggle function
-    this.skipBsoia = function () {
+    this.toggleSkipBsoia = function () {
         skipBsoia = !skipBsoia;
     };
 
     this.getSkipBsoia = function () {
         return skipBsoia;
+    };
+
+    this.toggleSkipToia = function () {
+        skipToia = !skipToia;
+    };
+
+    this.getSkipToia = function () {
+        return skipToia;
     };
 
 }]);
