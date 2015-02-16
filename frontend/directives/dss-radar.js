@@ -11,6 +11,7 @@ dssApp.directive('dssRadar', ['TreatmentsService', function(TreatmentsService){
             characteristics: '='
         },
         link: function(scope, elem, attrs){
+
             // Datasets seem to be of same length, consider treatments not selected to have a value of 0 (does it make sense?)
             var treatmentsValues = TreatmentsService.getTreatmentsValues();
             var treatmentsAxes = [];
