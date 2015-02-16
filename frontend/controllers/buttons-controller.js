@@ -157,14 +157,25 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
         $('#dssSlides').carousel('next')
     });
 
+    /**
+     * Check if the Bsoia step was skipped
+     * @returns {boolean|*}
+     */
     $scope.skippedBsoia = function () {
         return AssetsService.countBSOIASelected() === 0 && AssetsService.getSkipBsoia();
     };
 
+    /**
+     * Check if the Toia step is skipped
+     * @returns {boolean|*}
+     */
     $scope.skippedToia = function () {
         return AssetsService.countTOIASelected() === 0 && AssetsService.getSkipToia();
     };
 
+    /**
+     * Skip step function
+     */
     $scope.skip = function () {
 
         var lastActiveWizardElement = $('.nav-wizard').find('.active').last();

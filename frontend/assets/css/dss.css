@@ -18,7 +18,7 @@ html, body {
   margin-right: 10px; }
 
 .logo {
-  background: url("../img/image4094_1.png") no-repeat white;
+  background: url("../img/image4094_1.png") no-repeat #ffffff;
   display: block;
   width: 111px;
   height: 65px;
@@ -270,8 +270,7 @@ blockquote {
   margin-bottom: 5px;
   border: 2px solid #ecf0f1; }
   .service-proposal-panel:hover {
-    border-color: #2c3e50;
-    transform: scale(1.01) translateZ(0); }
+    border-color: #2c3e50; }
 
 .service-proposal-title {
   background: #fff !important;
@@ -477,3 +476,5 @@ dss-radar svg {
   margin-top: 20px;
   display: block;
   margin: 0 auto; }
+
+/*# sourceMappingURL=dss.css.map */

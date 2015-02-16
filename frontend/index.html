@@ -477,7 +477,7 @@
                             <br/>
                         </div>
                         <div class="center-block center-text">
-                            <span class="selected hasRisks label label-danger" ng-show="hasUnmitigatedRisks(result)" data-content="Some risks are unmitigated within one or more providers." popup-right>
+                            <span class="selected hasRisks label label-danger" ng-show="hasUnmitigatedRisks(result) || isVendorLockedIn(result)" data-content="Some risks are unmitigated within one or more providers or they are from the same provider which imposes risk of vendor lock-in" popup-right>
                                 <i class="glyphicon glyphicon-exclamation-sign"></i>
                             </span>
                         </div>
