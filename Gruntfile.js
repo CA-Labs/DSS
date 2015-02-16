@@ -39,7 +39,7 @@ module.exports = function (grunt) {
             }
         },
         watch: {
-            files: ['frontend/{con,s,d}*/*.js'],
+            files: ['frontend/{con,s,d}*/*.js', 'frontend/app.js'],
             tasks: ['uglify'],
             options: {
                 nospawn: true

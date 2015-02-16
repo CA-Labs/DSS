@@ -157,8 +157,23 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
         $('#dssSlides').carousel('next')
     });
 
+    $scope.skippedBsoia = function () {
+        return AssetsService.countBSOIASelected() === 0 && AssetsService.getSkipBsoia();
+    };
+
+    $scope.skippedToia = function () {
+        return AssetsService.countTOIASelected() === 0 && AssetsService.getSkipToia();
+    };
+
     $scope.skip = function () {
-        AssetsService.skipBsoia();
+
+        var lastActiveWizardElement = $('.nav-wizard').find('.active').last();
+
+        if (lastActiveWizardElement.hasClass('bsoia-slide')) {
+            AssetsService.toggleSkipBsoia();
+        } else if (lastActiveWizardElement.hasClass('toia-slide')) {
+            AssetsService.toggleSkipToia();
+        }
     };
 
 }]);

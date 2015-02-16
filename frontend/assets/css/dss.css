@@ -89,8 +89,10 @@ blockquote {
       border-color: transparent transparent transparent #eee;
       z-index: 150; }
     .nav-pills.nav-wizard > li small {
-      color: #999;
-      margin-left: 23px; }
+      color: #999; }
+      .nav-pills.nav-wizard > li small .spacer {
+        display: inline-block;
+        width: 18px; }
     .nav-pills.nav-wizard > li .nav-wedge {
       position: absolute;
       top: 0;

@@ -123,7 +123,11 @@ blockquote {
     }
     small {
       color: #999;
-      margin-left: 23px;
+//      margin-left: 23px;
+      .spacer {
+        display: inline-block;
+        width: 18px;
+      }
     }
     .nav-wedge {
       position: absolute;

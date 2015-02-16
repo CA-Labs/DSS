@@ -29,7 +29,7 @@ $('#dssSlides').carousel('pause' ,{
         navButtons.find('.slide-prev').css('display', 'inline');
         navButtons.find('.slide-next').prop('disabled', false);
         navButtons.find('.slide-next').css('display', 'inline');
-        navButtons.find('.slide-skip').css('display', 'none');
+        navButtons.find('.slide-skip').css('display', 'inline');
         cloudServicesButton.css('display', 'none');
     } else if (slideClass.hasClass('ta-slide')) {
         currentSlide = topMenu.find('.ta-slide');
@@ -38,6 +38,7 @@ $('#dssSlides').carousel('pause' ,{
         navButtons.find('.slide-prev').css('display', 'inline');
         navButtons.find('.slide-next').prop('disabled', false);
         navButtons.find('.slide-next').css('display', 'inline');
+        navButtons.find('.slide-skip').css('display', 'none');
         cloudServicesButton.css('display', 'none');
     } else if (slideClass.hasClass('risks-slide')) {
         currentSlide = topMenu.find('.risks-slide');
@@ -46,6 +47,7 @@ $('#dssSlides').carousel('pause' ,{
         navButtons.find('.slide-prev').css('display', 'inline');
         navButtons.find('.slide-next').prop('disabled', false);
         navButtons.find('.slide-next').css('display', 'inline');
+        navButtons.find('.slide-skip').css('display', 'none');
         cloudServicesButton.css('display', 'none');
     } else if (slideClass.hasClass('treatments-slide')) {
         currentSlide = topMenu.find('.treatments-slide');
@@ -53,6 +55,7 @@ $('#dssSlides').carousel('pause' ,{
         currentSlide.nextAll().removeClass('active');
         navButtons.find('.slide-prev').css('display', 'inline');
         navButtons.find('.slide-next').css('display', 'none');
+        navButtons.find('.slide-skip').css('display', 'none');
         cloudServicesButton.css('display', 'inline');
     } else {
         currentSlide = topMenu.find('.services-slide');
@@ -60,6 +63,7 @@ $('#dssSlides').carousel('pause' ,{
         currentSlide.nextAll().removeClass('active');
         navButtons.find('.slide-prev').css('display', 'inline');
         navButtons.find('.slide-next').css('display', 'none');
+        navButtons.find('.slide-skip').css('display', 'none');
         cloudServicesButton.css('display', 'none');
     }
 

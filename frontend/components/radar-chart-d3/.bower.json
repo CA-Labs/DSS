@@ -19,8 +19,8 @@
     "branch": "master",
     "commit": "57e057eea23022d8081b6635cb1a0b15bf842a53"
   },
-  "_source": "git@github.com:alangrafu/radar-chart-d3.git",
+  "_source": "git://github.com/alangrafu/radar-chart-d3.git",
   "_target": "*",
-  "_originalSource": "git@github.com:alangrafu/radar-chart-d3.git",
+  "_originalSource": "radar-chart-d3",
   "_direct": true
 }
