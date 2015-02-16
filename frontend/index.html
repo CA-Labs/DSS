@@ -433,7 +433,7 @@
                 <div ng-switch="treatmentSelected.representation">
                     <div ng-switch-when="select">
                         <br>
-                        <select ng-init="treatmentValues[treatmentSelected.name]=utils.keys(treatmentSelected.options)[0]"
+                        <select ng-init="treatmentValues[treatmentSelected.name] = treatmentValues[treatmentSelected.name] || utils.keys(treatmentSelected.options)[0]"
                                 ng-show="showTreatmentValues[treatmentSelected.name]"
                                 class="form-control" data-hash-key="treatmentSelected.name"
                                 ng-model="treatmentValues[treatmentSelected.name]"
@@ -484,7 +484,7 @@
                     <div class="col-lg-11">
                         <table class="table" style="table-layout: fixed;">
                             <tr>
-                                <td ng-repeat="service in result track by $index">
+                                <td ng-repeat="service in result">
                                     <div class="panel panel-default">
                                         <div class="panel-heading service-proposal-title">
                                             <div ng-switch="service.ta.cloudType">
