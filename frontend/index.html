@@ -116,7 +116,7 @@
             <i class="glyphicon glyphicon-backward"></i>
             Previous step
         </button>
-        <button class="btn btn-primary btn-sm slide-skip" href="#dssSlides" data-slide="next" ng-click="skip()">
+        <button class="btn btn-primary btn-sm slide-skip" href="#dssSlides" data-slide="next" ng-click="skip()" ng-class="{'disabled': skippedBsoia(), 'disabled': skippedToia() }">
             Skip
             <i class="glyphicon glyphicon-step-forward"></i>
         </button>

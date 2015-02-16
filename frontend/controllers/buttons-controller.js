@@ -157,6 +157,14 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
         $('#dssSlides').carousel('next')
     });
 
+    $scope.skippedBsoia = function () {
+        return AssetsService.countBSOIASelected() === 0 && AssetsService.getSkipBsoia();
+    };
+
+    $scope.skippedToia = function () {
+        return AssetsService.countTOIASelected() === 0 && AssetsService.getSkipToia();
+    };
+
     $scope.skip = function () {
 
         var lastActiveWizardElement = $('.nav-wizard').find('.active').last();
