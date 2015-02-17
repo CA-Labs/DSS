@@ -263,6 +263,21 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
     };
 
     /**
+     * Check if the deployment has the same provider
+     * @param deployment
+     * @returns {boolean}
+     */
+    $scope.isVendorLockedIn = function (deployment) {
+        var deploymentWithTheSameProvider = false;
+
+        for (var i = 0; i < deployment.length - 1; i++) {
+            deploymentWithTheSameProvider = deployment[i].provider._id == deployment[++i].provider._id;
+        }
+
+        return deploymentWithTheSameProvider;
+    };
+
+    /**
      * Shows hidden details of the cloud service.
      * @param {object} item - service item from the ng-repeat.
      */
