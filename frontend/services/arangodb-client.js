@@ -31,7 +31,7 @@ dssApp.service('ArangoClient', ['$q', function($q){
             // Used in the service graph query for grouping providers by services and characteristic values
             createAQLfunction('dss::utils::pathsToCharacteristicValues', function(paths){
                 return paths.map(function(path){
-                    return {name: path.vertices[2].name , value: path.edges[1].data.value}
+                    return {name: path.vertices[2].name , value: path.edges[1].hasOwnProperty('data') ? path.edges[1].data.hasOwnProperty('value') ? path.edges[1].data.value : 0 : 0}
                 })
             })
         ]).then(function(){
