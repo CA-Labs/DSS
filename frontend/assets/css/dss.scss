@@ -578,14 +578,18 @@ circle.node-treatment-collapse {
 #map .continent { stroke: #ccc; }
 #map .continent:hover { fill: #ccb; }
 
-/* Colour the continents */
-.continent[data-name="North America"] { fill: #0067A5; }
-.continent[data-name="South America"] { fill: #FF70DB; }
-.continent[data-name="Asia"] { fill: #00A86B; }
-.continent[data-name="Africa"] { fill: orange; }
-.continent[data-name="Europe"] { fill: #CC3333; }
-.continent[data-name="Oceania"] { fill: purple; }
-.continent[data-name="Antarctica"] { fill: #DDD; }
+.dss-continent[data-name="North America"] { fill: #0067A5; }
+.dss-continent[data-name="South America"] { fill: #FF70DB; }
+.dss-continent[data-name="Asia"] { fill: #00A86B; }
+.dss-continent[data-name="Africa"] { fill: orange; }
+.dss-continent[data-name="Europe"] { fill: #CC3333; }
+.dss-continent[data-name="Oceania"] { fill: purple; }
+.dss-continent[data-name="Antarctica"] { fill: #DDD; }
+
+dss-map svg {
+  display: block;
+  margin: 0 auto;
+}
 
 /* Radar Chart */
 dss-radar svg {

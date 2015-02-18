@@ -145,8 +145,6 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                 var modalWidth = $window.innerWidth * 0.75,
                     modalHeight = $window.innerHeight * 0.75;
 
-                console.log('modalWidth', 'modalHeight', modalWidth, modalHeight);
-
                 var margin = {
                     top: modalHeight * 0.03,
                     left: modalWidth * 0.03,

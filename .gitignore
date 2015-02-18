@@ -7,7 +7,7 @@ lib-cov
 *.pid
 *.gz
 *.map
-*.min.js
+frontend/app.min.js
 
 # Merge files origins
 **/*/*.orig
