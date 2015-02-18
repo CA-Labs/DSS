@@ -64,10 +64,27 @@ blockquote {
 }
 
 .nav-pills.nav-wizard {
+  font-size: 12px;
 
   & > li {
     & > a {
       border-radius: 0px !important;
+      padding-left: 1px;
+//      padding-right: 1px;
+      .checkpoint-icon {
+        font-size: 1.3em;
+        position: relative;
+        top: 5px;
+      }
+      & i.green {
+        color: #27ae60;
+      }
+      & i.red {
+        color: #c9c9c9;
+      }
+      & i.orange {
+        color: orange;
+      }
     }
     float: left;
     background-color: #eee;
@@ -75,39 +92,52 @@ blockquote {
     overflow: visible;
 //    padding: 8px;
     border: {
-      left: 15px solid #fff;
+      left: 35px solid #fff;
       right: 10px solid #fff;
     }
     &:first-child {
       border-left: 0;
+      & > a {
+        padding-left: 15px;
+      }
     }
     &:last-child {
       border-right: 0;
       float: right;
+      & > a {
+        padding-left: 15px;
+      }
     }
     .nav-arrow {
       position: absolute;
       top: 0;
-      right: -20px;
+      right: -40px;
       width: 0;
       height: 0;
       border: {
         style: solid;
-        width: 21px 0 20px 20px;
+        width: 28px 15px 28px 25px;
         color: transparent transparent transparent #eee;
       }
-    ;
       z-index: 150;
+    }
+    small {
+      color: #999;
+//      margin-left: 23px;
+      .spacer {
+        display: inline-block;
+        width: 18px;
+      }
     }
     .nav-wedge {
       position: absolute;
       top: 0;
-      left: -20px;
+      left: -40px;
       width: 0;
       height: 0;
       border: {
         style: solid;
-        width: 21px 0 20px 20px;
+        width: 28px 15px 28px 25px;
         color: #eee #eee #eee transparent;
       }
       z-index: 150;
@@ -119,6 +149,9 @@ blockquote {
     }
     .nav-wedge {
       border-color: #2c3e50 #2c3e50 #2c3e50 transparent;
+    }
+    small {
+      color: #ccc;
     }
   }
 }
@@ -315,7 +348,7 @@ blockquote {
 .service-proposal-panel {
   &:hover {
     border-color: rgb(44, 62, 80);
-    transform: scale(1.01) translateZ(0);
+//    transform: scale(1.01) translateZ(0);
 
 //    box-shadow: -5px 0 5px -5px #666, 5px 0 5px -5px #666;
   }
@@ -408,7 +441,11 @@ blockquote {
 }
 
 .service-selected {
-  border: 2px solid #f39c12;
+  border: 2px solid #27ae60;
+}
+
+.has-risks {
+  border-color: #e01010;
 }
 
 .center-text {
@@ -422,6 +459,7 @@ blockquote {
 span.selected.label
 {
   font-size: 2em;
+  line-height: 2em;
 }
 
 .acceptable-risk {
@@ -509,3 +547,49 @@ circle.node-treatment-collapse {
   z-index: 10000;
 }
 
+/* Risks mitigation */
+
+.mitigation-all {
+  stroke: green;
+  fill: none;
+  stroke-width: 3px;
+}
+
+.mitigation-some {
+  stroke: orange;
+  fill: none;
+  stroke-width: 3px;
+}
+
+.mitigation-none {
+  stroke: red;
+  fill: none;
+  stroke-width: 3px;
+}
+
+.mitigation-undefined {
+  stroke: grey;
+  fill: none;
+  stroke-width: 3px;
+}
+
+/* Continents map */
+
+#map .continent { stroke: #ccc; }
+#map .continent:hover { fill: #ccb; }
+
+/* Colour the continents */
+.continent[data-name="North America"] { fill: #0067A5; }
+.continent[data-name="South America"] { fill: #FF70DB; }
+.continent[data-name="Asia"] { fill: #00A86B; }
+.continent[data-name="Africa"] { fill: orange; }
+.continent[data-name="Europe"] { fill: #CC3333; }
+.continent[data-name="Oceania"] { fill: purple; }
+.continent[data-name="Antarctica"] { fill: #DDD; }
+
+/* Radar Chart */
+dss-radar svg {
+  margin-top: 20px;
+  display: block;
+  margin: 0 auto;
+}

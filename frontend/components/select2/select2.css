@@ -78,6 +78,7 @@ html[dir="rtl"] .select2-container .select2-choice {
 
 .select2-container .select2-choice > .select2-chosen {
     margin-right: 26px;
+    margin-top: 3px;
     display: block;
     overflow: hidden;
 

@@ -27,6 +27,7 @@ module.exports = function (grunt) {
                         'frontend/services/assets-service.js',
                         'frontend/services/risks-service.js',
                         'frontend/services/arangodb-service.js',
+                        'frontend/services/arangodb-client.js',
                         'frontend/services/treatments-service.js',
                         'frontend/services/cloud-service.js',
                         'frontend/factories/d3-factory.js',
@@ -38,7 +39,7 @@ module.exports = function (grunt) {
             }
         },
         watch: {
-            files: ['frontend/{con,s,d}*/*.js'],
+            files: ['frontend/{con,s,d}*/*.js', 'frontend/app.js'],
             tasks: ['uglify'],
             options: {
                 nospawn: true

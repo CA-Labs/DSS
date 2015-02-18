@@ -48,6 +48,10 @@ dssApp.controller('risksController'
 
     $scope.toiaRisksMapping = RisksService.getTOIARisksMapping();
 
+    // show likelihood values default, used when we want to standardise the values of the likelihood
+    // because the user don't want/know how to specify it. In this case, the slider should disappear
+    $scope.specifyLikelihood = true;
+
     //List of available categories to categorize risks level for likelihood values
     var LIKELIHOOD_CATEGORIES = {
         RARE: {
@@ -94,6 +98,8 @@ dssApp.controller('risksController'
             name: 'Catastrophic'
         }
     };
+
+    var LIKELIHOOD_DEFAULT_VALUE = 5;
 
     //Auxiliar function to map scalar values to discrete ones (class names)
     var numberToCategoryClass = function(n, type){
@@ -163,8 +169,7 @@ dssApp.controller('risksController'
                 } else {
                     var seen = [];
                     var aux = [];
-                    _.each(data._documents, function(risk){
-                        //TODO: Move this logic to an Angular filter
+                    _.each(data, function(risk){
                         //Filter repeated risks by hand since AngularJS filter "unique" does not seem to work properly
                         if(seen.indexOf(risk.destination.name) === -1){
                             seen.push(risk.destination.name);
@@ -188,8 +193,7 @@ dssApp.controller('risksController'
            } else {
                var seen = [];
                var aux = [];
-               _.each(data._documents, function(risk){
-                   //TODO: Move this logic to an Angular filter
+               _.each(data, function(risk){
                    //Filter repeated risks by hand since AngularJS filter "unique" does not seem to work properly
                    if(seen.indexOf(risk.destination.name) === -1){
                        seen.push(risk.destination.name);
@@ -406,7 +410,7 @@ dssApp.controller('risksController'
 
         //Add keys
         _.each(keysToAdd, function(key){
-            RisksService.addRiskLikelihood(key.name, key.value);
+            RisksService.addRiskLikelihood(key.name, ($scope.specifyLikelihood) ? key.value : LIKELIHOOD_DEFAULT_VALUE);
             RisksService.addRiskConsequence(key.name, key.value);
             _.each($scope.taAssets, function(taAsset){
                 switch(taAsset.cloudType){
@@ -513,7 +517,7 @@ dssApp.controller('risksController'
 
             if(valueToUpdate == "likelihood"){
                 //Update likelihood in simple model
-                RisksService.addRiskLikelihood(riskName, sliderValue)
+                RisksService.addRiskLikelihood(riskName, ($scope.specifyLikelihood) ? sliderValue : LIKELIHOOD_DEFAULT_VALUE);
             } else {
                 //Update consequence in simple model
                 RisksService.addRiskConsequence(riskName, sliderValue);
@@ -587,9 +591,10 @@ dssApp.controller('risksController'
     $scope.potentialRisksGrouped = function(){
         var data = [];
         var potentialRiskNames = $scope.potentialRisks.map(function(potentialRisk) { return potentialRisk.destination.name });
+        var selectedToiaNames = AssetsService.getTOIA().map(function(toia){ return toia.asset.name });
         _.each($scope.toiaRisksMapping, function(values, key){
             _.each(values, function(value){
-                if(_.contains(potentialRiskNames, value)){
+                if(_.contains(potentialRiskNames, value) && _.contains(selectedToiaNames, key)){
                     data.push({group: key, risk: $scope.getRiskByName(value)});
                 }
             });
@@ -628,11 +633,18 @@ dssApp.controller('risksController'
             flash.error = 'Some error occurred while fetching TOIA/risks mapping values';
         } else {
             var mapping = {};
-            _.each(data._documents, function (e) {
+            _.each(data, function (e) {
                 mapping[e.toia] = e.risks;
             });
             RisksService.setTOIARisksMapping(mapping);
         }
     });
+
+    // toggle Standardised Likelihood and
+    $scope.toggleStandardiseLikelihood = function () {
+        if (!$scope.specifyLikelihood) {
+            RisksService.setStandardisedLikelihood();
+        }
+    };
 
 }]);

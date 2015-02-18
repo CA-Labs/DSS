@@ -18,7 +18,7 @@ html, body {
   margin-right: 10px; }
 
 .logo {
-  background: url("../img/image4094_1.png") no-repeat white;
+  background: url("../img/image4094_1.png") no-repeat #ffffff;
   display: block;
   width: 111px;
   height: 65px;
@@ -47,44 +47,68 @@ blockquote {
   blockquote p.active {
     color: #18bc9c; }
 
-.nav-pills.nav-wizard > li {
-  float: left;
-  background-color: #eee;
-  position: relative;
-  overflow: visible;
-  border-left: 15px solid #fff;
-  border-right: 10px solid #fff; }
-  .nav-pills.nav-wizard > li > a {
-    border-radius: 0px !important; }
-  .nav-pills.nav-wizard > li:first-child {
-    border-left: 0; }
-  .nav-pills.nav-wizard > li:last-child {
-    border-right: 0;
-    float: right; }
-  .nav-pills.nav-wizard > li .nav-arrow {
-    position: absolute;
-    top: 0;
-    right: -20px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 21px 0 20px 20px;
-    border-color: transparent transparent transparent #eee;
-    z-index: 150; }
-  .nav-pills.nav-wizard > li .nav-wedge {
-    position: absolute;
-    top: 0;
-    left: -20px;
-    width: 0;
-    height: 0;
-    border-style: solid;
-    border-width: 21px 0 20px 20px;
-    border-color: #eee #eee #eee transparent;
-    z-index: 150; }
-.nav-pills.nav-wizard > li.active .nav-arrow {
-  border-color: transparent transparent transparent #2c3e50; }
-.nav-pills.nav-wizard > li.active .nav-wedge {
-  border-color: #2c3e50 #2c3e50 #2c3e50 transparent; }
+.nav-pills.nav-wizard {
+  font-size: 12px; }
+  .nav-pills.nav-wizard > li {
+    float: left;
+    background-color: #eee;
+    position: relative;
+    overflow: visible;
+    border-left: 35px solid #fff;
+    border-right: 10px solid #fff; }
+    .nav-pills.nav-wizard > li > a {
+      border-radius: 0px !important;
+      padding-left: 1px; }
+      .nav-pills.nav-wizard > li > a .checkpoint-icon {
+        font-size: 1.3em;
+        position: relative;
+        top: 5px; }
+      .nav-pills.nav-wizard > li > a i.green {
+        color: #27ae60; }
+      .nav-pills.nav-wizard > li > a i.red {
+        color: #c9c9c9; }
+      .nav-pills.nav-wizard > li > a i.orange {
+        color: orange; }
+    .nav-pills.nav-wizard > li:first-child {
+      border-left: 0; }
+      .nav-pills.nav-wizard > li:first-child > a {
+        padding-left: 15px; }
+    .nav-pills.nav-wizard > li:last-child {
+      border-right: 0;
+      float: right; }
+      .nav-pills.nav-wizard > li:last-child > a {
+        padding-left: 15px; }
+    .nav-pills.nav-wizard > li .nav-arrow {
+      position: absolute;
+      top: 0;
+      right: -40px;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 28px 15px 28px 25px;
+      border-color: transparent transparent transparent #eee;
+      z-index: 150; }
+    .nav-pills.nav-wizard > li small {
+      color: #999; }
+      .nav-pills.nav-wizard > li small .spacer {
+        display: inline-block;
+        width: 18px; }
+    .nav-pills.nav-wizard > li .nav-wedge {
+      position: absolute;
+      top: 0;
+      left: -40px;
+      width: 0;
+      height: 0;
+      border-style: solid;
+      border-width: 28px 15px 28px 25px;
+      border-color: #eee #eee #eee transparent;
+      z-index: 150; }
+  .nav-pills.nav-wizard > li.active .nav-arrow {
+    border-color: transparent transparent transparent #2c3e50; }
+  .nav-pills.nav-wizard > li.active .nav-wedge {
+    border-color: #2c3e50 #2c3e50 #2c3e50 transparent; }
+  .nav-pills.nav-wizard > li.active small {
+    color: #ccc; }
 
 .sticky-bottom {
   position: relative;
@@ -246,8 +270,7 @@ blockquote {
   margin-bottom: 5px;
   border: 2px solid #ecf0f1; }
   .service-proposal-panel:hover {
-    border-color: #2c3e50;
-    transform: scale(1.01) translateZ(0); }
+    border-color: #2c3e50; }
 
 .service-proposal-title {
   background: #fff !important;
@@ -312,7 +335,10 @@ blockquote {
   margin: 0 auto; }
 
 .service-selected {
-  border: 2px solid #f39c12; }
+  border: 2px solid #27ae60; }
+
+.has-risks {
+  border-color: #e01010; }
 
 .center-text {
   text-align: center; }
@@ -321,7 +347,8 @@ blockquote {
   background-color: indianred; }
 
 span.selected.label {
-  font-size: 2em; }
+  font-size: 2em;
+  line-height: 2em; }
 
 .acceptable-risk {
   background-color: palegreen; }
@@ -393,3 +420,61 @@ circle.node-treatment-collapse {
   top: 0;
   display: none;
   z-index: 10000; }
+
+/* Risks mitigation */
+.mitigation-all {
+  stroke: green;
+  fill: none;
+  stroke-width: 3px; }
+
+.mitigation-some {
+  stroke: orange;
+  fill: none;
+  stroke-width: 3px; }
+
+.mitigation-none {
+  stroke: red;
+  fill: none;
+  stroke-width: 3px; }
+
+.mitigation-undefined {
+  stroke: grey;
+  fill: none;
+  stroke-width: 3px; }
+
+/* Continents map */
+#map .continent {
+  stroke: #ccc; }
+
+#map .continent:hover {
+  fill: #ccb; }
+
+/* Colour the continents */
+.continent[data-name="North America"] {
+  fill: #0067A5; }
+
+.continent[data-name="South America"] {
+  fill: #FF70DB; }
+
+.continent[data-name="Asia"] {
+  fill: #00A86B; }
+
+.continent[data-name="Africa"] {
+  fill: orange; }
+
+.continent[data-name="Europe"] {
+  fill: #CC3333; }
+
+.continent[data-name="Oceania"] {
+  fill: purple; }
+
+.continent[data-name="Antarctica"] {
+  fill: #DDD; }
+
+/* Radar Chart */
+dss-radar svg {
+  margin-top: 20px;
+  display: block;
+  margin: 0 auto; }
+
+/*# sourceMappingURL=dss.css.map */

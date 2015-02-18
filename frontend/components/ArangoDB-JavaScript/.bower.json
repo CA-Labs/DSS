@@ -1,0 +1,14 @@
+{
+  "name": "ArangoDB-JavaScript",
+  "homepage": "https://github.com/triAGENS/ArangoDB-JavaScript",
+  "_release": "51dc768928",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "51dc7689285a5c01483bc4c7fa02b5dbdfe618c7"
+  },
+  "_source": "git@github.com:triAGENS/ArangoDB-JavaScript.git",
+  "_target": "master",
+  "_originalSource": "git@github.com:triAGENS/ArangoDB-JavaScript.git",
+  "_direct": true
+}

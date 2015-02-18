@@ -213,6 +213,40 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
             template: 'partials/dss-graph.html',
             className: 'ngdialog-theme-default'
         });
-    }
+    };
 
+    //---------------------------------
+        // what follows is a set of counters which check if the steps have been fulfilled by the
+        // actor or not. should be fairly self explanatory
+
+        $scope.haveBSOIASelected = function () {
+            return AssetsService.countBSOIASelected() > 0;
+        };
+
+        $scope.haveTOIASelected = function () {
+            return AssetsService.countTOIASelected() > 0;
+        };
+
+        $scope.isTALoaded = function () {
+            return AssetsService.countTALoaded() > 0;
+        };
+
+        $scope.haveRisksSelected = function () {
+            return RisksService.countRisksSelected() > 0;
+        };
+
+        $scope.haveTreatmentsSelected = function () {
+            return TreatmentsService.countTreatmentsSelected() > 0;
+        };
+
+
+        // skipBsoia status
+        $scope.isSkipBsoia = function () {
+           return AssetsService.getSkipBsoia();
+        };
+
+        // skip Toia status
+        $scope.isSkipToia = function () {
+            return AssetsService.getSkipToia();
+        };
 }]);

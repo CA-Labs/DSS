@@ -9,6 +9,8 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     //BSOIA assets
     var bsoiaFromStorage = localStorageService.get('bsoiaAssetsSelected') || [];
     var bsoia = bsoiaFromStorage;               //BSOIA assets selected by the user
+    var skipBsoia = (!!localStorageService.get('skipBsoia')) ? localStorageService.get('skipBsoia') : false; // flag to see if the user skipped bsoia
+    var skipToia = (!!localStorageService.get('skipToia')) ? localStorageService.get('skipToia') : false; // flag to see if the user skipped toia
 
     //TOIA assets
     var toiaFromStorage = localStorageService.get('toiaAssetsSelected') || [];
@@ -21,9 +23,22 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     var loadingDataFromLocalStorage = false;    //Flag to control local storage restore state
 
     var xmlTaAssetsAsObjectFromStorage = localStorageService.get('xmlTaAssetsAsObject') || {};
-    var xmlTaAssetsAsObject = xmlTaAssetsAsObjectFromStorage;               // Parsed XML of Modelio file represented as object
+    var xmlTaAssetsAsObject = xmlTaAssetsAsObjectFromStorage;               // Parsed XML of Modelio file represented
+                                                                            // as object
 
-    var deploymentTypeFromStorage = Boolean(localStorageService.get('isMulticloudDeployment')) || true; // set the isMulticloudDeployment to be multicloudDeployment in default { options: isMulticloudDeployment = multicloudDeployment || multicloudReplication }
+    var deploymentTypeFromStorage = Boolean(localStorageService.get('isMulticloudDeployment')) || true; // set the
+
+                                                                                                        // isMulticloudDeployment
+                                                                                                        // to be
+                                                                                                        // multicloudDeployment
+                                                                                                        // in default {
+                                                                                                        // options:
+                                                                                                        // isMulticloudDeployment
+                                                                                                        // =
+                                                                                                        // multicloudDeployment
+                                                                                                        // ||
+                                                                                                        // multicloudReplication
+                                                                                                        // }
     var isMulticloudDeployment = deploymentTypeFromStorage;
 
     var criticityBoundModelsFromStorage = localStorageService.get('criticityBoundModels') || {};
@@ -442,8 +457,10 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
     /**
      * Get Deployment type
      * @description: there are two options for the multicloud deployment,
-     * 0: application is of a type of multicloud replication - which means that each that we look for services matching the deployment from the same provider
-     * 1: cloud is of a type of multicloud deployment - which means that each of the TA needs a service on different cloud service
+     * 0: application is of a type of multicloud replication - which means that each that we look for services matching
+     *     the deployment from the same provider
+     * 1: cloud is of a type of multicloud deployment - which means that each of the TA needs a service on different
+     *     cloud service
      * @returns {number}
      */
     this.getDeploymentType = function () {
@@ -487,6 +504,38 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
      */
     this.setCriticityBoundModel = function(taAssetId, value){
         criticityBoundModels[taAssetId] = value;
+    };
+
+    // Set of counters for the assets
+    this.countBSOIASelected = function () {
+        return bsoia.length;
+    };
+
+    this.countTOIASelected = function () {
+        return toia.length;
+    };
+
+    this.countTALoaded = function () {
+        return ta.length;
+    };
+
+    // skip bsoia toggle function
+    this.toggleSkipBsoia = function () {
+        skipBsoia = !skipBsoia;
+        localStorageService.set('skipBsoia', skipBsoia);
+    };
+
+    this.getSkipBsoia = function () {
+        return skipBsoia;
+    };
+
+    this.toggleSkipToia = function () {
+        skipToia = !skipToia;
+        localStorageService.set('skipToia', skipBsoia);
+    };
+
+    this.getSkipToia = function () {
+        return skipToia;
     };
 
 }]);
