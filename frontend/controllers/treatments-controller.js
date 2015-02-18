@@ -352,5 +352,10 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
         });
         return newArray;
     };
+
+    $scope.$on('newContinents', function($event, data){
+        TreatmentsService.addTreatmentValue(data.treatmentName, data.continents);
+    });
+
 }]);
 

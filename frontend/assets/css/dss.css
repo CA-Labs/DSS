@@ -449,26 +449,11 @@ circle.node-treatment-collapse {
 #map .continent:hover {
   fill: #ccb; }
 
-.dss-continent[data-name="North America"] {
-  fill: #0067A5; }
+.continent-selected {
+  fill: green; }
 
-.dss-continent[data-name="South America"] {
-  fill: #FF70DB; }
-
-.dss-continent[data-name="Asia"] {
-  fill: #00A86B; }
-
-.dss-continent[data-name="Africa"] {
-  fill: orange; }
-
-.dss-continent[data-name="Europe"] {
-  fill: #CC3333; }
-
-.dss-continent[data-name="Oceania"] {
-  fill: purple; }
-
-.dss-continent[data-name="Antarctica"] {
-  fill: #DDD; }
+.continent-unselected {
+  fill: black; }
 
 dss-map svg {
   display: block;

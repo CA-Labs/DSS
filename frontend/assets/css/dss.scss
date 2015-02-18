@@ -578,13 +578,8 @@ circle.node-treatment-collapse {
 #map .continent { stroke: #ccc; }
 #map .continent:hover { fill: #ccb; }
 
-.dss-continent[data-name="North America"] { fill: #0067A5; }
-.dss-continent[data-name="South America"] { fill: #FF70DB; }
-.dss-continent[data-name="Asia"] { fill: #00A86B; }
-.dss-continent[data-name="Africa"] { fill: orange; }
-.dss-continent[data-name="Europe"] { fill: #CC3333; }
-.dss-continent[data-name="Oceania"] { fill: purple; }
-.dss-continent[data-name="Antarctica"] { fill: #DDD; }
+.continent-selected { fill: green; }
+.continent-unselected { fill: black; }
 
 dss-map svg {
   display: block;

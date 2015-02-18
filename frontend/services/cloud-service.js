@@ -235,22 +235,37 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                         treatments = TreatmentsService.getTreatments();
                     }
                     _.each(treatments, function(treatment, j){
-                        // console.log('Current treatment', treatment)
+
                         var criticityValue = null;
                         var treatmentValue = null;
-                        if(treatment.hasOwnProperty('value')){
+
+                        // Special cases:
+                        // Place of jurisdiction => comparison between continents/regions arrays
+                        if (treatment.name == "Place of jurisdiction"){
                             criticityValue = TreatmentsService.showTreatmentValue(treatment.name) ?
-                                AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatment.name)) : AssetsService.getTACriticityValue(taAssetId);
-                            treatmentValue = AssetsService.getInverseCriticityValue(treatment.value);
-                        } else {
-                            criticityValue = TreatmentsService.showTreatmentValue(treatment.name) ?
-                                AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatment.name)) : AssetsService.getTACriticityValue(taAssetId);
-                            var proposalCharacteristic = proposal.characteristics.filter(function(t){ return t.name == treatment.name});
-                            if(proposalCharacteristic.length > 0){
-                                treatmentValue = AssetsService.getInverseCriticityValue(proposalCharacteristic[0].value);
-                            } else {
-                                // If the service does not have this characteristic, consider it has it with the lowest value possible
+                                AssetsService.getInverseCriticityValue(TreatmentsService.compareRegions(TreatmentsService.getTreatmentValue(treatment.name), proposal.service.regions)) : AssetsService.getTACriticityValue(taAssetId);
+                            if (!proposal.service.hasOwnProperty('regions')){
                                 treatmentValue = 0;
+                            } else {
+                                treatmentValue =  AssetsService.getInverseCriticityValue(TreatmentsService.compareRegions(TreatmentsService.getTreatmentValue(treatment.name), proposal.service.regions))
+                            }
+                        } else {
+                            if (treatment.hasOwnProperty('value')) {
+                                criticityValue = TreatmentsService.showTreatmentValue(treatment.name) ?
+                                    AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatment.name)) : AssetsService.getTACriticityValue(taAssetId);
+                                treatmentValue = AssetsService.getInverseCriticityValue(treatment.value);
+                            } else {
+                                criticityValue = TreatmentsService.showTreatmentValue(treatment.name) ?
+                                    AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatment.name)) : AssetsService.getTACriticityValue(taAssetId);
+                                var proposalCharacteristic = proposal.characteristics.filter(function (t) {
+                                    return t.name == treatment.name
+                                });
+                                if (proposalCharacteristic.length > 0) {
+                                    treatmentValue = AssetsService.getInverseCriticityValue(proposalCharacteristic[0].value);
+                                } else {
+                                    // If the service does not have this characteristic, consider it has it with the lowest value possible
+                                    treatmentValue = 0;
+                                }
                             }
                         }
                         // console.log('Criticity value vs treatment value', criticityValue, treatmentValue);
