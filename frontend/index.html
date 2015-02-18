@@ -439,7 +439,7 @@
                 <div ng-switch="treatmentSelected.representation">
                     <div ng-switch-when="select">
                         <br>
-                        <select ng-init="treatmentValues[treatmentSelected.name] = parseInt(treatmentValues[treatmentSelected.name] || utils.keys(treatmentSelected.options)[0])"
+                        <select ng-init="treatmentValues[treatmentSelected.name] = treatmentValues[treatmentSelected.name] || utils.keys(treatmentSelected.options)[0]"
                                 ng-show="showTreatmentValues[treatmentSelected.name]"
                                 class="form-control" data-hash-key="treatmentSelected.name"
                                 ng-model="treatmentValues[treatmentSelected.name]"

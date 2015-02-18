@@ -16,6 +16,18 @@ dssApp.directive('dssMap', [function(){
             // List of continents selected so far
             scope.continents = [];
 
+            scope.$on('setSelectedContinents', function($event, data){
+                scope.continents = data.continents;
+                if (data.treatment == scope.treatmentName) {
+                    _.each(data.continents, function(continent){
+                        d3.selectAll('.dss-continent')
+                            .filter(function(d){ return d.properties.continent == continent })
+                            .attr('selected', true)
+                            .classed('continent-selected', true);
+                    });
+                }
+            });
+
             var width = 600;
             var height = 400;
 
@@ -63,6 +75,7 @@ dssApp.directive('dssMap', [function(){
                             } else {
                                 scope.continents.splice(index,1);
                             }
+                            console.log('sending new continents event from directive...');
                             scope.$emit('newContinents', {treatmentName: scope.treatmentName, continents: scope.continents});
                         });
                 }
