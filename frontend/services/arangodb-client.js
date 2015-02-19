@@ -35,7 +35,7 @@ dssApp.service('ArangoClient', ['$q', function($q){
                 })
             })
         ]).then(function(){
-            console.log('ArangoDB initialization checks completed.');
+            //console.log('ArangoDB initialization checks completed.');
         }, function(err){
             console.log('ArangoDB initialization checks failed, reason:', err);
         });

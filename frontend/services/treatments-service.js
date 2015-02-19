@@ -85,7 +85,7 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
      */
     this.addTreatmentValue = function(treatmentName, treatmentValue){
         treatmentsValues[treatmentName] = treatmentValue;
-        console.log(treatmentsValues);
+        localStorageService.set('treatmentValues', treatmentsValues);
     };
 
     /**
