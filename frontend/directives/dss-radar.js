@@ -8,7 +8,8 @@ dssApp.directive('dssRadar', ['TreatmentsService', function(TreatmentsService){
     return {
         restrict: 'E',
         scope: {
-            characteristics: '='
+            characteristics: '=',
+            service: '='
         },
         link: function(scope, elem, attrs){
 
@@ -19,7 +20,11 @@ dssApp.directive('dssRadar', ['TreatmentsService', function(TreatmentsService){
                 var value = 0;
                 _.each(treatmentsValues, function(treatmentValue, treatmentKey){
                     if (treatmentKey == characteristic.name){
-                        value = treatmentValue;
+                        if (treatmentKey == "Place of jurisdiction"){
+                            value = TreatmentsService.compareRegions(treatmentValue, scope.service.regions)
+                        } else {
+                            value = treatmentValue;
+                        }
                     }
                 });
                 treatmentsAxes.push({axis: characteristic.name, value: value});

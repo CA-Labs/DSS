@@ -7,38 +7,79 @@
 dssApp.directive('dssMap', [function(){
     return {
         restrict: 'E',
-        scope: {},
+        scope: {
+            treatmentName: '='
+        },
         transclude: true,
         link: function(scope, element, attrs){
-            var width = 1024;
-            var height = 300;
+
+            // List of continents selected so far
+            scope.continents = [];
+
+            scope.$on('setSelectedContinents', function($event, data){
+                scope.continents = data.continents;
+                if (data.treatment == scope.treatmentName) {
+                    _.each(data.continents, function(continent){
+                        d3.selectAll('.dss-continent')
+                            .filter(function(d){ return d.properties.continent == continent })
+                            .attr('selected', true)
+                            .classed('continent-selected', true);
+                    });
+                }
+            });
+
+            var width = 600;
+            var height = 400;
 
             var svg = d3.select('.dss-map').append('svg')
                 .attr('width', width)
                 .attr('height', height);
 
             var projection = d3.geo.mercator()
-                .scale((width + 1) / 2 / Math.PI)
+                .scale(100)
                 .translate([width / 2, height / 2])
                 .precision(.1);
 
-            //d3.json('assets/world-continents.geo.json', function(error, world) {
-            //    if (error) {
-            //        return console.error(error);
-            //    } else {
-            //        var path = d3.geo.path().projection(projection);
-            //
-            //        var continents = svg.selectAll('.continent')
-            //            .data(world.features);
-            //
-            //        continents.enter().append('path')
-            //            .attr('id', function(d) { return d.id; })
-            //            .attr('data-continent', function(d) { return d.properties.name; })
-            //            .attr('class', function(d) { return 'dss-continent'; })
-            //            .attr('d', path)
-            //            .on('click', function(d){console.log('click on ' + d.properties.name)});
-            //    }
-            //});
+            var path = d3.geo.path()
+                .projection(projection);
+
+            var selectContinent = function(continent){
+                d3.selectAll('.dss-continent')
+                    .filter(function(d){ return d.properties.continent == continent })
+                    .attr('selected', function(d,i){
+                        return d3.selectAll('.dss-continent').filter(function(d){ return d.properties.continent == continent })[0][i].attributes.selected.value == 'true' ? false : true;
+                    })
+                    .classed('continent-selected', function(d,i){ return d3.selectAll('.dss-continent').filter(function(d){ return d.properties.continent == continent })[0][i].attributes.selected.value == 'true' })
+                    .classed('continent-unselected', function(d,i) { return d3.selectAll('.dss-continent').filter(function(d){ return d.properties.continent == continent })[0][i].attributes.selected.value == 'false' })
+            };
+
+            d3.json('assets/continents.json', function(error, world) {
+                if (error) {
+                    return console.error(error);
+                } else {
+                    var countries = topojson.feature(world, world.objects.countries).features;
+                    svg.selectAll('.continent')
+                        .data(countries)
+                        .enter()
+                        .append('path')
+                        .attr('id', function(d) { return d.id; })
+                        .attr('class', function(d) { return 'dss-continent'; })
+                        .attr('data-name', function(d) { return d.properties.continent; })
+                        .attr('selected', false)
+                        .attr('d', path)
+                        .on('click', function(d) {
+                            selectContinent(d.properties.continent);
+                            var index = scope.continents.indexOf(d.properties.continent);
+                            if (index == -1) {
+                                scope.continents.push(d.properties.continent)
+                            } else {
+                                scope.continents.splice(index,1);
+                            }
+                            console.log('sending new continents event from directive...');
+                            scope.$emit('newContinents', {treatmentName: scope.treatmentName, continents: scope.continents});
+                        });
+                }
+            });
 
         }
     }

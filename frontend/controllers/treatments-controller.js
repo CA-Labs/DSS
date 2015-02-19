@@ -146,9 +146,19 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
             Object.keys($scope.treatmentValues).forEach(function (key) {
                 $scope.treatmentsBoundModels[key] = treatmentValueToDescription(key, $scope.treatmentValues[key]);
             });
+
+            // Color selected continents if map-like treatment values are available
+            if($scope.treatmentValues.hasOwnProperty('Place of jurisdiction')){
+                console.log('sending setSelectedContinents', $scope.treatmentValues);
+                $timeout(function(){
+                    $rootScope.$broadcast('setSelectedContinents', {treatment: 'Place of jurisdiction', continents: $scope.treatmentValues['Place of jurisdiction']});
+                }, 1000);
+            };
+
             return;
         }
         TreatmentsService.setTreatmentValues(newValue);
+
     }, true);
 
     /**
@@ -352,5 +362,11 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
         });
         return newArray;
     };
+
+    $scope.$on('newContinents', function($event, data){
+        console.log('newContinents event in controller', data);
+        TreatmentsService.addTreatmentValue(data.treatmentName, data.continents);
+    });
+
 }]);
 

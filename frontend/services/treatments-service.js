@@ -85,6 +85,7 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
      */
     this.addTreatmentValue = function(treatmentName, treatmentValue){
         treatmentsValues[treatmentName] = treatmentValue;
+        console.log(treatmentsValues);
     };
 
     /**
@@ -109,7 +110,11 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
      * @returns {*}
      */
     this.getTreatmentValue = function(treatmentName){
-        return parseInt(treatmentsValues[treatmentName]);
+        switch (typeof treatmentsValues[treatmentName]){
+            case 'object': return treatmentsValues[treatmentName];
+            case 'string': return parseInt(treatmentsValues[treatmentName]);
+            default: return treatmentsValues[treatmentName];
+        }
     };
 
     /**
@@ -381,6 +386,25 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
      */
     this.countTreatmentsSelected = function () {
         return treatments.length;
+    };
+
+    /**
+     * Used when comparing user-selected regions with service regions.
+     * @param userRegions
+     * @param serviceRegions
+     * @returns {number}
+     */
+    this.compareRegions = function(userRegions, serviceRegions){
+        // Normalize regions arrays to lowercase
+        userRegions = _.map(userRegions, function(region){ return region.toLowerCase(); });
+        serviceRegions = _.map(serviceRegions, function(region){ return region.toLowerCase(); });
+
+        // Compute score based on user-selected regions
+        var score = 0;
+        _.each(userRegions, function(region){
+            if(serviceRegions.indexOf(region) !== -1 && score < userRegions.length) score++;
+        });
+        return userRegions.length > 0 ? (score/userRegions.length)*10 : 0;
     };
 
 }]);
