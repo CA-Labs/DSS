@@ -16,6 +16,7 @@ dssApp.directive('dssRadar', ['TreatmentsService', function(TreatmentsService){
             // Datasets seem to be of same length, consider treatments not selected to have a value of 0 (does it make sense?)
             var treatmentsValues = TreatmentsService.getTreatmentsValues();
             var treatmentsAxes = [];
+
             _.each(scope.characteristics, function(characteristic){
                 var value = 0;
                 _.each(treatmentsValues, function(treatmentValue, treatmentKey){
@@ -33,7 +34,11 @@ dssApp.directive('dssRadar', ['TreatmentsService', function(TreatmentsService){
             var data = [
                 {
                     axes: _.map(scope.characteristics, function (characteristic) {
-                        return {axis: characteristic.name, value: characteristic.value}
+                        var value = characteristic.value;
+                        if (characteristic.name == "Place of jurisdiction"){
+                            value = characteristic.value.length / characteristic.max;
+                        }
+                        return {axis: characteristic.name, value: value}
                     })
                 },
                 {
