@@ -18,7 +18,7 @@ html, body {
   margin-right: 10px; }
 
 .logo {
-  background: url("../img/image4094_1.png") no-repeat white;
+  background: url("../img/image4094_1.png") no-repeat #ffffff;
   display: block;
   width: 111px;
   height: 65px;
@@ -444,23 +444,32 @@ circle.node-treatment-collapse {
 
 /* Continents map */
 #map .continent {
-  stroke: #ccc; }
+  stroke: #111; }
 
 #map .continent:hover {
-  fill: #ccb; }
+  fill: #999; }
+
+.dss-continent {
+  fill: #333; }
 
 .continent-selected {
-  fill: green; }
+  fill: #18bc9c; }
 
 .continent-unselected {
-  fill: black; }
+  fill: #333; }
 
 dss-map svg {
   display: block;
-  margin: 0 auto; }
+  margin: 0 auto;
+  border: 1px solid #cdcdcd;
+  background: #ffffff;
+  border-radius: 3px;
+  box-shadow: 0px 0px 3px rgba(0, 0, 0, 0.2); }
 
 /* Radar Chart */
 dss-radar svg {
   margin-top: 20px;
   display: block;
   margin: 0 auto; }
+
+/*# sourceMappingURL=dss.css.map */

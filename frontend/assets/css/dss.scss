@@ -575,15 +575,20 @@ circle.node-treatment-collapse {
 
 /* Continents map */
 
-#map .continent { stroke: #ccc; }
-#map .continent:hover { fill: #ccb; }
+#map .continent { stroke: #111; }
+#map .continent:hover { fill: #999; }
 
-.continent-selected { fill: green; }
-.continent-unselected { fill: black; }
+.dss-continent { fill: #333; }
+.continent-selected { fill: rgb(24, 188, 156); }
+.continent-unselected { fill: #333; }
 
 dss-map svg {
   display: block;
   margin: 0 auto;
+  border: 1px solid #cdcdcd;
+  background: #ffffff;
+  border-radius: 3px;
+  box-shadow: 0px 0px 3px rgba(0,0,0,.2);
 }
 
 /* Radar Chart */
