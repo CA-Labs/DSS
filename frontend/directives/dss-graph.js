@@ -120,20 +120,42 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                 });
                 return paths;
             };
+
             var findLinksStartingByNode = function(links, nodeName){
                 // console.log('nodeName', nodeName);
                 return links.filter(function(link){ return link.source.name == nodeName });
             };
+
             var pathContainingMitigatedRisk = function(path, risk, service){
+                // TODO: What if the path has been hidden? no risk link will be found and it will be considered as unmitigated!
+                // TODO: no clear work around
                 var mitigatedRisk = false;
                 _.each(path, function(link){
-                    if(link.source.type == 'risk' && link.source.name == risk){
+                    if(link.target.type == 'risk' && link.target.name == risk){
                         if(service.mitigatedRisks.indexOf(risk) !== -1){
                             mitigatedRisk = true;
                         }
                     }
                 });
                 return mitigatedRisk;
+            };
+
+            var toggleAll = function(d) {
+                if (d.children) {
+                    d.children.forEach(toggleAll);
+                    toggle(d);
+                }
+            };
+
+            // Toggle children.
+            var toggle = function(d) {
+                if (d.children) {
+                    d._children = d.children;
+                    d.children = null;
+                } else {
+                    d.children = d._children;
+                    d._children = null;
+                }
             };
 
             /********************************************************************
@@ -173,70 +195,26 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                     .append('g')
                     .attr('transform', 'translate(' + margin.left + ',' + margin.top + ')');
 
+                // Compute the new tree layout
                 var root = buildFlowNodes();
                 root.x0 = margin.left;
                 root.y0 = width / 4.5;
+
+                var nodes = tree.nodes(root).reverse();
+                var links = tree.links(nodes);
+
                 var i = 0;
 
-                update(root);
+                // First update is for risk mitigation detection
+                buildProperNodesAndLinks();
+                updateGraph(root);
+                hideMitigatedPaths();
 
-                function update(source) {
-
-                    var selectedServices = CloudService.getServicesSelected();
+                // Graph ui-related updates
+                function updateGraph(source) {
 
                     var duration = d3.event && d3.event.altKey ? 5000 : 500;
 
-                    // Compute the new tree layout
-                    var nodes = tree.nodes(root).reverse(),
-                        links = tree.links(nodes);
-                    // Initialize mitigation class to empty value
-                    _.each(links, function(link){ link.mitigationClass = "mitigation-undefined"} );
-
-                    // The user already selected some services, display mitigated/unmitigated risks in the tree
-                    if(selectedServices !== null && typeof selectedServices !== 'undefined' && selectedServices.length > 0){
-                        // Find all tree paths
-                        var paths = findPaths(links);
-                        //console.log('Computed paths', paths);
-                        var auxLinks = [];
-                        // Iterate over paths found
-                        _.each(paths, function(path){
-                            // Retrieve the link starting from a Risk asset
-                            var riskLink = path.filter(function(link){ return link.source.type == 'risk'; })[0];
-                            if (riskLink) {
-                                //console.log('RISK LINK', riskLink);
-                                var riskMitigated = 0;
-                                // Check if this link is contained in a path where the risk has been mitigated by some selected service
-                                _.each(selectedServices, function(selectedService){
-                                    if(pathContainingMitigatedRisk(path, riskLink.source.name, selectedService)){
-                                        riskMitigated++;
-                                    }
-                                });
-                                _.each(path, function(link){
-                                    link.mitigationClass = riskMitigated > 0 ? riskMitigated == selectedServices.length ? 'mitigation-all' : 'mitigation-some' : 'mitigation-none';
-                                    auxLinks.push(link);
-                                });
-                            } else {
-                                //console.error("No risk link found in path!", path);
-                            }
-                        });
-
-                        //console.log('Original links', links);
-
-                        // Modify original links
-                        var linksIdsUsed = [];
-                        _.each(links, function(link, index){
-                            _.each(auxLinks, function(auxLink){
-                                if(link.source.name == auxLink.source.name && link.target.name == auxLink.target.name && !linksIdsUsed.indexOf(link.target.id)){
-                                    linksIdsUsed.push(link.target.id);
-                                    links[index] = auxLink
-                                }
-                            });
-                        });
-
-                        //console.log('Modified links', links)
-                    }
-
-                    // Normalize for fixed depth
                     nodes.forEach(function (d) {
                         d.y = d.depth * (width / 4.5);    // We have up to 4 levels, divide by 4.5 to be sure all 4 levels fit within the area
                         d.x = d.x * height / width;
@@ -252,11 +230,20 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                      *********************** NEW NODES **************************
                      ************************************************************/
 
+                    //console.log('new nodes', node.enter());
+
                     // Enter any new nodes at the parent's previous position
                     var nodeEnter = node.enter().append('g')
                         .attr('class', 'node')
                         .attr('transform', function (d) {
                             return 'translate(' + source.y0 + ',' + source.x0 + ')';
+                        })
+                        .on('click', function(d) {
+                            toggle(d);
+                            nodes = tree.nodes(root).reverse();
+                            links = tree.links(nodes);
+                            buildProperNodesAndLinks();
+                            updateGraph(d);
                         });
 
                     nodeEnter.append('circle')
@@ -282,6 +269,8 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                      ********************* UPDATE NODES *************************
                      ************************************************************/
 
+                    //console.log('update nodes', node);
+
                     // Transition nodes to their new position
                     var nodeUpdate = node.transition()
                         .duration(duration)
@@ -301,6 +290,8 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                     /************************************************************
                      ********************* REMOVED NODES ************************
                      ************************************************************/
+
+                    //console.log('removed nodes', node.exit());
 
                     // Transition exiting nodes to the parent's new position
                     var nodeExit = node.exit().transition()
@@ -332,10 +323,9 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                      *********************** NEW LINKS **************************
                      ************************************************************/
 
-                        // Enter any new links at the parent's previous position.
+                    // Enter any new links at the parent's previous position.
                     link.enter().insert('path', 'g')
-                        .attr('class', 'link')
-                        .attr('class', function(d){ return d.mitigationClass})
+                        .attr('class', function(d){ return d.mitigationClass + " link"})
                         .attr('d', function (d) {
                             var o = {x: source.x0, y: source.y0};
                             return diagonal({source: o, target: o});
@@ -353,7 +343,7 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                      ********************* REMOVED LINKS ************************
                      ************************************************************/
 
-                        // Transition exiting nodes to the parent's new position.
+                    // Transition exiting nodes to the parent's new position.
                     link.exit().transition()
                         .duration(duration)
                         .attr('d', function (d) {
@@ -369,6 +359,175 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                     });
 
                 }
+
+                // Prepares nodes and links for graph plotting
+                function buildProperNodesAndLinks() {
+
+                    var selectedServices = CloudService.getServicesSelected();
+
+                    // The user already selected some services, display mitigated/unmitigated risks in the tree
+                    if(selectedServices !== null && typeof selectedServices !== 'undefined' && selectedServices.length > 0){
+
+                        // Find all tree paths
+                        var paths = findPaths(links);
+
+                        var auxLinks = [];
+                        // Iterate over paths found
+                        _.each(paths, function(path){
+                            // Retrieve the link ending to a Risk asset (some unmitigated risk might have no treatments)
+                            var riskLink = path.filter(function(link){ return link.target.type == 'risk'; })[0];
+                            if (riskLink) {
+                                var riskMitigated = 0;
+                                // Check if this link is contained in a path where the risk has been mitigated by some selected service
+                                _.each(selectedServices, function(selectedService){
+                                    if(pathContainingMitigatedRisk(path, riskLink.target.name, selectedService)){
+                                        riskMitigated++;
+                                    }
+                                });
+                                _.each(path, function(link){
+                                    link.mitigationClass = riskMitigated > 0 ? riskMitigated == selectedServices.length ? 'mitigation-all' : 'mitigation-some' : 'mitigation-none';
+                                    auxLinks.push(link);
+                                });
+                            }
+                        });
+
+                        // Modify original links
+                        var linksIdsUsed = [];
+                        _.each(links, function(link, index){
+                            _.each(auxLinks, function(auxLink){
+                                if(link.source.name == auxLink.source.name && link.target.name == auxLink.target.name && linksIdsUsed.indexOf(link.source.name + "_" + link.target.name) == -1){
+
+                                    // Choose proper mitigation class (links might be contained within different paths of different mitigation nature)
+                                    var duplicatedLinks = _.filter(auxLinks, function(duplicatedLink){
+                                        return duplicatedLink.source.name == auxLink.source.name && duplicatedLink.target.name == auxLink.target.name;
+                                    });
+
+                                    // red, green, orange mitigation classes
+                                    var reds = 0;
+                                    var greens = 0;
+                                    var oranges = 0;
+
+                                    _.each(duplicatedLinks, function(duplicatedLink){
+                                        if(duplicatedLink.mitigationClass == 'mitigation-all') {
+                                            greens++;
+                                        } else if(duplicatedLink.mitigationClass == 'mitigation-some') {
+                                            oranges++;
+                                        } else if(duplicatedLink.mitigationClass == 'mitigation-none') {
+                                            reds++;
+                                        }
+                                    });
+                                    if (reds > 0 && oranges == 0 && greens == 0) {
+                                        auxLink.mitigationClass = 'mitigation-none';
+                                    } else if (reds > 0 && (oranges > 0 || greens > 0)) {
+                                        auxLink.mitigationClass = 'mitigation-some';
+                                    } else if (reds == 0 && oranges > 0) {
+                                        auxLink.mitigationClass = 'mitigation-some';
+                                    } else if (greens > 0) {
+                                        auxLink.mitigationClass = 'mitigation-all';
+                                    }
+
+                                    linksIdsUsed.push(link.source.name + "_" + link.target.name);
+                                    links[index] = auxLink;
+                                }
+                            });
+                        });
+
+                    }
+
+                    // Initialize mitigation class to empty value
+                    _.each(links, function(link){
+                        if(!link.mitigationClass) {
+                            link.mitigationClass = 'mitigation-undefined';
+                        }
+                    });
+
+                };
+
+                // Hides mitigated paths
+                function hideMitigatedPaths() {
+
+                    // Retrieves a link by source and target names
+                    var getFromToLink = function(sourceName, targetName){
+                        var foundLink = _.filter(links, function(link){
+                            return link.source.name == sourceName && link.target.name == targetName
+                        });
+                        return foundLink.length == 1 ? foundLink[0] : null;
+                    };
+
+                    // Checks whether a certain node is a child of some other node
+                    var isChildFromNode = function(childNodeName, parentNodeName){
+
+                        var parentObj = {value: false};
+
+                        var isParent = function(parent, childNodeName){
+                            if (parent.children){
+                                _.each(parent.children, function(child){
+                                    if (child.name == childNodeName) {
+                                        parentObj.value = true;
+                                    }
+                                    else isParent(child, childNodeName);
+                                });
+                            }
+                        };
+
+                        var parentNode = _.filter(nodes, function(node){
+                            return node.name == parentNodeName;
+                        });
+                        if (parentNode.length !== 1) return false;
+                        parentNode = parentNode[0];
+
+                        isParent(parentNode, childNodeName);
+                        return parentObj.value;
+                    };
+
+                    // Auxiliar function that checks if there are unmitigated children links
+                    var allMitigated = function (source) {
+                        var mitigated = 0;
+                        if (source.children) {
+                            _.each(source.children, function (child) {
+                                var link = getFromToLink(source.name, child.name);
+                                if (link.mitigationClass == 'mitigation-all') mitigated++;
+                            });
+                            return mitigated == source.children.length;
+                        } else {
+                            return true;
+                        }
+                    };
+
+                    var nodesNames = [];
+                    _.each(links, function (link) {
+                        if (link.mitigationClass == 'mitigation-all' && allMitigated(link.target)) {
+                            nodesNames.push(link.source.name);
+                        }
+                    });
+
+                    _.each(nodesNames, function(parentName){
+                        _.each(nodesNames, function(childName){
+                            if (childName != parentName){
+                                nodes.forEach(function(d){
+                                    if(d.name == childName && nodesNames.indexOf(childName) !== -1 && d.children){
+                                        var canBeHidden = true;
+                                        _.each(nodesNames, function(nodeName){
+                                            if(isChildFromNode(childName, nodeName)){
+                                                canBeHidden = false;
+                                            }
+                                        });
+
+                                        if (canBeHidden){
+                                            d._children = d.children;
+                                            d.children = null;
+                                            nodes = tree.nodes(root).reverse();
+                                            links = tree.links(nodes);
+                                            buildProperNodesAndLinks();
+                                            updateGraph(d);
+                                        }
+                                    }
+                                })
+                            };
+                        });
+                    });
+                };
+
             }, 100);
         }
     }
