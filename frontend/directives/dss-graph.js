@@ -122,7 +122,6 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
             };
 
             var findLinksStartingByNode = function(links, nodeName){
-                // console.log('nodeName', nodeName);
                 return links.filter(function(link){ return link.source.name == nodeName });
             };
 
@@ -156,6 +155,14 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                     d.children = d._children;
                     d._children = null;
                 }
+            };
+
+            // Retrieves a link by source and target names
+            var getFromToLink = function(sourceName, targetName, links){
+                var foundLink = _.filter(links, function(link){
+                    return link.source.name == sourceName && link.target.name == targetName
+                });
+                return foundLink.length == 1 ? foundLink[0] : null;
             };
 
             /********************************************************************
@@ -446,14 +453,6 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                 // Hides mitigated paths
                 function hideMitigatedPaths() {
 
-                    // Retrieves a link by source and target names
-                    var getFromToLink = function(sourceName, targetName){
-                        var foundLink = _.filter(links, function(link){
-                            return link.source.name == sourceName && link.target.name == targetName
-                        });
-                        return foundLink.length == 1 ? foundLink[0] : null;
-                    };
-
                     // Checks whether a certain node is a child of some other node
                     var isChildFromNode = function(childNodeName, parentNodeName){
 
@@ -481,11 +480,11 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                     };
 
                     // Auxiliar function that checks if there are unmitigated children links
-                    var allMitigated = function (source) {
+                    var allMitigated = function (source, links) {
                         var mitigated = 0;
                         if (source.children) {
                             _.each(source.children, function (child) {
-                                var link = getFromToLink(source.name, child.name);
+                                var link = getFromToLink(source.name, child.name, links);
                                 if (link.mitigationClass == 'mitigation-all') mitigated++;
                             });
                             return mitigated == source.children.length;
@@ -496,8 +495,19 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
 
                     var nodesNames = [];
                     _.each(links, function (link) {
-                        if (link.mitigationClass == 'mitigation-all' && allMitigated(link.target)) {
-                            nodesNames.push(link.source.name);
+                        var successorLinks = findLinksStartingByNode(links, link.source.name);
+                        if (successorLinks.length == 1){
+                            // There's only one successor link, just get this one into account
+                            if (link.mitigationClass == 'mitigation-all' && allMitigated(link.target, links)) {
+                                nodesNames.push(link.source.name);
+                            }
+                        } else if (successorLinks.length > 1){
+                            // There's more than one successor link, check that all successor links are actually mitigated
+                            var mitigated = 0;
+                            _.each(successorLinks, function(successor){
+                                if (successor.mitigationClass == 'mitigation-all' && allMitigated(successor.target, links)) mitigated++;
+                            })
+                            if (mitigated == successorLinks.length) nodesNames.push(link.source.name);
                         }
                     });
 
