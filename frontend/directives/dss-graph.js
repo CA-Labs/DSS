@@ -81,7 +81,7 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                     var currentPath = [];
                     if (link.source.type == 'bsoia') {
                         // Add this first edge to the current path
-                        currentPath.push(link);
+                        currentPath.push(_.clone(link));
                         //console.log('CURRENT PATH', _.clone(currentPath));
                         // Use a stack to push unvisited children edges (depth search)
                         var stackToVisit = [];
@@ -380,13 +380,12 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                                 var riskMitigated = 0;
                                 // Check if this link is contained in a path where the risk has been mitigated by some selected service
                                 _.each(selectedServices, function(selectedService){
-                                    if(pathContainingMitigatedRisk(path, riskLink.target.name, selectedService)){
-                                        riskMitigated++;
-                                    }
+                                    if(pathContainingMitigatedRisk(path, riskLink.target.name, selectedService)) riskMitigated++;
                                 });
                                 _.each(path, function(link){
-                                    link.mitigationClass = riskMitigated > 0 ? riskMitigated == selectedServices.length ? 'mitigation-all' : 'mitigation-some' : 'mitigation-none';
-                                    auxLinks.push(link);
+                                    var copy = _.clone(link);
+                                    copy.mitigationClass = riskMitigated > 0 ? riskMitigated == selectedServices.length ? 'mitigation-all' : 'mitigation-some' : 'mitigation-none';
+                                    auxLinks.push(copy);
                                 });
                             }
                         });
@@ -395,7 +394,7 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                         var linksIdsUsed = [];
                         _.each(links, function(link, index){
                             _.each(auxLinks, function(auxLink){
-                                if(link.source.name == auxLink.source.name && link.target.name == auxLink.target.name && linksIdsUsed.indexOf(link.source.name + "_" + link.target.name) == -1){
+                                if(link.source.name == auxLink.source.name && link.target.name == auxLink.target.name){
 
                                     // Choose proper mitigation class (links might be contained within different paths of different mitigation nature)
                                     var duplicatedLinks = _.filter(auxLinks, function(duplicatedLink){
@@ -416,6 +415,7 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                                             reds++;
                                         }
                                     });
+
                                     if (reds > 0 && oranges == 0 && greens == 0) {
                                         auxLink.mitigationClass = 'mitigation-none';
                                     } else if (reds > 0 && (oranges > 0 || greens > 0)) {
@@ -522,7 +522,7 @@ dssApp.directive('dssGraph', ['AssetsService', 'RisksService', 'TreatmentsServic
                                             updateGraph(d);
                                         }
                                     }
-                                })
+                                });
                             };
                         });
                     });
