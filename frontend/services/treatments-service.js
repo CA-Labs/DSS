@@ -85,7 +85,7 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
      */
     this.addTreatmentValue = function(treatmentName, treatmentValue){
         treatmentsValues[treatmentName] = treatmentValue;
-        console.log(treatmentsValues);
+        localStorageService.set('treatmentValues', treatmentsValues);
     };
 
     /**
@@ -395,16 +395,18 @@ dssApp.service('TreatmentsService', ['flash', 'localStorageService', 'RisksServi
      * @returns {number}
      */
     this.compareRegions = function(userRegions, serviceRegions){
+        if(typeof userRegions == 'undefined' || typeof serviceRegions == 'undefined' || (_.isArray(userRegions) && userRegions.length == 0) || (_.isArray(serviceRegions) && serviceRegions.length == 0)) return 0;
         // Normalize regions arrays to lowercase
         userRegions = _.map(userRegions, function(region){ return region.toLowerCase(); });
         serviceRegions = _.map(serviceRegions, function(region){ return region.toLowerCase(); });
 
         // Compute score based on user-selected regions
-        var score = 0;
+        // Intersection means 10, no intersection means 0
+        var intersection = false;
         _.each(userRegions, function(region){
-            if(serviceRegions.indexOf(region) !== -1 && score < userRegions.length) score++;
+            if(serviceRegions.indexOf(region) !== -1) intersection = true;
         });
-        return userRegions.length > 0 ? (score/userRegions.length)*10 : 0;
+        return intersection ? 10 : 0;
     };
 
 }]);

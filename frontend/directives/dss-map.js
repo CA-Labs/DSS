@@ -75,7 +75,6 @@ dssApp.directive('dssMap', [function(){
                             } else {
                                 scope.continents.splice(index,1);
                             }
-                            console.log('sending new continents event from directive...');
                             scope.$emit('newContinents', {treatmentName: scope.treatmentName, continents: scope.continents});
                         });
                 }

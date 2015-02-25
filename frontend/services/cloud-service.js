@@ -242,13 +242,11 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                         // Special cases:
                         // Place of jurisdiction => comparison between continents/regions arrays
                         if (treatment.name == "Place of jurisdiction"){
+                            var placeOfJurisdiction = proposal.characteristics.filter(function(characteristic){return characteristic.name == "Place of jurisdiction"});
+                            placeOfJurisdiction = placeOfJurisdiction.length == 1 ? placeOfJurisdiction[0].value : [];
                             criticityValue = TreatmentsService.showTreatmentValue(treatment.name) ?
-                                AssetsService.getInverseCriticityValue(TreatmentsService.compareRegions(TreatmentsService.getTreatmentValue(treatment.name), proposal.service.regions)) : AssetsService.getTACriticityValue(taAssetId);
-                            if (!proposal.service.hasOwnProperty('regions')){
-                                treatmentValue = 0;
-                            } else {
-                                treatmentValue =  AssetsService.getInverseCriticityValue(TreatmentsService.compareRegions(TreatmentsService.getTreatmentValue(treatment.name), proposal.service.regions))
-                            }
+                                AssetsService.getInverseCriticityValue(TreatmentsService.compareRegions(TreatmentsService.getTreatmentValue(treatment.name), placeOfJurisdiction)) : AssetsService.getTACriticityValue(taAssetId);
+                            treatmentValue =  AssetsService.getInverseCriticityValue(TreatmentsService.compareRegions(TreatmentsService.getTreatmentValue(treatment.name), placeOfJurisdiction));
                         } else {
                             if (treatment.hasOwnProperty('value')) {
                                 criticityValue = TreatmentsService.showTreatmentValue(treatment.name) ?
