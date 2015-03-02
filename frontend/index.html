@@ -112,11 +112,11 @@
         </a>
     </li>
     <li class="nav-buttons" ng-controller="buttonsController">
-        <button class="btn btn-primary btn-sm slide-prev" href="#dssSlides" data-slide="prev" style="display: none;">
+        <button class="btn btn-primary btn-sm slide-prev" href="#dssSlides" data-slide="prev" ng-click="previous($event)" style="display: none;">
             <i class="glyphicon glyphicon-backward"></i>
             Previous step
         </button>
-        <button class="btn btn-primary btn-sm slide-skip" href="#dssSlides" data-slide="next" ng-click="skip()" ng-class="{'disabled': skippedBsoia(), 'disabled': skippedToia() }">
+        <button class="btn btn-primary btn-sm slide-skip" href="#dssSlides" data-slide="next" ng-click="skip($event)" ng-class="{'disabled': skippedBsoia(), 'disabled': skippedToia() }">
             Skip
             <i class="glyphicon glyphicon-step-forward"></i>
         </button>

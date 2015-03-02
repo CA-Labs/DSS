@@ -85,11 +85,12 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'ArangoClient', function($http
      * risks connected to BSOIA or TOIA assets.
      * @param bsoia List of BSOIA assets.
      * @param toia List of TOIA assets.
+     * @param useBsoia Whether to start from BSOIA or TOIA assets for paths lookup.
      * @param callback Callback fn to execute
      * on data retrieval.
      */
-    this.getPotentialRisks = function(bsoia, toia, callback) {
-        ArangoClient.getPotentialRisks(toia)
+    this.getPotentialRisks = function(bsoia, toia, useBsoia, callback) {
+        ArangoClient.getPotentialRisks(toia, useBsoia)
             .then(function(res){
                 callback(null, res);
             }, function(err){
@@ -132,6 +133,19 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'ArangoClient', function($http
      */
     this.getTOIARisksMapping = function(callback){
         ArangoClient.getTOIARisksMapping()
+            .then(function(res){
+                callback(null, res);
+            }, function(err){
+                callback(err, null);
+            });
+    };
+
+    /**
+     * Retrieves bsoia-risks mapping.
+     * @param callback Callback fn to execute on data retrieval.
+     */
+    this.getBSOIARisksMapping = function(callback){
+        ArangoClient.getBSOIARisksMapping()
             .then(function(res){
                 callback(null, res);
             }, function(err){

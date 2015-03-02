@@ -48,6 +48,8 @@ dssApp.controller('risksController'
 
     $scope.toiaRisksMapping = RisksService.getTOIARisksMapping();
 
+    $scope.bsoiaRisksMapping = RisksService.getBSOIARisksMapping();
+
     // show likelihood values default, used when we want to standardise the values of the likelihood
     // because the user don't want/know how to specify it. In this case, the slider should disappear
     $scope.specifyLikelihood = true;
@@ -163,7 +165,7 @@ dssApp.controller('risksController'
     $scope.$on('bsoiaChanged', function(){
         // Only update if we have at least one BSOIA asset
         if(AssetsService.getBSOIA().length > 0) {
-            ArangoDBService.getPotentialRisks(AssetsService.getBSOIA(), AssetsService.getTOIA(), function(error, data){
+            ArangoDBService.getPotentialRisks(AssetsService.getBSOIA(), AssetsService.getTOIA(), true, function(error, data){
                 if(error){
                     flash.error = 'Some error occurred when trying to compute potential risks after selected BSOIA changed';
                 } else {
@@ -187,21 +189,21 @@ dssApp.controller('risksController'
      * by the user. This allows to recompute the potential risks.
      */
     $scope.$on('toiaChanged', function(){
-        ArangoDBService.getPotentialRisks(AssetsService.getBSOIA(), AssetsService.getTOIA(), function(error, data){
-           if(error){
-               flash.error = 'Some error occurred when trying to compute potential risks after selected TOIA changed';
-           } else {
-               var seen = [];
-               var aux = [];
-               _.each(data, function(risk){
-                   //Filter repeated risks by hand since AngularJS filter "unique" does not seem to work properly
-                   if(seen.indexOf(risk.destination.name) === -1){
-                       seen.push(risk.destination.name);
-                       aux.push(risk);
-                   }
-               });
-               $scope.potentialRisks = aux;
-           }
+        ArangoDBService.getPotentialRisks(AssetsService.getBSOIA(), AssetsService.getTOIA(), false, function(error, data){
+            if(error){
+                flash.error = 'Some error occurred when trying to compute potential risks after selected TOIA changed';
+            } else {
+                var seen = [];
+                var aux = [];
+                _.each(data, function(risk){
+                    //Filter repeated risks by hand since AngularJS filter "unique" does not seem to work properly
+                    if(seen.indexOf(risk.destination.name) === -1){
+                        seen.push(risk.destination.name);
+                        aux.push(risk);
+                    }
+                });
+                $scope.potentialRisks = aux;
+            }
         });
     });
 
@@ -586,19 +588,30 @@ dssApp.controller('risksController'
     });
 
     /**
-     * Aggregates risks by TOIA associated to them.
+     * Aggregates risks by BSOIA/TOIA associated to them.
      */
     $scope.potentialRisksGrouped = function(){
         var data = [];
         var potentialRiskNames = $scope.potentialRisks.map(function(potentialRisk) { return potentialRisk.destination.name });
-        var selectedToiaNames = AssetsService.getTOIA().map(function(toia){ return toia.asset.name });
-        _.each($scope.toiaRisksMapping, function(values, key){
+        var useBsoia = AssetsService.getSkipToia() ? AssetsService.getSkipBsoia() ? false : true : false;
+        //console.log('use bsoia', useBsoia);
+        var selectedNames = [];
+        var mapping = {};
+        if (useBsoia) {
+            selectedNames = AssetsService.getBSOIA().map(function(bsoia){ return bsoia.name });
+            mapping = $scope.bsoiaRisksMapping;
+        } else {
+            selectedNames = AssetsService.getTOIA().map(function(toia){ return toia.asset.name });
+            mapping = $scope.toiaRisksMapping;
+        }
+        _.each(mapping, function(values, key){
             _.each(values, function(value){
-                if(_.contains(potentialRiskNames, value) && _.contains(selectedToiaNames, key)){
+                if(_.contains(potentialRiskNames, value) && _.contains(selectedNames, key)){
                     data.push({group: key, risk: $scope.getRiskByName(value)});
                 }
             });
         });
+        //console.log(data);
         return data;
     };
 
@@ -637,6 +650,18 @@ dssApp.controller('risksController'
                 mapping[e.toia] = e.risks;
             });
             RisksService.setTOIARisksMapping(mapping);
+        }
+    });
+
+    ArangoDBService.getBSOIARisksMapping(function(error, data){
+        if (error) {
+            flash.error = 'Some error occurred while fetching BSOIA/risks mapping values';
+        } else {
+            var mapping = {};
+            _.each(data, function (e) {
+                mapping[e.bsoia] = e.risks;
+            });
+            RisksService.setBSOIARisksMapping(mapping);
         }
     });
 

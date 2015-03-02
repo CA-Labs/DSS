@@ -23,6 +23,9 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     var toiaRisksMappingFromStorage = localStorageService.get('toiaRisksMapping') || {};                                                        //TOIA/Risks mapping
     var toiaRisksMapping = toiaRisksMappingFromStorage;
 
+    var bsoiaRisksMappingFromStorage = localStorageService.get('bsoiaRisksMapping') || {};                                                        //TOIA/Risks mapping
+    var bsoiaRisksMapping = bsoiaRisksMappingFromStorage;
+
     var unacceptableRisks = {};                                                                                                                 //List of unacceptable risks per tangible asset
 
     var loadingDataFromLocalStorage = false;                                                                                                    //Flag to control local storage restore state
@@ -412,6 +415,14 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     };
 
     /**
+     * Retrieves the bsoia-risks mapping loaded from local storage.
+     * @returns {*}
+     */
+    this.getBSOIARisksMapping = function() {
+        return bsoiaRisksMapping;
+    }
+
+    /**
      * Sets the toia/risks mapping loaded from local storage.
      * @param toiaRisksMappingFromLocalStorage The toia/risks mapping
      * loaded from local storage.
@@ -419,6 +430,17 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     this.setTOIARisksMapping = function(toiaRisksMappingFromStorage) {
         if(!angular.equals(toiaRisksMapping, toiaRisksMappingFromStorage)){
             angular.copy(toiaRisksMappingFromStorage, toiaRisksMapping);
+        }
+    };
+
+    /**
+     * Sets the bsoia/risks mapping loaded from local storage.
+     * @param bsoiaRisksMappingFromLocalStorage The bsoia/risks mapping
+     * loaded from local storage.
+     */
+    this.setBSOIARisksMapping = function(bsoiaRisksMappingFromStorage) {
+        if(!angular.equals(bsoiaRisksMapping, bsoiaRisksMappingFromStorage)){
+            angular.copy(bsoiaRisksMappingFromStorage, bsoiaRisksMapping);
         }
     };
 

@@ -529,9 +529,19 @@ dssApp.service('AssetsService', ['flash', '$q', '$rootScope', 'localStorageServi
         return skipBsoia;
     };
 
+    this.setSkipBsoia = function(skip) {
+        skipBsoia = skip;
+        localStorageService.set('skipBsoia', skipBsoia);
+    };
+
     this.toggleSkipToia = function () {
         skipToia = !skipToia;
         localStorageService.set('skipToia', skipBsoia);
+    };
+
+    this.setSkipToia = function(skip) {
+        skipToia = skip;
+        localStorageService.set('skipToia', skipToia);
     };
 
     this.getSkipToia = function () {
