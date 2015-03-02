@@ -339,6 +339,24 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     };
 
     /**
+     * Removes a risk from tangible assets unacceptable risks.
+     * @param riskName The risk name to be removed.
+     */
+    this.removeUnacceptableRiskByName = function(riskName){
+        _.each(unacceptableRisks, function(values, taAssetId){
+            var i = -1;
+            _.each(values, function(value, index){
+                if (riskName == value) {
+                    i = index;
+                }
+            });
+            if (i != -1) {
+                unacceptableRisks[taAssetId].splice(i, 1);
+            }
+        });
+    };
+
+    /**
      * Removes all unacceptable risks.
      */
     this.clearUnacceptableRisks = function(){
@@ -378,6 +396,18 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         if(!angular.equals(riskBoundModels, riskBoundModelsFromStorage)){
             angular.copy(riskBoundModelsFromStorage, riskBoundModels);
         }
+    };
+
+    /**
+     * Removes a risk bound model entry by risk name.
+     * @param riskName The risk name to be removed.
+     */
+    this.removeRiskBoundModelsByName = function(riskName){
+        var regex = new RegExp(riskName + '[\\w\\s]*', 'i');
+        for(key in riskBoundModels){
+            if (key.match(regex)) delete riskBoundModels[key];
+        }
+        localStorageService.set('riskBoundModels', riskBoundModels);
     };
 
     /**

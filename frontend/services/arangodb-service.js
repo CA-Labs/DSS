@@ -90,12 +90,21 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'ArangoClient', function($http
      * on data retrieval.
      */
     this.getPotentialRisks = function(bsoia, toia, useBsoia, callback) {
-        ArangoClient.getPotentialRisks(toia, useBsoia)
-            .then(function(res){
-                callback(null, res);
-            }, function(err){
-                callback(err, null);
-            });
+        if (useBsoia) {
+            ArangoClient.getPotentialRisks(bsoia.map(function(asset){ return asset.name.toLowerCase(); }), useBsoia)
+                .then(function(res){
+                    callback(null, res);
+                }, function(err){
+                    callback(err, null);
+                });
+        } else {
+            ArangoClient.getPotentialRisks(toia.map(function(t){ return t.asset.name.toLowerCase(); }), useBsoia)
+                .then(function(res){
+                    callback(null, res);
+                }, function(err){
+                    callback(err, null);
+                });
+        }
     };
 
     /**
@@ -106,7 +115,7 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'ArangoClient', function($http
      * on data retrieval.
      */
     this.getPotentialTreatments = function(risks, callback){
-        ArangoClient.getPotentialTreatments(risks)
+        ArangoClient.getPotentialTreatments(risks.map(function(risk){ return risk.toLowerCase(); }))
             .then(function(res){
                 callback(null, res);
             }, function(err){

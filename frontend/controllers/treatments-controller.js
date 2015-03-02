@@ -64,9 +64,10 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
                     });
                 });
 
-                $scope.potentialTreatments = aux;
+                angular.copy(aux, $scope.potentialTreatments);
+
                 var potentialTreatmentsNames = [];
-                $scope.potentialTreatmentsGrouped = [];
+                angular.copy([], $scope.potentialTreatmentsGrouped);
 
                 _.each($scope.potentialTreatments, function (potentialTreatment) {
                     potentialTreatmentsNames.push(potentialTreatment.name);
@@ -87,6 +88,28 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
         });
 
     });
+
+    $scope.$watch(function(){
+        return $scope.potentialTreatments;
+    }, function(newTreatments, oldTreatments){
+        var toBeRemoved = [];
+        _.each(oldTreatments, function(oldT){
+            var found = false;
+            _.each(newTreatments, function(newT){
+                if (newT.name == oldT.name) found = true;
+            });
+            if (!found) toBeRemoved.push(oldT.name);
+        });
+        _.each(toBeRemoved, function(tName){
+            _.each($scope.potentialTreatments, function(treatment, index){
+                if(treatment.name == tName) {
+                    TreatmentsService.removeTreatment(treatment);
+                    TreatmentsService.removeTreatmentValue(tName);
+                    if ($scope.treatmentsBoundModels.hasOwnProperty(tName)) delete $scope.treatmentsBoundModels[tName];
+                }
+            });
+        });
+    }, true);
 
     /**
      * Every time the list of selected treatments changes, we should update the treatments
@@ -109,8 +132,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
             _.each(newTreatments, function (newTreatment) {
                 if (newTreatment.name == oldTreatment.name) {
                     found = true;
-                }
-                ;
+                };
             });
             if (!found) {
                 keysToRemove.push(oldTreatment.name);
@@ -359,6 +381,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
                 newArray.push(item);
             }
         });
+        if (newArray.length == 0) $scope.$broadcast('forceSelectUpdate', newArray);
         return newArray;
     };
 

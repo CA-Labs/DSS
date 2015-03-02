@@ -163,25 +163,22 @@ dssApp.controller('risksController'
      * by the user. This allows to recompute the potential risks.
      */
     $scope.$on('bsoiaChanged', function(){
-        // Only update if we have at least one BSOIA asset
-        if(AssetsService.getBSOIA().length > 0) {
-            ArangoDBService.getPotentialRisks(AssetsService.getBSOIA(), AssetsService.getTOIA(), true, function(error, data){
-                if(error){
-                    flash.error = 'Some error occurred when trying to compute potential risks after selected BSOIA changed';
-                } else {
-                    var seen = [];
-                    var aux = [];
-                    _.each(data, function(risk){
-                        //Filter repeated risks by hand since AngularJS filter "unique" does not seem to work properly
-                        if(seen.indexOf(risk.destination.name) === -1){
-                            seen.push(risk.destination.name);
-                            aux.push(risk);
-                        }
-                    });
-                    $scope.potentialRisks = aux;
-                }
-            });
-        }
+        ArangoDBService.getPotentialRisks(AssetsService.getBSOIA(), AssetsService.getTOIA(), true, function(error, data){
+            if(error){
+                flash.error = 'Some error occurred when trying to compute potential risks after selected BSOIA changed';
+            } else {
+                var seen = [];
+                var aux = [];
+                _.each(data, function(risk){
+                    //Filter repeated risks by hand since AngularJS filter "unique" does not seem to work properly
+                    if(seen.indexOf(risk.destination.name) === -1){
+                        seen.push(risk.destination.name);
+                        aux.push(risk);
+                    }
+                });
+                angular.copy(aux, $scope.potentialRisks);
+            }
+        });
     });
 
     /**
@@ -202,10 +199,34 @@ dssApp.controller('risksController'
                         aux.push(risk);
                     }
                 });
-                $scope.potentialRisks = aux;
+                angular.copy(aux, $scope.potentialRisks);
             }
         });
     });
+
+    /**
+     * Whenever risks get deprecated, they should be automatically removed
+     */
+    $scope.$watch(function(){
+        return $scope.potentialRisks;
+    }, function(newRisks, oldRisks){
+        // List of risks (names) to be removed from UI
+        var toBeRemoved = [];
+        _.each(oldRisks, function(oldRisk, index){
+            var found = false;
+            _.each(newRisks, function(newRisk){
+               if (oldRisk.destination.name == newRisk.destination.name) found = true;
+            });
+            if (!found) toBeRemoved.push(oldRisk.destination.name);
+        });
+        _.each(toBeRemoved, function(riskName){
+            _.each($scope.risksSelected, function(selectedRisk){
+                if (selectedRisk.destination.name == riskName){
+                    $scope.removeRisk(selectedRisk);
+                }
+            })
+        });
+    }, true);
 
     /**
      * Handles toggle event in risks switch component and manages
@@ -430,7 +451,6 @@ dssApp.controller('risksController'
             });
         });
 
-        $scope.risksSelected = newRisks;
         $rootScope.$broadcast('acceptabilityValueChanged');
 
     }, true);
@@ -452,6 +472,9 @@ dssApp.controller('risksController'
      */
     $scope.removeRisk = function(risk){
         RisksService.removeRisk(risk);
+        RisksService.removeRiskLikelihoodConsequence(risk.destination.name)
+        RisksService.removeRiskBoundModelsByName(risk.destination.name);
+        RisksService.removeUnacceptableRiskByName(risk.destination.name);
     };
 
     /**
@@ -611,7 +634,9 @@ dssApp.controller('risksController'
                 }
             });
         });
-        //console.log(data);
+
+        if(data.length == 0) $scope.$broadcast('forceSelectUpdate', data);
+
         return data;
     };
 

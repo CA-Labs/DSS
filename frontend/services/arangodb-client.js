@@ -72,7 +72,7 @@ dssApp.service('ArangoClient', ['$q', function($q){
                     'let sourceType = (p.source.type)' +
                     'let destinationType = (p.destination.type)' +
                     'let sourceName = (lower(p.source.name))' +
-                    'filter ((sourceType == "' + sourceType + '") && (destinationType == "risk") && (position(@assets, sourceName) != -1))' +
+                    'filter ((sourceType == "' + sourceType + '") && (destinationType == "risk") && (position(@assets, sourceName, true) != -1))' +
                     'return p';
         return db.query.exec(query, {assets: fromAssets});
     };
@@ -87,7 +87,7 @@ dssApp.service('ArangoClient', ['$q', function($q){
                     'let sourceType = (p.source.type) ' +
                     'let destinationType = (p.destination.type) ' +
                     'let sourceName = (lower(p.source.name)) ' +
-                    'filter (sourceType == "risk") && (destinationType == "treatment") && (position(@risks, sourceName) != -1) ' +
+                    'filter (sourceType == "risk") && (destinationType == "treatment") && (position(@risks, sourceName, true) != -1) ' +
                     'collect risk = p.source.name into risks ' +
                     'return {risk: risk, treatments: risks[*].p.destination}';
         return db.query.exec(query, {risks: fromRisks});
