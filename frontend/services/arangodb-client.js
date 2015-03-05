@@ -62,18 +62,19 @@ dssApp.service('ArangoClient', ['$q', function($q){
     };
 
     /**
-     * Retrieves list of potential risks.
-     * @param fromToias An array containing valid TOIA asset names.
+     * Retrieves list of potential risks from BSOIA or TOIA assets,
+     * @param fromAssets An array containing valid asset names.
      * @returns {Promise}
      */
-    this.getPotentialRisks = function(fromToias){
-        var query = 'for p in graph_paths("dssBlueprints", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1})' +
+    this.getPotentialRisks = function(fromAssets, useBsoia){
+        var sourceType = useBsoia ? 'bsoia' : 'toia';
+        var query = 'for p in graph_paths("dssBlueprints", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 2})' +
                     'let sourceType = (p.source.type)' +
                     'let destinationType = (p.destination.type)' +
                     'let sourceName = (lower(p.source.name))' +
-                    'filter ((sourceType == "toia") && (destinationType == "risk") && (position(@toias, sourceName) != -1))' +
+                    'filter ((sourceType == "' + sourceType + '") && (destinationType == "risk") && (position(@assets, sourceName, true) != -1))' +
                     'return p';
-        return db.query.exec(query, {toias: fromToias});
+        return db.query.exec(query, {assets: fromAssets});
     };
 
     /**
@@ -86,7 +87,7 @@ dssApp.service('ArangoClient', ['$q', function($q){
                     'let sourceType = (p.source.type) ' +
                     'let destinationType = (p.destination.type) ' +
                     'let sourceName = (lower(p.source.name)) ' +
-                    'filter (sourceType == "risk") && (destinationType == "treatment") && (position(@risks, sourceName) != -1) ' +
+                    'filter (sourceType == "risk") && (destinationType == "treatment") && (position(@risks, sourceName, true) != -1) ' +
                     'collect risk = p.source.name into risks ' +
                     'return {risk: risk, treatments: risks[*].p.destination}';
         return db.query.exec(query, {risks: fromRisks});
@@ -119,6 +120,21 @@ dssApp.service('ArangoClient', ['$q', function($q){
                     'filter (sourceType == "toia") && (destinationType == "risk") ' +
                     'collect toia = (p.source.name) into risks ' +
                     'return {toia: toia, risks: risks[*].p.destination.name}';
+        return db.query.exec(query);
+    };
+
+    /**
+     * Retrieves BSOIA assets - risks mapping.
+     * @returns {Promise}
+     */
+    this.getBSOIARisksMapping = function(){
+        var query = 'for p in graph_paths("dssBlueprints", {direction: "outbound", followCycles: false, minLength: 2, maxLength: 2}) ' +
+            'let sourceType = (p.source.type) ' +
+            'let destinationType = (p.destination.type) ' +
+            'let sourceName = (lower(p.source.name)) ' +
+            'filter (sourceType == "bsoia") && (destinationType == "risk") ' +
+            'collect bsoia = (p.source.name) into risks ' +
+            'return {bsoia: bsoia, risks: risks[*].p.destination.name}';
         return db.query.exec(query);
     };
 

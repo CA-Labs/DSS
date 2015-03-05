@@ -191,6 +191,7 @@ $('body').on('mouseout', '.form-group > .dropzone-container', function(e){
 
 //Select2
 $(function(){
+
     $('select[label="assets"]').select2({
         placeholder: 'Select an asset'
     });

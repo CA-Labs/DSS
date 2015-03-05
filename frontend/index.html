@@ -112,11 +112,11 @@
         </a>
     </li>
     <li class="nav-buttons" ng-controller="buttonsController">
-        <button class="btn btn-primary btn-sm slide-prev" href="#dssSlides" data-slide="prev" style="display: none;">
+        <button class="btn btn-primary btn-sm slide-prev" href="#dssSlides" data-slide="prev" ng-click="previous($event)" style="display: none;">
             <i class="glyphicon glyphicon-backward"></i>
             Previous step
         </button>
-        <button class="btn btn-primary btn-sm slide-skip" href="#dssSlides" data-slide="next" ng-click="skip()" ng-class="{'disabled': skippedBsoia(), 'disabled': skippedToia() }">
+        <button class="btn btn-primary btn-sm slide-skip" href="#dssSlides" data-slide="next" ng-click="skip($event)" ng-class="{'disabled': skippedBsoia(), 'disabled': skippedToia() }">
             Skip
             <i class="glyphicon glyphicon-step-forward"></i>
         </button>
@@ -273,7 +273,7 @@
             <h4>Choose the relevant risks to avoid</h4>
             <i class="glyphicon glyphicon-info-sign" data-content="The risks refer to unwanted events which may occur based on the selected assets. Based on your specification of assets, the drop down menu below on the left allows you to specify the risks which are associated with the assets. For each risk, you can specify the probability/likelihood of the risk to occur and impact/consequence of the risk." popup-down></i>
         </div>
-        <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.risk as r.risk.destination.name group by r.group for r in potentialRisksGrouped()">
+        <select label="risks" class="form-control form assets-select item-select" ng-model="risk" ng-options="r.risk as r.risk.destination.name group by r.group for r in potentialRisksGrouped()" select2 selectField="risk">
             <option></option>
         </select>
         <button class="btn btn-success" ng-click="addRisk(risk)" style="width: 19% !important;">Add</button>
@@ -385,7 +385,7 @@
                     <div class="panel-body" ng-switch="taAsset.cloudType">
                         <div ng-switch-when="IaaS">
                             <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment"
-                                    ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudType, taAsset.cloudResource._serviceType)" select2>
+                                    ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudType, taAsset.cloudResource._serviceType)" select2 selectField="treatment">
                                 <option></option>
                             </select>
                             <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment, taAsset)" style="width:19% !important;">Add</button>
@@ -393,7 +393,7 @@
                         <div ng-switch-when="PaaS">
                             <!--| byCloudAndServiceTypes:taAsset.cloudType:taAsset.cloudPlatform._serviceType"-->
                             <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment"
-                                    ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudType, taAsset.cloudPlatform._serviceType)" select2>
+                                    ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudType, taAsset.cloudPlatform._serviceType)" select2 selectField="treatment">
                                 <option></option>
                             </select>
                             <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment, taAsset)" style="width:19% !important;">Add</button>

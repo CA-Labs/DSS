@@ -23,6 +23,9 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     var toiaRisksMappingFromStorage = localStorageService.get('toiaRisksMapping') || {};                                                        //TOIA/Risks mapping
     var toiaRisksMapping = toiaRisksMappingFromStorage;
 
+    var bsoiaRisksMappingFromStorage = localStorageService.get('bsoiaRisksMapping') || {};                                                        //TOIA/Risks mapping
+    var bsoiaRisksMapping = bsoiaRisksMappingFromStorage;
+
     var unacceptableRisks = {};                                                                                                                 //List of unacceptable risks per tangible asset
 
     var loadingDataFromLocalStorage = false;                                                                                                    //Flag to control local storage restore state
@@ -336,6 +339,24 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     };
 
     /**
+     * Removes a risk from tangible assets unacceptable risks.
+     * @param riskName The risk name to be removed.
+     */
+    this.removeUnacceptableRiskByName = function(riskName){
+        _.each(unacceptableRisks, function(values, taAssetId){
+            var i = -1;
+            _.each(values, function(value, index){
+                if (riskName == value) {
+                    i = index;
+                }
+            });
+            if (i != -1) {
+                unacceptableRisks[taAssetId].splice(i, 1);
+            }
+        });
+    };
+
+    /**
      * Removes all unacceptable risks.
      */
     this.clearUnacceptableRisks = function(){
@@ -378,6 +399,18 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     };
 
     /**
+     * Removes a risk bound model entry by risk name.
+     * @param riskName The risk name to be removed.
+     */
+    this.removeRiskBoundModelsByName = function(riskName){
+        var regex = new RegExp(riskName + '[\\w\\s]*', 'i');
+        for(key in riskBoundModels){
+            if (key.match(regex)) delete riskBoundModels[key];
+        }
+        localStorageService.set('riskBoundModels', riskBoundModels);
+    };
+
+    /**
      * Returns true if a given risk is unacceptable for a certain TA
      * asset, false otherwise.
      * @param riskName The risk name.
@@ -412,6 +445,14 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     };
 
     /**
+     * Retrieves the bsoia-risks mapping loaded from local storage.
+     * @returns {*}
+     */
+    this.getBSOIARisksMapping = function() {
+        return bsoiaRisksMapping;
+    }
+
+    /**
      * Sets the toia/risks mapping loaded from local storage.
      * @param toiaRisksMappingFromLocalStorage The toia/risks mapping
      * loaded from local storage.
@@ -419,6 +460,17 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
     this.setTOIARisksMapping = function(toiaRisksMappingFromStorage) {
         if(!angular.equals(toiaRisksMapping, toiaRisksMappingFromStorage)){
             angular.copy(toiaRisksMappingFromStorage, toiaRisksMapping);
+        }
+    };
+
+    /**
+     * Sets the bsoia/risks mapping loaded from local storage.
+     * @param bsoiaRisksMappingFromLocalStorage The bsoia/risks mapping
+     * loaded from local storage.
+     */
+    this.setBSOIARisksMapping = function(bsoiaRisksMappingFromStorage) {
+        if(!angular.equals(bsoiaRisksMapping, bsoiaRisksMappingFromStorage)){
+            angular.copy(bsoiaRisksMappingFromStorage, bsoiaRisksMapping);
         }
     };
 

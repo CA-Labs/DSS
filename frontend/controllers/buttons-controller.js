@@ -21,7 +21,9 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
      */
     $scope.next = function($event){
         var currentSlide = $('#dssSlides').find('.active');
-        if(currentSlide.hasClass('toia-slide')){
+        if(currentSlide.hasClass('bsoia-slide')){
+            AssetsService.setSkipBsoia(false);
+        } else if(currentSlide.hasClass('toia-slide')){
             _.each(AssetsService.getTOIA(), function(toia){
                 if(toia.bsoiaRelations.length == 0){
                     $scope.error = true;
@@ -48,9 +50,12 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
                 });
                 $scope.error = false;
                 $event.stopPropagation();
+            } else {
+                AssetsService.setSkipToia(false);
+                // Simulate some TOIA changed and compute risks based on them
+                $rootScope.$broadcast('toiaChanged');
             }
-        }
-        else if(currentSlide.hasClass('risks-slide') && _.size($scope.unacceptableRisks) > 0){
+        } else if(currentSlide.hasClass('risks-slide') && _.size($scope.unacceptableRisks) > 0){
             var errorMessage = 'The following risks aren\'t mitigated: ';
             var i = 0;
             _.each($scope.unacceptableRisks, function(value, key){
@@ -91,8 +96,7 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
                 // flash.error = errorMessage + '.';
                 // $event.stopPropagation();
             }
-        }
-        else if(currentSlide.hasClass('treatments-slide') && _.size($scope.unacceptableRisks) > 0){
+        } else if(currentSlide.hasClass('treatments-slide') && _.size($scope.unacceptableRisks) > 0){
 
             var treatmentsSelected = TreatmentsService.getTreatments();
             var noUnnaceptableRisks = RisksService.noUnacceptableRisks();
@@ -176,14 +180,29 @@ dssApp.controller('buttonsController', ['$scope', '$rootScope', 'RisksService', 
     /**
      * Skip step function
      */
-    $scope.skip = function () {
-
+    $scope.skip = function ($event) {
         var lastActiveWizardElement = $('.nav-wizard').find('.active').last();
 
         if (lastActiveWizardElement.hasClass('bsoia-slide')) {
             AssetsService.toggleSkipBsoia();
         } else if (lastActiveWizardElement.hasClass('toia-slide')) {
-            AssetsService.toggleSkipToia();
+            if ($scope.skippedBsoia()) {
+                flash.error = 'You can\'t skip both BSOIA and TOIA assets selection.';
+                $event.stopPropagation();
+            } else {
+                AssetsService.toggleSkipToia();
+                // Simulate some BSOIA asset changed and recompute risks based on them
+                $rootScope.$broadcast('bsoiaChanged');
+            }
+        }
+    };
+
+    $scope.previous = function ($event) {
+        var currentSlide = $('#dssSlides').find('.active');
+        if (currentSlide.hasClass('bsoia-slide')) {
+            AssetsService.setSkipBsoia(false);
+        } else if (currentSlide.hasClass('toia-slide')) {
+            AssetsService.setSkipToia(false);
         }
     };
 
