@@ -22,6 +22,28 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
     $scope.xmlTaAssetsFileName = "";
     localStorageService.bind($scope, 'xmlTaAssetsFileName', $scope.xmlTaAssetsFileName);
 
+    // Initial data fetch: available cloud service names
+    ArangoDBService.getServiceNames(function(error, data){
+        if (error) {
+            flash.error = 'Some error occurred while trying to fetch the list of service names'
+        } else {
+            $scope.services = data;
+            $scope.selectedService = {};
+        }
+    });
+
+    $scope.$watch(function(){
+        return $scope.selectedService;
+    }, function(newService, oldService){
+        if (typeof newService !== 'undefined' && newService !== null && !_.isEmpty(newService)){
+            ngDialog.open({
+                template: 'partials/service.html',
+                className: 'ngdialog-theme-default',
+                scope: $scope
+            });
+        }
+    });
+
     /**
      * Clear local storage and reload the window
      */
@@ -216,37 +238,37 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
     };
 
     //---------------------------------
-        // what follows is a set of counters which check if the steps have been fulfilled by the
-        // actor or not. should be fairly self explanatory
+    // what follows is a set of counters which check if the steps have been fulfilled by the
+    // actor or not. should be fairly self explanatory
 
-        $scope.haveBSOIASelected = function () {
-            return AssetsService.countBSOIASelected() > 0;
-        };
+    $scope.haveBSOIASelected = function () {
+        return AssetsService.countBSOIASelected() > 0;
+    };
 
-        $scope.haveTOIASelected = function () {
-            return AssetsService.countTOIASelected() > 0;
-        };
+    $scope.haveTOIASelected = function () {
+        return AssetsService.countTOIASelected() > 0;
+    };
 
-        $scope.isTALoaded = function () {
-            return AssetsService.countTALoaded() > 0;
-        };
+    $scope.isTALoaded = function () {
+        return AssetsService.countTALoaded() > 0;
+    };
 
-        $scope.haveRisksSelected = function () {
-            return RisksService.countRisksSelected() > 0;
-        };
+    $scope.haveRisksSelected = function () {
+        return RisksService.countRisksSelected() > 0;
+    };
 
-        $scope.haveTreatmentsSelected = function () {
-            return TreatmentsService.countTreatmentsSelected() > 0;
-        };
+    $scope.haveTreatmentsSelected = function () {
+        return TreatmentsService.countTreatmentsSelected() > 0;
+    };
 
 
-        // skipBsoia status
-        $scope.isSkipBsoia = function () {
-           return AssetsService.getSkipBsoia();
-        };
+    // skipBsoia status
+    $scope.isSkipBsoia = function () {
+       return AssetsService.getSkipBsoia();
+    };
 
-        // skip Toia status
-        $scope.isSkipToia = function () {
-            return AssetsService.getSkipToia();
-        };
+    // skip Toia status
+    $scope.isSkipToia = function () {
+        return AssetsService.getSkipToia();
+    };
 }]);
