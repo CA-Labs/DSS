@@ -191,6 +191,25 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'ArangoClient', function($http
     };
 
     /**
+     * Returns the migration value for a given service.
+     * @param service The service name.
+     * @param callback
+     */
+    this.getServiceMigrationValues = function(service, callback){
+        ArangoClient.getServiceMigrationValues(service)
+            .then(function(res){
+                if (res.length == 0) callback(null, 0);
+                else {
+                    callback(null, (res.reduce(function(previous, next){
+                        return previous + next.value;
+                    }, 0))/res.length);
+                }
+            }, function(err){
+                callback(err, null);
+            });
+    };
+
+    /**
      * Validates a cloud descriptor XML file using server-side validation
      * @param xmlString XML string to validate.
      * @param callback Callback fn to execute.
