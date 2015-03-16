@@ -124,6 +124,18 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'ArangoClient', function($http
     };
 
     /**
+     * Retrieves service names.
+     */
+    this.getServiceNames = function(callback){
+        ArangoClient.getServiceNames()
+            .then(function(res){
+                callback(null, res);
+            }, function(err){
+                callback(err, null);
+            });
+    };
+
+    /**
      * Retrieves risks-treatments mapping.
      * @param callback Callback fn to execute on data retrieval.
      */

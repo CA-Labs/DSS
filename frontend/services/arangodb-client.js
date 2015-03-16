@@ -94,6 +94,15 @@ dssApp.service('ArangoClient', ['$q', function($q){
     };
 
     /**
+     * Retrieves list of available service names (used in services search).
+     * @returns {*|Promise|Array|{index: number, input: string}}
+     */
+    this.getServiceNames = function(){
+        var query = 'for s in nodes filter s.type == "service" return s';
+        return db.query.exec(query);
+    };
+
+    /**
      * Retrieves risks - treatments mapping.
      * @returns {Promise}
      */
