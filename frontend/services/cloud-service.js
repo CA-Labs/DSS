@@ -245,16 +245,16 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                             var placeOfJurisdiction = proposal.characteristics.filter(function(characteristic){return characteristic.name == "Place of jurisdiction"});
                             placeOfJurisdiction = placeOfJurisdiction.length == 1 ? placeOfJurisdiction[0].value : [];
                             criticityValue = TreatmentsService.showTreatmentValue(treatment.name) ?
-                                AssetsService.getInverseCriticityValue(TreatmentsService.compareRegions(TreatmentsService.getTreatmentValue(treatment.name), placeOfJurisdiction)) : AssetsService.getTACriticityValue(taAssetId);
+                                AssetsService.getInverseCriticityValue(TreatmentsService.compareRegions(TreatmentsService.getTreatmentValue(treatment.name), placeOfJurisdiction)) : AssetsService.getInverseCriticityValue(treatment.default);
                             treatmentValue =  AssetsService.getInverseCriticityValue(TreatmentsService.compareRegions(TreatmentsService.getTreatmentValue(treatment.name), placeOfJurisdiction));
                         } else {
                             if (treatment.hasOwnProperty('value')) {
                                 criticityValue = TreatmentsService.showTreatmentValue(treatment.name) ?
-                                    AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatment.name)) : AssetsService.getTACriticityValue(taAssetId);
+                                    AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatment.name)) : AssetsService.getInverseCriticityValue(treatment.default);
                                 treatmentValue = AssetsService.getInverseCriticityValue(treatment.value);
                             } else {
                                 criticityValue = TreatmentsService.showTreatmentValue(treatment.name) ?
-                                    AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatment.name)) : AssetsService.getTACriticityValue(taAssetId);
+                                    AssetsService.getInverseCriticityValue(TreatmentsService.getTreatmentValue(treatment.name)) : AssetsService.getInverseCriticityValue(treatment.default);
                                 var proposalCharacteristic = proposal.characteristics.filter(function (t) {
                                     return t.name == treatment.name
                                 });

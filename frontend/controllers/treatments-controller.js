@@ -288,7 +288,7 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
      * @param treatmentName
      */
     $scope.addRadioValue = function (treatmentName) {
-        TreatmentsService.addTreatmentValue(treatmentName, "1");
+        TreatmentsService.addTreatmentValue(treatmentName, "10");
     };
 
     // Initial data fetch
