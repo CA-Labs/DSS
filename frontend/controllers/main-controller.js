@@ -23,7 +23,7 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
     localStorageService.bind($scope, 'xmlTaAssetsFileName', $scope.xmlTaAssetsFileName);
 
     // Initial data fetch: available cloud service names
-    ArangoDBService.getServiceNames(function(error, data){
+    ArangoDBService.getServicesWithProviders(function(error, data){
         if (error) {
             flash.error = 'Some error occurred while trying to fetch the list of service names'
         } else {

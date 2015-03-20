@@ -94,11 +94,23 @@ dssApp.service('ArangoClient', ['$q', function($q){
     };
 
     /**
-     * Retrieves list of available service names (used in services search).
+     * Retrieves list of available services with corresponding providers.
      * @returns {*|Promise|Array|{index: number, input: string}}
      */
-    this.getServiceNames = function(){
-        var query = 'for s in nodes filter s.type == "service" return s';
+    this.getServicesWithProviders = function(){
+        var query = 'for p in graph_paths("dssBlueprints", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1}) ' +
+                    'let sourceType = (p.source.type) ' +
+                    'let destinationType = (p.destination.type) ' +
+                    'filter (sourceType == "provider") && (destinationType == "service") ' +
+                    'return {providerYearFounding: p.source.year_founding, ' +
+                            'providerNumberEmployees: p.source.number_of_employees, ' +
+                            'providerName: p.source.name, ' +
+                            'providerDescription: p.source.description, ' +
+                            'providerWebsite: p.source.website, ' +
+                            'providerLogoUrl: p.source.logo_url, ' +
+                            'providerHeadquarters: p.source.headquarters, ' +
+                            'serviceName: p.destination.name, ' +
+                            'serviceCloudType: p.destination.cloudType}';
         return db.query.exec(query);
     };
 

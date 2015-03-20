@@ -126,8 +126,8 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'ArangoClient', function($http
     /**
      * Retrieves service names.
      */
-    this.getServiceNames = function(callback){
-        ArangoClient.getServiceNames()
+    this.getServicesWithProviders = function(callback){
+        ArangoClient.getServicesWithProviders()
             .then(function(res){
                 callback(null, res);
             }, function(err){
