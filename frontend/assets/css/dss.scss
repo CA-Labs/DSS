@@ -444,6 +444,17 @@ blockquote {
   border: 2px solid #27ae60;
 }
 
+.service-data-sources > ul {
+  list-style-type: none;
+  padding: 0;
+  text-align: center;
+}
+
+.service-source-logo {
+  max-width: 150px;
+  max-height: 75px;
+}
+
 .has-risks {
   border-color: #e01010;
 }

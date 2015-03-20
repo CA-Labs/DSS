@@ -552,6 +552,21 @@
                                                         <ul>
                                                             <li ng-repeat="unmitigatedRisk in service.unmitigatedRisks | orderBy: ''">{{unmitigatedRisk}}</li>
                                                         </ul>
+                                                        <div class="row service-data-sources">
+                                                            <h4>Data sources: </h4>
+                                                            <ul>
+                                                                <li ng-repeat="source in service.service.sources">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-6">
+                                                                            <p>{{ source.name }}</p>
+                                                                        </div>
+                                                                        <div class="col-lg-6">
+                                                                            <a ng-href="{{source.url}}"><img class="service-source-logo" ng-src="{{source.logo}}" alt="{{source.name}}"></a>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
