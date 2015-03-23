@@ -475,8 +475,22 @@
 <div class="item services-slide" ng-controller="cloudController">
     <div class="col-lg-12">
         <!--per deployment results-->
+        <div class="row">
+            <div class="col-lg-1 text-right">
+                <h4>Order By:</h4>
+            </div>
+            <div class="col-lg-11">
+                <div class="btn-group btn-group-justified">
+                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('overallScore')}" ng-click="orderBy='overallScore'">Risk Mitigation</a>
+                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('minimalDeploymentScore')}" ng-click="orderBy='minimalDeploymentScore'">Minimal Deployment Score</a>
+                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('qualityScore')}" ng-click="orderBy='qualityScore'">Quality Perception Score</a>
+                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('migrationScore')}" ng-click="orderBy='migrationScore'">Easiness of Migration</a>
+                </div>
+            </div>
+        </div>
+        <br/>
         <ul class="list-group">
-            <li class="list-group-item service-proposal-panel" ng-class="{ 'service-selected': isSelected(result), 'has-risks': hasUnmitigatedRisks(result) }" on-repeat-done ng-repeat="result in getDeploymentProposals() | multicloudReplication | orderBy:'overallScore':true track by $index">
+            <li class="list-group-item service-proposal-panel" ng-class="{ 'service-selected': isSelected(result), 'has-risks': hasUnmitigatedRisks(result) }" on-repeat-done ng-repeat="result in getDeploymentProposals() | multicloudReplication | orderBy: orderBy :true track by $index">
                 <div class="row" ng-click="selectService(result)">
                     <div class="col-lg-1">
                         <div class="well service-proposal-score service-proposal-score-overall">

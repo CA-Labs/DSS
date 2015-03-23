@@ -35,6 +35,7 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
     $scope.$watch(function(){
         return $scope.selectedService;
     }, function(newService, oldService){
+        console.log(newService);
         if (typeof newService !== 'undefined' && newService !== null && !_.isEmpty(newService)){
             ngDialog.open({
                 template: 'partials/service.html',

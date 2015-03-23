@@ -1,4 +1,17 @@
 <div>
-    <!-- TODO: Style this template as you wish -->
     <p>Service name is {{ selectedService.title }}</p>
+    <hr/>
+    <h4>Description</h4>
+    <p>{{serviceSelected.description}}</p>
+    <hr/>
+    <h4>Provider Information</h4>
+    <ul>
+        <li>Year founded: {{ serviceSelected.year_founding || "-" }}</li>
+        <li>Number of Employees: {{ serviceSelected.number_of_employees || "-" }}</li>
+        <li>Headquarters: {{ serviceSelected.headquarters || "-" }}</li>
+        <li>Website: <a href="{{ serviceSelected.website }}">{{ serviceSelected.website || "-" }}</a></li>
+    </ul>
+    <hr/>
+    <h4>Service Characteristics Values</h4>
+    <dss-radar service="serviceSelected.service" characteristics="serviceSelected.characteristics"></dss-radar>
 </div>

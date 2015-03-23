@@ -25,6 +25,12 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
         return AssetsService.getDeploymentType();
     };
 
+    // order setup for the order of cloud providers
+    $scope.orderBy = 'overallScore'; // init
+    $scope.isOrderBySelected = function (name) {
+        return (name == $scope.orderBy);
+    };
+
     /**
      * Generates the final list of deployment proposals offered to the user.
      * @returns {Array}
@@ -228,20 +234,6 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
      */
     $scope.isSelected = function (listItem) {
         return (!!listItem.isSelected);
-        //var selected = true;
-        //if($scope.servicesSelected.length == 0) {
-        //    selected = false;
-        //}
-        //if(listItem.length != $scope.servicesSelected.length){
-        //    selected = false;
-        //} else {
-        //    _.each(listItem, function (item, index) {
-        //        if (item.service._id !== $scope.servicesSelected[index].service._id) {
-        //            selected = false;
-        //        }
-        //    });
-        //}
-        //return selected;
     };
 
     /**
