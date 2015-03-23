@@ -164,6 +164,8 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
                 AssetsService.setXmlTaObject(localStorageValues.xmlAsJsonObject);
                 RisksService.setSimpleRisksLikelihoodConsequence(localStorageValues.simpleRisksLikelihoodConsequence);
                 RisksService.setRiskBoundModels(localStorageValues.riskBoundModels);
+                RisksService.setSpecifiyLikelihoods(localStorageValues.specifyLikelihoods);
+                RisksService.setSpecifiyTALikelihoods(localStorageValues.specifyTALikelihoods);
                 RisksService.setMultipleRisksLikelihoodConsequence(localStorageValues.multipleRisksLikelihoodConsequence);
                 RisksService.setRisks(localStorageValues.risksSelected);
                 AssetsService.setCriticityBoundModels(localStorageValues.criticityBoundModels);

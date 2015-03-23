@@ -32,6 +32,12 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
 
     var SEPARATOR = '/';
 
+    var specifyLikelihoodsFromStorage = localStorageService.get('specifyLikelihoods') || {};
+    var specifyLikelihoods = specifyLikelihoodsFromStorage;
+
+    var specifyTALikelihoodsFromStorage = localStorageService.get('specifyTALikelihoods') || {};
+    var specifyTALikelihoods = specifyTALikelihoodsFromStorage;
+
     /**
      * Adds a risk to the list of selected risks.
      * @param risk The risk to be added.
@@ -52,23 +58,40 @@ dssApp.service('RisksService', ['flash', 'localStorageService', 'ArangoDBService
         }
     };
 
-    /**
-     * set Standardised Likelihood across all the riskBoundModels when the switch "Specify Likelihood"
-     * is positioned as "NO"
-     */
-    this.setStandardisedLikelihood = function () {
-        _.each(riskBoundModels, function (value, key) {
-            var splitKey = key.split('/');
-            if (splitKey[splitKey.length - 1] == 'likelihood') {
-                riskBoundModels[key] = 5;
-                if (risksTALikelihoodConsequence.hasOwnProperty(key)) {
-                    risksTALikelihoodConsequence[key] = 5;
-                }
-                if (risksLikelihoodConsequence.hasOwnProperty(key)) {
-                    risksLikelihoodConsequence[key] = 5;
-                }
-            }
-        });
+    this.getSpecifyLikelihoods = function(){
+        return specifyLikelihoods;
+    };
+
+    this.getSpecifyTALikelihoods = function(){
+        return specifyTALikelihoods;
+    };
+
+    this.setSpecifyLikelihoodByName = function(riskName, active){
+        specifyLikelihoods[riskName] = active;
+    };
+
+    this.setSpecifyTALikelihoodByName = function(riskName, active){
+        specifyTALikelihoods[riskName] = active;
+    };
+
+    this.removeSpecifyLikelihoodByName = function(riskName){
+        delete specifyLikelihoods[riskName];
+    };
+
+    this.removeSpecifyTALikelihoodByName = function(riskName){
+        delete specifyTALikelihoods[riskName];
+    };
+
+    this.setSpecifiyLikelihoods = function(likelihoodsLoadedFromLocalStorage) {
+        if(!angular.equals(specifyLikelihoods, likelihoodsLoadedFromLocalStorage)){
+            angular.copy(likelihoodsLoadedFromLocalStorage, specifyLikelihoods);
+        }
+    };
+
+    this.setSpecifiyTALikelihoods = function(likelihoodsLoadedFromLocalStorage) {
+        if(!angular.equals(specifyTALikelihoods, likelihoodsLoadedFromLocalStorage)){
+            angular.copy(likelihoodsLoadedFromLocalStorage, specifyTALikelihoods);
+        }
     };
 
     /**
