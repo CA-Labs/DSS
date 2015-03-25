@@ -197,24 +197,28 @@ dssApp.service('ArangoClient', ['$q', function($q){
         return db.query.exec(query, {cloudType: cloudType, serviceType: serviceType});
     };
 
-    this.getServiceMigrationValues = function(service){
-        var query = 'for p in graph_paths("dssBlueprints", {minLength: 2,maxLength: 2}) ' +
-                    'let sourceType = p.source.type ' +
-                    'let sourceName = p.source.name ' +
-                    'let destinationType = p.destination.type ' +
-                    'let destinationName = p.destination.name ' +
-                    'let value = ( ' +
-                        'is_list(p.edges[0].data.value) ? ' +
-                        '( ' +
-                            'for n1 in nodes filter n1.type == sourceType ' +
-                            'for n2 in nodes filter n2.type == "metric" && n2.name == p.vertices[1].name ' +
-                            'for r in relations filter r._from == n1._id && r._to == n2._id ' +
-                            'return length(r.data.value) ' +
-                        ') : [p.edges[0].data.value]) ' +
-                        'let result = is_list(value) ? max(value) > 0 ? length(value) / max(value) : 0 : value ' +
-                        'filter sourceType == "service" && sourceName == @service && destinationType == "characteristic" && destinationName == "Migration" ' +
-                        'return {source: sourceName, destination: destinationName, metric: p.vertices[1].name, value: result}';
-        return db.query.exec(query, {service: service});
+    this.getServicesMigrationValues = function(){
+        var query = 'for service in nodes ' +
+                    'let edges = ( ' +
+                        'for nodeA in graph_neighbors("dssBlueprints", service._id, { ' +
+                            'edgeExamples: [{type: "service_metric"}], ' +
+                            'neighborExamples: [{type: "metric"}] ' +
+                        '}) ' +
+                        'let edgesB = (for nodeB in graph_neighbors("dssBlueprints", nodeA.path.vertices[1]._id, { ' +
+                            'edgeExamples: [{type: "metric_characteristic"}], ' +
+                            'neighborExamples: [{type: "characteristic", name: "Migration"}] ' +
+                        '}) return nodeB.path) ' +
+                        'let value = is_list(nodeA.path.edges[0].data.value) ? ' +
+                            'nodeA.path.edges[0].data.value : ' +
+                            '[nodeA.path.edges[0].data.value] ' +
+                        'let result = length(value.length) > 0 ? ' +
+                            'nodeA.path.vertices[1].max ? ' +
+                            'length(value)/nodeA.path.vertices[1].max : value[0] : 0 ' +
+                        'return {metric: nodeA.path.vertices[1].name, value: result} ' +
+                    ') ' +
+                    'filter service.type == "service" ' +
+                    'return {service: service._id, edges: edges}';
+        return db.query.exec(query, {});
     };
 
 }]);
