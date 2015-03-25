@@ -81,6 +81,20 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'ArangoClient', function($http
     };
 
     /**
+     * Retrieves characteristics from the database
+     * @param callback Callback fn to execute
+     * on data retrieval.
+     */
+    this.getCharacteristics = function(callback) {
+        ArangoClient.getNodesByType('characteristic')
+            .then(function(res){
+               callback(null, res);
+            }, function(err){
+                callback(err, null);
+            });
+    };
+
+    /**
      * Retrieves potential risks by looking up
      * risks connected to BSOIA or TOIA assets.
      * @param bsoia List of BSOIA assets.
