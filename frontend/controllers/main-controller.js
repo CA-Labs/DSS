@@ -23,7 +23,7 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
     localStorageService.bind($scope, 'xmlTaAssetsFileName', $scope.xmlTaAssetsFileName);
 
     // Initial data fetch: available cloud service names
-    ArangoDBService.getServiceNames(function(error, data){
+    ArangoDBService.getServicesWithProviders(function(error, data){
         if (error) {
             flash.error = 'Some error occurred while trying to fetch the list of service names'
         } else {
@@ -165,6 +165,8 @@ dssApp.controller('mainController', ['$scope', '$rootScope', '$upload', 'flash',
                 AssetsService.setXmlTaObject(localStorageValues.xmlAsJsonObject);
                 RisksService.setSimpleRisksLikelihoodConsequence(localStorageValues.simpleRisksLikelihoodConsequence);
                 RisksService.setRiskBoundModels(localStorageValues.riskBoundModels);
+                RisksService.setSpecifiyLikelihoods(localStorageValues.specifyLikelihoods);
+                RisksService.setSpecifiyTALikelihoods(localStorageValues.specifyTALikelihoods);
                 RisksService.setMultipleRisksLikelihoodConsequence(localStorageValues.multipleRisksLikelihoodConsequence);
                 RisksService.setRisks(localStorageValues.risksSelected);
                 AssetsService.setCriticityBoundModels(localStorageValues.criticityBoundModels);

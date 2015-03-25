@@ -94,11 +94,23 @@ dssApp.service('ArangoClient', ['$q', function($q){
     };
 
     /**
-     * Retrieves list of available service names (used in services search).
+     * Retrieves list of available services with corresponding providers.
      * @returns {*|Promise|Array|{index: number, input: string}}
      */
-    this.getServiceNames = function(){
-        var query = 'for s in nodes filter s.type == "service" return s';
+    this.getServicesWithProviders = function(){
+        var query = 'for p in graph_paths("dssBlueprints", {direction: "outbound", followCycles: false, minLength: 1, maxLength: 1}) ' +
+                    'let sourceType = (p.source.type) ' +
+                    'let destinationType = (p.destination.type) ' +
+                    'filter (sourceType == "provider") && (destinationType == "service") ' +
+                    'return {providerYearFounding: p.source.year_founding, ' +
+                            'providerNumberEmployees: p.source.number_of_employees, ' +
+                            'providerName: p.source.name, ' +
+                            'providerDescription: p.source.description, ' +
+                            'providerWebsite: p.source.website, ' +
+                            'providerLogoUrl: p.source.logo_url, ' +
+                            'providerHeadquarters: p.source.headquarters, ' +
+                            'serviceName: p.destination.name, ' +
+                            'serviceCloudType: p.destination.cloudType}';
         return db.query.exec(query);
     };
 
@@ -183,6 +195,26 @@ dssApp.service('ArangoClient', ['$q', function($q){
                     'providerName = path.source.name into providers ' +
                     'return {provider: provider, service: service, characteristics: dss::utils::pathsToCharacteristicValues(providers[*].path)}';
         return db.query.exec(query, {cloudType: cloudType, serviceType: serviceType});
+    };
+
+    this.getServiceMigrationValues = function(service){
+        var query = 'for p in graph_paths("dssBlueprints", {minLength: 2,maxLength: 2}) ' +
+                    'let sourceType = p.source.type ' +
+                    'let sourceName = p.source.name ' +
+                    'let destinationType = p.destination.type ' +
+                    'let destinationName = p.destination.name ' +
+                    'let value = ( ' +
+                        'is_list(p.edges[0].data.value) ? ' +
+                        '( ' +
+                            'for n1 in nodes filter n1.type == sourceType ' +
+                            'for n2 in nodes filter n2.type == "metric" && n2.name == p.vertices[1].name ' +
+                            'for r in relations filter r._from == n1._id && r._to == n2._id ' +
+                            'return length(r.data.value) ' +
+                        ') : [p.edges[0].data.value]) ' +
+                        'let result = is_list(value) ? max(value) > 0 ? length(value) / max(value) : 0 : value ' +
+                        'filter sourceType == "service" && sourceName == @service && destinationType == "characteristic" && destinationName == "Migration" ' +
+                        'return {source: sourceName, destination: destinationName, metric: p.vertices[1].name, value: result}';
+        return db.query.exec(query, {service: service});
     };
 
 }]);

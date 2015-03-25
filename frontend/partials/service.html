@@ -1,17 +1,22 @@
 <div>
-    <p>Service name is {{ selectedService.title }}</p>
-    <hr/>
-    <h4>Description</h4>
-    <p>{{serviceSelected.description}}</p>
-    <hr/>
-    <h4>Provider Information</h4>
-    <ul>
-        <li>Year founded: {{ serviceSelected.year_founding || "-" }}</li>
-        <li>Number of Employees: {{ serviceSelected.number_of_employees || "-" }}</li>
-        <li>Headquarters: {{ serviceSelected.headquarters || "-" }}</li>
-        <li>Website: <a href="{{ serviceSelected.website }}">{{ serviceSelected.website || "-" }}</a></li>
-    </ul>
-    <hr/>
-    <h4>Service Characteristics Values</h4>
-    <dss-radar service="serviceSelected.service" characteristics="serviceSelected.characteristics"></dss-radar>
+    <div>
+        <div style="text-align:center; margin-top: 25px; margin-bottom: 25px;">
+            <a ng-href="{{selectedService.originalObject.providerWebsite || '#'}}"><img style="max-width: 150px; max-heigth: 75px;" ng-src="{{ selectedService.originalObject.providerLogoUrl}}"></a>
+        </div>
+        <p>{{selectedService.originalObject.providerDescription}}</p>
+        <hr/>
+        <h4>Provider Information</h4>
+        <ul>
+            <li>Year founded: {{ selectedService.originalObject.providerYearFounding || "-" }}</li>
+            <li>Number of Employees: {{ selectedService.originalObject.providerNumberEmployees || "-" }}</li>
+            <li>Headquarters: {{ selectedService.originalObject.providerHeadquarters || "-" }}</li>
+            <li>Website: <a ng-href="{{ selectedService.originalObject.providerWebsite || '#' }}">{{ selectedService.originalObject.providerWebsite || "-" }}</a></li>
+        </ul>
+        <hr/>
+        <h4>Service Information</h4>
+        <ul>
+            <li>Name: {{selectedService.originalObject.serviceName}}</li>
+            <li>Cloud type: {{selectedService.originalObject.serviceCloudType}}</li>
+        </ul>
+    </div>
 </div>

@@ -43,8 +43,8 @@
                                   selectedObject="selectedService"
                                   localdata="services"
                                   minlength="1"
-                                  searchfields="name"
-                                  titlefield="name"
+                                  searchfields="serviceName"
+                                  titlefield="serviceName"
                                   inputclass="form-control col-lg-4"/>
                 </form>
             </li>
@@ -292,8 +292,6 @@
             <div>
                 <input name="risks-per-ta" bs-switch ng-model="showRiskPerTA" type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleActivation()"/>
                 <label class="pull-right">&nbsp;&nbsp;Specify risk per tangible asset&nbsp;</label>
-                <input name="risks-per-ta" ng-model="specifyLikelihood" bs-switch type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleStandardiseLikelihood()"/>
-                <label class="pull-right">Specify Likelihood&nbsp;</label>
                 <h4 ng-show="risksSelected.length > 0">Risks Selected</h4>
             </div>
             <div class="list-group-item selected-risk risk-container" href="#" ng-repeat="risk in risksSelected track by $index">
@@ -301,6 +299,8 @@
                 <!-- Not showRiskPerTA selection -->
                 <div style="margin-top: 10px" ng-show="!showRiskPerTA">
                     <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
+                    <input name="risks-per-ta" ng-init="activateSpecifyLikelihood(risk.destination.name)" ng-model="specifyLikelihoods[risk.destination.name]" bs-switch type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleSpecifyLikelihood(risk.destination.name)"/>
+                    <label class="pull-right">Specify Likelihood&nbsp;</label>
                     <br/>
                     <div class="row">
                         <div class="col-lg-12 col-sm-12">
@@ -310,7 +310,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-6" style="margin-top: 10px;" ng-show="specifyLikelihood">
+                    <div class="col-lg-6" style="margin-top: 10px;" ng-show="specifyLikelihoods[risk.destination.name]">
                         <p style="margin-bottom: 15px" class="popover-enabled">Likelihood: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Probability/frequency of risk to occur" popup-right></i></p>
                         <div on-risks-type="simple" data-type="likelihood">
                             <div style="width: 80%; margin-bottom: 15px;" slider data-model="simple" data-hash-key="{{risk.destination.name + '/likelihood'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '/likelihood']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
@@ -318,7 +318,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="" style="margin-top: 10px" ng-class="{ 'col-lg-12': !specifyLikelihood, 'col-lg-6': specifyLikelihood }">
+                    <div class="" style="margin-top: 10px" ng-class="{ 'col-lg-12': !specifyLikelihoods[risk.destination.name], 'col-lg-6': specifyLikelihoods[risk.destination.name] }">
                         <p style="margin-bottom: 15px;">Consequence: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Impact of risk on asset" popup-right></i></p>
                         <div on-risks-type="simple" data-type="consequence">
                             <div style="width: 80%; margin-bottom: 15px;" slider data-model="simple" data-hash-key="{{risk.destination.name + '/consequence'}}" ng-model="$parent.riskBoundModels[risk.destination.name + '/consequence']" start="$eval('{' + risk.destination.attributes + '}').range[0]" end="$eval('{' + risk.destination.attributes + '}').range[1]" step="$eval('{' + risk.destination.attributes + '}').step">
@@ -330,6 +330,8 @@
                 <!-- Multiple selection -->
                 <div style="margin-top: 10px" ng-show="showRiskPerTA">
                     <span class="def-tip" data-placement="right" data-content="{{ risk.destination.description }}"><strong>{{risk.destination.name}}</strong></span>
+                    <input name="risks-per-ta" ng-init="activateSpecifyTALikelihood(risk.destination.name)" ng-model="specifyTALikelihoods[risk.destination.name]" bs-switch type="checkbox" switch-active="true" switch-size="small" switch-animate="true" switch-on-text="YES" switch-off-text="NO" switch-on-color="success" ng-change="toggleSpecifyTALikelihood(risk.destination.name)"/>
+                    <label class="pull-right">Specify Likelihood&nbsp;</label>
                     <br/>
                     <div class="row">
                         <div class="col-lg-12 col-sm-12">
@@ -345,7 +347,7 @@
                             <span ng-switch-when="PaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudPlatform._serviceType }}"><strong>{{taAsset.cloudPlatform._serviceName}}</strong></span>
                         </div>
                         <br/>
-                        <div class="col-lg-6" style="margin-top: 10px; display: block;" ng-show="specifyLikelihood">
+                        <div class="col-lg-6" style="margin-top: 10px; display: block;" ng-show="specifyTALikelihoods[risk.destination.name]">
                             <p style="margin-bottom: 15px">Likelihood: <i class="glyphicon glyphicon-info-sign"  data-toggle="popover" data-placement="top" data-content="Probability/frequency of risk to occur" popup-right></i> </p>
                             <div on-risks-type="multiple" data-type="likelihood" ng-switch="taAsset.cloudType">
                                 <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-model="multiple" data-hash-key="{{$parent.risk.destination.name + '/' + taAsset._id + '/likelihood'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '/' + taAsset._id + '/likelihood']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
@@ -356,7 +358,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="" style="margin-top: 10px; display: block" ng-class="{'col-lg-12': !specifyLikelihood, 'col-lg-6': specifyLikelihood }">
+                        <div class="" style="margin-top: 10px; display: block" ng-class="{'col-lg-12': !specifyTALikelihoods[risk.destination.name], 'col-lg-6': specifyTALikelihoods[risk.destination.name]}">
                             <p style="margin-bottom: 15px;">Consequence: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Impact of risk on asset" popup-right></i></p>
                             <div on-risks-type="multiple" data-type="consequence" ng-switch="taAsset.cloudType">
                                 <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-model="multiple" data-hash-key="{{$parent.risk.destination.name + '/' + taAsset._id + '/consequence'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '/' + taAsset._id + '/consequence']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
@@ -482,7 +484,7 @@
             <div class="col-lg-11">
                 <div class="btn-group btn-group-justified">
                     <a class="btn btn-default" ng-class="{'active': isOrderBySelected('overallScore')}" ng-click="orderBy='overallScore'">Risk Mitigation</a>
-                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('minimalDeploymentScore')}" ng-click="orderBy='minimalDeploymentScore'">Minimal Deployment Score</a>
+                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('minimalDeploymentScore')}" ng-click="orderBy='minimalDeploymentScore'">Minimal Deployment Cost Score</a>
                     <a class="btn btn-default" ng-class="{'active': isOrderBySelected('qualityScore')}" ng-click="orderBy='qualityScore'">Quality Perception Score</a>
                     <a class="btn btn-default" ng-class="{'active': isOrderBySelected('migrationScore')}" ng-click="orderBy='migrationScore'">Easiness of Migration</a>
                 </div>
@@ -566,6 +568,21 @@
                                                         <ul>
                                                             <li ng-repeat="unmitigatedRisk in service.unmitigatedRisks | orderBy: ''">{{unmitigatedRisk}}</li>
                                                         </ul>
+                                                        <div class="row service-data-sources">
+                                                            <h4>Data sources: </h4>
+                                                            <ul>
+                                                                <li ng-repeat="source in service.service.sources">
+                                                                    <div class="row">
+                                                                        <div class="col-lg-6">
+                                                                            <p>{{ source.name }}</p>
+                                                                        </div>
+                                                                        <div class="col-lg-6">
+                                                                            <a ng-href="{{source.url}}"><img class="service-source-logo" ng-src="{{source.logo}}" alt="{{source.name}}"></a>
+                                                                        </div>
+                                                                    </div>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

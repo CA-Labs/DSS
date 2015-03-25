@@ -50,9 +50,13 @@ dssApp.controller('risksController'
 
     $scope.bsoiaRisksMapping = RisksService.getBSOIARisksMapping();
 
-    // show likelihood values default, used when we want to standardise the values of the likelihood
+    // show likelihoods values, used when we want to standardise the values of the likelihood
     // because the user don't want/know how to specify it. In this case, the slider should disappear
-    $scope.specifyLikelihood = true;
+    $scope.specifyLikelihoods = RisksService.getSpecifyLikelihoods();
+    localStorageService.bind($scope, 'specifyLikelihoods', $scope.specifyLikelihoods);
+
+    $scope.specifyTALikelihoods = RisksService.getSpecifyTALikelihoods();
+    localStorageService.bind($scope, 'specifyTALikelihoods', $scope.specifyTALikelihoods);
 
     //List of available categories to categorize risks level for likelihood values
     var LIKELIHOOD_CATEGORIES = {
@@ -475,6 +479,8 @@ dssApp.controller('risksController'
         RisksService.removeRiskLikelihoodConsequence(risk.destination.name)
         RisksService.removeRiskBoundModelsByName(risk.destination.name);
         RisksService.removeUnacceptableRiskByName(risk.destination.name);
+        RisksService.removeSpecifyLikelihoodByName(risk.destination.name);
+        RisksService.removeSpecifyTALikelihoodByName(risk.destination.name);
     };
 
     /**
@@ -690,10 +696,43 @@ dssApp.controller('risksController'
         }
     });
 
-    // toggle Standardised Likelihood and
-    $scope.toggleStandardiseLikelihood = function () {
-        if (!$scope.specifyLikelihood) {
-            RisksService.setStandardisedLikelihood();
+    // toggle specify likelihood
+    $scope.activateSpecifyLikelihood = function (riskName) {
+        if (!$scope.specifyLikelihoods.hasOwnProperty(riskName)) {
+            RisksService.setSpecifyLikelihoodByName(riskName, true);
+        }
+    };
+
+    $scope.toggleSpecifyLikelihood = function (riskName) {
+        if($scope.specifyLikelihoods[riskName]) {
+            // Update UI stuff
+            $scope.riskBoundModels[riskName + '/likelihood'] = 5;
+            removeClasses($('div[data-hash-key="' + riskName + '/likelihood"] > span'))
+                .addClass(numberToCategoryClass(5, 'likelihood'))
+                .text(numberToCategoryName(5, 'likelihood'));
+            // Update service data
+            RisksService.addRiskLikelihood(riskName, 5);
+        }
+    }
+
+    // toggle specify TA likelihood
+    $scope.activateSpecifyTALikelihood = function (riskName) {
+        if (!$scope.specifyTALikelihoods.hasOwnProperty(riskName)) {
+            RisksService.setSpecifyTALikelihoodByName(riskName, true);
+        }
+    };
+
+    $scope.toggleSpecifyTALikelihood = function (riskName) {
+        if($scope.specifyTALikelihoods[riskName]) {
+            _.each(AssetsService.getTA(), function(ta){
+                // Update UI stuff
+                $scope.riskBoundModels[riskName + '/' + ta._id + '/likelihood'] = 5;
+                removeClasses($('div[data-hash-key="' + riskName + '/' + ta._id + '/likelihood"] > span'))
+                    .addClass(numberToCategoryClass(5, 'likelihood'))
+                    .text(numberToCategoryName(5, 'likelihood'));
+                // Update service data
+                RisksService.addRiskTALikelihood(riskName, ta._id, 5);
+            });
         }
     };
 

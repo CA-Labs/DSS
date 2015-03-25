@@ -126,8 +126,8 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'ArangoClient', function($http
     /**
      * Retrieves service names.
      */
-    this.getServiceNames = function(callback){
-        ArangoClient.getServiceNames()
+    this.getServicesWithProviders = function(callback){
+        ArangoClient.getServicesWithProviders()
             .then(function(res){
                 callback(null, res);
             }, function(err){
@@ -197,6 +197,25 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'ArangoClient', function($http
         ArangoClient.getProposalsByCloudAndServiceTypes(cloudType, serviceType)
             .then(function(res){
                 callback(null, res);
+            }, function(err){
+                callback(err, null);
+            });
+    };
+
+    /**
+     * Returns the migration value for a given service.
+     * @param service The service name.
+     * @param callback
+     */
+    this.getServiceMigrationValues = function(service, callback){
+        ArangoClient.getServiceMigrationValues(service)
+            .then(function(res){
+                if (res.length == 0) callback(null, 0);
+                else {
+                    callback(null, (res.reduce(function(previous, next){
+                        return previous + next.value;
+                    }, 0))/res.length);
+                }
             }, function(err){
                 callback(err, null);
             });
