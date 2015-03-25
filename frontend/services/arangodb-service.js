@@ -203,19 +203,20 @@ dssApp.service('ArangoDBService', ['$http', '$q', 'ArangoClient', function($http
     };
 
     /**
-     * Returns the migration value for a given service.
-     * @param service The service name.
+     * Returns the migration values for all services.
      * @param callback
      */
-    this.getServiceMigrationValues = function(service, callback){
-        ArangoClient.getServiceMigrationValues(service)
+    this.getServicesMigrationValues = function(callback){
+        ArangoClient.getServicesMigrationValues()
             .then(function(res){
-                if (res.length == 0) callback(null, 0);
-                else {
-                    callback(null, (res.reduce(function(previous, next){
-                        return previous + next.value;
-                    }, 0))/res.length);
-                }
+                var services = res.map(function(service){ return {name: service.service, values: service.edges.map(function(edge){ return edge.value})}});
+                var result = {};
+                _.each(services, function(service){
+                    result[service.name] = service.values.reduce(function(previous, next){
+                            return previous + next;
+                        }, 0) / (service.values.length || 1)
+                });
+                callback(null, result);
             }, function(err){
                 callback(err, null);
             });
