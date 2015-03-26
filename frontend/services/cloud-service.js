@@ -21,6 +21,12 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
     var deploymentProposals = [];
 
+    // prefetch the migration score values
+    var servicesMigrationValues = [];
+    ArangoDBService.getServicesMigrationValues(function (err, values) {
+        servicesMigrationValues = values;
+    });
+
     /**
      * Returns the list of initial proposals.
      * @returns {*|{}}
@@ -199,14 +205,23 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
             _.each(deploymentProposals, function(proposal, index) {
                 var riskBasedScore = 0;
                 var qualitySumScore = 0;
+                var minimalDeploymentCost = 0;
+                var migrationScore = 0;
+
                 _.each(proposal, function (service, indexP) {
                     riskBasedScore += service.score/service.total;
                     qualitySumScore += service.service.quality;
+                    minimalDeploymentCost += service.service.minimalDeploymentCost || 0;
+                    migrationScore += servicesMigrationValues[service.service._id];
+
+                    deploymentProposals[index][indexP].migrationScore = servicesMigrationValues[service.service._id];
                 });
 
                 // calculate riskBasedScore
                 deploymentProposals[index].overallScore = riskBasedScore / proposal.length;
                 deploymentProposals[index].qualityScore = qualitySumScore / proposal.length / 10; // scale [0-1]
+                deploymentProposals[index].minimalDeploymentCost = minimalDeploymentCost;
+                deploymentProposals[index].migrationScore = migrationScore / proposal.length;
             });
             return deploymentProposals;
         }
@@ -315,21 +330,6 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
         });
 
         // console.log('end result', filteredProposals);
-
-    };
-
-    /**
-     * Enriches the value of the deployment with the per deployment migration score
-     * it does enrich the service values as well.
-     */
-    this.scoreDeploymentsMigration = function () {
-
-    };
-
-    /**
-     * Enriches the value of the deployment with the miminalDeploymentCost value
-     */
-    this.scoreDeploymentsCost = function () {
 
     };
 

@@ -484,9 +484,9 @@
             <div class="col-lg-11">
                 <div class="btn-group btn-group-justified">
                     <a class="btn btn-default" ng-class="{'active': isOrderBySelected('overallScore')}" ng-click="orderBy='overallScore'">Risk Mitigation</a>
-                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('minimalDeploymentScore')}" ng-click="orderBy='minimalDeploymentScore'">Minimal Deployment Cost Score</a>
+                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('minimalDeploymentCost')}" ng-click="orderBy='minimalDeploymentCost'">Minimal Deployment Cost</a>
                     <a class="btn btn-default" ng-class="{'active': isOrderBySelected('qualityScore')}" ng-click="orderBy='qualityScore'">Quality Perception Score</a>
-                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('migrationScore')}" ng-click="orderBy='migrationScore'">Easiness of Migration</a>
+                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('migrationScore')}" ng-click="orderBy='migrationScore'">Ease of Migration</a>
                 </div>
             </div>
         </div>
@@ -498,11 +498,19 @@
                         <div class="well service-proposal-score service-proposal-score-overall">
                             <h6>Deployment<br/>Score</h6>
                             <hr/>
-                            <h3>{{ (result.overallScore * 10.0 || 0) | number: 2 }}</h3>
+                            <h3 ng-show="isOrderBySelected('overallScore')">{{ (result.overallScore * 10.0 || 0) | number: 2 }}</h3>
+                            <h3 ng-show="isOrderBySelected('minimalDeploymentCost')">{{ (result.minimalDeploymentCost || 0) | number: 2 }}</h3>
+                            <h3 ng-show="isOrderBySelected('migrationScore')">{{ (result.migrationScore * 10.0 || 0) | number: 2 }}</h3>
+                            <h3 ng-show="isOrderBySelected('qualityScore')">{{ (result.qualityScore * 2.0 * 10.0 || 0) | number: 2 }}</h3>
                             <br/>
                         </div>
                         <div class="center-block center-text">
-                            <span class="selected hasRisks label label-danger" ng-show="hasUnmitigatedRisks(result) || isVendorLockedIn(result)" data-content="Some risks are unmitigated within one or more providers or they are from the same provider which imposes risk of vendor lock-in" popup-right>
+                            <span class="selected hasRisks label label-warning" ng-show="!hasUnmitigatedRisks(result) && isVendorLockedIn(result)" data-content="Please note possible vendor lock-in risk" popup-right>
+                                <i class="glyphicon glyphicon-lock"></i>
+                            </span>
+                        </div>
+                        <div class="center-block center-text">
+                            <span class="selected hasRisks label label-danger" ng-show="hasUnmitigatedRisks(result) && isVendorLockedIn(result)" data-content="Some risks are unmitigated within one or more providers or they are from the same provider which imposes risk of vendor lock-in" popup-right>
                                 <i class="glyphicon glyphicon-exclamation-sign"></i>
                             </span>
                         </div>
@@ -539,7 +547,10 @@
                                                         <div class="well service-proposal-score">
                                                             <h6>Score</h6>
                                                             <hr/>
-                                                            <h3>{{ ((service.score / service.total) || 0.0) * 10.0 | number: 2 }}</h3>
+                                                            <h3 ng-show="isOrderBySelected('overallScore')">{{ ((service.score / service.total) || 0.0) * 10.0 | number: 2 }}</h3>
+                                                            <h3 ng-show="isOrderBySelected('minimalDeploymentCost')">{{ (service.minimalDeploymentCost || 0) | number: 2 }}</h3>
+                                                            <h3 ng-show="isOrderBySelected('migrationScore')">{{ (service.migrationScore * 10.0 || 0) | number: 2 }}</h3>
+                                                            <h3 ng-show="isOrderBySelected('qualityScore')">{{ (service.service.quality * 2.0 || 0) | number: 2 }}</h3>
                                                         </div>
                                                     </div>
                                                 </div>
