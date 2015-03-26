@@ -8,6 +8,7 @@ dssApp.directive('dssRadar', ['TreatmentsService', function(TreatmentsService){
     return {
         restrict: 'E',
         scope: {
+            characteristicsArray: '=',
             characteristics: '=',
             service: '='
         },
@@ -16,35 +17,42 @@ dssApp.directive('dssRadar', ['TreatmentsService', function(TreatmentsService){
             // Datasets seem to be of same length, consider treatments not selected to have a value of 0 (does it make sense?)
             var treatmentsValues = TreatmentsService.getTreatmentsValues();
             var treatmentsAxes = [];
+            var characteristicsAxes = [];
 
-            _.each(scope.characteristics, function(characteristic){
-                var value = 0;
-                _.each(treatmentsValues, function(treatmentValue, treatmentKey){
-                    if (treatmentKey == characteristic.name){
-                        if (treatmentKey == "Place of jurisdiction"){
-                            value = TreatmentsService.compareRegions(treatmentValue, scope.service.regions)
-                        } else {
-                            value = treatmentValue;
-                        }
+            // Characteristics array is used to assure characteristics are traversed in the same order
+            _.each(scope.characteristicsArray, function(characteristicElement){
+                _.each(scope.characteristics, function(characteristic){
+                    if (characteristic.name == characteristicElement.name){
+                        var value = 0;
+                        _.each(treatmentsValues, function(treatmentValue, treatmentKey){
+                            if (treatmentKey == characteristic.name){
+                                if (treatmentKey == "Place of jurisdiction"){
+                                    value = TreatmentsService.compareRegions(treatmentValue, scope.service.regions)
+                                } else {
+                                    value = treatmentValue;
+                                }
+                            }
+                        });
+                        treatmentsAxes.push({axis: characteristic.name, value: value});
                     }
                 });
-                treatmentsAxes.push({axis: characteristic.name, value: value});
             });
 
-            var data = [
-                {
-                    axes: _.map(scope.characteristics, function (characteristic) {
+            // Characteristics array is used to assure characteristics are traversed in the same order
+            _.each(scope.characteristicsArray, function(characteristicElement){
+                _.each(scope.characteristics, function (characteristic) {
+                    if (characteristic.name == characteristicElement.name) {
                         var value = characteristic.value;
-                        if (characteristic.name == "Place of jurisdiction"){
+                        if (characteristic.name == "Place of jurisdiction") {
                             value = characteristic.value.length / characteristic.max;
                         }
-                        return {axis: characteristic.name, value: value}
-                    })
-                },
-                {
-                    axes: treatmentsAxes
-                }
-            ];
+                        characteristicsAxes.push({axis: characteristic.name, value: value});
+                    }
+                });
+            });
+
+
+            var data = [{axes: characteristicsAxes}, {axes: treatmentsAxes}];
 
             var chart = RadarChart.chart();
             chart.config({

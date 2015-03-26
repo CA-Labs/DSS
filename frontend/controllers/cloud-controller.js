@@ -286,4 +286,13 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
         item.showDetails = !item.showDetails;
     };
 
+    // Initial characteristics fetch used to preserve order when rendering the radar charts
+    ArangoDBService.getCharacteristics(function(error, data){
+       if (error) {
+           console.error(error);
+       } else {
+           $scope.characteristicsArray = data.filter(function(characteristic){ return characteristic.level == 3});
+       }
+    });
+
 }]);
