@@ -477,18 +477,43 @@
 <div class="item services-slide" ng-controller="cloudController">
     <div class="col-lg-12">
         <!--per deployment results-->
+        <div class="row">
+            <div class="col-lg-1 text-right">
+                <h4>Order By:</h4>
+            </div>
+            <div class="col-lg-11">
+                <div class="btn-group btn-group-justified">
+                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('overallScore')}" ng-click="orderBy='overallScore'">Risk Mitigation</a>
+                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('minimalDeploymentCost')}" ng-click="orderBy='minimalDeploymentCost'">Minimal Deployment Cost</a>
+                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('qualityScore')}" ng-click="orderBy='qualityScore'">Quality Perception Score</a>
+                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('migrationScore')}" ng-click="orderBy='migrationScore'">Ease of Migration</a>
+                </div>
+            </div>
+        </div>
+        <br/>
         <ul class="list-group">
-            <li class="list-group-item service-proposal-panel" ng-class="{ 'service-selected': isSelected(result), 'has-risks': hasUnmitigatedRisks(result) }" on-repeat-done ng-repeat="result in getDeploymentProposals() | multicloudReplication | orderBy:'overallScore':true track by $index">
+            <li class="list-group-item service-proposal-panel" ng-class="{ 'service-selected': isSelected(result), 'has-risks': hasUnmitigatedRisks(result) }" on-repeat-done ng-repeat="result in getDeploymentProposals() | multicloudReplication | orderBy: orderBy :true track by $index">
                 <div class="row" ng-click="selectService(result)">
                     <div class="col-lg-1">
                         <div class="well service-proposal-score service-proposal-score-overall">
-                            <h6>Deployment<br/>Score</h6>
+                            <h6 ng-show="isOrderBySelected('overallScore')">Rist Mitigation<br/>Deployment<br/>Score</h6>
+                            <h6 ng-show="isOrderBySelected('minimalDeploymentCost')">Minimal Deployment<br/>Cost</h6>
+                            <h6 ng-show="isOrderBySelected('migrationScore')">Migration<br/>Score</h6>
+                            <h6 ng-show="isOrderBySelected('qualityScore')">Quality<br/>Score</h6>
                             <hr/>
-                            <h3>{{ (result.overallScore * 10.0 || 0) | number: 2 }}</h3>
+                            <h3 ng-show="isOrderBySelected('overallScore')">{{ (result.overallScore * 10.0 || 0) | number: 2 }}</h3>
+                            <h3 ng-show="isOrderBySelected('minimalDeploymentCost')">{{ (result.minimalDeploymentCost || 0) | number: 2 }}</h3>
+                            <h3 ng-show="isOrderBySelected('migrationScore')">{{ (result.migrationScore * 10.0 || 0) | number: 2 }}</h3>
+                            <h3 ng-show="isOrderBySelected('qualityScore')">{{ (result.qualityScore * 2.0 * 10.0 || 0) | number: 2 }}</h3>
                             <br/>
                         </div>
                         <div class="center-block center-text">
-                            <span class="selected hasRisks label label-danger" ng-show="hasUnmitigatedRisks(result) || isVendorLockedIn(result)" data-content="Some risks are unmitigated within one or more providers or they are from the same provider which imposes risk of vendor lock-in" popup-right>
+                            <span class="selected hasRisks label label-warning" ng-show="!hasUnmitigatedRisks(result) && isVendorLockedIn(result)" data-content="Please note possible vendor lock-in risk" popup-right>
+                                <i class="glyphicon glyphicon-lock"></i>
+                            </span>
+                        </div>
+                        <div class="center-block center-text">
+                            <span class="selected hasRisks label label-danger" ng-show="hasUnmitigatedRisks(result) || (hasUnmitigatedRisks(result) && isVendorLockedIn(result))" data-content="Some risks are unmitigated within one or more providers or they are from the same provider which imposes risk of vendor lock-in" popup-right>
                                 <i class="glyphicon glyphicon-exclamation-sign"></i>
                             </span>
                         </div>
@@ -525,7 +550,10 @@
                                                         <div class="well service-proposal-score">
                                                             <h6>Score</h6>
                                                             <hr/>
-                                                            <h3>{{ ((service.score / service.total) || 0.0) * 10.0 | number: 2 }}</h3>
+                                                            <h3 ng-show="isOrderBySelected('overallScore')">{{ ((service.score / service.total) || 0.0) * 10.0 | number: 2 }}</h3>
+                                                            <h3 ng-show="isOrderBySelected('minimalDeploymentCost')">{{ (service.minimalDeploymentCost || 0) | number: 2 }}</h3>
+                                                            <h3 ng-show="isOrderBySelected('migrationScore')">{{ (service.migrationScore * 10.0 || 0) | number: 2 }}</h3>
+                                                            <h3 ng-show="isOrderBySelected('qualityScore')">{{ (service.service.quality * 2.0 || 0) | number: 2 }}</h3>
                                                         </div>
                                                     </div>
                                                 </div>

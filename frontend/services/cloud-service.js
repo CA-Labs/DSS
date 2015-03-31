@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsService', 'localStorageService', 'flash', function(AssetsService, RisksService, TreatmentsService, localStorageService, flash){
+dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsService', 'localStorageService', 'flash', 'ArangoDBService', function(AssetsService, RisksService, TreatmentsService, localStorageService, flash, ArangoDBService){
 
     var proposalsFromLocalStorage = localStorageService.get('proposals') || {};
     var proposals = proposalsFromLocalStorage;
@@ -20,6 +20,12 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
     var specifyTreatmentsPerCloudService = false;
 
     var deploymentProposals = [];
+
+    // prefetch the migration score values
+    var servicesMigrationValues = [];
+    ArangoDBService.getServicesMigrationValues(function (err, values) {
+        servicesMigrationValues = values;
+    });
 
     /**
      * Returns the list of initial proposals.
@@ -197,13 +203,25 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
             // calculate overall score
             _.each(deploymentProposals, function(proposal, index) {
-                var overallScore = 0;
-                _.each(proposal, function (service) {
-                    overallScore += service.score/service.total;
+                var riskBasedScore = 0;
+                var qualitySumScore = 0;
+                var minimalDeploymentCost = 0;
+                var migrationScore = 0;
+
+                _.each(proposal, function (service, indexP) {
+                    riskBasedScore += service.score/service.total;
+                    qualitySumScore += service.service.quality;
+                    minimalDeploymentCost += service.service.minimalDeploymentCost || 0;
+                    migrationScore += servicesMigrationValues[service.service._id];
+
+                    deploymentProposals[index][indexP].migrationScore = servicesMigrationValues[service.service._id];
                 });
 
-                // calulate overallScore
-                deploymentProposals[index].overallScore = overallScore / proposal.length;
+                // calculate riskBasedScore
+                deploymentProposals[index].overallScore = riskBasedScore / proposal.length;
+                deploymentProposals[index].qualityScore = qualitySumScore / proposal.length / 10; // scale [0-1]
+                deploymentProposals[index].minimalDeploymentCost = minimalDeploymentCost;
+                deploymentProposals[index].migrationScore = migrationScore / proposal.length;
             });
             return deploymentProposals;
         }
@@ -261,7 +279,8 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                                 if (proposalCharacteristic.length > 0) {
                                     treatmentValue = AssetsService.getInverseCriticityValue(proposalCharacteristic[0].value);
                                 } else {
-                                    // If the service does not have this characteristic, consider it has it with the lowest value possible
+                                    // If the service does not have this characteristic, consider it has it with the
+                                    // lowest value possible
                                     treatmentValue = 0;
                                 }
                             }
@@ -272,7 +291,8 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                             if(_.contains(risksFromTreatment, unacceptableRisk) && treatmentValue <= criticityValue){
                                 // This treatment is mitigating the risk
                                 if(filteredProposals[taAssetId][i].mitigatedRisks.indexOf(unacceptableRisk) == -1){
-                                    // console.log('treatment ' + treatment + ' is mitigating risk ' + unacceptableRisk);
+                                    // console.log('treatment ' + treatment + ' is mitigating risk ' +
+                                    // unacceptableRisk);
                                     filteredProposals[taAssetId][i].mitigatedRisks.push(unacceptableRisk);
                                 }
                                 // Check if this treatment was considered unmitigated before
@@ -283,7 +303,8 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                                     }
                                 });
                                 if(k >= 0){
-                                    // console.log('unacceptable risk ' + unacceptableRisk + ' was considered unmitigated before');
+                                    // console.log('unacceptable risk ' + unacceptableRisk + ' was considered
+                                    // unmitigated before');
                                     filteredProposals[taAssetId][i].unmitigatedRisks.splice(k, 1);
                                 }
                             } else {

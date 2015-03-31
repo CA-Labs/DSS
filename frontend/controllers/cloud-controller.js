@@ -4,7 +4,7 @@
  * <jordi.aranda@bsc.es>
  */
 
-dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'RisksService', 'CloudService', 'localStorageService', 'usSpinnerService', function($scope, $rootScope, $timeout, ArangoDBService, TreatmentsService, AssetsService, RisksService, CloudService, localStorageService, usSpinnerService){
+dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'ArangoDBService', 'TreatmentsService', 'AssetsService', 'RisksService', 'CloudService', 'localStorageService', 'usSpinnerService', '$q', function($scope, $rootScope, $timeout, ArangoDBService, TreatmentsService, AssetsService, RisksService, CloudService, localStorageService, usSpinnerService, $q){
 
     $scope.ta = AssetsService.getTA();                                  // The selected TA assets loaded from the cloud
                                                                         // descriptor xml file
@@ -23,6 +23,12 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
 
     $scope.isMulticloudDeployment = function(){
         return AssetsService.getDeploymentType();
+    };
+
+    // order setup for the order of cloud providers
+    $scope.orderBy = 'overallScore'; // init
+    $scope.isOrderBySelected = function (name) {
+        return (name == $scope.orderBy);
     };
 
     /**
@@ -77,9 +83,17 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
                 var serviceType = ta.cloudType == 'IaaS' ? ta.cloudResource._serviceType : ta.cloudPlatform._serviceType;
                 ArangoDBService.getProposalsByCloudAndServiceTypes(ta.cloudType, serviceType, function(error, data){
                     if(error){
-                        // console.log(error);
+                        console.log(error);
                     } else {
-                        CloudService.setTAProposals(ta, data);
+                        $q.all(
+                            _.map(data, function (item, index) {
+                                ArangoDBService.getServiceMigrationValues(item.service.name, function (err, value) {
+                                    data[index].service.migrationScore = value;
+                                });
+                            })
+                        ).then(function () {
+                                CloudService.setTAProposals(ta, data);
+                            });
                         $timeout(function(){
                             CloudService.scoreProposals(false);
                         }, 100);
@@ -228,20 +242,6 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
      */
     $scope.isSelected = function (listItem) {
         return (!!listItem.isSelected);
-        //var selected = true;
-        //if($scope.servicesSelected.length == 0) {
-        //    selected = false;
-        //}
-        //if(listItem.length != $scope.servicesSelected.length){
-        //    selected = false;
-        //} else {
-        //    _.each(listItem, function (item, index) {
-        //        if (item.service._id !== $scope.servicesSelected[index].service._id) {
-        //            selected = false;
-        //        }
-        //    });
-        //}
-        //return selected;
     };
 
     /**
