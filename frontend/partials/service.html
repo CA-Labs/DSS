@@ -11,6 +11,7 @@
             <li>Number of Employees: {{ selectedService.originalObject.providerNumberEmployees || "-" }}</li>
             <li>Headquarters: {{ selectedService.originalObject.providerHeadquarters || "-" }}</li>
             <li>Website: <a ng-href="{{ selectedService.originalObject.providerWebsite || '#' }}">{{ selectedService.originalObject.providerWebsite || "-" }}</a></li>
+            <li>Contact: <a ng-href="mailto:{{ selectedService.originalObject.providerContact || '#' }}">{{ selectedService.originalObject.providerContact || "-" }}</a></li>
         </ul>
         <hr/>
         <h4>Service Information</h4>

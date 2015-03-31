@@ -107,6 +107,7 @@ dssApp.service('ArangoClient', ['$q', function($q){
                             'providerName: p.source.name, ' +
                             'providerDescription: p.source.description, ' +
                             'providerWebsite: p.source.website, ' +
+                            'providerContact: p.source.contact, ' +
                             'providerLogoUrl: p.source.logo_url, ' +
                             'providerHeadquarters: p.source.headquarters, ' +
                             'serviceName: p.destination.name, ' +
