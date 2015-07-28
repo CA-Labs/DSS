@@ -113,24 +113,24 @@ dssApp.controller('taController', ['$rootScope', '$scope', 'AssetsService', 'Clo
                             if(_.isArray(resources)){
                                 _.each(resources, function(resource){
                                     // IaaS
-                                    if(resource.hasOwnProperty('cloudResource')){
-                                        resource.cloudType = 'IaaS';
-                                    }
-                                    // PaaS
-                                    else if(resource.hasOwnProperty('cloudPlatform')){
-                                        resource.cloudType = 'PaaS';
-                                    }
+                                    //if(resource.hasOwnProperty('cloudResource')){
+                                    //    resource.cloudType = 'IaaS';
+                                    //}
+                                    //// PaaS
+                                    //else if(resource.hasOwnProperty('cloudPlatform')){
+                                    //    resource.cloudType = 'PaaS';
+                                    //}
                                     AssetsService.addTA(resource);
                                 });
                             } else if(_.isObject(resources)){
                                 // IaaS
-                                if(resources.hasOwnProperty('cloudResource')){
-                                    resources.cloudType = 'IaaS';
-                                }
-                                // PaaS
-                                else if(resources.hasOwnProperty('cloudPlatform')){
-                                    resources.cloudType = 'PaaS';
-                                }
+                                //if(resources.hasOwnProperty('cloudResource')){
+                                //    resources.cloudType = 'IaaS';
+                                //}
+                                //// PaaS
+                                //else if(resources.hasOwnProperty('cloudPlatform')){
+                                //    resources.cloudType = 'PaaS';
+                                //}
                                 AssetsService.addTA(resources);
                             }
                             $rootScope.$broadcast('loadedTA');

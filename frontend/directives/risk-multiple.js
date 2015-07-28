@@ -12,6 +12,7 @@ dssApp.directive('onRisksType', ['$timeout', function($timeout){
         restrict: 'A',
         scope: false,
         link: function(scope, element, attrs){
+
             $timeout(function(){
                 scope.$emit('sliderValueChanged', {
                     slider: $(element.children().first()) || $($(element.children()).eq(1)),
@@ -19,7 +20,8 @@ dssApp.directive('onRisksType', ['$timeout', function($timeout){
                     init: true,
                     type: attrs.type,
                     model: $($(element.children()).eq(1)).data('model') || $(element).children().first().data('model'),
-                    key: $($(element.children()).eq(1)).data('hash-key') || $(element).children().first().data('hash-key')});
+                    key: $($(element.children()).eq(1)).data('hash-key') || $(element).children().first().data('hash-key')
+                })
             }, 100);
         }
     };
