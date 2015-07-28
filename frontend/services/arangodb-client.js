@@ -10,7 +10,7 @@ dssApp.service('ArangoClient', ['$q', function($q){
      ************************** INITIALIZATION ************************
      ******************************************************************/
 
-    var host = 'db.dss.effortable.com';
+    var host = 'db.dss.tools.modaclouds.eu';
     var db = 'dss';
 
     var db = new arango.Connection({_name: db, _server: {hostname: host, port: 80}});

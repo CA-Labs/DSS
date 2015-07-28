@@ -251,12 +251,12 @@
                     <strong>Oops!</strong>&nbsp;No cloud resources have been loaded yet.
                 </div>
             </div>
-            <a class="list-group-item selected-asset" href="#" ng-repeat="taAsset in taAssets" ng-switch="taAsset.cloudType">
-                <strong ng-switch-when="IaaS">{{ taAsset.cloudResource._serviceName }} (IaaS)</strong>
-                <strong ng-switch-when="PaaS">{{ taAsset.cloudPlatform._serviceName }} (PaaS)</strong>
+            <a class="list-group-item selected-asset" href="#" ng-repeat="taAsset in taAssets" ng-switch="taAsset.cloudElement._serviceCategory">
+                <strong ng-switch-when="IaaS">{{ taAsset._name }} (IaaS)</strong>
+                <strong ng-switch-when="PaaS">{{ taAsset._name }} (PaaS)</strong>
                 <span class="glyphicon glyphicon-remove remove-asset" ng-click="removeTaAsset(taAsset)">&nbsp;</span>
-                <p ng-switch-when="IaaS" style="margin-top: 10px;">{{ taAsset.cloudResource._serviceType }}</p>
-                <p ng-switch-when="PaaS" style="margin-top: 10px;">{{ taAsset.cloudPlatform._serviceType }}</p>
+                <p ng-switch-when="IaaS" style="margin-top: 10px;">{{ taAsset.cloudElement._serviceType }}</p>
+                <p ng-switch-when="PaaS" style="margin-top: 10px;">{{ taAsset.cloudElement._serviceType }}</p>
                 <p>
                     <div style="display: inline-block; margin-left: 10px; position: relative; top: -5px;">Risk Acceptability level : <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-content="This slider allows you to specify the risk level which will be acceptable on each asset. The risk level is measured as a product of probability of the risk to occur (scale 1-5) and impact of the risk on your asset (scale 1-5). As you move the slider to the right, it would indicate that your asset can endure higher level of risks. As you move the slider to the left, it would indicate a lower resistance to risk thereby indicating the asset should not be exposed to any risk." popup-right></i></div>
                     <div on-risks-type="criticity" data-type="criticity" class="center-text">
@@ -342,14 +342,14 @@
                         </div>
                     </div>
                     <div ng-repeat="taAsset in taAssets" class="col-lg-12">
-                        <div ng-switch="taAsset.cloudType">
-                            <span ng-switch-when="IaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudResource._serviceType }}"><strong>{{taAsset.cloudResource._serviceName}}</strong></span>
-                            <span ng-switch-when="PaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudPlatform._serviceType }}"><strong>{{taAsset.cloudPlatform._serviceName}}</strong></span>
+                        <div ng-switch="taAsset.cloudElement._serviceCategory">
+                            <span ng-switch-when="IaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudElement._serviceType }}"><strong>{{taAsset.cloudElement._serviceName}}</strong></span>
+                            <span ng-switch-when="PaaS" class="def-tip" data-placement="right" data-content="{{ taAsset.cloudElement._serviceType }}"><strong>{{taAsset.cloudElement._serviceName}}</strong></span>
                         </div>
                         <br/>
                         <div class="col-lg-6" style="margin-top: 10px; display: block;" ng-show="specifyTALikelihoods[risk.destination.name]">
                             <p style="margin-bottom: 15px">Likelihood: <i class="glyphicon glyphicon-info-sign"  data-toggle="popover" data-placement="top" data-content="Probability/frequency of risk to occur" popup-right></i> </p>
-                            <div on-risks-type="multiple" data-type="likelihood" ng-switch="taAsset.cloudType">
+                            <div on-risks-type="multiple" data-type="likelihood" ng-switch="taAsset.cloudElement._serviceCategory">
                                 <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-model="multiple" data-hash-key="{{$parent.risk.destination.name + '/' + taAsset._id + '/likelihood'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '/' + taAsset._id + '/likelihood']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
                                     <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                                 </div>
@@ -360,7 +360,7 @@
                         </div>
                         <div class="" style="margin-top: 10px; display: block" ng-class="{'col-lg-12': !specifyTALikelihoods[risk.destination.name], 'col-lg-6': specifyTALikelihoods[risk.destination.name]}">
                             <p style="margin-bottom: 15px;">Consequence: <i class="glyphicon glyphicon-info-sign" data-toggle="popover" data-placement="top" data-content="Impact of risk on asset" popup-right></i></p>
-                            <div on-risks-type="multiple" data-type="consequence" ng-switch="taAsset.cloudType">
+                            <div on-risks-type="multiple" data-type="consequence" ng-switch="taAsset.cloudElement._serviceCategory">
                                 <div ng-switch-when="IaaS" style="width: 80%; margin-bottom: 15px;" slider data-model="multiple" data-hash-key="{{$parent.risk.destination.name + '/' + taAsset._id + '/consequence'}}" ng-model="$parent.$parent.$parent.riskBoundModels[$parent.risk.destination.name + '/' + taAsset._id + '/consequence']" start="$eval('{' + $parent.risk.destination.attributes + '}').range[0]" end="$eval('{' + $parent.risk.destination.attributes + '}').range[1]" step="$eval('{' + $parent.risk.destination.attributes + '}').step">
                                     <span class="label label-default secondary radius right requirement-value">&nbsp;</span>
                                 </div>
@@ -386,17 +386,17 @@
             <div class="panel panel-default" ng-repeat="taAsset in taAssets track by $index">
                 <div class="panel-heading">
                     <h4 class="panel-title">
-                        <a data-toggle="collapse" data-parent="#treatments-accordion" ng-href="{{'#collapse' + $index}}" ng-switch="taAsset.cloudType">
-                            <p ng-switch-when="IaaS"> {{ taAsset.cloudResource._serviceName + ' (IaaS)' }} </p>
-                            <p ng-switch-when="PaaS"> {{ taAsset.cloudPlatform._serviceName + ' (PaaS)' }} </p>
+                        <a data-toggle="collapse" data-parent="#treatments-accordion" ng-href="{{'#collapse' + $index}}" ng-switch="taAsset.cloudElement._serviceCategory">
+                            <p ng-switch-when="IaaS"> {{ taAsset._name + ' (IaaS)' }} </p>
+                            <p ng-switch-when="PaaS"> {{ taAsset._name + ' (PaaS)' }} </p>
                         </a>
                     </h4>
                 </div>
                 <div id="{{ 'collapse' + $index }}" class="panel-collapse collapse">
-                    <div class="panel-body" ng-switch="taAsset.cloudType">
+                    <div class="panel-body" ng-switch="taAsset.cloudElement._serviceCategory">
                         <div ng-switch-when="IaaS">
                             <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment"
-                                    ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudType, taAsset.cloudResource._serviceType)" select2 selectField="treatment">
+                                    ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudElement._serviceCategory, taAsset.cloudElement._serviceType)" select2 selectField="treatment">
                                 <option></option>
                             </select>
                             <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment, taAsset)" style="width:19% !important;">Add</button>
@@ -404,7 +404,7 @@
                         <div ng-switch-when="PaaS">
                             <!--| byCloudAndServiceTypes:taAsset.cloudType:taAsset.cloudPlatform._serviceType"-->
                             <select label="treatments" class="form-control form assets-select item-select" ng-model="potentialTreatment"
-                                    ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudType, taAsset.cloudPlatform._serviceType)" select2 selectField="treatment">
+                                    ng-options="p as p.treatment.name group by p.group for p in potentialTreatmentsGroupedAndFiltered(taAsset.cloudElement._serviceCategory, taAsset.cloudElement._serviceType)" select2 selectField="treatment">
                                 <option></option>
                             </select>
                             <button class="btn btn-success" ng-click="addTreatment(potentialTreatment.treatment, taAsset)" style="width:19% !important;">Add</button>
@@ -437,12 +437,12 @@
                 <div class="row">
                     <div class="col-lg-12 col-sm-12">
                         Associated tangible assets:
-                        <div ng-repeat="taRelation in treatmentSelected.taRelations" ng-switch="taRelation.cloudType" class="remove-ta-treatment" style="display: inline-block;">
+                        <div ng-repeat="taRelation in treatmentSelected.taRelations" ng-switch="taRelation.cloudElement._serviceCategory" class="remove-ta-treatment" style="display: inline-block;">
                             <button ng-switch-when="IaaS" class="btn btn-sm btn-info btn-margin">
-                                {{ taRelation.cloudResource._serviceName }} (IaaS)
+                                {{ taRelation._name }} (IaaS)
                                 <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected, taRelation)">&nbsp;</span></small></button>
                             <button ng-switch-when="PaaS" class="btn btn-sm btn-info btn-margin">
-                                {{ taRelation.cloudPlatform._serviceName }} (PaaS)
+                                {{ taRelation._name }} (PaaS)
                                 <small><span class="glyphicon glyphicon-remove remove-dragdrop" ng-click="removeTaFromTreatment(treatmentSelected, taRelation)">&nbsp;</span></small></button>
                         </div>
                     </div>
@@ -530,8 +530,8 @@
                                     <div class="panel panel-default">
                                         <div class="panel-heading service-proposal-title">
                                             <div ng-switch="service.ta.cloudType">
-                                                <h3 ng-switch-when="IaaS">{{ service.ta.cloudResource._serviceType }} ({{ service.ta.cloudType }})</h3>
-                                                <h3 ng-switch-when="PaaS">{{ service.ta.cloudPlatform._serviceType }} ({{ service.ta.cloudType }})</h3>
+                                                <h3 ng-switch-when="IaaS">{{ service.ta.cloudElement._serviceType }} ({{ service.ta.cloudElement._serviceCategory }})</h3>
+                                                <h3 ng-switch-when="PaaS">{{ service.ta.cloudElement._serviceType }} ({{ service.ta.cloudElement._serviceCategory }})</h3>
                                             </div>
                                         </div>
                                         <div class="panel-body">

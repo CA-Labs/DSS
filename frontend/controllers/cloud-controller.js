@@ -80,8 +80,8 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
         // Only query service proposals if we have at least one tangible asset
         if($scope.ta.length > 0){
             _.each($scope.ta, function(ta){
-                var serviceType = ta.cloudType == 'IaaS' ? ta.cloudResource._serviceType : ta.cloudPlatform._serviceType;
-                ArangoDBService.getProposalsByCloudAndServiceTypes(ta.cloudType, serviceType, function(error, data){
+                var serviceType = ta.cloudElement._serviceCategory == 'IaaS' ? ta.cloudElement._serviceType : ta.cloudElement._serviceType;
+                ArangoDBService.getProposalsByCloudAndServiceTypes(ta.cloudElement._serviceCategory, serviceType, function(error, data){
                     if(error){
                         console.log(error);
                     } else {
@@ -110,8 +110,8 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
     $scope.$on('acceptabilityValueChanged', function(){
         if($scope.ta.length > 0){
             _.each($scope.ta, function(ta){
-                var serviceType = ta.cloudType == 'IaaS' ? ta.cloudResource._serviceType : ta.cloudPlatform._serviceType;
-                ArangoDBService.getProposalsByCloudAndServiceTypes(ta.cloudType, serviceType, function(error, data){
+                var serviceType = ta.cloudElement._serviceCategory == 'IaaS' ? ta.cloudElement._serviceType : ta.cloudElement._serviceType;
+                ArangoDBService.getProposalsByCloudAndServiceTypes(ta.cloudElement._serviceCategory, serviceType, function(error, data){
                     if(error){
                         // console.log(error);
                     } else {
@@ -210,11 +210,11 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
                 _.each(proposals, function(proposal){
                    if(resourceContainer._id == proposal.ta._id){
                        copy.resourceModelExtension.resourceContainer[index]._provider = proposal.provider.name;
-                       if(_.has(resourceContainer, 'cloudResource')){
-                           copy.resourceModelExtension.resourceContainer[index].cloudResource._serviceName = proposal.service.name;
-                       } else if(_.has(resourceContainer, 'cloudPlatform')){
-                           copy.resourceModelExtension.resourceContainer[index].cloudPlatform._serviceName = proposal.service.name;
-                       }
+                       //if(_.has(resourceContainer, 'cloudResource')){
+                           copy.resourceModelExtension.resourceContainer[index].cloudElement._serviceName = proposal.service.name;
+                       //} else if(_.has(resourceContainer, 'cloudPlatform')){
+                       //    copy.resourceModelExtension.resourceContainer[index].cloudPlatform._serviceName = proposal.service.name;
+                       //}
                    }
                 });
             });
@@ -223,11 +223,11 @@ dssApp.controller('cloudController', ['$scope', '$rootScope', '$timeout', 'Arang
             _.each(proposals, function(proposal){
                 if(copy.resourceModelExtension.resourceContainer._id == proposal.ta._id){
                     copy.resourceModelExtension.resourceContainer._provider = proposal.provider.name;
-                    if(_.has(copy.resourceModelExtension.resourceContainer, 'cloudResource')){
-                        copy.resourceModelExtension.resourceContainer.cloudResource._serviceName = proposal.service.name;
-                    } else if(_.has(resourceContainer, 'cloudPlatform')){
-                        copy.resourceModelExtension.resourceContainer.cloudPlatform._serviceName = proposal.service.name;
-                    }
+                    //if(_.has(copy.resourceModelExtension.resourceContainer, 'cloudResource')){
+                        copy.resourceModelExtension.resourceContainer.cloudElement._serviceName = proposal.service.name;
+                    //} else if(_.has(resourceContainer, 'cloudPlatform')){
+                    //    copy.resourceModelExtension.resourceContainer.cloudPlatform._serviceName = proposal.service.name;
+                    //}
                 }
             });
         }

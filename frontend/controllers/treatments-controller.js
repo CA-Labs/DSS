@@ -313,14 +313,14 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
     });
 
     _.each($scope.taAssets, function (taAsset) {
-        var cloudType = taAsset.cloudType;
+        var cloudType = taAsset.cloudElement._serviceCategory;
         var serviceType = '';
         switch (cloudType) {
             case 'IaaS':
-                serviceType = taAsset.cloudResource._serviceType;
+                serviceType = taAsset.cloudElement._serviceType;
                 break;
             case 'PaaS':
-                serviceType = taAsset.cloudPlatform._serviceType;
+                serviceType = taAsset.cloudElement._serviceType;
                 break;
             default:
                 break;
@@ -346,14 +346,14 @@ dssApp.controller('treatmentsController', ['$scope', '$rootScope', 'ArangoDBServ
     }, function (newValue) {
         $scope.taAssets = newValue;
         _.each($scope.taAssets, function (taAsset) {
-            var cloudType = taAsset.cloudType;
+            var cloudType = taAsset.cloudElement._serviceCategory;
             var serviceType = '';
             switch (cloudType) {
                 case 'IaaS':
-                    serviceType = taAsset.cloudResource._serviceType;
+                    serviceType = taAsset.cloudElement._serviceType;
                     break;
                 case 'PaaS':
-                    serviceType = taAsset.cloudPlatform._serviceType;
+                    serviceType = taAsset.cloudElement._serviceType;
                     break;
                 default:
                     break;
