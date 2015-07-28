@@ -244,7 +244,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                 filteredProposals[taAssetId][i].unacceptableRisks = unacceptableRisks;
                 filteredProposals[taAssetId][i].mitigatedRisks = [];
                 filteredProposals[taAssetId][i].unmitigatedRisks = [];
-                if(proposal.service.cloudType == AssetsService.getTAById(taAssetId).cloudType){
+                if(proposal.service.cloudType == AssetsService.getTAById(taAssetId).cloudElement._serviceCategory){
                     // Determine what treatments should be taken into account
                     treatments = proposal.characteristics;
                     treatmentsValues = proposal.characteristics.map(function(c){ return c.value});
