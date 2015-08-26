@@ -211,7 +211,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                 _.each(proposal, function (service, indexP) {
                     riskBasedScore += service.score/service.total;
                     qualitySumScore += service.service.quality;
-                    minimalDeploymentCost += service.service.minimalDeploymentCost || 0;
+                    minimalDeploymentCost += parseInt(service.service.minimumDeploymentCost.replace(",", ".")) || 0;
                     migrationScore += servicesMigrationValues[service.service._id];
 
                     deploymentProposals[index][indexP].migrationScore = servicesMigrationValues[service.service._id];

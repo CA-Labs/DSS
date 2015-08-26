@@ -551,7 +551,7 @@
                                                             <h6>Score</h6>
                                                             <hr/>
                                                             <h3 ng-show="isOrderBySelected('overallScore')">{{ ((service.score / service.total) || 0.0) * 10.0 | number: 2 }}</h3>
-                                                            <h3 ng-show="isOrderBySelected('minimalDeploymentCost')">{{ (service.minimalDeploymentCost || 0) | number: 2 }}</h3>
+                                                            <h3 ng-show="isOrderBySelected('minimalDeploymentCost')">{{ service.service.minimumDeploymentCost.substr(0, 4) }}</h3>
                                                             <h3 ng-show="isOrderBySelected('migrationScore')">{{ (service.migrationScore * 10.0 || 0) | number: 2 }}</h3>
                                                             <h3 ng-show="isOrderBySelected('qualityScore')">{{ (service.service.quality * 2.0 || 0) | number: 2 }}</h3>
                                                         </div>
