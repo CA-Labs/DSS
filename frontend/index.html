@@ -496,7 +496,7 @@
                 <div class="row" ng-click="selectService(result)">
                     <div class="col-lg-1">
                         <div class="well service-proposal-score service-proposal-score-overall">
-                            <h6 ng-show="isOrderBySelected('overallScore')">Rist Mitigation<br/>Deployment<br/>Score</h6>
+                            <h6 ng-show="isOrderBySelected('overallScore')">Risk Mitigation<br/>Deployment<br/>Score</h6>
                             <h6 ng-show="isOrderBySelected('minimalDeploymentCost')">Minimal Deployment<br/>Cost</h6>
                             <h6 ng-show="isOrderBySelected('migrationScore')">Migration<br/>Score</h6>
                             <h6 ng-show="isOrderBySelected('qualityScore')">Quality<br/>Score</h6>
@@ -551,7 +551,7 @@
                                                             <h6>Score</h6>
                                                             <hr/>
                                                             <h3 ng-show="isOrderBySelected('overallScore')">{{ ((service.score / service.total) || 0.0) * 10.0 | number: 2 }}</h3>
-                                                            <h3 ng-show="isOrderBySelected('minimalDeploymentCost')">{{ service.service.minimumDeploymentCost.substr(0, 4) }}</h3>
+                                                            <h3 ng-show="isOrderBySelected('minimalDeploymentCost')">{{ service.service.minimumDeploymentCost.substr(0, 4).replace(",", ".") }}</h3>
                                                             <h3 ng-show="isOrderBySelected('migrationScore')">{{ (service.migrationScore * 10.0 || 0) | number: 2 }}</h3>
                                                             <h3 ng-show="isOrderBySelected('qualityScore')">{{ (service.service.quality * 2.0 || 0) | number: 2 }}</h3>
                                                         </div>
