@@ -12,7 +12,8 @@ dssApp.directive('starRating', function () {
             value: '='
         },
         link: function (scope, elem, attrs) {
-
+            console.log('score value', scope.value);
+            
             var updateStars = function () {
                 scope.stars = [];
                 for (var i = 0; i < 5; i++) {
