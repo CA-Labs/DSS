@@ -501,7 +501,7 @@
                             <!--<h6 ng-show="isOrderBySelected('migrationScore')">Migration<br/>Score</h6>-->
                             <h6 ng-show="isOrderBySelected('qualityScore')">Quality<br/>Perception</h6>
                             <hr/>
-                            <h3 ng-show="isOrderBySelected('overallScore')">{{ (result.overallScore * 100.0 || 0) }}%</h3>
+                            <h3 ng-show="isOrderBySelected('overallScore')">{{ (result.overallScore * 100.0 || 0 | number: 0) }}%</h3>
                             <h3 ng-show="isOrderBySelected('minimalDeploymentCost')">&euro;{{ (result.minimalDeploymentCost || 0) | number: 2 }}</h3>
                             <!--<h3 ng-show="isOrderBySelected('migrationScore')">{{ (result.migrationScore * 10.0 || 0) | number: 2 }}</h3>-->
                             <h4 ng-show="isOrderBySelected('qualityScore')">
