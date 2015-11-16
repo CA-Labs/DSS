@@ -504,7 +504,15 @@
                             <h3 ng-show="isOrderBySelected('overallScore')">{{ (result.overallScore * 100.0 || 0) }}%</h3>
                             <h3 ng-show="isOrderBySelected('minimalDeploymentCost')">&euro;{{ (result.minimalDeploymentCost || 0) | number: 2 }}</h3>
                             <!--<h3 ng-show="isOrderBySelected('migrationScore')">{{ (result.migrationScore * 10.0 || 0) | number: 2 }}</h3>-->
-                            <h3 ng-show="isOrderBySelected('qualityScore')">{{ (result.qualityScore * 2.0 * 10.0 || 0) | number: 2 }}</h3>
+                            <h4 ng-show="isOrderBySelected('qualityScore')">
+                                <ul class="rating">
+                                    <li ng-class="{'filled': 1 <= result.qualityScore }">&#9733;</li>
+                                    <li ng-class="{'filled': 2 <= result.qualityScore }">&#9733;</li>
+                                    <li ng-class="{'filled': 3 <= result.qualityScore }">&#9733;</li>
+                                    <li ng-class="{'filled': 4 <= result.qualityScore }">&#9733;</li>
+                                    <li ng-class="{'filled': 5 <= result.qualityScore }">&#9733;</li>
+                                </ul>
+                            </h4>
                             <br/>
                         </div>
                         <div class="center-block center-text">
@@ -555,9 +563,15 @@
                                                             <h3 ng-show="isOrderBySelected('overallScore')">{{ ((service.score / service.total) || 0.0) * 100.0 | number: 0 }}%</h3>
                                                             <h3 ng-show="isOrderBySelected('minimalDeploymentCost')">&euro;{{ service.service.minimumDeploymentCost.substr(0, 4).replace(",", ".") | number: 2 }}</h3>
                                                             <h3 ng-show="isOrderBySelected('migrationScore')">{{ (service.migrationScore * 10.0 || 0) | number: 2 }}</h3>
-                                                            <h3 ng-show="isOrderBySelected('qualityScore')">
-                                                                <star-rating value="service.service.quality"></star-rating>
-                                                            </h3>
+                                                            <h4 ng-show="isOrderBySelected('qualityScore')">
+                                                                <ul class="rating">
+                                                                    <li ng-class="{'filled': isScoreFilled(1, service.service.qualityVotes) }">&#9733;</li>
+                                                                    <li ng-class="{'filled': isScoreFilled(2, service.service.qualityVotes) }">&#9733;</li>
+                                                                    <li ng-class="{'filled': isScoreFilled(3, service.service.qualityVotes) }">&#9733;</li>
+                                                                    <li ng-class="{'filled': isScoreFilled(4, service.service.qualityVotes) }">&#9733;</li>
+                                                                    <li ng-class="{'filled': isScoreFilled(5, service.service.qualityVotes) }">&#9733;</li>
+                                                                </ul>
+                                                            </h4>
                                                         </div>
                                                     </div>
                                                 </div>

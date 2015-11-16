@@ -209,8 +209,14 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                 var migrationScore = 0;
 
                 _.each(proposal, function (service, indexP) {
+
+                    var qualityScoreSum = 0;
+                    _.each(service.service.qualityVotes, function (vote) {
+                        qualityScoreSum += vote.score;
+                    });
                     riskBasedScore += service.score/service.total;
-                    qualitySumScore += service.service.quality;
+                    qualitySumScore += (qualityScoreSum / service.service.qualityVotes.length);
+                    console.log(qualitySumScore);
                     minimalDeploymentCost += parseInt(service.service.minimumDeploymentCost.replace(",", ".")) || 0;
                     migrationScore += servicesMigrationValues[service.service._id];
 
@@ -219,7 +225,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
 
                 // calculate riskBasedScore
                 deploymentProposals[index].overallScore = riskBasedScore / proposal.length;
-                deploymentProposals[index].qualityScore = qualitySumScore / proposal.length / 10; // scale [0-1]
+                deploymentProposals[index].qualityScore = qualitySumScore / proposal.length;
                 deploymentProposals[index].minimalDeploymentCost = minimalDeploymentCost;
                 deploymentProposals[index].migrationScore = migrationScore / proposal.length;
             });

@@ -4,7 +4,8 @@
  * @created: 16/11/15
  */
 
-dssApp.directive('starRating', function () {
+dssApp.directive('starRating',['$rootScope', function ($rootScope) {
+    console.log('starRating called');
     return {
         restrict: 'A',
         template: '<ul class="rating"><li ng-repeat="star in stars" ng-class="star">\u2605</li></ul>',
@@ -13,7 +14,7 @@ dssApp.directive('starRating', function () {
         },
         link: function (scope, elem, attrs) {
             console.log('score value', scope.value);
-            
+
             var updateStars = function () {
                 scope.stars = [];
                 for (var i = 0; i < 5; i++) {
@@ -30,4 +31,4 @@ dssApp.directive('starRating', function () {
             });
         }
     }
-});
+}]);

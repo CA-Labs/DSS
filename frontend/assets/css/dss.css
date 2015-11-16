@@ -316,7 +316,7 @@ blockquote {
     font-size: 13px;
     font-size: 0.7vw; }
   .service-proposal-score-overall h3 {
-    font-size: 1.5vw; }
+    font-size: 1.3vw; }
 
 .service-proposal-score-positive {
   width: 0;
@@ -484,3 +484,23 @@ dss-radar svg {
 /* Angucomplete */
 .angucomplete-dropdown {
   margin-top: 43px !important; }
+
+.rating {
+  color: #a9a9a9;
+  margin: 0;
+  padding: 0;
+}
+ul.rating {
+  display: inline-block;
+}
+.rating li {
+  list-style-type: none;
+  display: inline-block;
+  padding: 1px;
+  text-align: center;
+  font-weight: bold;
+  cursor: pointer;
+}
+.rating .filled {
+  color: #f39c12;
+}
