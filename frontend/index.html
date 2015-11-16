@@ -492,7 +492,7 @@
         </div>
         <br/>
         <ul class="list-group">
-            <li class="list-group-item service-proposal-panel" ng-class="{ 'service-selected': isSelected(result), 'has-risks': hasUnmitigatedRisks(result) }" on-repeat-done ng-repeat="result in getDeploymentProposals() | multicloudReplication | orderBy: orderBy :true track by $index">
+            <li class="list-group-item service-proposal-panel" ng-class="{ 'service-selected': isSelected(result), 'has-risks': hasUnmitigatedRisks(result) }" on-repeat-done ng-repeat="result in getDeploymentProposals() | multicloudReplication | orderBy: orderBy :true track by $index | limitTo: 50 ">
                 <div class="row" ng-click="selectService(result)">
                     <div class="col-lg-1">
                         <div class="well service-proposal-score service-proposal-score-overall">
