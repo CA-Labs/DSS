@@ -11,7 +11,9 @@ html, body {
   display: inline-block; }
 
 .popover {
-  min-width: 400px; }
+  min-width: 400px;
+  color: #333;
+}
 
 .margin-10 {
   margin-left: 10px;

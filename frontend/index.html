@@ -484,8 +484,13 @@
             <div class="col-lg-11">
                 <div class="btn-group btn-group-justified">
                     <a class="btn btn-default" ng-class="{'active': isOrderBySelected('overallScore')}" ng-click="orderBy='overallScore'">Risk Mitigation</a>
-                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('minimalDeploymentCost')}" ng-click="orderBy='minimalDeploymentCost'">Minimal Deployment Cost</a>
-                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('qualityScore')}" ng-click="orderBy='qualityScore'">Quality Perception Score</a>
+                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('minimalDeploymentCost')}" ng-click="orderBy='minimalDeploymentCost'">Minimal Deployment Cost&nbsp;
+                        <i class="glyphicon glyphicon-info-sign" data-content="Minimal Deployment Cost refers to the monetary cost which is necessary in order to acquire the smallest set of instances from the sets of providers." popup-down></i>
+                    </a>
+                    <a class="btn btn-default" ng-class="{'active': isOrderBySelected('qualityScore')}" ng-click="orderBy='qualityScore'">Quality Perception Score&nbsp;
+                        <i class="glyphicon glyphicon-info-sign" data-content="Quality Perception Score is a score based on the votes of the users regarding the service taken from http://cloudservices.modaclouds.eu. It is a service where users can discover and rate cloud services based on their past expiriences and perceptions." popup-down></i>
+
+                    </a>
                     <!--<a class="btn btn-default" ng-class="{'active': isOrderBySelected('migrationScore')}" ng-click="orderBy='migrationScore'">Ease of Migration</a>-->
                 </div>
             </div>
