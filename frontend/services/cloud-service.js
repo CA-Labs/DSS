@@ -216,7 +216,7 @@ dssApp.service('CloudService', ['AssetsService', 'RisksService', 'TreatmentsServ
                     });
                     riskBasedScore += service.score/service.total;
                     qualitySumScore += (qualityScoreSum / service.service.qualityVotes.length);
-                    minimalDeploymentCost += parseInt(service.service.minimumDeploymentCost.replace(",", ".")) || 0;
+                    minimalDeploymentCost += (!!service.service.minimumDeploymentCost) ? parseInt(service.service.minimumDeploymentCost.replace(",", ".")) : 0;
                     migrationScore += servicesMigrationValues[service.service._id];
 
                     deploymentProposals[index][indexP].migrationScore = servicesMigrationValues[service.service._id];
